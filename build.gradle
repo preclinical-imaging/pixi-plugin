@@ -1,0 +1,63 @@
+/*
+ * pixi-plugin: build.gradle
+ */
+plugins {
+    id "java"
+    id "org.nrg.xnat.build.xnat-data-builder" version "1.8.0"
+    id "io.freefair.lombok" version "6.0.0-m2"
+}
+
+group "org.nrg.xnatx"
+version "0.1"
+
+repositories {
+    mavenLocal()
+    maven { url "https://www.dcm4che.org/maven2" }
+    mavenCentral()
+    maven { url "https://nrgxnat.jfrog.io/nrgxnat/libs-release" }
+    maven { url "https://nrgxnat.jfrog.io/nrgxnat/libs-snapshot" }
+}
+
+configurations {
+    implementation.extendsFrom(xnatProvided)
+    testImplementation.exclude group: 'org.slf4j', module: 'log4j-over-slf4j'
+}
+
+dependencies {
+    xnatProvided enforcedPlatform("org.nrg:parent:1.8.0")
+    xnatProvided "org.nrg:framework"
+    xnatProvided "org.nrg.xnat:xnat-data-models"
+    xnatProvided "org.nrg.xnat:web"
+    xnatProvided "org.nrg.xdat:core"
+    xnatProvided "io.springfox:springfox-swagger2"
+    xnatProvided "io.springfox:springfox-swagger-ui"
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testImplementation "org.mockito:mockito-core:3.+"
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+// Configure the compileJava task to call the xnatDataBuilder task before trying to compile any
+// Java code in the plugin. This is required for custom data types
+compileJava.dependsOn project.tasks["xnatDataBuilder"]
+
+// Not required in a standard build, but the XNAT data builder generates code from XNAT data-type
+// schemas that the compiler needs to know about.
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            srcDir "build/xnat-generated/src/main/java"
+        }
+        resources {
+            srcDir 'src/main/resources'
+            srcDir "build/xnat-generated/src/main/resources"
+        }
+    }
+}
