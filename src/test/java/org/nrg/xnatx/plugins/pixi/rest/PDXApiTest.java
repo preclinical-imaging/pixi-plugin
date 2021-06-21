@@ -1,5 +1,6 @@
 package org.nrg.xnatx.plugins.pixi.rest;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.nrg.xapi.exceptions.DataFormatException;
@@ -7,26 +8,43 @@ import org.nrg.xapi.exceptions.NotFoundException;
 import org.nrg.xapi.exceptions.ResourceAlreadyExistsException;
 import org.nrg.xdat.security.services.RoleHolder;
 import org.nrg.xdat.security.services.UserManagementServiceI;
-import org.nrg.xnatx.plugins.pixi.entities.PDX;
+import org.nrg.xft.security.UserI;
+import org.nrg.xnatx.plugins.pixi.models.PDX;
 import org.nrg.xnatx.plugins.pixi.services.PDXService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 class PDXApiTest {
 
-    PDXService pdxService;
-    UserManagementServiceI userManagementService;
-    RoleHolder roleHolder;
-    PDXApi pdxApi;
+    private PDXService pdxService;
+    private UserManagementServiceI userManagementService;
+    private RoleHolder roleHolder;
+    private PDXApi pdxApi;
+    private static String username = "PDXUser";
+
+    @BeforeAll
+    public static void beforeAll() {
+        UserI userI = mock(UserI.class);
+        when(userI.getUsername()).thenReturn(username);
+
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getPrincipal()).thenReturn(userI);
+
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+    }
 
     @BeforeEach
-    public void setup() {
+    public void beforeEach() {
         pdxService = mock(PDXService.class);
         userManagementService = mock(UserManagementServiceI.class);
         roleHolder = mock(RoleHolder.class);
@@ -44,42 +62,30 @@ class PDXApiTest {
         pdxs.add(pdx1);
         pdxs.add(pdx2);
 
-        when(pdxService.getAll()).thenReturn(pdxs);
+        when(pdxService.getAllPDX()).thenReturn(pdxs);
 
-        assertEquals(pdxApi.getPDXs(), pdxs);
+        assertEquals(pdxApi.getAllPDX(), pdxs);
     }
 
     @Test
     public void testCreatePDX() {
         PDX pdx = new PDX();
 
-        when(pdxService.create(pdx)).thenReturn(pdx);
-
         try {
-            assertEquals(pdx, pdxApi.createPDX(pdx));
+            pdxApi.createPDX(pdx);
+            verify(pdxService).createPDX(pdx);
+            assertEquals(username, pdx.getCreatedBy());
         } catch (ResourceAlreadyExistsException e) {
             fail("Exception should not be thrown. Resource does not already exist");
         }
     }
 
     @Test
-    public void testCreateExistingPDX() {
-        PDX pdx = new PDX();
-        String pdxID = "WUXNAT01";
-        pdx.setPdxID(pdxID);
-
-        when(pdxService.exists("pdxID", pdxID)).thenReturn(true);
-
-        assertThrows(ResourceAlreadyExistsException.class, () -> pdxApi.createPDX(pdx));
-    }
-
-    @Test
     public void testGetKnownPDX() {
-        PDX pdx = new PDX();
         String pdxID = "WUXNAT01";
-        pdx.setPdxID(pdxID);
+        PDX pdx = PDX.builder().pdxID(pdxID).build();
 
-        when(pdxService.findByPdxID(pdxID)).thenReturn(Optional.of(pdx));
+        when(pdxService.getPDX(pdxID)).thenReturn(Optional.of(pdx));
 
         try {
             assertEquals(pdx, pdxApi.getPDX(pdxID));
@@ -92,75 +98,56 @@ class PDXApiTest {
     public void testGetUnknownPDX() {
         String pdxID = "WUXNAT01";
 
-        when(pdxService.findByPdxID(pdxID)).thenReturn(Optional.empty());
+        when(pdxService.getPDX(pdxID)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> pdxApi.getPDX(pdxID));
     }
 
     @Test
     public void testPutPDXWithIDMismatch() {
-        PDX pdx = new PDX();
+        PDX pdx = PDX.builder().pdxID("junk").build();
         String pdxID = "WUXNAT01";
-        assertThrows(DataFormatException.class, () -> pdxApi.updatePDX(pdxID, pdx));
+        assertThrows(DataFormatException.class, () -> pdxApi.createOrUpdatePDX(pdxID, pdx));
     }
 
     @Test
     public void testPutPDXCreation() {
-        PDX pdx = new PDX();
         String pdxID = "WUXNAT01";
-        pdx.setPdxID(pdxID);
-
-        when(pdxService.exists(eq("pdxID"), anyString())).thenReturn(false);
+        PDX pdx = PDX.builder().pdxID(pdxID).build();
 
         try {
-            pdxApi.updatePDX(pdxID, pdx);
-            verify(pdxService).create(pdx);
-            verify(pdxService, never()).update(pdx);
-        } catch (DataFormatException e) {
-            fail("Exception should not be thrown. pdxIDs match.");
+            pdxApi.createOrUpdatePDX(pdxID, pdx);
+            verify(pdxService).createPDX(pdx);
+            verify(pdxService, never()).updatePDX(pdx);
+        } catch (DataFormatException | NotFoundException | ResourceAlreadyExistsException e) {
+            fail("Exception should not be thrown.");
         }
     }
 
     @Test
     public void testPutPDXUpdate() {
-        PDX pdx = new PDX();
         String pdxID = "WUXNAT01";
-        pdx.setPdxID(pdxID);
-
-        when(pdxService.exists(eq("pdxID"), anyString())).thenReturn(true);
+        PDX pdx = PDX.builder().pdxID(pdxID).build();
 
         try {
-            pdxApi.updatePDX(pdxID, pdx);
-            verify(pdxService, never()).create(pdx);
-            verify(pdxService).update(pdx);
-        } catch (DataFormatException e) {
-            fail("Exception should not be thrown. pdxIDs match.");
+            doThrow(ResourceAlreadyExistsException.class).when(pdxService).createPDX(any());
+            pdxApi.createOrUpdatePDX(pdxID, pdx);
+            verify(pdxService).createPDX(pdx);
+            verify(pdxService).updatePDX(pdx);
+        } catch (DataFormatException | NotFoundException | ResourceAlreadyExistsException e) {
+            fail("Exception should not be thrown.");
         }
     }
 
     @Test
-    public void testDeleteUnknownPDX() {
+    public void testDeletePDX() {
         String pdxID = "WUXNAT01";
-
-        when(pdxService.findByPdxID(any())).thenReturn(Optional.empty());
-
-        assertThrows(NotFoundException.class, () -> pdxApi.deletePDX(pdxID));
-    }
-
-    @Test
-    public void testDeleteKnownPDX() {
-        PDX pdx = new PDX();
-        String pdxID = "WUXNAT01";
-        pdx.setPdxID(pdxID);
-
-        when(pdxService.findByPdxID(pdxID)).thenReturn(Optional.of(pdx));
 
         try {
             pdxApi.deletePDX(pdxID);
-            verify(pdxService).delete(pdx);
+            verify(pdxService).deletePDX(pdxID);
         } catch (NotFoundException e) {
-            fail("Exception should not be thrown. PDX is known and should be deleted");
+            fail("Exception should not be thrown.");
         }
     }
-
 }
