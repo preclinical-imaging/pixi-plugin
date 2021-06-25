@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+$page.setTitle("AnimalModel Details")
+$page.setLinkColor($ui.alink)
+$page.setVlinkColor($ui.vlink)
+ ##---------------------------------------- 
+ ## DO NOT MODIFY THIS FILE HERE
+ ##
+ ## TO MODIFY, COPY THIS FILE to src/main/resources/templates/screens/ and modify it there 
+ ##----------------------------------------
+#if ($turbineUtils.GetPassedParameter("popup", $data))
+	#set ($popup = $turbineUtils.GetPassedParameter("popup", data) )
+	#set ($popup = "false")
+#end
+<TABLE width="100%">
+	<TR>
+		<TD>
+			<table width="100%">
+				<TR>
+					<TD align="left" valign="middle">
+						<font face="$ui.sansSerifFonts" size="3"><b>AnimalModel Details</b></font>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<TABLE width="100%">
+				<TR>
+					<TD valign="top">
+						<TABLE>
+							<TR><TD>***PDX ID</TD><TD>$!item.getStringProperty("pixi:animalModel/pdxID")</TD></TR>
+							<TR><TD>Mouse Strain</TD><TD>$!item.getStringProperty("pixi:animalModel/strain")</TD></TR>
+							<TR><TD>Mouse Source</TD><TD>$!item.getStringProperty("pixi:animalModel/source")</TD></TR>
+							<TR><TD>Date Weaned</TD><TD>$!item.getProperty("pixi:animalModel/dateWeaned")</TD></TR>
+							<TR><TD>Litter</TD><TD>$!item.getStringProperty("pixi:animalModel/litter")</TD></TR>
+							<TR><TD>Passage</TD><TD>$!item.getStringProperty("pixi:animalModel/passage")</TD></TR>
+							<TR><TD>Immune System Humanized?</TD><TD>$!item.getBooleanProperty("pixi:animalModel/isImmuneSystemHumanized")</TD></TR>
+							<TR><TD>Humanization Type</TD><TD>$!item.getStringProperty("pixi:animalModel/humanizationType")</TD></TR>
+							<TR><TD>Tumor Preparation</TD><TD>$!item.getStringProperty("pixi:animalModel/tumorPreparation")</TD></TR>
+							<TR><TD>Tumor Injection Type</TD><TD>$!item.getStringProperty("pixi:animalModel/tumorInjectionType")</TD></TR>
+							<TR><TD>Tumor Injection Site</TD><TD>$!item.getStringProperty("pixi:animalModel/tumorInjectionSite")</TD></TR>
+							<TR><TD>Engraftment Treatment</TD><TD>$!item.getStringProperty("pixi:animalModel/engraftmentTreatment")</TD></TR>
+							<TR><TD>Engraftment Time (weeks)</TD><TD>$!item.getStringProperty("pixi:animalModel/engraftmentTime")</TD></TR>
+						</TABLE>
+					</TD>
+					<TD valign="top" align="right">
+						#parse($turbineUtils.getTemplateName("actions",$om.getXSIType(),$project))
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+</TABLE><BR>#parse("/screens/ReportProjectSpecificFields.vm")

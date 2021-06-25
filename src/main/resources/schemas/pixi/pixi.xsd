@@ -1,0 +1,63 @@
+<xs:schema targetNamespace="http://nrg.wustl.edu/pixi"
+           xmlns:pixi="http://nrg.wustl.edu/pixi"
+           xmlns:xnat="http://nrg.wustl.edu/xnat"
+           xmlns:xdat="http://nrg.wustl.edu/xdat"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:import namespace="http://nrg.wustl.edu/xnat" schemaLocation="../xnat/xnat.xsd"/>
+    <xs:import namespace="http://nrg.wustl.edu/xdat" schemaLocation="../xdat/xdat.xsd"/>
+
+    <xs:element name="AnimalModel" type="pixi:animalModel"/>
+    <xs:element name="Treatment" type="pixi:treatment"/>
+    <xs:complexType name="animalModel">
+        <xs:annotation>
+            <xs:documentation>Animal Model</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="xnat:subjectAssessorData">
+                <xs:sequence>
+                    <!-- TODO: Foreign Key Reference-->
+                    <xs:element name="pdxID" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>PDX ID</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="strain" type="xs:string" minOccurs="0"/>
+                    <xs:element name="source" type="xs:string" minOccurs="0"/>
+                    <xs:element name="dateWeaned" type="xs:date" minOccurs="0"/>
+                    <xs:element name="litter" type="xs:string" minOccurs="0"/>
+                    <xs:element name="passage" type="xs:string" minOccurs="0"/>
+                    <xs:element name="isImmuneSystemHumanized" type="xs:boolean" minOccurs="0"/>
+                    <xs:element name="humanizationType" type="xs:string" minOccurs="0"/>
+                    <xs:element name="tumorPreparation" type="xs:string" minOccurs="0"/>
+                    <xs:element name="tumorInjectionType" type="xs:string" minOccurs="0"/>
+                    <xs:element name="tumorInjectionSite" type="xs:string" minOccurs="0"/>
+                    <xs:element name="engraftmentTreatment" type="xs:string" minOccurs="0"/>
+                    <xs:element name="engraftmentTime" type="xs:positiveInteger" minOccurs="0"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="treatment">
+        <xs:annotation>
+            <xs:documentation>Treatment</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="xnat:subjectAssessorData">
+                <xs:sequence>
+                    <xs:element name="treatment" type="xs:string" minOccurs="0"/>
+                    <xs:element name="treatmentProtocol" type="xs:string" minOccurs="0"/>
+                    <xs:element name="treatmentResponse" type="xs:string" minOccurs="0">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="Complete Response"/>
+                                <xs:enumeration value="Partial Response"/>
+                                <xs:enumeration value="Stable Disease"/>
+                                <xs:enumeration value="Progressive Disease"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>
