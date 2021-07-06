@@ -29,11 +29,11 @@ $page.setVlinkColor($ui.vlink)
 				<TR>
 					<TD valign="top">
 						<TABLE>
-							<TR><TD>***PDX ID</TD><TD>$!item.getStringProperty("pixi:animalModel/pdxID")</TD></TR>
+							<TR><TD>***PDX</TD><TD>$!item.getStringProperty("pixi:animalModel/pdxID")</TD></TR>
 							<TR><TD>Mouse Strain</TD><TD>$!item.getStringProperty("pixi:animalModel/strain")</TD></TR>
 							<TR><TD>Mouse Source</TD><TD>$!item.getStringProperty("pixi:animalModel/source")</TD></TR>
-							<TR><TD>Date Weaned</TD><TD>$!item.getProperty("pixi:animalModel/dateWeaned")</TD></TR>
-							<TR><TD>Litter</TD><TD>$!item.getStringProperty("pixi:animalModel/litter")</TD></TR>
+							<TR><TD>***Date Weaned</TD><TD>$!item.getProperty("pixi:animalModel/dateWeaned")</TD></TR>
+							<TR><TD>***Litter</TD><TD>$!item.getStringProperty("pixi:animalModel/litter")</TD></TR>
 							<TR><TD>Passage</TD><TD>$!item.getStringProperty("pixi:animalModel/passage")</TD></TR>
 							<TR><TD>Immune System Humanized?</TD><TD>$!item.getBooleanProperty("pixi:animalModel/isImmuneSystemHumanized")</TD></TR>
 							<TR><TD>Humanization Type</TD><TD>$!item.getStringProperty("pixi:animalModel/humanizationType")</TD></TR>
@@ -41,8 +41,7 @@ $page.setVlinkColor($ui.vlink)
 							<TR><TD>Tumor Injection Type</TD><TD>$!item.getStringProperty("pixi:animalModel/tumorInjectionType")</TD></TR>
 							<TR><TD>Tumor Injection Site</TD><TD>$!item.getStringProperty("pixi:animalModel/tumorInjectionSite")</TD></TR>
 							<TR><TD>Engraftment Treatment</TD><TD>$!item.getStringProperty("pixi:animalModel/engraftmentTreatment")</TD></TR>
-							<TR><TD>Engraftment Time (weeks)</TD><TD>$!item.getStringProperty("pixi:animalModel/engraftmentTime")</TD></TR>
-						</TABLE>
+							</TABLE>
 					</TD>
 					<TD valign="top" align="right">
 						#parse($turbineUtils.getTemplateName("actions",$om.getXSIType(),$project))

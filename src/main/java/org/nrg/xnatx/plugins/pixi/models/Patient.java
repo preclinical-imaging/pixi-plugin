@@ -19,8 +19,8 @@ public class Patient {
     @ApiModelProperty(example = "Invasive breast cancer") @Nullable private String diagnosis;
     @ApiModelProperty(example = "Yes/no/available to academic centers only") @Nullable private String consentToShare;
     @ApiModelProperty(example = "Caucasian") @Nullable private String ethnicityRace;
-    @ApiModelProperty(example = "Everolimus; CHEMBL83") @Nullable private String currentTreatmentDrug;
-    @ApiModelProperty(example = "Afinitor; 10 mg/day") @Nullable private String currentTreatmentProtocol;
+    @ApiModelProperty(example = "Everolimus") @Nullable private String currentTreatmentDrug;
+    @ApiModelProperty(example = "10 mg/day") @Nullable private String currentTreatmentProtocol;
     @ApiModelProperty(example = "Surgery and nolvadex; 40 mg/day") @Nullable private String priorTreatmentProtocol;
     @ApiModelProperty(example = "Progressive disease (RECIST1.1)") @Nullable private String priorTreatmentResponse;
     @ApiModelProperty(example = "HIV-/HBV-/HCV+/HTLV-/EBV+") @Nullable private String virologyStatus;

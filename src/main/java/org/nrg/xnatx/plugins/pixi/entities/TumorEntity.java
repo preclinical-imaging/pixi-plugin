@@ -27,7 +27,7 @@ public class TumorEntity {
     @Nullable private String specificMarkersPlatform;
     @Nullable private Boolean fromUntreatedPatient;
     @Nullable private String originalTumorSampleType;
-    @Nullable private String derivedPDXModelID;
+    @Nullable private String derivedPDXModelID; // TODO : FK -> Derived pdxID
     @Nullable private String derivedPDXReason;
 
     public static TumorEntity fromPojo(final Tumor tumor) {

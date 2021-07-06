@@ -45,19 +45,20 @@ $page.setVlinkColor($ui.vlink)
 							<tr>
 								<TD colspan="2">#parse("/screens/EditProjectSpecificFields.vm")</TD>
 							</tr>
-							<TR><TD>***PDX ID</TD><TD>#xdatStringBox("pixi:animalModel/pdxID" $item "" $vr)</TD></TR>
+							<TR><TD>***PDX</TD><TD>#xdatStringBox("pixi:animalModel/pdxID" $item "" $vr)</TD></TR>
 							<TR><TD>Mouse Strain</TD><TD>#xdatStringBox("pixi:animalModel/strain" $item "" $vr)</TD></TR>
 							<TR><TD>Mouse Source</TD><TD>#xdatStringBox("pixi:animalModel/source" $item "" $vr)</TD></TR>
-							<TR><TD>Date Weaned</TD><TD>#xdatDateBox("pixi:animalModel/dateWeaned" $item $vr $years)</TD></TR>
-							<TR><TD>Litter</TD><TD>#xdatStringBox("pixi:animalModel/litter" $item "" $vr)</TD></TR>
+							<TR><TD>***Date Weaned</TD><TD>#xdatDateBox("pixi:animalModel/dateWeaned" $item $vr $years)</TD></TR>
+							<TR><TD>***Litter</TD><TD>#xdatStringBox("pixi:animalModel/litter" $item "" $vr)</TD></TR>
 							<TR><TD>Passage</TD><TD>#xdatStringBox("pixi:animalModel/passage" $item "" $vr)</TD></TR>
-							<TR><TD>Immune System Humanized?</TD><TD>#xdatBooleanRadio("pixi:animalModel/isImmuneSystemHumanized" $item false $vr)</TD></TR>
+							<TR><TD>Immune System Humanized?</TD><TD>#xdatBooleanRadioYesNo("pixi:animalModel/isImmuneSystemHumanized" $item false $vr)</TD></TR>
 							<TR><TD>Humanization Type</TD><TD>#xdatStringBox("pixi:animalModel/humanizationType" $item "" $vr)</TD></TR>
 							<TR><TD>Tumor Preparation</TD><TD>#xdatStringBox("pixi:animalModel/tumorPreparation" $item "" $vr)</TD></TR>
-							<TR><TD>Tumor Injection Type</TD><TD>#xdatStringBox("pixi:animalModel/tumorInjectionType" $item "" $vr)</TD></TR>
+							#set($tumorInjectionTypes = ["Subcutaneous","Orthotopic"])
+							<TR><TD>Tumor Injection Type</TD><TD>#xdatSimpleSelectBoxLbl("Select" "pixi:animalModel/tumorInjectionType" $item $tumorInjectionTypes $vr)</TD></TR>
 							<TR><TD>Tumor Injection Site</TD><TD>#xdatStringBox("pixi:animalModel/tumorInjectionSite" $item "" $vr)</TD></TR>
+							<TR><TD>Tumor Injection Date/Time</TD><TD>#xdatStringBox("pixi:animalModel/tumorInjectionSite" $item "" $vr)</TD></TR>
 							<TR><TD>Engraftment Treatment</TD><TD>#xdatStringBox("pixi:animalModel/engraftmentTreatment" $item "" $vr)</TD></TR>
-							<TR><TD>Engraftment Time (weeks)</TD><TD>#xdatStringBox("pixi:animalModel/engraftmentTime" $item "" $vr)</TD></TR>
 						</TABLE>
 					</TD>
 				</TR>
