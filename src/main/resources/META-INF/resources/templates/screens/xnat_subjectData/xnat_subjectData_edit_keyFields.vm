@@ -1,0 +1,21 @@
+<!-- BEGIN /screens/xnat_subjectData/xnat_subjectData_edit_keyFields.vm -->
+<h3>Demographics</h3>
+$project
+$subject.getDemographics().getXSIType()
+<table>
+	#set($demographicType = $subject.getDemographics().getXSIType())
+	#if(!$demographicType && !$turbineUtils.GetPassedParameter("demographics",$data)) ## unknown / not set && not in URL
+		#set($demographicType = "xnat:DemographicData") ## default
+	#elseif(!$demographicType && $turbineUtils.GetPassedParameter("demographics",$data)) ## unknown / not set && in URL
+		#set($demographicType = $turbineUtils.GetPassedParameter("demographics",$data)) ## get prefered demographics
+	#end
+	#parse($turbineUtils.getTemplateName("_edit_core_demographics",$demographicType,$project))
+	#parse($turbineUtils.getTemplateName("_edit_addtl_demographics",$demographicType,$project))
+</table>
+## validation is now handled on XDATScreen_edit_xnat_subjectData.vm
+##		<script type="text/javascript">
+##		function validateKeyFields(){
+##		  return validateDemographics();
+##		}
+##		</script>
+<!-- END /screens/xnat_subjectData/xnat_subjectData_edit_keyFields.vm -->

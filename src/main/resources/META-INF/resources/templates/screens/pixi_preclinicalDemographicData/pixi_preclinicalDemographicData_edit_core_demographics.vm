@@ -1,0 +1,12 @@
+#set ($dataPathStr = "xnat:subjectData/demographics[@xsi:type=pixi:preclinicalDemographicData]")
+<TR>
+    <TD valign="top">
+        <TABLE>
+            <TR><TD>Date of Birth</TD><TD>#xdatDateBox("${dataPathStr}/dateOfBirth" $item $vr $years)</TD></TR>
+            <TR><TD>Date of Weaning</TD><TD>#xdatDateBox("${dataPathStr}/dateOfWeaning" $item $vr $years)</TD></TR>
+            <TR><TD>Species</TD><TD>#xdatStringBox("${dataPathStr}/species" $item "" $vr)</TD></TR>
+            <TR><TD>Strain</TD><TD>#xdatStringBox("${dataPathStr}/strain" $item "" $vr)</TD></TR>
+            <TR><TD>Sex</TD><TD>#xdatStringBox("${dataPathStr}/sex" $item "" $vr)</TD></TR>
+        </TABLE>
+    </TD>
+</TR>

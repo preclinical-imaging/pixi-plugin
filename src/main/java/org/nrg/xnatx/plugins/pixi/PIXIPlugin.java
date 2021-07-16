@@ -2,13 +2,7 @@ package org.nrg.xnatx.plugins.pixi;
 
 import org.nrg.framework.annotations.XnatDataModel;
 import org.nrg.framework.annotations.XnatPlugin;
-import org.nrg.xdat.om.PixiAnesthesia;
-import org.nrg.xdat.om.PixiAnimalfeeding;
-import org.nrg.xdat.om.PixiAnimalhousing;
-import org.nrg.xdat.om.PixiAnimalmodel;
-import org.nrg.xdat.om.PixiCircadianeffects;
-import org.nrg.xdat.om.PixiHeatingconditions;
-import org.nrg.xdat.om.PixiTreatmentprotocol;
+import org.nrg.xdat.om.*;
 import org.springframework.context.annotation.ComponentScan;
 
 @XnatPlugin(value = "PIXIPlugin", name = "PIXI Plugin",
@@ -42,6 +36,10 @@ import org.springframework.context.annotation.ComponentScan;
                                          singular = "Circadian Effect",
                                          plural = "Circadian Effects",
                                          code = "CIRC"),
+                         @XnatDataModel(value = PixiPreclinicaldemographicdata.SCHEMA_ELEMENT_NAME,
+                                         singular = "Preclinical Demographic Data",
+                                         plural = "Preclinical Demographics",
+                                         code = "PCDD"),
 
             })
 @ComponentScan({"org.nrg.xnatx.plugins.pixi.repositories",

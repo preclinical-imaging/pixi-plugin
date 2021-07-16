@@ -13,6 +13,7 @@
     <xs:element name="HeatingConditions" type="pixi:heatingConditions"/>
     <xs:element name="Anesthesia" type="pixi:anesthesia"/>
     <xs:element name="CircadianEffects" type="pixi:circadianEffects"/>
+    <xs:element name="PreclinicalDemographicData" type="pixi:preclinicalDemographicData"/>
     <xs:complexType name="animalModel">
         <xs:annotation>
             <xs:documentation>Animal Model</xs:documentation>
@@ -142,4 +143,24 @@
             <xs:enumeration value="anesthesiaRecoveryPeriod"/>
         </xs:restriction>
     </xs:simpleType>
+
+    <xs:complexType name="preclinicalDemographicData">
+        <xs:annotation>
+            <xs:documentation>Preclinical Dmeographic Data</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="xnat:abstractDemographicData">
+                <xs:sequence>
+                    <xs:element name="dateOfBirth" type="xs:date" minOccurs="0"/>
+                    <xs:element name="dateOfDeath" type="xs:date" minOccurs="0"/>
+                    <xs:element name="dateOfWeaning" type="xs:date" minOccurs="0"/>
+                    <xs:element name="species" type="xs:string" minOccurs="0"/>
+                    <xs:element name="strain" type="xs:string" minOccurs="0"/>
+                    <xs:element name="geneticModifications" type="xs:string" minOccurs="0"/>
+                    <xs:element name="source" type="xs:string" minOccurs="0"/>
+                    <xs:element name="sex" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 </xs:schema>

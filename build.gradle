@@ -24,7 +24,7 @@ configurations {
 }
 
 dependencies {
-    xnatProvided enforcedPlatform("org.nrg:parent:1.8.0")
+    xnatProvided enforcedPlatform("org.nrg:parent:1.8.0.1")
     xnatProvided "org.nrg:framework"
     xnatProvided "org.nrg.xnat:xnat-data-models"
     xnatProvided "org.nrg.xnat:web"

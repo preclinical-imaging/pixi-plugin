@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Displays xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xdat/display.xsd" schema-element="pixi:preclinicalDemographicData" full-description="PreclinicalDemographicData" brief-description="PreclinicalDemographicData">
+    <DisplayField id="INSERT_DATE" header="Inserted" visible="true" searchable="true" data-type="string">
+        <DisplayFieldElement name="Field1" schema-element="pixi:preclinicalDemographicData.meta.insert_date"/>	</DisplayField>
+    <DisplayField id="INSERT_USER" header="Creator" visible="true" searchable="true" data-type="string">
+        <DisplayFieldElement name="Field1" schema-element="pixi:preclinicalDemographicData.meta.insert_user.login"/>	</DisplayField>
+    <DisplayField id="DATEOFBIRTH" header="dateOfBirth" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:preclinicalDemographicData/dateOfBirth"/>	</DisplayField>
+    <DisplayField id="DATEOFDEATH" header="dateOfDeath" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:preclinicalDemographicData/dateOfDeath"/>	</DisplayField>
+    <DisplayField id="DATEOFWEANING" header="dateOfWeaning" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:preclinicalDemographicData/dateOfWeaning"/>	</DisplayField>
+    <DisplayField id="SPECIES" header="species" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:preclinicalDemographicData/species"/>	</DisplayField>
+    <DisplayField id="STRAIN" header="strain" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:preclinicalDemographicData/strain"/>	</DisplayField>
+    <DisplayField id="GENETICMODIFICATIONS" header="geneticModifications" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:preclinicalDemographicData/geneticModifications"/>	</DisplayField>
+    <DisplayField id="SOURCE" header="source" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:preclinicalDemographicData/source"/>	</DisplayField>
+    <DisplayField id="SEX" header="sex" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:preclinicalDemographicData/sex"/>	</DisplayField>
+    <DisplayVersion versionName="listing" default-order-by="DATEOFBIRTH" default-sort-order="DESC" brief-description="PreclinicalDemographicData" dark-color="9999CC" light-color="CCCCFF">
+        <DisplayFieldRef id="DATEOFBIRTH"/>
+        <DisplayFieldRef id="DATEOFDEATH"/>
+        <DisplayFieldRef id="DATEOFWEANING"/>
+        <DisplayFieldRef id="SPECIES"/>
+        <DisplayFieldRef id="STRAIN"/>
+        <DisplayFieldRef id="GENETICMODIFICATIONS"/>
+        <DisplayFieldRef id="SOURCE"/>
+        <DisplayFieldRef id="SEX"/>	</DisplayVersion>
+    <DisplayVersion versionName="full" default-order-by="DATEOFBIRTH" default-sort-order="DESC" brief-description="PreclinicalDemographicData" dark-color="9999CC" light-color="CCCCFF">
+        <DisplayFieldRef id="DATEOFBIRTH"/>
+        <DisplayFieldRef id="DATEOFDEATH"/>
+        <DisplayFieldRef id="DATEOFWEANING"/>
+        <DisplayFieldRef id="SPECIES"/>
+        <DisplayFieldRef id="STRAIN"/>
+        <DisplayFieldRef id="GENETICMODIFICATIONS"/>
+        <DisplayFieldRef id="SOURCE"/>
+        <DisplayFieldRef id="SEX"/>
+    </DisplayVersion>
+    <DisplayVersion versionName="project_bundle" default-order-by="DATEOFBIRTH" brief-description="PreclinicalDemographicData" dark-color="DEDEDE" light-color="FFFFFF">
+        <DisplayFieldRef id="DATEOFBIRTH"/>
+        <DisplayFieldRef id="DATEOFDEATH"/>
+        <DisplayFieldRef id="DATEOFWEANING"/>
+        <DisplayFieldRef id="SPECIES"/>
+        <DisplayFieldRef id="STRAIN"/>
+        <DisplayFieldRef id="GENETICMODIFICATIONS"/>
+        <DisplayFieldRef id="SOURCE"/>
+        <DisplayFieldRef id="SEX"/>
+    </DisplayVersion>
+</Displays>

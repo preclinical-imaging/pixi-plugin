@@ -1,0 +1,15 @@
+#set ($dataPathStr = "xnat:subjectData/demographics[@xsi:type=pixi:preclinicalDemographicData]")
+<TR>
+    <TD valign="top">
+        <TABLE>
+            <TR><TD>dateOfBirth</TD><TD>$!item.getProperty("$dataPathStr/dateOfBirth")</TD></TR>
+            <TR><TD>dateOfDeath</TD><TD>$!item.getProperty("$dataPathStr/dateOfDeath")</TD></TR>
+            <TR><TD>dateOfWeaning</TD><TD>$!item.getProperty("$dataPathStr/dateOfWeaning")</TD></TR>
+            <TR><TD>species</TD><TD>$!item.getStringProperty("$dataPathStr/species")</TD></TR>
+            <TR><TD>strain</TD><TD>$!item.getStringProperty("$dataPathStr/strain")</TD></TR>
+            <TR><TD>geneticModifications</TD><TD>$!item.getStringProperty("$dataPathStr/geneticModifications")</TD></TR>
+            <TR><TD>source</TD><TD>$!item.getStringProperty("$dataPathStr/source")</TD></TR>
+            <TR><TD>sex</TD><TD>$!item.getStringProperty("$dataPathStr/sex")</TD></TR>
+        </TABLE>
+    </TD>
+</TR>
