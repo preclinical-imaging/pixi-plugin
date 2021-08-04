@@ -1,0 +1,8 @@
+#if($user.isSiteAdmin() || $user.checkRole("PIXI"))
+<li><a href="#!" class="nolink">Manage PIXI Datatypes</a>
+    <ul>
+        <li><a href="$link.setPage("XHBMScreen_edit_pixi_animalModel.vm")">New Animal Model</a></li>
+        <li><a href="$link.setPage("XHBMScreen_edit_pixi_pdx.vm")">New PDX</a></li>
+    </ul>
+</li>
+#end

@@ -1,0 +1,40 @@
+<div id="formio"></div>
+
+<script type="text/javascript">
+    var formComponents = $form
+
+    var formObj;
+    var pdx
+
+    window.onload = function() {
+        Formio.createForm(document.getElementById('formio'), formComponents).then(function(form) {
+            formObj = form
+
+            form.nosubmit=true;
+
+            // TODO: Look at Mohanas error handling
+            form.on('submit', function(submission) {
+                pdx = submission.data.pdx;
+                console.log(pdx)
+                return Formio.fetch(XNAT.url.csrfUrl('/xapi/pixi/pdx'), {
+                    body: JSON.stringify(pdx),
+                    headers: {'content-type': 'application/json'},
+                    method: 'POST',
+                }).then(function(response) {
+                    console.log(response)
+                    if (response.status === 200 || response.status === 201) {
+                        formObj.emit('submitDone', submission)
+                    } else if (response.status === 409) {
+                        formObj.emit('submitError', "Conflict: A PDX with this ID already exists")
+                    } else {
+                        formObj.emit('submitError', "An error occurred submitting your PDX.")
+                    }
+
+                    return response.json()
+                })
+            });
+        });
+    };
+</script>
+
+#parse('screens/formsioJSIncludes.vm')

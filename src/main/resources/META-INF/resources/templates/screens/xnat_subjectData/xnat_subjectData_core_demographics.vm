@@ -1,24 +1,24 @@
 #* @vtlvariable name="turbineUtils" type="org.nrg.xdat.turbine.utils.TurbineUtils" *#
 
-<!-- start /xnat-templates/screens/xnat_subjectData/xnat_demographicData_core_demographics.vm -->
+<!-- start /xnat-templates/screens/xnat_subjectData/xnat_subjectData_core_demographics.vm -->
 
-#if($subject.DOBDisplay)
+#if(!$subject.DOBDisplay.equals("--"))
 <tr>
     <th align="left">Birth year</th>
     <td>#escapeCleanHTML($!subject.DOBDisplay)</td>
 </tr>
 #end
-#if($subject.GenderText)
+#if(!$subject.GenderText.empty)
 <tr>
     <th align="left">Gender</th>
     <td>#escapeCleanHTML($!subject.GenderText)</td>
 </tr>
 #end
-#if($subject.HandedText)
+#if(!$subject.HandedText.empty)
 <tr>
     <th align="left">Handedness</th>
     <td>#escapeCleanHTML($!subject.HandedText)</td>
 </tr>
 #end
 
-<!-- end /xnat-templates/screens/xnat_subjectData/xnat_demographicData_core_demographics.vm -->
+<!-- end /xnat-templates/screens/xnat_subjectData/xnat_subjectData_core_demographics.vm -->

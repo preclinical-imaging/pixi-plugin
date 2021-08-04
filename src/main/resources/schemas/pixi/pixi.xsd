@@ -6,159 +6,37 @@
     <xs:import namespace="http://nrg.wustl.edu/xnat" schemaLocation="../xnat/xnat.xsd"/>
     <xs:import namespace="http://nrg.wustl.edu/xdat" schemaLocation="../xdat/xdat.xsd"/>
 
-    <xs:element name="AnimalModel" type="pixi:animalModel"/>
-    <xs:element name="TreatmentProtocol" type="pixi:treatmentProtocol"/>
-    <xs:element name="AnimalHousing" type="pixi:animalHousing"/>
-    <xs:element name="AnimalFeeding" type="pixi:animalFeeding"/>
-    <xs:element name="HeatingConditions" type="pixi:heatingConditions"/>
-    <xs:element name="Anesthesia" type="pixi:anesthesia"/>
-    <xs:element name="CircadianEffects" type="pixi:circadianEffects"/>
-    <xs:element name="PreclinicalDemographicData" type="pixi:preclinicalDemographicData"/>
-    <xs:complexType name="animalModel">
+    <xs:element name="AnimalModelCreation" type="pixi:animalModelCreation"/>
+    <xs:element name="Treatment" type="pixi:treatment"/>
+    <xs:complexType name="animalModelCreation">
         <xs:annotation>
-            <xs:documentation>Animal Model</xs:documentation>
+            <xs:documentation>Create an Animal Model</xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="xnat:subjectAssessorData">
                 <xs:sequence>
-                    <!-- TODO: Foreign Key Reference-->
-                    <xs:element name="pdxID" type="xs:string">
-                        <xs:annotation>
-                            <xs:documentation>PDX ID</xs:documentation>
-                        </xs:annotation>
-                    </xs:element>
-                    <xs:element name="strain" type="xs:string" minOccurs="0"/>
-                    <xs:element name="source" type="xs:string" minOccurs="0"/>
-                    <xs:element name="dateWeaned" type="xs:date" minOccurs="0"/>
-                    <xs:element name="litter" type="xs:string" minOccurs="0"/>
-                    <xs:element name="passage" type="xs:string" minOccurs="0"/>
-                    <xs:element name="isImmuneSystemHumanized" type="xs:boolean" minOccurs="0"/>
-                    <xs:element name="humanizationType" type="xs:string" minOccurs="0"/>
+                    <xs:element name="animalModelID" type="xs:string"/> <!-- Foreign Key Reference to Hibernate Managed Animal Model-->
                     <xs:element name="tumorPreparation" type="xs:string" minOccurs="0"/>
                     <xs:element name="tumorInjectionType" type="xs:string" minOccurs="0"/>
                     <xs:element name="tumorInjectionSite" type="xs:string" minOccurs="0"/>
-                    <xs:element name="tumorInjectionDateTime" type="xs:dateTime" minOccurs="0"/>
+                    <xs:element name="numCellsInjected" type="xs:integer" minOccurs="0"/>
                     <xs:element name="engraftmentTreatment" type="xs:string" minOccurs="0"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:complexType name="treatmentProtocol">
+    <xs:complexType name="treatment">
         <xs:annotation>
-            <xs:documentation>Treatment Protocol</xs:documentation>
+            <xs:documentation>Treatment</xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="xnat:subjectAssessorData">
                 <xs:sequence>
-                    <xs:element name="drug1" type="xs:string" minOccurs="0"/>
-                    <xs:element name="drug1LoadingDose" type="xs:float" minOccurs="0"/>
-                    <xs:element name="drug1MaintenanceDose" type="xs:float" minOccurs="0"/>
-                    <xs:element name="drug1DoseUnits" type="xs:string" minOccurs="0"/>
-                    <xs:element name="drug1DoseInterval" type="xs:duration" minOccurs="0"/>
-                    <xs:element name="drug1RouteOfAdministration" type="xs:string" minOccurs="0"/>
-                    <xs:element name="drug2" type="xs:string" minOccurs="0"/>
-                    <xs:element name="drug2LoadingDose" type="xs:float" minOccurs="0"/>
-                    <xs:element name="drug2MaintenanceDose" type="xs:float" minOccurs="0"/>
-                    <xs:element name="drug2DoseUnits" type="xs:string" minOccurs="0"/>
-                    <xs:element name="drug2DoseInterval" type="xs:duration" minOccurs="0"/>
-                    <xs:element name="drug2RouteOfAdministration" type="xs:string" minOccurs="0"/>
-                    <xs:element name="treatmentResponse" type="xs:string" minOccurs="0">
-                        <xs:simpleType>
-                            <xs:restriction base="xs:string">
-                                <xs:enumeration value="Complete Response"/>
-                                <xs:enumeration value="Partial Response"/>
-                                <xs:enumeration value="Stable Disease"/>
-                                <xs:enumeration value="Progressive Disease"/>
-                            </xs:restriction>
-                        </xs:simpleType>
-                    </xs:element>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="animalHousing">
-        <xs:annotation>
-            <xs:documentation>Animal Housing</xs:documentation>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="xnat:subjectAssessorData">
-                <xs:sequence>
-                    <xs:element name="animalRoomType" minOccurs="0">
-                        <xs:simpleType>
-                            <xs:restriction base="xs:string">
-                                <xs:enumeration value="Animal Housing Room"/>
-                                <xs:enumeration value="Preparation Room"/>
-                                <xs:enumeration value="Imaging Procedure Room"/>
-                                <xs:enumeration value="Induction Room"/>
-                                <xs:enumeration value="Recovery Room"/>
-                                <xs:enumeration value="Isolation Room"/>
-                            </xs:restriction>
-                        </xs:simpleType>
-                    </xs:element>
-                </xs:sequence>
-                <xs:attribute name="phaseOfAnimalHandling" type="pixi:phaseOfAnimalHandlingType"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="animalFeeding">
-        <xs:annotation>
-            <xs:documentation>Animal Feeding</xs:documentation>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="xnat:subjectAssessorData"></xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="heatingConditions">
-        <xs:annotation>
-            <xs:documentation>Heating Conditions</xs:documentation>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="xnat:subjectAssessorData"></xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="anesthesia">
-        <xs:annotation>
-            <xs:documentation>Anesthesia</xs:documentation>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="xnat:subjectAssessorData"></xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="circadianEffects">
-        <xs:annotation>
-            <xs:documentation>Circadian Effects</xs:documentation>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="xnat:subjectAssessorData"></xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:simpleType name="phaseOfAnimalHandlingType">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="inHomeCage"/>
-            <xs:enumeration value="duringTransport"/>
-            <xs:enumeration value="stagingPriorToImaging"/>
-            <xs:enumeration value="preparationForImaging"/>
-            <xs:enumeration value="anesthesiaInduction"/>
-            <xs:enumeration value="imagingProcedure"/>
-            <xs:enumeration value="anesthesiaRecoveryPeriod"/>
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:complexType name="preclinicalDemographicData">
-        <xs:annotation>
-            <xs:documentation>Preclinical Dmeographic Data</xs:documentation>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="xnat:abstractDemographicData">
-                <xs:sequence>
-                    <xs:element name="dateOfBirth" type="xs:date" minOccurs="0"/>
-                    <xs:element name="dateOfDeath" type="xs:date" minOccurs="0"/>
-                    <xs:element name="dateOfWeaning" type="xs:date" minOccurs="0"/>
-                    <xs:element name="species" type="xs:string" minOccurs="0"/>
-                    <xs:element name="strain" type="xs:string" minOccurs="0"/>
-                    <xs:element name="geneticModifications" type="xs:string" minOccurs="0"/>
-                    <xs:element name="source" type="xs:string" minOccurs="0"/>
-                    <xs:element name="sex" type="xs:string" minOccurs="0"/>
+                    <xs:element name="drug" type="xs:string" minOccurs="0"/>
+                    <xs:element name="dose" type="xs:float" minOccurs="0"/>
+                    <xs:element name="doseUnits" type="xs:string" minOccurs="0"/>
+                    <xs:element name="routeOfAdministration" type="xs:string" minOccurs="0"/>
+                    <xs:element name="technician" type="xs:string" minOccurs="0"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

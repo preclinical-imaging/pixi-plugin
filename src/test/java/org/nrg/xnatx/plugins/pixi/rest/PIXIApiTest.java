@@ -10,6 +10,8 @@ import org.nrg.xdat.security.services.RoleHolder;
 import org.nrg.xdat.security.services.UserManagementServiceI;
 import org.nrg.xft.security.UserI;
 import org.nrg.xnatx.plugins.pixi.models.PDX;
+import org.nrg.xnatx.plugins.pixi.services.AnimalModelEntityService;
+import org.nrg.xnatx.plugins.pixi.services.PDXEntityService;
 import org.nrg.xnatx.plugins.pixi.services.PDXService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -22,12 +24,14 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class PDXApiTest {
+class PIXIApiTest {
 
     private PDXService pdxService;
+    private PDXEntityService pdxEntityService;
+    private AnimalModelEntityService animalModelEntityService;
     private UserManagementServiceI userManagementService;
     private RoleHolder roleHolder;
-    private PDXApi pdxApi;
+    private PIXIApi PIXIApi;
     private static String username = "PDXUser";
 
     @BeforeAll
@@ -46,9 +50,11 @@ class PDXApiTest {
     @BeforeEach
     public void beforeEach() {
         pdxService = mock(PDXService.class);
+        pdxEntityService = mock(PDXEntityService.class);
         userManagementService = mock(UserManagementServiceI.class);
         roleHolder = mock(RoleHolder.class);
-        pdxApi = new PDXApi(userManagementService, roleHolder, pdxService);
+        animalModelEntityService = mock(AnimalModelEntityService.class);
+        PIXIApi = new PIXIApi(userManagementService, roleHolder, pdxService, pdxEntityService, animalModelEntityService);
     }
 
     @Test
@@ -64,7 +70,7 @@ class PDXApiTest {
 
         when(pdxService.getAllPDX()).thenReturn(pdxs);
 
-        assertEquals(pdxApi.getAllPDX(), pdxs);
+        assertEquals(PIXIApi.getAllPDX(), pdxs);
     }
 
     @Test
@@ -72,7 +78,7 @@ class PDXApiTest {
         PDX pdx = new PDX();
 
         try {
-            pdxApi.createPDX(pdx);
+            PIXIApi.createPDX(pdx);
             verify(pdxService).createPDX(pdx);
             assertEquals(username, pdx.getCreatedBy());
         } catch (ResourceAlreadyExistsException e) {
@@ -88,7 +94,7 @@ class PDXApiTest {
         when(pdxService.getPDX(pdxID)).thenReturn(Optional.of(pdx));
 
         try {
-            assertEquals(pdx, pdxApi.getPDX(pdxID));
+            assertEquals(pdx, PIXIApi.getPDX(pdxID));
         } catch (NotFoundException e) {
             fail("Exception should not be thrown. PDX should be found.");
         }
@@ -100,14 +106,14 @@ class PDXApiTest {
 
         when(pdxService.getPDX(pdxID)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> pdxApi.getPDX(pdxID));
+        assertThrows(NotFoundException.class, () -> PIXIApi.getPDX(pdxID));
     }
 
     @Test
     public void testPutPDXWithIDMismatch() {
         PDX pdx = PDX.builder().pdxID("junk").build();
         String pdxID = "WUXNAT01";
-        assertThrows(DataFormatException.class, () -> pdxApi.createOrUpdatePDX(pdxID, pdx));
+        assertThrows(DataFormatException.class, () -> PIXIApi.createOrUpdatePDX(pdxID, pdx));
     }
 
     @Test
@@ -116,7 +122,7 @@ class PDXApiTest {
         PDX pdx = PDX.builder().pdxID(pdxID).build();
 
         try {
-            pdxApi.createOrUpdatePDX(pdxID, pdx);
+            PIXIApi.createOrUpdatePDX(pdxID, pdx);
             verify(pdxService).createPDX(pdx);
             verify(pdxService, never()).updatePDX(pdx);
         } catch (DataFormatException | NotFoundException | ResourceAlreadyExistsException e) {
@@ -131,7 +137,7 @@ class PDXApiTest {
 
         try {
             doThrow(ResourceAlreadyExistsException.class).when(pdxService).createPDX(any());
-            pdxApi.createOrUpdatePDX(pdxID, pdx);
+            PIXIApi.createOrUpdatePDX(pdxID, pdx);
             verify(pdxService).createPDX(pdx);
             verify(pdxService).updatePDX(pdx);
         } catch (DataFormatException | NotFoundException | ResourceAlreadyExistsException e) {
@@ -144,7 +150,7 @@ class PDXApiTest {
         String pdxID = "WUXNAT01";
 
         try {
-            pdxApi.deletePDX(pdxID);
+            PIXIApi.deletePDX(pdxID);
             verify(pdxService).deletePDX(pdxID);
         } catch (NotFoundException e) {
             fail("Exception should not be thrown.");

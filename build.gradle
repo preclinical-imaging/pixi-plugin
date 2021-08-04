@@ -3,7 +3,7 @@
  */
 plugins {
     id "java"
-    id "org.nrg.xnat.build.xnat-data-builder" version "1.8.0"
+    id "org.nrg.xnat.build.xnat-data-builder" version "1.8.2"
     id "io.freefair.lombok" version "6.0.0-m2"
 }
 
@@ -24,7 +24,7 @@ configurations {
 }
 
 dependencies {
-    xnatProvided enforcedPlatform("org.nrg:parent:1.8.0.1")
+    xnatProvided enforcedPlatform("org.nrg:parent:1.8.2.2")
     xnatProvided "org.nrg:framework"
     xnatProvided "org.nrg.xnat:xnat-data-models"
     xnatProvided "org.nrg.xnat:web"

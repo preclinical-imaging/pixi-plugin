@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+$page.setTitle("Animal Model Creation Details")
+$page.setLinkColor($ui.alink)
+$page.setVlinkColor($ui.vlink)
+ ##---------------------------------------- 
+ ## DO NOT MODIFY THIS FILE HERE
+ ##
+ ## TO MODIFY, COPY THIS FILE to src/main/resources/templates/screens/ and modify it there 
+ ##----------------------------------------
+#if ($turbineUtils.GetPassedParameter("popup", $data))
+	#set ($popup = $turbineUtils.GetPassedParameter("popup", $data) )
+	#set ($popup = "false")
+#end
+<TABLE width="100%">
+	<TR>
+		<TD>
+			<table width="100%">
+				<TR>
+					<TD align="left" valign="middle">
+						<b>Animal Model Creation Details</b>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<TABLE width="100%">
+				<TR>
+					<TD valign="top">
+						<TABLE>
+							<TR><TD>Project</TD><TD>$!item.getStringProperty("pixi:animalModelCreation/project")</TD></TR>
+							<TR><TD>Subject ID</TD><TD>$!item.getStringProperty("pixi:animalModelCreation/subject_ID")</TD></TR>
+							<TR><TD>Label</TD><TD>$!item.getStringProperty("pixi:animalModelCreation/label")</TD></TR>
+							<TR><TD>Animal Model</TD><TD>$!item.getStringProperty("pixi:animalModelCreation/animalModelID")</TD></TR>
+							<TR><TD>Date Created</TD><TD>$!item.getProperty("pixi:animalModelCreation/date")</TD></TR>
+							<TR><TD>Tumor Preparation</TD><TD>$!item.getStringProperty("pixi:animalModelCreation/tumorPreparation")</TD></TR>
+							<TR><TD>Tumor Injection Type</TD><TD>$!item.getStringProperty("pixi:animalModelCreation/tumorInjectionType")</TD></TR>
+							<TR><TD>Tumor Injection Site</TD><TD>$!item.getStringProperty("pixi:animalModelCreation/tumorInjectionSite")</TD></TR>
+							<TR><TD>Number of Cells Injected</TD><TD>$!item.getStringProperty("pixi:animalModelCreation/numCellsInjected")</TD></TR>
+							<TR><TD>Engraftment Treatment</TD><TD>$!item.getStringProperty("pixi:animalModelCreation/engraftmentTreatment")</TD></TR>
+						</TABLE>
+					</TD>
+					<TD valign="top" align="right">
+						#parse($turbineUtils.getTemplateName("actions",$om.getXSIType(),$project))
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+</TABLE><BR>#parse("/screens/ReportProjectSpecificFields.vm")

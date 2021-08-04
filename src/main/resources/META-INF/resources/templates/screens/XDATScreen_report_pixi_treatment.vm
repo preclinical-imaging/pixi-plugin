@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+$page.setTitle("Treatment Details")
+$page.setLinkColor($ui.alink)
+$page.setVlinkColor($ui.vlink)
+ ##---------------------------------------- 
+ ## DO NOT MODIFY THIS FILE HERE
+ ##
+ ## TO MODIFY, COPY THIS FILE to src/main/resources/templates/screens/ and modify it there 
+ ##----------------------------------------
+#if ($turbineUtils.GetPassedParameter("popup", $data))
+	#set ($popup = $turbineUtils.GetPassedParameter("popup", data) )
+	#set ($popup = "false")
+#end
+<TABLE width="100%">
+	<TR>
+		<TD>
+			<table width="100%">
+				<TR>
+					<TD align="left" valign="middle">
+						<b>Treatment Details</b>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<TABLE width="100%">
+				<TR>
+					<TD valign="top">
+						<TABLE>
+							<TR><TD>Subject ID</TD><TD>$!item.getStringProperty("pixi:treatment/subject_ID")</TD></TR>
+							<TR><TD>Project</TD><TD>$!item.getStringProperty("pixi:treatment/project")</TD></TR>
+							<TR><TD>ID</TD><TD>$!item.getStringProperty("pixi:treatment/ID")</TD></TR>
+							<TR><TD>Label</TD><TD>$!item.getStringProperty("pixi:treatment/label")</TD></TR>
+							<TR><TD>Date</TD><TD>$!item.getProperty("pixi:treatment/date")</TD></TR>
+							<TR><TD>Drug</TD><TD>$!item.getStringProperty("pixi:treatment/drug")</TD></TR>
+							<TR><TD>Dose</TD><TD>$!item.getDoubleProperty("pixi:treatment/dose")</TD></TR>
+							<TR><TD>Dose Units</TD><TD>$!item.getStringProperty("pixi:treatment/doseUnits")</TD></TR>
+							<TR><TD>Route Of Administration</TD><TD>$!item.getStringProperty("pixi:treatment/routeOfAdministration")</TD></TR>
+							<TR><TD>Technician</TD><TD>$!item.getStringProperty("pixi:treatment/technician")</TD></TR>
+							<TR><TD>Notes</TD><TD>$!item.getStringProperty("pixi:treatment/note")</TD></TR>
+						</TABLE>
+					</TD>
+					<TD valign="top" align="right">
+						#parse($turbineUtils.getTemplateName("actions",$om.getXSIType(),$project))
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+</TABLE><BR>#parse("/screens/ReportProjectSpecificFields.vm")
