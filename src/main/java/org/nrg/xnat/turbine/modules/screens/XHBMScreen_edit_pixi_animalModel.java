@@ -17,17 +17,15 @@ public class XHBMScreen_edit_pixi_animalModel extends SecureScreen {
         if (null != config) {
             if (config.getStatus().equalsIgnoreCase("ENABLED")) {
                 customFormJson = config.getContents();
-            }else {
+            } else {
                 customFormJson = "{}";
             }
-        }else {
+        } else {
             customFormJson = "{}";
         }
 
         customFormJson = customFormJson.replace("$siteUrl", XDAT.getSiteUrl());
 
         context.put("form", customFormJson);
-
     }
-
 }

@@ -1,9 +1,9 @@
 <div id="formio"></div>
 
 <script type="text/javascript">
-    var baseModelUrl = "/xapi/pixi/pdx/";
+    var baseModelUrl = "/xapi/pixi/animalModels/";
     const formComponents = $form
-    const formOptions = {readOnly: false};
+    const formOptions = {readOnly: true};
 </script>
 
 #parse('screens/formsioJSIncludes.vm')

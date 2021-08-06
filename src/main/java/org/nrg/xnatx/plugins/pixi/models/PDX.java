@@ -16,7 +16,7 @@ import javax.validation.constraints.NotBlank;
 public class PDX {
 
     @ApiModelProperty(example = "WUPDX1", required = true, position = 0)
-    @NotBlank private String pdxID;
+    @NotBlank private String id;
 
     @ApiModelProperty(example = "Wash U PDX #1", position = 1)
     @Nullable private String pdxLabel;

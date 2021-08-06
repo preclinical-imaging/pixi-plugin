@@ -4,7 +4,7 @@
   "settings": {},
   "components": [
     {
-      "html": "<h4>Register a Patient Derived Xenograft (PDX)</h4>",
+      "html": "<h4>Patient Derived Xenograft (PDX)</h4>",
       "label": "Content",
       "refreshOnChange": false,
       "key": "content",
@@ -19,7 +19,7 @@
       "validate": {
         "required": true
       },
-      "key": "pdx.pdxLabel",
+      "key": "pdxLabel",
       "type": "textfield",
       "input": true
     },
@@ -30,7 +30,7 @@
       "validate": {
         "required": true
       },
-      "key": "pdx.pdxID",
+      "key": "id",
       "type": "textfield",
       "input": true
     },
@@ -47,14 +47,14 @@
           "label": "Submitter Patient ID",
           "description": "The original ID at the datasource providing the Patient data",
           "tableView": true,
-          "key": "pdx.patient.submitterPatientID",
+          "key": "patient.submitterPatientID",
           "type": "textfield",
           "input": true
         },
         {
           "label": "Age",
           "tableView": true,
-          "key": "pdx.patient.age",
+          "key": "patient.age",
           "type": "textfield",
           "input": true
         },
@@ -75,7 +75,7 @@
             ]
           },
           "selectThreshold": 0.3,
-          "key": "pdx.patient.gender",
+          "key": "patient.gender",
           "type": "select",
           "input": true
         },
@@ -115,7 +115,7 @@
               }
             ]
           },
-          "key": "pdx.patient.ethnicityRace",
+          "key": "patient.ethnicityRace",
           "type": "select",
           "input": true
         },
@@ -139,14 +139,14 @@
               }
             ]
           },
-          "key": "pdx.patient.consentToShare",
+          "key": "patient.consentToShare",
           "type": "select",
           "input": true
         },
         {
           "label": "Diagnosis",
           "tableView": true,
-          "key": "pdx.patient.diagnosis",
+          "key": "patient.diagnosis",
           "type": "textfield",
           "input": true
         },
@@ -158,7 +158,7 @@
                 {
                   "label": "Current Treatment Drug",
                   "tableView": true,
-                  "key": "pdx.patient.currentTreatmentDrug",
+                  "key": "patient.currentTreatmentDrug",
                   "type": "textfield",
                   "input": true
                 },
@@ -166,7 +166,7 @@
                   "label": "Current Treatment Protocol",
                   "description": "Dose and details",
                   "tableView": true,
-                  "key": "pdx.patient.currentTreatmentProtocol",
+                  "key": "patient.currentTreatmentProtocol",
                   "type": "textfield",
                   "input": true
                 }
@@ -184,7 +184,7 @@
                   "label": "Prior Treatment Protocol",
                   "description": "Drugs, doses, and details.",
                   "tableView": true,
-                  "key": "pdx.patient.priorTreatmentProtocol",
+                  "key": "patient.priorTreatmentProtocol",
                   "type": "textfield",
                   "input": true
                 },
@@ -213,7 +213,7 @@
                       }
                     ]
                   },
-                  "key": "pdx.patient.priorTreatmentResponse",
+                  "key": "patient.priorTreatmentResponse",
                   "type": "select",
                   "input": true
                 }
@@ -235,7 +235,7 @@
           "label": "Virology Status",
           "description": "Example: HIV-/HBV-/HCV+/HTLV-/EBV+",
           "tableView": true,
-          "key": "pdx.patient.virologyStatus",
+          "key": "patient.virologyStatus",
           "type": "textfield",
           "input": true
         }
@@ -253,19 +253,19 @@
         {
           "label": "Submitter Tumor ID",
           "tableView": true,
-          "key": "pdx.tumor.submitterTumorID",
+          "key": "tumor.submitterTumorID",
           "type": "textfield",
           "input": true
         },
         {
           "label": "Primary Tumor Tissue Origin",
           "tableView": true,
-          "key": "pdx.tumor.primaryTumorTissueOrigin",
+          "key": "tumor.primaryTumorTissueOrigin",
           "type": "textfield",
           "input": true
         },
         {
-          "label": "Turmor Type",
+          "label": "Tumor Type",
           "widget": "choicesjs",
           "tableView": true,
           "data": {
@@ -284,21 +284,21 @@
               }
             ]
           },
-          "key": "pdx.tumor.turmorType",
+          "key": "tumor.tumorType",
           "type": "select",
           "input": true
         },
         {
           "label": "Specimen Tumor Tissue",
           "tableView": true,
-          "key": "pdx.tumor.specimenTumorTissue",
+          "key": "tumor.specimenTumorTissue",
           "type": "textfield",
           "input": true
         },
         {
           "label": "Tissue Histology",
           "tableView": true,
-          "key": "pdx.tumor.tissueHistology",
+          "key": "tumor.tissueHistology",
           "type": "textfield",
           "input": true
         },
@@ -310,14 +310,14 @@
                 {
                   "label": "Tumor Grade",
                   "tableView": true,
-                  "key": "pdx.tumor.tumorGrade",
+                  "key": "tumor.tumorGrade",
                   "type": "textfield",
                   "input": true
                 },
                 {
                   "label": "Disease Stage",
                   "tableView": true,
-                  "key": "pdx.tumor.diseaseStage",
+                  "key": "tumor.diseaseStage",
                   "type": "textfield",
                   "input": true
                 },
@@ -325,7 +325,7 @@
                   "label": "Specific Markers",
                   "description": "Diagnostic linked",
                   "tableView": true,
-                  "key": "pdx.tumor.specificMarkers",
+                  "key": "tumor.specificMarkers",
                   "type": "textfield",
                   "input": true
                 }
@@ -342,21 +342,21 @@
                 {
                   "label": "Tumor Classification System",
                   "tableView": true,
-                  "key": "pdx.tumor.tumorClassification",
+                  "key": "tumor.tumorClassification",
                   "type": "textfield",
                   "input": true
                 },
                 {
                   "label": "Disease Classification System",
                   "tableView": true,
-                  "key": "pdx.tumor.diseaseClassification",
+                  "key": "tumor.diseaseClassification",
                   "type": "textfield",
                   "input": true
                 },
                 {
                   "label": "Specific Markers Platform",
                   "tableView": true,
-                  "key": "pdx.tumor.specificMarkersPlatform",
+                  "key": "tumor.specificMarkersPlatform",
                   "type": "textfield",
                   "input": true
                 }
@@ -391,7 +391,7 @@
             ]
           },
           "selectThreshold": 0.3,
-          "key": "pdx.tumor.fromUntreatedPatient",
+          "key": "tumor.fromUntreatedPatient",
           "type": "select",
           "input": true
         },
@@ -399,7 +399,7 @@
           "label": "Original Tumor Sample Type",
           "description": "Biopsy, surgical sample, ascites fluid, blood, etc.",
           "tableView": true,
-          "key": "pdx.tumor.originalTumorSampleType",
+          "key": "tumor.originalTumorSampleType",
           "type": "textfield",
           "input": true
         },
@@ -419,7 +419,7 @@
               }
             ]
           },
-          "key": "pdx.tumor.isTumorFromAnExistingPdxModel",
+          "key": "tumor.isTumorFromAnExistingPdxModel",
           "type": "select",
           "input": true
         },
@@ -444,7 +444,7 @@
                   },
                   "valueProperty": "pdxID",
                   "template": "<span>{{ item.pdxID }}</span>",
-                  "key": "pdx.tumor.derivedPDXModelID",
+                  "key": "tumor.derivedPDXModelID",
                   "conditional": {
                     "show": true,
                     "when": "isTumorFromAnExistingPdxModel",
@@ -467,7 +467,7 @@
                 {
                   "label": "Why subline?",
                   "tableView": true,
-                  "key": "pdx.tumor.derivedPDXReason",
+                  "key": "tumor.derivedPDXReason",
                   "conditional": {
                     "show": true,
                     "when": "isTumorFromAnExistingPdxModel",

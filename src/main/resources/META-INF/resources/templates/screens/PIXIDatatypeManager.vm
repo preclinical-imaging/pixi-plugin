@@ -1,0 +1,37 @@
+#* @vtlvariable name="animalModels" type="java.util.List<org.nrg.xnatx.plugins.pixi.entities.AnimalModelEntity>" *#
+#* @vtlvariable name="pdxs" type="java.util.List<org.nrg.xnatx.plugins.pixi.entities.PDXEntity>" *#
+<table class="xnat-table">
+    <tr>
+        <th>Animal Model Name</th>
+        <th>Animal Model ID</th>
+        <th>Actions</th>
+    </tr>
+    #foreach($animalModel in $animalModels)
+        <tr>
+            <td>$animalModel.getAnimalModelName()</td>
+            <td>$animalModel.getAnimalModelID()</td>
+            <td><a href="$link.setPage("XHBMScreen_report_pixi_animalModel.vm").addQueryData("id", $animalModel.getAnimalModelID())"><button class="btn sm">View</button></a>
+                <a href="$link.setPage("XHBMScreen_edit_pixi_animalModel.vm").addQueryData("id", $animalModel.getAnimalModelID())"><button class="btn sm">Edit</button></a></td>
+        </tr>
+    #end
+</table>
+
+<a href="$link.setPage("XHBMScreen_edit_pixi_animalModel.vm")">New Animal Model</a>
+
+<table class="xnat-table">
+    <tr>
+        <th>PDX</th>
+        <th>PDX ID</th>
+        <th>Actions</th>
+    </tr>
+    #foreach($pdx in $pdxs)
+        <tr>
+            <td>$pdx.getPdxLabel()</td>
+            <td>$pdx.getPdxID()</td>
+            <td><a href="$link.setPage("XHBMScreen_report_pixi_pdx.vm").addQueryData("id", $pdx.getPdxID())"><button class="btn sm">View</button></a>
+                <a href="$link.setPage("XHBMScreen_edit_pixi_pdx.vm").addQueryData("id", $pdx.getPdxID())"><button class="btn sm">Edit</button></a></td>
+        </tr>
+    #end
+</table>
+
+<a href="$link.setPage("XHBMScreen_edit_pixi_pdx.vm")">New PDX</a>

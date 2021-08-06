@@ -1,40 +1,10 @@
 <div id="formio"></div>
 
 <script type="text/javascript">
-    var formComponents = $form
-
-    var formObj;
-    var animalModel
-
-    window.onload = function() {
-        Formio.createForm(document.getElementById('formio'), formComponents).then(function(form) {
-            formObj = form
-
-            form.nosubmit=true;
-
-            // TODO: Look at Mohanas error handling
-            form.on('submit', function(submission) {
-                animalModel = submission.data.animalModel;
-                console.log(animalModel)
-                return Formio.fetch(XNAT.url.csrfUrl('/xapi/pixi/animalModels'), {
-                    body: JSON.stringify(animalModel),
-                    headers: {'content-type': 'application/json'},
-                    method: 'POST',
-                }).then(function(response) {
-                    console.log(response)
-                    if (response.status === 200 || response.status === 201) {
-                        formObj.emit('submitDone', submission)
-                    } else if (response.status === 409) {
-                        formObj.emit('submitError', "Conflict: An animal model with this ID already exists")
-                    } else {
-                        formObj.emit('submitError', "An error occurred submitting your Animal Model.")
-                    }
-
-                    return response.json()
-                })
-            });
-        });
-    };
+    var baseModelUrl = "/xapi/pixi/animalModels/";
+    const formComponents = $form
+    const formOptions = {readOnly: false};
 </script>
 
 #parse('screens/formsioJSIncludes.vm')
+#parse('screens/formioPIXIInclude.vm')

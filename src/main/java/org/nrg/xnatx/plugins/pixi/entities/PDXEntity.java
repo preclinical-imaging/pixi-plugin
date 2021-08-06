@@ -41,7 +41,7 @@ public class PDXEntity extends AbstractHibernateEntity {
     }
 
     public PDXEntity update(final PDX pdx) {
-        this.setPdxID(pdx.getPdxID());
+        this.setPdxID(pdx.getId());
         this.setPdxLabel(pdx.getPdxLabel());
         this.setNotes(pdx.getNotes());
         this.setCreatedBy(pdx.getCreatedBy());
@@ -75,7 +75,7 @@ public class PDXEntity extends AbstractHibernateEntity {
         Tumor tumor = tumorEntity.map(TumorEntity::toPojo).orElse(null);
 
         return PDX.builder()
-                .pdxID(this.getPdxID())
+                .id(this.getPdxID())
                 .pdxLabel(this.getPdxLabel())
                 .createdBy(this.getCreatedBy())
                 .notes(this.getNotes())

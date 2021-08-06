@@ -11,7 +11,6 @@ import org.nrg.xapi.exceptions.NotFoundException;
 import org.nrg.xapi.exceptions.ResourceAlreadyExistsException;
 import org.nrg.xapi.rest.AbstractXapiRestController;
 import org.nrg.xapi.rest.AuthorizedRoles;
-import org.nrg.xapi.rest.Username;
 import org.nrg.xapi.rest.XapiRequestMapping;
 import org.nrg.xdat.security.helpers.AccessLevel;
 import org.nrg.xdat.security.services.RoleHolder;
@@ -30,10 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Api("PIXI API")
@@ -100,8 +96,8 @@ public class PIXIApi extends AbstractXapiRestController {
     @AuthorizedRoles({"PIXI", "Administrator"})
     @XapiRequestMapping(value = "/pdx/{pdxID}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT, restrictTo = AccessLevel.Role)
     public void createOrUpdatePDX(@PathVariable final String pdxID, @RequestBody final PDX pdx) throws DataFormatException, NotFoundException {
-        if (!pdxID.equals(pdx.getPdxID())) {
-            throw new DataFormatException("pdxID Mismatch. URI pdxID: " + pdxID + " does not match the request body pdxID: " + pdx.getPdxID());
+        if (!pdxID.equals(pdx.getId())) {
+            throw new DataFormatException("DataFormatException: Updates to ID are not allowed");
         }
 
         pdx.setCreatedBy(getSessionUser().getUsername());
@@ -144,8 +140,40 @@ public class PIXIApi extends AbstractXapiRestController {
         animalModelEntityService.createAnimalModelEntity(animalModelEntity);
     }
 
+    @ApiOperation(value = "Get the indicated Animal Model", response = AnimalModel.class)
+    @ApiResponses({@ApiResponse(code = 200, message = "Animal Model successfully retrieved."),
+            @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
+            @ApiResponse(code = 500, message = "Unexpected error")})
+    @XapiRequestMapping(value = "/animalModels/{animalModelID}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public AnimalModel getAnimalModel(@PathVariable final String animalModelID) throws NotFoundException {
+        AnimalModelEntity animalModelEntity = animalModelEntityService.getAnimalModelEntity(animalModelID)
+                                                                      .orElseThrow(() -> new NotFoundException(AnimalModelEntity.class.getSimpleName(), animalModelID));
+        return toDTO(animalModelEntity);
+    }
+
+    @ApiOperation(value = "Create/Update an Animal Model.")
+    @ApiResponses({@ApiResponse(code = 200, message = "Animal Model successfully created/updated."),
+            @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
+            @ApiResponse(code = 500, message = "Unexpected error")})
+    @AuthorizedRoles({"PIXI", "Administrator"})
+    @XapiRequestMapping(value = "/animalModels/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT, restrictTo = AccessLevel.Role)
+    public AnimalModel updateAnimalModel(@PathVariable final String id, @RequestBody final AnimalModel animalModel) throws DataFormatException, NotFoundException {
+        if (!id.equals(animalModel.getId())) {
+            throw new DataFormatException("DataFormatException: Updates to ID are not allowed");
+        }
+
+        AnimalModelEntity animalModelEntity = animalModelEntityService.getAnimalModelEntity(id)
+                                                                      .orElseThrow(() -> new NotFoundException(AnimalModelEntity.class.getSimpleName(), id));
+
+        updateEntity(animalModelEntity, animalModel);
+        animalModelEntityService.update(animalModelEntity);
+
+        return animalModel;
+    }
+
+
     private AnimalModel toDTO(final AnimalModelEntity animalModelEntity) {
-        return AnimalModel.builder().animalModelID(animalModelEntity.getAnimalModelID())
+        return AnimalModel.builder().id(animalModelEntity.getAnimalModelID())
                                     .animalModelName(animalModelEntity.getAnimalModelName())
                                     .passage(animalModelEntity.getPassage())
                                     .isImmuneSystemHumanized(animalModelEntity.getIsImmuneSystemHumanized())
@@ -162,7 +190,7 @@ public class PIXIApi extends AbstractXapiRestController {
     }
 
     private void updateEntity(final AnimalModelEntity animalModelEntity, final AnimalModel animalModel) {
-        animalModelEntity.setAnimalModelID(animalModel.getAnimalModelID());
+        animalModelEntity.setAnimalModelID(animalModel.getId());
         animalModelEntity.setAnimalModelName(animalModel.getAnimalModelName());
         animalModelEntity.setPassage(animalModel.getPassage());
         animalModelEntity.setIsImmuneSystemHumanized(animalModel.getIsImmuneSystemHumanized());

@@ -4,7 +4,7 @@
   "settings": {},
   "components": [
     {
-      "html": "<h4>Enter A New Animal Model</h4>",
+      "html": "<h4>Animal Model</h4>",
       "label": "Content",
       "refreshOnChange": false,
       "key": "content",
@@ -19,7 +19,7 @@
       "validate": {
         "required": true
       },
-      "key": "animalModel.animalModelName",
+      "key": "animalModelName",
       "type": "textfield",
       "input": true
     },
@@ -30,7 +30,7 @@
       "validate": {
         "required": true
       },
-      "key": "animalModel.animalModelID",
+      "key": "id",
       "type": "textfield",
       "input": true
     },
@@ -50,10 +50,10 @@
           }
         ]
       },
-      "valueProperty": "pdxID",
-      "template": "<span>{{ item.pdxID }}</span>",
+      "valueProperty": "id",
+      "template": "<span>{{ item.id }}</span>",
       "selectThreshold": 0.3,
-      "key": "animalModel.pdxIDs",
+      "key": "pdxIDs",
       "type": "select",
       "input": true,
       "lazyLoad": false,
@@ -62,7 +62,7 @@
     {
       "label": "Passage",
       "tableView": true,
-      "key": "animalModel.passage",
+      "key": "passage",
       "type": "textfield",
       "input": true
     },
@@ -84,7 +84,7 @@
         }
       ],
       "dataType": "boolean",
-      "key": "animalModel.isImmuneSystemHumanized",
+      "key": "isImmuneSystemHumanized",
       "type": "radio",
       "input": true
     },
@@ -121,17 +121,17 @@
           }
         ]
       },
-      "key": "animalModel.humanizationType",
+      "key": "humanizationType",
       "type": "select",
       "input": true
     },
     {
       "label": "Other Humanization Type",
       "tableView": true,
-      "key": "animalModel.otherHumanizationType",
+      "key": "otherHumanizationType",
       "conditional": {
         "show": true,
-        "when": "animalModel.humanizationType",
+        "when": "humanizationType",
         "eq": "other"
       },
       "type": "textfield",

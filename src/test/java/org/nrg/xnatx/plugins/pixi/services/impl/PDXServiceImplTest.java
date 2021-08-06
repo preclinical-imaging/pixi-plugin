@@ -43,7 +43,7 @@ class PDXServiceImplTest {
         when(pdxEntityService.getPDXEntity(pdxID)).thenReturn(Optional.of(pdxEntity));
 
         PDX pdx = pdxService.getPDX(pdxID).get();
-        assertEquals(pdxID, pdx.getPdxID());
+        assertEquals(pdxID, pdx.getId());
         assertNull(pdx.getPatient());
         assertNull(pdx.getTumor());
     }
@@ -67,7 +67,7 @@ class PDXServiceImplTest {
         when(pdxEntityService.getPDXEntity(pdxID)).thenReturn(Optional.of(pdxEntity));
 
         PDX pdx = pdxService.getPDX(pdxID).get();
-        assertEquals(pdxID, pdx.getPdxID());
+        assertEquals(pdxID, pdx.getId());
         assertNotNull(pdx.getPatient());
         assertEquals(age, pdx.getPatient().getAge());
         assertNotNull(pdx.getTumor());
@@ -103,16 +103,16 @@ class PDXServiceImplTest {
         when(pdxEntityService.getAll()).thenReturn(Arrays.asList(pdxEntity1, pdxEntity2));
 
         List<PDX> pdxs = pdxService.getAllPDX();
-        assertEquals(pdxID1, pdxs.get(0).getPdxID());
+        assertEquals(pdxID1, pdxs.get(0).getId());
         assertEquals(age, pdxs.get(0).getPatient().getAge());
         assertEquals(tumorType, pdxs.get(0).getTumor().getTumorType());
-        assertEquals(pdxID2, pdxs.get(1).getPdxID());
+        assertEquals(pdxID2, pdxs.get(1).getId());
     }
 
     @Test
     public void testCreateExistingPDX() {
         String pdxID = "ID1";
-        PDX pdx = PDX.builder().pdxID(pdxID).build();
+        PDX pdx = PDX.builder().id(pdxID).build();
 
         when(pdxEntityService.pdxEntityExists(pdxID)).thenReturn(true);
         assertThrows(ResourceAlreadyExistsException.class, () -> pdxService.createPDX(pdx));
@@ -121,7 +121,7 @@ class PDXServiceImplTest {
     @Test
     public void testCreateNewPDX() {
         String pdxID = "ID1";
-        PDX pdx = PDX.builder().pdxID(pdxID).build();
+        PDX pdx = PDX.builder().id(pdxID).build();
 
         when(pdxEntityService.pdxEntityExists(pdxID)).thenReturn(false);
 
@@ -147,7 +147,7 @@ class PDXServiceImplTest {
 
         Patient patient = Patient.builder().age(12).build();
         Tumor tumor = Tumor.builder().tumorGrade("Primary").build();
-        PDX pdx = PDX.builder().pdxID(pdxID).patient(patient).tumor(tumor).build();
+        PDX pdx = PDX.builder().id(pdxID).patient(patient).tumor(tumor).build();
 
         when(pdxEntityService.getPDXEntity(any())).thenReturn(Optional.of(pdxEntity));
 

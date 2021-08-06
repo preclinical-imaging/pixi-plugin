@@ -61,8 +61,8 @@ class PIXIApiTest {
     public void testGetPDXs() {
         PDX pdx1 = new PDX();
         PDX pdx2 = new PDX();
-        pdx1.setPdxID("WUXNAT01");
-        pdx2.setPdxID("WUXNAT02");
+        pdx1.setId("WUXNAT01");
+        pdx2.setId("WUXNAT02");
 
         List<PDX> pdxs = new ArrayList<>();
         pdxs.add(pdx1);
@@ -89,7 +89,7 @@ class PIXIApiTest {
     @Test
     public void testGetKnownPDX() {
         String pdxID = "WUXNAT01";
-        PDX pdx = PDX.builder().pdxID(pdxID).build();
+        PDX pdx = PDX.builder().id(pdxID).build();
 
         when(pdxService.getPDX(pdxID)).thenReturn(Optional.of(pdx));
 
@@ -111,7 +111,7 @@ class PIXIApiTest {
 
     @Test
     public void testPutPDXWithIDMismatch() {
-        PDX pdx = PDX.builder().pdxID("junk").build();
+        PDX pdx = PDX.builder().id("junk").build();
         String pdxID = "WUXNAT01";
         assertThrows(DataFormatException.class, () -> PIXIApi.createOrUpdatePDX(pdxID, pdx));
     }
@@ -119,7 +119,7 @@ class PIXIApiTest {
     @Test
     public void testPutPDXCreation() {
         String pdxID = "WUXNAT01";
-        PDX pdx = PDX.builder().pdxID(pdxID).build();
+        PDX pdx = PDX.builder().id(pdxID).build();
 
         try {
             PIXIApi.createOrUpdatePDX(pdxID, pdx);
@@ -133,7 +133,7 @@ class PIXIApiTest {
     @Test
     public void testPutPDXUpdate() {
         String pdxID = "WUXNAT01";
-        PDX pdx = PDX.builder().pdxID(pdxID).build();
+        PDX pdx = PDX.builder().id(pdxID).build();
 
         try {
             doThrow(ResourceAlreadyExistsException.class).when(pdxService).createPDX(any());

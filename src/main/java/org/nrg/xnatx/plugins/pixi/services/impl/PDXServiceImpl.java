@@ -9,7 +9,6 @@ import org.nrg.xnatx.plugins.pixi.services.PDXEntityService;
 import org.nrg.xnatx.plugins.pixi.services.PDXService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,19 +37,19 @@ public class PDXServiceImpl implements PDXService {
 
     @Override
     public void createPDX(PDX pdx) throws ResourceAlreadyExistsException{
-        if (!pdxEntityService.pdxEntityExists(pdx.getPdxID())) {
+        if (!pdxEntityService.pdxEntityExists(pdx.getId())) {
             pdxEntityService.create(PDXEntity.fromPojo(pdx));
         } else {
-            throw new ResourceAlreadyExistsException(PDXEntity.class.getSimpleName(), pdx.getPdxID());
+            throw new ResourceAlreadyExistsException(PDXEntity.class.getSimpleName(), pdx.getId());
         }
     }
 
     @Override
     public void updatePDX(PDX pdx) throws NotFoundException {
-        Optional<PDXEntity> pdxEntity = pdxEntityService.getPDXEntity(pdx.getPdxID());
+        Optional<PDXEntity> pdxEntity = pdxEntityService.getPDXEntity(pdx.getId());
 
         if (!pdxEntity.isPresent()) {
-            throw new NotFoundException(PDXEntity.class.getSimpleName(), pdx.getPdxID());
+            throw new NotFoundException(PDXEntity.class.getSimpleName(), pdx.getId());
         } else {
             pdxEntityService.update(pdxEntity.get().update(pdx));
         }

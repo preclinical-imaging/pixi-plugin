@@ -7,11 +7,11 @@ import org.nrg.config.services.ConfigService;
 import org.nrg.xdat.XDAT;
 import org.nrg.xdat.turbine.modules.screens.SecureScreen;
 
-public class XHBMScreen_edit_pixi_pdx extends SecureScreen {
+public class XHBMScreen_report_pixi_animalModel extends SecureScreen {
     @Override
     protected void doBuildTemplate(RunData runData, Context context) throws Exception {
         ConfigService configService = XDAT.getConfigService();
-        Configuration config = configService.getConfig("forms", "datatype/xhbm:pixi:pdx");
+        Configuration config = configService.getConfig("forms", "datatype/xhbm:pixi:animalModel");
 
         String customFormJson = null;
         if (null != config) {

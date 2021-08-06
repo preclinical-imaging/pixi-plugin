@@ -7,7 +7,7 @@ import org.nrg.config.services.ConfigService;
 import org.nrg.xdat.XDAT;
 import org.nrg.xdat.turbine.modules.screens.SecureScreen;
 
-public class XHBMScreen_edit_pixi_pdx extends SecureScreen {
+public class XHBMScreen_report_pixi_pdx  extends SecureScreen {
     @Override
     protected void doBuildTemplate(RunData runData, Context context) throws Exception {
         ConfigService configService = XDAT.getConfigService();

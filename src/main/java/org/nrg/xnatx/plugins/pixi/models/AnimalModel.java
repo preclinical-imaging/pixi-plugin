@@ -18,7 +18,7 @@ public class AnimalModel {
 
     @ApiModelProperty(example = "WUAM1")
     @NotBlank
-    private String animalModelID;
+    private String id;
 
     @ApiModelProperty(example = "Wash U Animal Model 1")
     @NotBlank
