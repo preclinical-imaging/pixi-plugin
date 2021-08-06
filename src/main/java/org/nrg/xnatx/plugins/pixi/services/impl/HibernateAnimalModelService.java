@@ -77,6 +77,7 @@ public class HibernateAnimalModelService extends AbstractHibernateEntityService<
     private AnimalModel toDTO(final AnimalModelEntity animalModelEntity) {
         return AnimalModel.builder().id(animalModelEntity.getAnimalModelID())
                 .name(animalModelEntity.getAnimalModelName())
+                .cellLine(animalModelEntity.getCellLine())
                 .passage(animalModelEntity.getPassage())
                 .isImmuneSystemHumanized(animalModelEntity.getIsImmuneSystemHumanized())
                 .humanizationType(animalModelEntity.getHumanizationType())
@@ -94,6 +95,7 @@ public class HibernateAnimalModelService extends AbstractHibernateEntityService<
     private void updateEntity(final AnimalModelEntity animalModelEntity, final AnimalModel animalModel) {
         animalModelEntity.setAnimalModelID(animalModel.getId());
         animalModelEntity.setAnimalModelName(animalModel.getName());
+        animalModelEntity.setCellLine(animalModel.getCellLine());
         animalModelEntity.setPassage(animalModel.getPassage());
         animalModelEntity.setIsImmuneSystemHumanized(animalModel.getIsImmuneSystemHumanized());
         animalModelEntity.setHumanizationType(animalModel.getHumanizationType());

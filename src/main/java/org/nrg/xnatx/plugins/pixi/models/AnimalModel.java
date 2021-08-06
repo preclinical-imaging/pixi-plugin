@@ -28,6 +28,10 @@ public class AnimalModel {
     @Nullable
     private List<String> pdxIDs;
 
+    @ApiModelProperty(example = "NIH-3T3")
+    @Nullable
+    private String cellLine;
+
     @ApiModelProperty(example = "P4")
     @Nullable
     private String passage;

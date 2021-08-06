@@ -4,11 +4,11 @@
  *
  */
 package org.nrg.xnat.turbine.modules.screens;
+
 import org.apache.turbine.util.RunData;
 import org.apache.velocity.context.Context;
 import org.nrg.xdat.XDAT;
 import org.nrg.xft.ItemI;
-import org.nrg.xnatx.plugins.pixi.entities.AnimalModelEntity;
 import org.nrg.xnatx.plugins.pixi.models.AnimalModel;
 import org.nrg.xnatx.plugins.pixi.services.AnimalModelService;
 

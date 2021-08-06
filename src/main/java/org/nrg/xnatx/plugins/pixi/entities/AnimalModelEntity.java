@@ -23,6 +23,7 @@ public class AnimalModelEntity extends AbstractHibernateEntity {
     @NotBlank private String animalModelID;
     @NotBlank private String animalModelName;
     @Getter(AccessLevel.NONE) @Nullable private List<PDXEntity> pdxs;
+    @Nullable private String cellLine;
     @Nullable private String passage;
     @Nullable private Boolean isImmuneSystemHumanized;
     @Nullable private String humanizationType;

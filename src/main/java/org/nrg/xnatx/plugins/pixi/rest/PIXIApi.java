@@ -20,7 +20,6 @@ import org.nrg.xnatx.plugins.pixi.entities.PDXEntity;
 import org.nrg.xnatx.plugins.pixi.models.AnimalModel;
 import org.nrg.xnatx.plugins.pixi.models.PDX;
 import org.nrg.xnatx.plugins.pixi.services.AnimalModelService;
-import org.nrg.xnatx.plugins.pixi.services.PDXEntityService;
 import org.nrg.xnatx.plugins.pixi.services.PDXService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -29,8 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Api("PIXI API")
 @XapiRestController

@@ -60,6 +60,13 @@
       "disableLimit": false
     },
     {
+      "label": "Cell Line",
+      "tableView": true,
+      "key": "cellLine",
+      "type": "textfield",
+      "input": true
+    },
+    {
       "label": "Passage",
       "tableView": true,
       "key": "passage",
