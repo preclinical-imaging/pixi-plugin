@@ -22,7 +22,7 @@ public class AnimalModel {
 
     @ApiModelProperty(example = "Wash U Animal Model 1")
     @NotBlank
-    private String animalModelName;
+    private String name;
 
     @ApiModelProperty(example = "[\"WUPDX1\", \"WUPDX1\" ]")
     @Nullable

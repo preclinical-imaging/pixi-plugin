@@ -19,7 +19,7 @@
       "validate": {
         "required": true
       },
-      "key": "animalModelName",
+      "key": "name",
       "type": "textfield",
       "input": true
     },

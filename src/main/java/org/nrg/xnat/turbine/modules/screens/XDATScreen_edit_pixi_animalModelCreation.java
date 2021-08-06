@@ -9,7 +9,8 @@ import org.apache.velocity.context.Context;
 import org.nrg.xdat.XDAT;
 import org.nrg.xft.ItemI;
 import org.nrg.xnatx.plugins.pixi.entities.AnimalModelEntity;
-import org.nrg.xnatx.plugins.pixi.services.AnimalModelEntityService;
+import org.nrg.xnatx.plugins.pixi.models.AnimalModel;
+import org.nrg.xnatx.plugins.pixi.services.AnimalModelService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,9 +26,9 @@ public class XDATScreen_edit_pixi_animalModelCreation extends EditSubjectAssesso
 	public void doBuildTemplate(RunData runData, Context context) {
 		super.doBuildTemplate(runData, context);
 
-		AnimalModelEntityService animalModelEntityService = XDAT.getContextService().getBean(AnimalModelEntityService.class);
-		List<String> animalModelIDs = animalModelEntityService.getAll().stream()
-				.map(AnimalModelEntity::getAnimalModelID)
+		AnimalModelService animalModelService = XDAT.getContextService().getBean(AnimalModelService.class);
+		List<String> animalModelIDs = animalModelService.getAllAnimalModels().stream()
+				.map(AnimalModel::getId)
 				.collect(Collectors.toList());
 
 		context.put("animalModelIDs", animalModelIDs);

@@ -19,7 +19,7 @@ import org.nrg.xnatx.plugins.pixi.entities.AnimalModelEntity;
 import org.nrg.xnatx.plugins.pixi.entities.PDXEntity;
 import org.nrg.xnatx.plugins.pixi.models.AnimalModel;
 import org.nrg.xnatx.plugins.pixi.models.PDX;
-import org.nrg.xnatx.plugins.pixi.services.AnimalModelEntityService;
+import org.nrg.xnatx.plugins.pixi.services.AnimalModelService;
 import org.nrg.xnatx.plugins.pixi.services.PDXEntityService;
 import org.nrg.xnatx.plugins.pixi.services.PDXService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,19 +40,16 @@ import java.util.stream.Collectors;
 public class PIXIApi extends AbstractXapiRestController {
 
     private final PDXService pdxService;
-    private final PDXEntityService pdxEntityService;
-    private final AnimalModelEntityService animalModelEntityService;
+    private final AnimalModelService animalModelService;
 
     @Autowired
     public PIXIApi(final UserManagementServiceI userManagementService,
                    final RoleHolder roleHolder,
                    final PDXService pdxService,
-                   final PDXEntityService pdxEntityService,
-                   final AnimalModelEntityService animalModelEntityService) {
+                   final AnimalModelService animalModelService) {
         super(userManagementService, roleHolder);
         this.pdxService = pdxService;
-        this.pdxEntityService = pdxEntityService;
-        this.animalModelEntityService = animalModelEntityService;
+        this.animalModelService = animalModelService;
     }
 
     // TODO: API Responses don't always match what I expect in Swagger UI
@@ -126,7 +123,7 @@ public class PIXIApi extends AbstractXapiRestController {
             @ApiResponse(code = 500, message = "Unexpected error")})
     @XapiRequestMapping(value = "/animalModels", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public List<AnimalModel> getAllAnimalModels() {
-        return animalModelEntityService.getAll().stream().map(this::toDTO).collect(Collectors.toList());
+        return animalModelService.getAllAnimalModels();
     }
 
     @ApiOperation(value = "Create new Animal Model.")
@@ -134,77 +131,32 @@ public class PIXIApi extends AbstractXapiRestController {
             @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
             @ApiResponse(code = 500, message = "Unexpected error")})
     @AuthorizedRoles({"PIXI", "Administrator"})
-    @XapiRequestMapping(value = "/animalModels", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST, restrictTo = AccessLevel.Role)
+    @XapiRequestMapping(value = "/animalModels", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST, restrictTo = AccessLevel.Role)
     public void createAnimalModel(@RequestBody final AnimalModel animalModel) throws ResourceAlreadyExistsException {
-        AnimalModelEntity animalModelEntity = toEntity(animalModel);
-        animalModelEntityService.createAnimalModelEntity(animalModelEntity);
+        animalModelService.createAnimalModel(animalModel);
     }
 
     @ApiOperation(value = "Get the indicated Animal Model", response = AnimalModel.class)
     @ApiResponses({@ApiResponse(code = 200, message = "Animal Model successfully retrieved."),
             @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
             @ApiResponse(code = 500, message = "Unexpected error")})
-    @XapiRequestMapping(value = "/animalModels/{animalModelID}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-    public AnimalModel getAnimalModel(@PathVariable final String animalModelID) throws NotFoundException {
-        AnimalModelEntity animalModelEntity = animalModelEntityService.getAnimalModelEntity(animalModelID)
-                                                                      .orElseThrow(() -> new NotFoundException(AnimalModelEntity.class.getSimpleName(), animalModelID));
-        return toDTO(animalModelEntity);
+    @XapiRequestMapping(value = "/animalModels/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public AnimalModel getAnimalModel(@PathVariable final String id) throws NotFoundException {
+        return animalModelService.getAnimalModel(id)
+                                 .orElseThrow(() -> new NotFoundException(AnimalModelEntity.class.getSimpleName(), id));
     }
 
-    @ApiOperation(value = "Create/Update an Animal Model.")
+    @ApiOperation(value = "Update an Animal Model.")
     @ApiResponses({@ApiResponse(code = 200, message = "Animal Model successfully created/updated."),
             @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
             @ApiResponse(code = 500, message = "Unexpected error")})
     @AuthorizedRoles({"PIXI", "Administrator"})
-    @XapiRequestMapping(value = "/animalModels/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT, restrictTo = AccessLevel.Role)
-    public AnimalModel updateAnimalModel(@PathVariable final String id, @RequestBody final AnimalModel animalModel) throws DataFormatException, NotFoundException {
+    @XapiRequestMapping(value = "/animalModels/{id}", method = RequestMethod.PUT, restrictTo = AccessLevel.Role)
+    public void updateAnimalModel(@PathVariable final String id, @RequestBody final AnimalModel animalModel) throws DataFormatException, NotFoundException {
         if (!id.equals(animalModel.getId())) {
             throw new DataFormatException("DataFormatException: Updates to ID are not allowed");
         }
 
-        AnimalModelEntity animalModelEntity = animalModelEntityService.getAnimalModelEntity(id)
-                                                                      .orElseThrow(() -> new NotFoundException(AnimalModelEntity.class.getSimpleName(), id));
-
-        updateEntity(animalModelEntity, animalModel);
-        animalModelEntityService.update(animalModelEntity);
-
-        return animalModel;
-    }
-
-
-    private AnimalModel toDTO(final AnimalModelEntity animalModelEntity) {
-        return AnimalModel.builder().id(animalModelEntity.getAnimalModelID())
-                                    .animalModelName(animalModelEntity.getAnimalModelName())
-                                    .passage(animalModelEntity.getPassage())
-                                    .isImmuneSystemHumanized(animalModelEntity.getIsImmuneSystemHumanized())
-                                    .humanizationType(animalModelEntity.getHumanizationType())
-                                    .pdxIDs(animalModelEntity.getPdxs().stream().map(PDXEntity::getPdxID).collect(Collectors.toList()))
-                                    .build();
-    }
-
-    private AnimalModelEntity toEntity(final AnimalModel animalModel) {
-        AnimalModelEntity animalModelEntity = new AnimalModelEntity();
-        animalModelEntity.setCreatedBy(getSessionUser().getUsername());
-        updateEntity(animalModelEntity, animalModel);
-        return animalModelEntity;
-    }
-
-    private void updateEntity(final AnimalModelEntity animalModelEntity, final AnimalModel animalModel) {
-        animalModelEntity.setAnimalModelID(animalModel.getId());
-        animalModelEntity.setAnimalModelName(animalModel.getAnimalModelName());
-        animalModelEntity.setPassage(animalModel.getPassage());
-        animalModelEntity.setIsImmuneSystemHumanized(animalModel.getIsImmuneSystemHumanized());
-        animalModelEntity.setHumanizationType(animalModel.getHumanizationType());
-
-        if (animalModel.getPdxIDs() != null) {
-            List<PDXEntity> pdxs = animalModel.getPdxIDs().stream()
-                    .map(pdxEntityService::getPDXEntity)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
-            animalModelEntity.setPdxs(pdxs);
-        } else {
-            animalModelEntity.setPdxs(Collections.emptyList());
-        }
+        animalModelService.updateAnimalModel(animalModel);
     }
 }

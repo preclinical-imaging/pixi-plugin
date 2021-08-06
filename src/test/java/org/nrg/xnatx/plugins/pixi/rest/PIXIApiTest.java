@@ -10,7 +10,7 @@ import org.nrg.xdat.security.services.RoleHolder;
 import org.nrg.xdat.security.services.UserManagementServiceI;
 import org.nrg.xft.security.UserI;
 import org.nrg.xnatx.plugins.pixi.models.PDX;
-import org.nrg.xnatx.plugins.pixi.services.AnimalModelEntityService;
+import org.nrg.xnatx.plugins.pixi.services.AnimalModelService;
 import org.nrg.xnatx.plugins.pixi.services.PDXEntityService;
 import org.nrg.xnatx.plugins.pixi.services.PDXService;
 import org.springframework.security.core.Authentication;
@@ -28,7 +28,7 @@ class PIXIApiTest {
 
     private PDXService pdxService;
     private PDXEntityService pdxEntityService;
-    private AnimalModelEntityService animalModelEntityService;
+    private AnimalModelService animalModelService;
     private UserManagementServiceI userManagementService;
     private RoleHolder roleHolder;
     private PIXIApi PIXIApi;
@@ -53,8 +53,8 @@ class PIXIApiTest {
         pdxEntityService = mock(PDXEntityService.class);
         userManagementService = mock(UserManagementServiceI.class);
         roleHolder = mock(RoleHolder.class);
-        animalModelEntityService = mock(AnimalModelEntityService.class);
-        PIXIApi = new PIXIApi(userManagementService, roleHolder, pdxService, pdxEntityService, animalModelEntityService);
+        animalModelService = mock(AnimalModelService.class);
+        PIXIApi = new PIXIApi(userManagementService, roleHolder, pdxService, animalModelService);
     }
 
     @Test
