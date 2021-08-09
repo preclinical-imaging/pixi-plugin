@@ -5,7 +5,7 @@ import org.nrg.config.exceptions.ConfigServiceException;
 import org.nrg.config.services.ConfigService;
 import org.nrg.framework.annotations.XnatDataModel;
 import org.nrg.framework.annotations.XnatPlugin;
-import org.nrg.xdat.om.PixiAnimalmodelcreation;
+import org.nrg.xdat.om.PixiModelcreation;
 import org.nrg.xdat.om.PixiTreatment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
 @XnatPlugin(value = "PIXIPlugin", name = "PIXI Plugin",
             logConfigurationFile = "pixi-logback.xml",
             entityPackages = "org.nrg.xnatx.plugins.pixi.entities",
-            dataModels = {@XnatDataModel(value = PixiAnimalmodelcreation.SCHEMA_ELEMENT_NAME,
-                                         singular = "Animal Model Creation",
-                                         plural = "Animal Model Creations",
-                                         code = "AMC"),
+            dataModels = {@XnatDataModel(value = PixiModelcreation.SCHEMA_ELEMENT_NAME,
+                                         singular = "Model Creation",
+                                         plural = "Model Creations",
+                                         code = "MC"),
                           @XnatDataModel(value = PixiTreatment.SCHEMA_ELEMENT_NAME,
                                          singular = "Treatment",
                                          plural = "Treatments",

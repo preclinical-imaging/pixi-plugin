@@ -45,13 +45,13 @@ $page.setVlinkColor($ui.vlink)
 							<tr>
 								<TD colspan="2">#parse("/screens/EditProjectSpecificFields.vm")</TD>
 							</tr>
-							<TR><TD>Animal Model</TD><TD>#xdatSelectBoxWSingleValue("pixi:animalModelCreation/animalModelID" $item $animalModelIDs $vr)</TD></TR>
-							<TR><TD>Date Created</TD><TD>#xdatDateBox("pixi:animalModelCreation/date" $item $vr $years)</TD></TR>
-							<TR><TD>Tumor Preparation</TD><TD>#xdatStringBox("pixi:animalModelCreation/tumorPreparation" $item "" $vr)</TD></TR>
-							<TR><TD>Tumor Injection Type</TD><TD>#xdatStringBox("pixi:animalModelCreation/tumorInjectionType" $item "" $vr)</TD></TR>
-							<TR><TD>Tumor Injection Site</TD><TD>#xdatStringBox("pixi:animalModelCreation/tumorInjectionSite" $item "" $vr)</TD></TR>
-							<TR><TD>Number of Cells Injected</TD><TD>#xdatStringBox("pixi:animalModelCreation/numCellsInjected" $item "" $vr)</TD></TR>
-							<TR><TD>Engraftment Treatment</TD><TD>#xdatStringBox("pixi:animalModelCreation/engraftmentTreatment" $item "" $vr)</TD></TR>
+							<TR><TD>Animal Model</TD><TD>#xdatSelectBoxWSingleValue("pixi:modelCreation/animalModelID" $item $animalModelIDs $vr)</TD></TR>
+							<TR><TD>Date Created</TD><TD>#xdatDateBox("pixi:modelCreation/date" $item $vr $years)</TD></TR>
+							<TR><TD>Tumor Preparation</TD><TD>#xdatStringBox("pixi:modelCreation/tumorPreparation" $item "" $vr)</TD></TR>
+							<TR><TD>Tumor Injection Type</TD><TD>#xdatStringBox("pixi:modelCreation/tumorInjectionType" $item "" $vr)</TD></TR>
+							<TR><TD>Tumor Injection Site</TD><TD>#xdatStringBox("pixi:modelCreation/tumorInjectionSite" $item "" $vr)</TD></TR>
+							<TR><TD>Number of Cells Injected</TD><TD>#xdatStringBox("pixi:modelCreation/numCellsInjected" $item "" $vr)</TD></TR>
+							<TR><TD>Engraftment Treatment</TD><TD>#xdatStringBox("pixi:modelCreation/engraftmentTreatment" $item "" $vr)</TD></TR>
 						</TABLE>
 					</TD>
 				</TR>

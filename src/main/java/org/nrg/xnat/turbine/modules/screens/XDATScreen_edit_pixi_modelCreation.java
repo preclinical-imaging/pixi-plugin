@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
  * @author XDAT
  *
  */
-public class XDATScreen_edit_pixi_animalModelCreation extends EditSubjectAssessorScreen {
-	static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(XDATScreen_edit_pixi_animalModelCreation.class);
+public class XDATScreen_edit_pixi_modelCreation extends EditSubjectAssessorScreen {
+	static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(XDATScreen_edit_pixi_modelCreation.class);
 
 	@Override
 	public void doBuildTemplate(RunData runData, Context context) {
@@ -38,7 +38,7 @@ public class XDATScreen_edit_pixi_animalModelCreation extends EditSubjectAssesso
 	 * @see org.nrg.xdat.turbine.modules.screens.EditScreenA#getElementName()
 	 */
 	public String getElementName() {
-	    return "pixi:animalModelCreation";
+	    return "pixi:modelCreation";
 	}
 	
 	public ItemI getEmptyItem(RunData data) throws Exception

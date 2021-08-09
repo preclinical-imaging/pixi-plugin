@@ -6,9 +6,9 @@
     <xs:import namespace="http://nrg.wustl.edu/xnat" schemaLocation="../xnat/xnat.xsd"/>
     <xs:import namespace="http://nrg.wustl.edu/xdat" schemaLocation="../xdat/xdat.xsd"/>
 
-    <xs:element name="AnimalModelCreation" type="pixi:animalModelCreation"/>
+    <xs:element name="ModelCreation" type="pixi:modelCreation"/>
     <xs:element name="Treatment" type="pixi:treatment"/>
-    <xs:complexType name="animalModelCreation">
+    <xs:complexType name="modelCreation">
         <xs:annotation>
             <xs:documentation>Create an Animal Model</xs:documentation>
         </xs:annotation>
