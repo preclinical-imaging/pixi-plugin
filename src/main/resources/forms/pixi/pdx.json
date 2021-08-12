@@ -74,7 +74,6 @@
               }
             ]
           },
-          "selectThreshold": 0.3,
           "key": "patient.gender",
           "type": "select",
           "input": true
@@ -390,7 +389,6 @@
               }
             ]
           },
-          "selectThreshold": 0.3,
           "key": "tumor.fromUntreatedPatient",
           "type": "select",
           "input": true
@@ -404,33 +402,14 @@
           "input": true
         },
         {
-          "label": "Is Tumor From an Existing PDX Model?",
-          "widget": "choicesjs",
-          "tableView": true,
-          "data": {
-            "values": [
-              {
-                "label": "Yes",
-                "value": "true"
-              },
-              {
-                "label": "No",
-                "value": "false"
-              }
-            ]
-          },
-          "key": "tumor.isTumorFromAnExistingPdxModel",
-          "type": "select",
-          "input": true
-        },
-        {
           "label": "Columns",
           "columns": [
             {
               "components": [
                 {
-                  "label": "PDX ID",
+                  "label": "Derived PDX Model ID",
                   "widget": "choicesjs",
+                  "description": "Is this PDX derived from another PDX model? If so select the model.",
                   "tableView": true,
                   "dataSrc": "url",
                   "data": {
@@ -442,17 +421,13 @@
                       }
                     ]
                   },
-                  "valueProperty": "pdxID",
-                  "template": "<span>{{ item.pdxID }}</span>",
+                  "valueProperty": "id",
+                  "template": "<span>{{ item.id }}</span>",
                   "key": "tumor.derivedPDXModelID",
-                  "conditional": {
-                    "show": true,
-                    "when": "isTumorFromAnExistingPdxModel",
-                    "eq": "true"
-                  },
                   "type": "select",
                   "input": true,
-                  "disableLimit": false
+                  "disableLimit": false,
+                  "lazyLoad": false
                 }
               ],
               "width": 6,
@@ -465,14 +440,10 @@
             {
               "components": [
                 {
-                  "label": "Why subline?",
+                  "label": "Subline Reason",
+                  "description": "If this model is derived from another PDX Model, please explain why.",
                   "tableView": true,
                   "key": "tumor.derivedPDXReason",
-                  "conditional": {
-                    "show": true,
-                    "when": "isTumorFromAnExistingPdxModel",
-                    "eq": "true"
-                  },
                   "type": "textfield",
                   "input": true
                 }

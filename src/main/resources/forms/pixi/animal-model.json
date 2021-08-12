@@ -35,6 +35,13 @@
       "input": true
     },
     {
+      "label": "Cell Line",
+      "tableView": true,
+      "key": "cellLine",
+      "type": "textfield",
+      "input": true
+    },
+    {
       "label": "PDXs",
       "widget": "choicesjs",
       "description": "Associate your Animal Model with one or more Patient Derived Xenografts",
@@ -52,19 +59,11 @@
       },
       "valueProperty": "id",
       "template": "<span>{{ item.id }}</span>",
-      "selectThreshold": 0.3,
       "key": "pdxIDs",
       "type": "select",
       "input": true,
       "lazyLoad": false,
       "disableLimit": false
-    },
-    {
-      "label": "Cell Line",
-      "tableView": true,
-      "key": "cellLine",
-      "type": "textfield",
-      "input": true
     },
     {
       "label": "Passage",
