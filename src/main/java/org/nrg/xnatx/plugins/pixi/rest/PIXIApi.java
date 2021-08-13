@@ -81,25 +81,19 @@ public class PIXIApi extends AbstractXapiRestController {
                          .orElseThrow(() -> new NotFoundException(PDXEntity.class.getSimpleName(), pdxID));
     }
 
-    @ApiOperation(value = "Create/Update the supplied PDX.",
+    @ApiOperation(value = "Update the supplied PDX.",
                   notes = "Based on the pdxID, not the primary key")
     @ApiResponses({@ApiResponse(code = 200, message = "PDX successfully created/updated."),
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
     @AuthorizedRoles({"PIXI", "Administrator"})
     @XapiRequestMapping(value = "/pdx/{pdxID}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT, restrictTo = AccessLevel.Role)
-    public void createOrUpdatePDX(@PathVariable final String pdxID, @RequestBody final PDX pdx) throws DataFormatException, NotFoundException {
+    public void updatePDX(@PathVariable final String pdxID, @RequestBody final PDX pdx) throws DataFormatException, NotFoundException {
         if (!pdxID.equals(pdx.getId())) {
             throw new DataFormatException("DataFormatException: Updates to ID are not allowed");
         }
 
-        pdx.setCreatedBy(getSessionUser().getUsername());
-
-        try {
-            pdxService.createPDX(pdx);
-        } catch (ResourceAlreadyExistsException e) {
-            pdxService.updatePDX(pdx);
-        }
+        pdxService.updatePDX(pdx);
     }
 
     @ApiOperation(value = "Delete the specified PDX",

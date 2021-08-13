@@ -7,7 +7,7 @@ import org.nrg.xdat.turbine.modules.screens.SecureScreen;
 import org.nrg.xnatx.plugins.pixi.entities.PDXEntity;
 import org.nrg.xnatx.plugins.pixi.models.AnimalModel;
 import org.nrg.xnatx.plugins.pixi.services.AnimalModelService;
-import org.nrg.xnatx.plugins.pixi.services.PDXEntityService;
+import org.nrg.xnatx.plugins.pixi.services.PDXService;
 
 import java.util.List;
 
@@ -18,8 +18,8 @@ public class PIXIDatatypeManager extends SecureScreen {
         List<AnimalModel> animalModels = animalModelService.getAllAnimalModels();
         context.put("animalModels", animalModels);
 
-        PDXEntityService pdxEntityService = XDAT.getContextService().getBean(PDXEntityService.class);
-        List<PDXEntity> pdxs = pdxEntityService.getAll();
+        PDXService pdxService = XDAT.getContextService().getBean(PDXService.class);
+        List<PDXEntity> pdxs = pdxService.getAll();
         context.put("pdxs", pdxs);
     }
 }

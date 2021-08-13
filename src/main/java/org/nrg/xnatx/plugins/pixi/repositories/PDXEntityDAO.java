@@ -13,7 +13,7 @@ public class PDXEntityDAO extends AbstractHibernateDAO<PDXEntity> {
         return Optional.ofNullable(this.findByUniqueProperty("pdxID", pdxID));
     }
 
-    public boolean pdxEntityExists(final String pdxID) {
+    public boolean pdxExists(final String pdxID) {
         return exists("pdxID", pdxID);
     }
 }

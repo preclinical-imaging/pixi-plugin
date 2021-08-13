@@ -10,7 +10,7 @@ import org.nrg.xnatx.plugins.pixi.entities.PDXEntity;
 import org.nrg.xnatx.plugins.pixi.models.AnimalModel;
 import org.nrg.xnatx.plugins.pixi.repositories.AnimalModelDAO;
 import org.nrg.xnatx.plugins.pixi.services.AnimalModelService;
-import org.nrg.xnatx.plugins.pixi.services.PDXEntityService;
+import org.nrg.xnatx.plugins.pixi.services.PDXService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -24,12 +24,12 @@ import java.util.stream.Collectors;
 @Service
 public class HibernateAnimalModelService extends AbstractHibernateEntityService<AnimalModelEntity, AnimalModelDAO> implements AnimalModelService {
 
-    private final PDXEntityService pdxEntityService;
+    private final PDXService pdxService;
 
     @Autowired
-    public HibernateAnimalModelService(final PDXEntityService pdxEntityService) {
+    public HibernateAnimalModelService(final PDXService pdxService) {
         super();
-        this.pdxEntityService = pdxEntityService;
+        this.pdxService = pdxService;
     }
 
     @Override
@@ -102,7 +102,7 @@ public class HibernateAnimalModelService extends AbstractHibernateEntityService<
 
         if (animalModel.getPdxIDs() != null) {
             List<PDXEntity> pdxs = animalModel.getPdxIDs().stream()
-                    .map(pdxEntityService::getPDXEntity)
+                    .map(pdxService::getPDXEntity)
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .collect(Collectors.toList());

@@ -11,7 +11,6 @@ import org.nrg.xdat.security.services.UserManagementServiceI;
 import org.nrg.xft.security.UserI;
 import org.nrg.xnatx.plugins.pixi.models.PDX;
 import org.nrg.xnatx.plugins.pixi.services.AnimalModelService;
-import org.nrg.xnatx.plugins.pixi.services.PDXEntityService;
 import org.nrg.xnatx.plugins.pixi.services.PDXService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -27,7 +26,6 @@ import static org.mockito.Mockito.*;
 class PIXIApiTest {
 
     private PDXService pdxService;
-    private PDXEntityService pdxEntityService;
     private AnimalModelService animalModelService;
     private UserManagementServiceI userManagementService;
     private RoleHolder roleHolder;
@@ -50,7 +48,6 @@ class PIXIApiTest {
     @BeforeEach
     public void beforeEach() {
         pdxService = mock(PDXService.class);
-        pdxEntityService = mock(PDXEntityService.class);
         userManagementService = mock(UserManagementServiceI.class);
         roleHolder = mock(RoleHolder.class);
         animalModelService = mock(AnimalModelService.class);
@@ -113,21 +110,7 @@ class PIXIApiTest {
     public void testPutPDXWithIDMismatch() {
         PDX pdx = PDX.builder().id("junk").build();
         String pdxID = "WUXNAT01";
-        assertThrows(DataFormatException.class, () -> PIXIApi.createOrUpdatePDX(pdxID, pdx));
-    }
-
-    @Test
-    public void testPutPDXCreation() {
-        String pdxID = "WUXNAT01";
-        PDX pdx = PDX.builder().id(pdxID).build();
-
-        try {
-            PIXIApi.createOrUpdatePDX(pdxID, pdx);
-            verify(pdxService).createPDX(pdx);
-            verify(pdxService, never()).updatePDX(pdx);
-        } catch (DataFormatException | NotFoundException | ResourceAlreadyExistsException e) {
-            fail("Exception should not be thrown.");
-        }
+        assertThrows(DataFormatException.class, () -> PIXIApi.updatePDX(pdxID, pdx));
     }
 
     @Test
@@ -137,8 +120,7 @@ class PIXIApiTest {
 
         try {
             doThrow(ResourceAlreadyExistsException.class).when(pdxService).createPDX(any());
-            PIXIApi.createOrUpdatePDX(pdxID, pdx);
-            verify(pdxService).createPDX(pdx);
+            PIXIApi.updatePDX(pdxID, pdx);
             verify(pdxService).updatePDX(pdx);
         } catch (DataFormatException | NotFoundException | ResourceAlreadyExistsException e) {
             fail("Exception should not be thrown.");
