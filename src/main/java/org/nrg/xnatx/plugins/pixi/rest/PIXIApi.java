@@ -34,7 +34,6 @@ import java.util.List;
 @XapiRestController
 @RequestMapping(value = "/pixi")
 @Slf4j
-//TODO Versioning?
 public class PIXIApi extends AbstractXapiRestController {
 
     private final PDXService pdxService;
@@ -50,7 +49,6 @@ public class PIXIApi extends AbstractXapiRestController {
         this.animalModelService = animalModelService;
     }
 
-    // TODO: API Responses don't always match what I expect in Swagger UI
     @ApiOperation(value = "Returns a list of all PDXs.", response = PDX.class, responseContainer = "List")
     @ApiResponses({@ApiResponse(code = 200, message = "PDXs successfully retrieved."),
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
@@ -117,8 +115,8 @@ public class PIXIApi extends AbstractXapiRestController {
 
     @ApiOperation(value = "Returns a list of all Animal Models.", response = AnimalModel.class, responseContainer = "List")
     @ApiResponses({@ApiResponse(code = 200, message = "Animal Models successfully retrieved."),
-            @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
-            @ApiResponse(code = 500, message = "Unexpected error")})
+                   @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
+                   @ApiResponse(code = 500, message = "Unexpected error")})
     @XapiRequestMapping(value = "/animalModels", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public List<AnimalModel> getAllAnimalModels() {
         return animalModelService.getAllAnimalModels();
@@ -126,8 +124,8 @@ public class PIXIApi extends AbstractXapiRestController {
 
     @ApiOperation(value = "Create new Animal Model.")
     @ApiResponses({@ApiResponse(code = 200, message = "Animal Model successfully created."),
-            @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
-            @ApiResponse(code = 500, message = "Unexpected error")})
+                   @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
+                   @ApiResponse(code = 500, message = "Unexpected error")})
     @AuthorizedRoles({"PIXI", "Administrator"})
     @XapiRequestMapping(value = "/animalModels", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST, restrictTo = AccessLevel.Role)
     public void createAnimalModel(@RequestBody final AnimalModel animalModel) throws ResourceAlreadyExistsException {
@@ -136,8 +134,8 @@ public class PIXIApi extends AbstractXapiRestController {
 
     @ApiOperation(value = "Get the indicated Animal Model", response = AnimalModel.class)
     @ApiResponses({@ApiResponse(code = 200, message = "Animal Model successfully retrieved."),
-            @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
-            @ApiResponse(code = 500, message = "Unexpected error")})
+                   @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
+                   @ApiResponse(code = 500, message = "Unexpected error")})
     @XapiRequestMapping(value = "/animalModels/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public AnimalModel getAnimalModel(@PathVariable final String id) throws NotFoundException {
         return animalModelService.getAnimalModel(id)
@@ -145,9 +143,9 @@ public class PIXIApi extends AbstractXapiRestController {
     }
 
     @ApiOperation(value = "Update an Animal Model.")
-    @ApiResponses({@ApiResponse(code = 200, message = "Animal Model successfully created/updated."),
-            @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
-            @ApiResponse(code = 500, message = "Unexpected error")})
+    @ApiResponses({@ApiResponse(code = 200, message = "Animal Model successfully updated."),
+                   @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
+                   @ApiResponse(code = 500, message = "Unexpected error")})
     @AuthorizedRoles({"PIXI", "Administrator"})
     @XapiRequestMapping(value = "/animalModels/{id}", method = RequestMethod.PUT, restrictTo = AccessLevel.Role)
     public void updateAnimalModel(@PathVariable final String id, @RequestBody final AnimalModel animalModel) throws DataFormatException, NotFoundException {
@@ -156,5 +154,15 @@ public class PIXIApi extends AbstractXapiRestController {
         }
 
         animalModelService.updateAnimalModel(animalModel);
+    }
+
+    @ApiOperation(value = "Delete an Animal Model.")
+    @ApiResponses({@ApiResponse(code = 200, message = "Animal Model successfully deleted."),
+                   @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
+                   @ApiResponse(code = 500, message = "Unexpected error")})
+    @AuthorizedRoles({"PIXI", "Administrator"})
+    @XapiRequestMapping(value = "/animalModels/{id}", method = RequestMethod.DELETE, restrictTo = AccessLevel.Role)
+    public void deleteAnimalModel(@PathVariable final String id) {
+        animalModelService.deleteAnimalModel(id);
     }
 }
