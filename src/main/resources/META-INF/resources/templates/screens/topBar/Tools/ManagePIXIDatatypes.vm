@@ -1,5 +1,0 @@
-#if($user.isSiteAdmin() || $user.checkRole("PIXI"))
-<li>
-    <a href="$link.setPage("PIXIDatatypeManager.vm")" >Manage PIXI Datatypes</a>
-</li>
-#end
