@@ -23,7 +23,7 @@ public class PIXIPlugin {
     private static final Map<String, String> jsonFormFiles;
     static {
         jsonFormFiles = new HashMap<>();
-        jsonFormFiles.put("xnat:subjectData", "/forms/pixi/preclinical-subject.json");
+        jsonFormFiles.put("xnat:subjectData", "/forms/pixi/small-animal-subject.json");
     }
 
     @Autowired
