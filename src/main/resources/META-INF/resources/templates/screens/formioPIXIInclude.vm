@@ -1,0 +1,63 @@
+<script type="text/javascript">
+    window.onload = function() {
+        initForm('formio');
+    }
+
+    async function initForm(containerId) {
+        this.form = await Formio.createForm(
+            document.getElementById(containerId),
+            formComponents,
+            formOptions
+        );
+
+        this.form.nosubmit = true;
+
+        const dataId = getID();
+        if (dataId) { // Fetch data if editing
+            const dataUrl =  XNAT.url.restUrl((dataId) ? baseModelUrl + dataId : baseModelUrl);
+            const response = await fetch(dataUrl, {
+                method: 'GET',
+                headers: {'Content-Type': 'application/json'}
+            });
+
+            if (response.ok) {
+                this.form.submission = {data: await response.json()};
+            }
+        }
+
+        this.form.on('submit', submission => {
+            handleFormSubmit(submission);
+        })
+
+        this.form.on('submitError', error => {
+            this.form.alert.remove()
+        })
+    }
+
+    async function handleFormSubmit(submission) {
+        const dataId = getID();
+        const dataUrl =  XNAT.url.restUrl((dataId) ? baseModelUrl + dataId : baseModelUrl);
+
+        const response = await fetch(dataUrl, {
+            method: dataId ? 'PUT' : 'POST', // UPDATE : CREATE
+            body: JSON.stringify(submission.data),
+            headers: {'Content-Type': 'application/json'}
+        })
+
+        if (response.ok) {
+            this.form.emit('submitDone', submission)
+            window.location = "$link.setPage("PIXIDatatypeManager.vm")";
+        } else {
+            const status = response.status;
+            const errorMsg = await response.text();
+            xmodal.alert({ title: 'Error', content: 'Error '+ status +': '+ errorMsg });
+            this.form.emit('submitError', 'Error '+ status +': '+ errorMsg)
+        }
+    }
+
+    function getID() {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        return urlParams.get('id')
+    }
+</script>

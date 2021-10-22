@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://nrg.wustl.edu/pixi"
+           xmlns:pixi="http://nrg.wustl.edu/pixi"
+           xmlns:xnat="http://nrg.wustl.edu/xnat"
+           xmlns:xdat="http://nrg.wustl.edu/xdat"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified">
+    <xs:import namespace="http://nrg.wustl.edu/xnat" schemaLocation="../xnat/xnat.xsd"/>
+    <xs:element name="AnimalDemographicData" type="pixi:animalDemographicData"/>
+    <xs:complexType name="animalDemographicData">
+        <xs:annotation>
+            <xs:appinfo>
+                <xs:documentation>Animal Demographic Data</xs:documentation>
+                <xdat:element ignoreWarnings="true"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="xnat:abstractDemographicData">
+                <xs:sequence>
+                    <xs:element name="species" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>Species</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="strain" type="xs:string" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Strain</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="source" type="xs:string" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Source / Vendor</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="geneticModifications" type="xs:string" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Genetic Modifications</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="dateOfBirth" type="xs:date" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Date of Birth</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="sex" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Sex</xs:documentation>
+                        </xs:annotation>
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="male"/>
+                                <xs:enumeration value="female"/>
+                                <xs:enumeration value="other"/>
+                                <xs:enumeration value="unknown"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="xenograftType1" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>First Xenograft Type</xs:documentation>
+                        </xs:annotation>
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="None"/>
+                                <xs:enumeration value="Cell Line"/>
+                                <xs:enumeration value="PDX"/>
+                                <xs:enumeration value="Other"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="xenograftType2" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Second Xenograft Type</xs:documentation>
+                        </xs:annotation>
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="None"/>
+                                <xs:enumeration value="Cell Line"/>
+                                <xs:enumeration value="PDX"/>
+                                <xs:enumeration value="Other"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                    <xs:choice minOccurs="0">
+                        <xs:element name="pdx1" type="pixi:pdx"/>
+                        <xs:element name="cellLine1" type="pixi:cellLine"/>
+                    </xs:choice>
+                    <xs:choice minOccurs="0">
+                        <xs:element name="pdx2" type="pixi:pdx"/>
+                        <xs:element name="cellLine2" type="pixi:cellLine"/>
+                    </xs:choice>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="xenograft">
+        <xs:sequence>
+            <xs:element name="externalID" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>External ID of the Xenograft (Cell Line or PDX ID)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="injectionDate" type="xs:date" minOccurs="0"/>
+            <xs:element name="numCellsInjected" type="xs:positiveInteger" minOccurs="0"/>
+            <xs:element name="injectionSite" type="xs:string" minOccurs="0"/>
+            <xs:element name="injectionType" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="cellLine">
+        <xs:complexContent>
+            <xs:extension base="pixi:xenograft"/>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="pdx">
+        <xs:complexContent>
+            <xs:extension base="pixi:xenograft">
+                <xs:sequence>
+                    <xs:element name="passage" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

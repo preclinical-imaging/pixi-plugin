@@ -1,0 +1,1164 @@
+<!-- BEGIN xnat-templates/screens/xnat_subjectData/edit/parameters.vm -->
+
+## CSS Link and JS script required for FormIO are in xnat-templates/navigations/BaseJS.vm file
+#parse('screens/formsioJSIncludes.vm')
+
+<div id="formio-subject"  data-id="$!om.getId()" data-type="$!om.getXSIType()" data-project="$!om.getProject()"></div>
+
+<script type="text/javascript">
+
+    let formIOObjSubj = undefined;
+    let formData= undefined;
+
+    async function initForm() {
+
+        #if ("$!om.getId()" != "")
+            formData = {};
+            #set($properties = [
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/species",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/strain",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/source",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/geneticModifications",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/sex",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/dateOfBirth",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/xenograftType1",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/xenograftType2",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine1/externalID",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine1/injectionDate",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine1/injectionSite",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine1/numCellsInjected",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine1/injectionType",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine2/externalID",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine2/injectionDate",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine2/injectionSite",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine2/numCellsInjected",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine2/injectionType",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx1/externalID",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx1/injectionDate",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx1/injectionSite",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx1/numCellsInjected",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx1/injectionType",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx1[@xsi:type=pixi:pdx]/passage",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx2/externalID",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx2/injectionDate",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx2/injectionSite",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx2/numCellsInjected",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx2/injectionType",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx2[@xsi:type=pixi:pdx]/passage"
+            ])
+            #foreach($property in $properties)
+                #if($om.getProperty($property))
+                    formData["$property"] = "$om.getProperty($property)";
+                #end
+            #end
+        #end
+
+        let formOptions = {};
+        let formComponents = {
+            "display": "form",
+            "title": "Animal Subject",
+            "components": [
+                {
+                    "label": "Columns",
+                    "columns": [
+                        {
+                            "components": [
+                                {
+                                    "label": "Species",
+                                    "widget": "choicesjs",
+                                    "tableView": true,
+                                    "data": {
+                                        "values": [
+                                            {
+                                                "label": "Mus musculus (House mouse)",
+                                                "value": "Mus musculus"
+                                            },
+                                            {
+                                                "label": "Rattus norvegicus (common rat)",
+                                                "value": "Rattus norvegicus"
+                                            },
+                                            {
+                                                "label": "Felis",
+                                                "value": "Felis"
+                                            },
+                                            {
+                                                "label": "Felis catus (domestic cat)",
+                                                "value": "Felis catus"
+                                            },
+                                            {
+                                                "label": "Equus",
+                                                "value": "Equus"
+                                            },
+                                            {
+                                                "label": "Equus caballus (domestic horse)",
+                                                "value": "Equus caballus"
+                                            },
+                                            {
+                                                "label": "Ovis",
+                                                "value": "Ovis"
+                                            },
+                                            {
+                                                "label": "Ovis aries (domestic sheep)",
+                                                "value": "Ovis aries"
+                                            },
+                                            {
+                                                "label": "Sus",
+                                                "value": "Sus"
+                                            },
+                                            {
+                                                "label": "Sus scrofa",
+                                                "value": "Sus scrofa"
+                                            },
+                                            {
+                                                "label": "Capra",
+                                                "value": "Capra"
+                                            },
+                                            {
+                                                "label": "Capra hircus (domestic goat)",
+                                                "value": "Capra hircus"
+                                            },
+                                            {
+                                                "label": "Canis",
+                                                "value": "Canis"
+                                            },
+                                            {
+                                                "label": "Canis lupus",
+                                                "value": "Canis lupus"
+                                            },
+                                            {
+                                                "label": "Canis lupus familiaris (domestic dog)",
+                                                "value": "Canis lupus familiaris"
+                                            },
+                                            {
+                                                "label": "Bos",
+                                                "value": "Bos"
+                                            },
+                                            {
+                                                "label": "Bovinae",
+                                                "value": "Bovinae"
+                                            },
+                                            {
+                                                "label": "Bos taurus (domestic cow)",
+                                                "value": "Bos taurus"
+                                            },
+                                            {
+                                                "label": "Mus genus",
+                                                "value": "Mus genus"
+                                            },
+                                            {
+                                                "label": "Peromyscus leucopus (American white-footed mouse)",
+                                                "value": "Peromyscus leucopus"
+                                            },
+                                            {
+                                                "label": "Peromyscus maniculatus (Deer mouse)",
+                                                "value": "Peromyscus maniculatus"
+                                            },
+                                            {
+                                                "label": "Rattus",
+                                                "value": "Rattus"
+                                            },
+                                            {
+                                                "label": "Sigmodon genus (cotton rat)",
+                                                "value": "Sigmodon genus"
+                                            },
+                                            {
+                                                "label": "Cavia porcellus (domestic guinea pig)",
+                                                "value": "Cavia porcellus"
+                                            },
+                                            {
+                                                "label": "Mustela putorius furo (ferret)",
+                                                "value": "Mustela putorius furo"
+                                            },
+                                            {
+                                                "label": "Oryctolagus cuniculus (European rabbit)",
+                                                "value": "Oryctolagus cuniculus"
+                                            },
+                                            {
+                                                "label": "Callithrix jacchus (common marmoset)",
+                                                "value": "Callithrix jacchus"
+                                            }
+                                        ]
+                                    },
+                                    "validate": {
+                                        "required": true
+                                    },
+                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/species",
+                                    "type": "select",
+                                    "input": true
+                                },
+                                {
+                                    "label": "Strain",
+                                    "tableView": true,
+                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/strain",
+                                    "type": "textfield",
+                                    "input": true
+                                },
+                                {
+                                    "label": "Strain Source / Vendor",
+                                    "widget": "choicesjs",
+                                    "tableView": true,
+                                    "data": {
+                                        "values": [
+                                            {
+                                                "label": "Charles River Laboratories",
+                                                "value": "CRL"
+                                            },
+                                            {
+                                                "label": "Jackson Laboratory",
+                                                "value": "JAX"
+                                            },
+                                            {
+                                                "label": "WUSTL",
+                                                "value": "wustl"
+                                            }
+                                        ]
+                                    },
+                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/source",
+                                    "type": "select",
+                                    "input": true
+                                },
+                                {
+                                    "label": "Genetic Modifications",
+                                    "tableView": true,
+                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/geneticModifications",
+                                    "type": "textfield",
+                                    "input": true
+                                }
+                            ],
+                            "width": 6,
+                            "offset": 0,
+                            "push": 0,
+                            "pull": 0,
+                            "size": "md",
+                            "currentWidth": 6
+                        },
+                        {
+                            "components": [
+                                {
+                                    "label": "Sex",
+                                    "widget": "choicesjs",
+                                    "tableView": true,
+                                    "data": {
+                                        "values": [
+                                            {
+                                                "label": "Male",
+                                                "value": "male"
+                                            },
+                                            {
+                                                "label": "Female",
+                                                "value": "female"
+                                            }
+                                        ]
+                                    },
+                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/sex",
+                                    "type": "select",
+                                    "input": true
+                                },
+                                {
+                                    "label": "Date of Birth",
+                                    "format": "yyyy-MM-dd",
+                                    "tableView": false,
+                                    "enableMinDateInput": false,
+                                    "datePicker": {
+                                        "disableWeekends": false,
+                                        "disableWeekdays": false
+                                    },
+                                    "enableMaxDateInput": false,
+                                    "enableTime": false,
+                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/dateOfBirth",
+                                    "type": "datetime",
+                                    "input": true,
+                                    "widget": {
+                                        "type": "calendar",
+                                        "displayInTimezone": "viewer",
+                                        "locale": "en",
+                                        "useLocaleSettings": false,
+                                        "allowInput": true,
+                                        "mode": "single",
+                                        "enableTime": false,
+                                        "noCalendar": false,
+                                        "format": "yyyy-MM-dd",
+                                        "hourIncrement": 1,
+                                        "minuteIncrement": 1,
+                                        "time_24hr": false,
+                                        "minDate": null,
+                                        "disableWeekends": false,
+                                        "disableWeekdays": false,
+                                        "maxDate": null
+                                    }
+                                },
+                                {
+                                    "label": "Columns",
+                                    "columns": [
+                                        {
+                                            "components": [
+                                                {
+                                                    "label": "First Tumor Model",
+                                                    "optionsLabelPosition": "right",
+                                                    "inline": false,
+                                                    "tableView": false,
+                                                    "defaultValue": "None",
+                                                    "values": [
+                                                        {
+                                                            "label": "None",
+                                                            "value": "None",
+                                                            "shortcut": ""
+                                                        },
+                                                        {
+                                                            "label": "Cell Line",
+                                                            "value": "Cell Line",
+                                                            "shortcut": ""
+                                                        },
+                                                        {
+                                                            "label": "PDX",
+                                                            "value": "PDX",
+                                                            "shortcut": ""
+                                                        }
+                                                    ],
+                                                    "validate": {
+                                                        "required": true
+                                                    },
+                                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/xenograftType1",
+                                                    "type": "radio",
+                                                    "input": true
+                                                }
+                                            ],
+                                            "width": 6,
+                                            "offset": 0,
+                                            "push": 0,
+                                            "pull": 0,
+                                            "size": "md",
+                                            "currentWidth": 6
+                                        },
+                                        {
+                                            "components": [
+                                                {
+                                                    "label": "Second Tumor Model",
+                                                    "optionsLabelPosition": "right",
+                                                    "inline": false,
+                                                    "tableView": false,
+                                                    "defaultValue": "None",
+                                                    "values": [
+                                                        {
+                                                            "label": "None",
+                                                            "value": "None",
+                                                            "shortcut": ""
+                                                        },
+                                                        {
+                                                            "label": "Cell Line",
+                                                            "value": "Cell Line",
+                                                            "shortcut": ""
+                                                        },
+                                                        {
+                                                            "label": "PDX",
+                                                            "value": "PDX",
+                                                            "shortcut": ""
+                                                        }
+                                                    ],
+                                                    "validate": {
+                                                        "required": true
+                                                    },
+                                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/xenograftType2",
+                                                    "type": "radio",
+                                                    "input": true
+                                                }
+                                            ],
+                                            "width": 6,
+                                            "offset": 0,
+                                            "push": 0,
+                                            "pull": 0,
+                                            "size": "md",
+                                            "currentWidth": 6
+                                        }
+                                    ],
+                                    "key": "columns3",
+                                    "type": "columns",
+                                    "input": false,
+                                    "tableView": false
+                                }
+                            ],
+                            "width": 6,
+                            "offset": 0,
+                            "push": 0,
+                            "pull": 0,
+                            "size": "md",
+                            "currentWidth": 6
+                        }
+                    ],
+                    "key": "columns",
+                    "type": "columns",
+                    "input": false,
+                    "tableView": false
+                },
+                // Cell Line 1
+                {
+                    "title": "Tumor Model",
+                    "collapsible": true,
+                    "hidden": true,
+                    "key": "cellLine1",
+                    "conditional": {
+                        "show": true,
+                        "when": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/xenograftType1",
+                        "eq": "Cell Line"
+                    },
+                    "type": "panel",
+                    "label": "Tumor Model",
+                    "input": false,
+                    "tableView": false,
+                    "components": [
+                        {
+                            "label": "Columns",
+                            "columns": [
+                                {
+                                    "components": [
+                                        {
+                                            "label": "Cell Line",
+                                            "widget": "choicesjs",
+                                            "tableView": true,
+                                            "dataSrc": "custom",
+                                            "data": {
+                                                "custom": "var values;\nXNAT.xhr.get({\n  url: '/xapi/pixi/cellline',\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    values = data;\n  }\n});"
+                                            },
+                                            "idPath": "externalID",
+                                            "valueProperty": "externalID",
+                                            "template": "<span>{{ item.externalID }}</span>",
+                                            "validate": {
+                                                "required": true
+                                            },
+                                            "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine1/externalID",
+                                            "type": "select",
+                                            "input": true
+                                        },
+                                        {
+                                            "label": "New Cell Line",
+                                            "action": "custom",
+                                            "showValidations": false,
+                                            "theme": "warning",
+                                            "size": "sm",
+                                            "tableView": false,
+                                            "key": "newCellLineButton1",
+                                            "type": "button",
+                                            "custom": "XNAT.ui.dialog.open({\n        title: \"New Cell Line\",\n        content: '<div id=\"cellline-modal-form-container\"></div>',\n        beforeShow: async function(obj) {\n\n            let form;\n\n            XNAT.xhr.getJSON({\n                url: XNAT.url.restUrl('/xapi/pixi/cellline/form'),\n                async: false,\n                success: function(json) {\n                    form = json;\n                },\n                error: function(error) {\n                    console.log(error);\n                    error.status = error.status || '';\n                    XNAT.ui.dialog.open({\n                        title: 'Error',\n                        content: '<p><strong>Error ' + error.status + ': '+ error.statusText+'</strong></p><p>' + error.responseText + '</p>',\n                        buttons: [{\n                            label: 'OK',\n                            action: function () { XNAT.ui.dialog.closeAll(); }\n                        }]\n                    });\n                }\n            })\n\n\n            let formObj = await Formio.createForm(document.getElementById('cellline-modal-form-container'), form);\n            formObj.nosubmit = true;\n\n            formObj.on('submit', submission => {\n                handleFormSubmit(submission);\n            })\n\n            formObj.on('submitError', error => {\n                formObj.alert.remove()\n            })\n\n\n            async function handleFormSubmit(submission) {\n                const dataUrl =  XNAT.url.restUrl('/xapi/pixi/cellline');\n\n                const response = await fetch(dataUrl, {\n                    method: 'POST',\n                    body: JSON.stringify(submission.data),\n                    headers: {'Content-Type': 'application/json'}\n                })\n\n                if (response.ok) {\n                    formObj.emit('submitDone', submission);\n                    XNAT.ui.dialog.closeAll();\n                } else {\n                    const status = response.status;\n                    const errorMsg = await response.text();\n                    xmodal.alert({ title: 'Error', content: 'Error '+ status +': '+ errorMsg });\n                    formObj.emit('submitError', 'Error '+ status +': '+ errorMsg)\n                }\n            }\n        },\n        buttons: []\n    })",
+                                            "input": true,
+                                        }
+                                    ],
+                                    "width": 6,
+                                    "offset": 0,
+                                    "push": 0,
+                                    "pull": 0,
+                                    "size": "md",
+                                    "currentWidth": 6
+                                },
+                                {
+                                    "components": [
+                                        {
+                                            "label": "Injection Date",
+                                            "format": "yyyy-MM-dd",
+                                            "tableView": false,
+                                            "enableMinDateInput": false,
+                                            "datePicker": {
+                                                "disableWeekends": false,
+                                                "disableWeekdays": false
+                                            },
+                                            "enableMaxDateInput": false,
+                                            "enableTime": false,
+                                            "validate": {
+                                                "required": true
+                                            },
+                                            "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine1/injectionDate",
+                                            "type": "datetime",
+                                            "input": true,
+                                            "widget": {
+                                                "type": "calendar",
+                                                "displayInTimezone": "viewer",
+                                                "locale": "en",
+                                                "useLocaleSettings": false,
+                                                "allowInput": true,
+                                                "mode": "single",
+                                                "enableTime": false,
+                                                "noCalendar": false,
+                                                "format": "yyyy-MM-dd",
+                                                "hourIncrement": 1,
+                                                "minuteIncrement": 1,
+                                                "time_24hr": false,
+                                                "minDate": null,
+                                                "disableWeekends": false,
+                                                "disableWeekdays": false,
+                                                "maxDate": null
+                                            }
+                                        }
+                                    ],
+                                    "size": "md",
+                                    "width": 6,
+                                    "offset": 0,
+                                    "push": 0,
+                                    "pull": 0,
+                                    "currentWidth": 6
+                                }
+                            ],
+                            "key": "columns1",
+                            "type": "columns",
+                            "input": false,
+                            "tableView": false
+                        },
+                        {
+                            "label": "Columns",
+                            "columns": [
+                                {
+                                    "components": [
+                                        {
+                                            "label": "Injection Site",
+                                            "tableView": true,
+                                            "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine1/injectionSite",
+                                            "type": "textfield",
+                                            "input": true
+                                        }
+                                    ],
+                                    "width": 6,
+                                    "offset": 0,
+                                    "push": 0,
+                                    "pull": 0,
+                                    "size": "md",
+                                    "currentWidth": 6
+                                },
+                                {
+                                    "components": [
+                                        {
+                                            "label": "Number of Cells Injected",
+                                            "tableView": true,
+                                            "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine1/numCellsInjected",
+                                            "type": "textfield",
+                                            "input": true
+                                        },
+                                        {
+                                            "label": "Injection Type",
+                                            "widget": "choicesjs",
+                                            "tableView": true,
+                                            "data": {
+                                                "values": [
+                                                    {
+                                                        "label": "Subcutaneous",
+                                                        "value": "subcutaneous"
+                                                    },
+                                                    {
+                                                        "label": "Orthotopic",
+                                                        "value": "orthotopic"
+                                                    }
+                                                ]
+                                            },
+                                            "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine1/injectionType",
+                                            "type": "select",
+                                            "input": true
+                                        }
+                                    ],
+                                    "width": 6,
+                                    "offset": 0,
+                                    "push": 0,
+                                    "pull": 0,
+                                    "size": "md",
+                                    "currentWidth": 6
+                                }
+                            ],
+                            "key": "columns6",
+                            "type": "columns",
+                            "input": false,
+                            "tableView": false
+                        }
+                    ],
+                    "collapsed": false
+                },
+                // PDX 1
+                {
+                    "title": "Tumor Model",
+                    "collapsible": true,
+                    "hidden": true,
+                    "key": "pdxModel1",
+                    "conditional": {
+                        "show": true,
+                        "when": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/xenograftType1",
+                        "eq": "PDX"
+                    },
+                    "type": "panel",
+                    "label": "Tumor Model",
+                    "input": false,
+                    "tableView": false,
+                    "components": [
+                        {
+                            "label": "Columns",
+                            "columns": [
+                                {
+                                    "components": [
+                                        {
+                                            "label": "PDX",
+                                            "widget": "choicesjs",
+                                            "tableView": true,
+                                            "dataSrc": "custom",
+                                            "data": {
+                                                "custom": "var values;\nXNAT.xhr.get({\n  url: '/xapi/pixi/pdx',\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    values = data;\n  }\n});"
+                                            },
+                                            "idPath": "externalID",
+                                            "valueProperty": "externalID",
+                                            "template": "<span>{{ item.externalID }}</span>",
+                                            "validate": {
+                                                "required": true
+                                            },
+                                            "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx1/externalID",
+                                            "type": "select",
+                                            "input": true,
+                                        },
+                                        {
+                                            "label": "New PDX",
+                                            "action": "custom",
+                                            "showValidations": false,
+                                            "theme": "warning",
+                                            "size": "sm",
+                                            "tableView": false,
+                                            "key": "newCellLineButton2",
+                                            "type": "button",
+                                            "custom": "XNAT.ui.dialog.open({\n        title: \"New PDX\",\n        content: '<div id=\"pdx-modal-form-container\"></div>',\n        beforeShow: async function(obj) {\n\n            let form;\n\n            XNAT.xhr.getJSON({\n                url: XNAT.url.restUrl('/xapi/pixi/pdx/form'),\n                async: false,\n                success: function(json) {\n                    form = json;\n                },\n                error: function(error) {\n                    console.log(error);\n                    error.status = error.status || '';\n                    XNAT.ui.dialog.open({\n                        title: 'Error',\n                        content: '<p><strong>Error ' + error.status + ': '+ error.statusText+'</strong></p><p>' + error.responseText + '</p>',\n                        buttons: [{\n                            label: 'OK',\n                            action: function () { XNAT.ui.dialog.closeAll(); }\n                        }]\n                    });\n                }\n            })\n\n\n            let formObj = await Formio.createForm(document.getElementById('pdx-modal-form-container'), form);\n            formObj.nosubmit = true;\n\n            formObj.on('submit', submission => {\n                handleFormSubmit(submission);\n            })\n\n            formObj.on('submitError', error => {\n                formObj.alert.remove()\n            })\n\n\n            async function handleFormSubmit(submission) {\n                const dataUrl =  XNAT.url.restUrl('/xapi/pixi/pdx');\n\n                const response = await fetch(dataUrl, {\n                    method: 'POST',\n                    body: JSON.stringify(submission.data),\n                    headers: {'Content-Type': 'application/json'}\n                })\n\n                if (response.ok) {\n                    formObj.emit('submitDone', submission);\n                    XNAT.ui.dialog.closeAll();\n                } else {\n                    const status = response.status;\n                    const errorMsg = await response.text();\n                    xmodal.alert({ title: 'Error', content: 'Error '+ status +': '+ errorMsg });\n                    formObj.emit('submitError', 'Error '+ status +': '+ errorMsg)\n                }\n            }\n        },\n        buttons: []\n    })",
+                                            "input": true,
+                                        }
+                                    ],
+                                    "width": 6,
+                                    "offset": 0,
+                                    "push": 0,
+                                    "pull": 0,
+                                    "size": "md",
+                                    "currentWidth": 6
+                                },
+                                {
+                                    "components": [
+                                        {
+                                            "label": "Injection Date",
+                                            "format": "yyyy-MM-dd",
+                                            "tableView": false,
+                                            "enableMinDateInput": false,
+                                            "datePicker": {
+                                                "disableWeekends": false,
+                                                "disableWeekdays": false
+                                            },
+                                            "enableMaxDateInput": false,
+                                            "enableTime": false,
+                                            "validate": {
+                                                "required": true
+                                            },
+                                            "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx1/injectionDate",
+                                            "type": "datetime",
+                                            "input": true,
+                                            "widget": {
+                                                "type": "calendar",
+                                                "displayInTimezone": "viewer",
+                                                "locale": "en",
+                                                "useLocaleSettings": false,
+                                                "allowInput": true,
+                                                "mode": "single",
+                                                "enableTime": false,
+                                                "noCalendar": false,
+                                                "format": "yyyy-MM-dd",
+                                                "hourIncrement": 1,
+                                                "minuteIncrement": 1,
+                                                "time_24hr": false,
+                                                "minDate": null,
+                                                "disableWeekends": false,
+                                                "disableWeekdays": false,
+                                                "maxDate": null
+                                            }
+                                        }
+                                    ],
+                                    "size": "md",
+                                    "width": 6,
+                                    "offset": 0,
+                                    "push": 0,
+                                    "pull": 0,
+                                    "currentWidth": 6
+                                }
+                            ],
+                            "key": "columns2",
+                            "type": "columns",
+                            "input": false,
+                            "tableView": false
+                        },
+                        {
+                            "label": "Columns",
+                            "columns": [
+                                {
+                                    "components": [
+                                        {
+                                            "label": "PDX Passage Number",
+                                            "tableView": true,
+                                            "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx1[@xsi:type=pixi:pdx]/passage",
+                                            "type": "textfield",
+                                            "input": true
+                                        },
+                                        {
+                                            "label": "Injection Site",
+                                            "tableView": true,
+                                            "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx1/injectionSite",
+                                            "type": "textfield",
+                                            "input": true
+                                        }
+                                    ],
+                                    "width": 6,
+                                    "offset": 0,
+                                    "push": 0,
+                                    "pull": 0,
+                                    "size": "md",
+                                    "currentWidth": 6
+                                },
+                                {
+                                    "components": [
+                                        {
+                                            "label": "Number of Cells Injected",
+                                            "tableView": true,
+                                            "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx1/numCellsInjected",
+                                            "type": "textfield",
+                                            "input": true
+                                        },
+                                        {
+                                            "label": "Injection Type",
+                                            "widget": "choicesjs",
+                                            "tableView": true,
+                                            "data": {
+                                                "values": [
+                                                    {
+                                                        "label": "Subcutaneous",
+                                                        "value": "subcutaneous"
+                                                    },
+                                                    {
+                                                        "label": "Orthotopic",
+                                                        "value": "orthotopic"
+                                                    }
+                                                ]
+                                            },
+                                            "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx1/injectionType",
+                                            "type": "select",
+                                            "input": true
+                                        }
+                                    ],
+                                    "width": 6,
+                                    "offset": 0,
+                                    "push": 0,
+                                    "pull": 0,
+                                    "size": "md",
+                                    "currentWidth": 6
+                                }
+                            ],
+                            "key": "columns8",
+                            "type": "columns",
+                            "input": false,
+                            "tableView": false
+                        }
+                    ],
+                    "collapsed": false
+                },
+
+                // Cell Line 2
+                {
+                    "title": "Tumor Model",
+                    "collapsible": true,
+                    "hidden": true,
+                    "key": "cellLine2",
+                    "conditional": {
+                        "show": true,
+                        "when": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/xenograftType2",
+                        "eq": "Cell Line"
+                    },
+                    "type": "panel",
+                    "label": "Tumor Model",
+                    "input": false,
+                    "tableView": false,
+                    "components": [
+                        {
+                            "label": "Columns",
+                            "columns": [
+                                {
+                                    "components": [
+                                        {
+                                            "label": "Cell Line",
+                                            "widget": "choicesjs",
+                                            "tableView": true,
+                                            "dataSrc": "custom",
+                                            "data": {
+                                                "custom": "var values;\nXNAT.xhr.get({\n  url: '/xapi/pixi/cellline',\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    values = data;\n  }\n});"
+                                            },
+                                            "idPath": "externalID",
+                                            "valueProperty": "externalID",
+                                            "template": "<span>{{ item.externalID }}</span>",
+                                            "validate": {
+                                                "required": true
+                                            },
+                                            "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine2/externalID",
+                                            "type": "select",
+                                            "input": true
+                                        },
+                                        {
+                                            "label": "New Cell Line",
+                                            "action": "custom",
+                                            "showValidations": false,
+                                            "theme": "warning",
+                                            "size": "sm",
+                                            "tableView": false,
+                                            "key": "newCellLineButton2",
+                                            "type": "button",
+                                            "custom": "XNAT.ui.dialog.open({\n        title: \"New Cell Line\",\n        content: '<div id=\"cellline-modal-form-container\"></div>',\n        beforeShow: async function(obj) {\n\n            let form;\n\n            XNAT.xhr.getJSON({\n                url: XNAT.url.restUrl('/xapi/pixi/cellline/form'),\n                async: false,\n                success: function(json) {\n                    form = json;\n                },\n                error: function(error) {\n                    console.log(error);\n                    error.status = error.status || '';\n                    XNAT.ui.dialog.open({\n                        title: 'Error',\n                        content: '<p><strong>Error ' + error.status + ': '+ error.statusText+'</strong></p><p>' + error.responseText + '</p>',\n                        buttons: [{\n                            label: 'OK',\n                            action: function () { XNAT.ui.dialog.closeAll(); }\n                        }]\n                    });\n                }\n            })\n\n\n            let formObj = await Formio.createForm(document.getElementById('cellline-modal-form-container'), form);\n            formObj.nosubmit = true;\n\n            formObj.on('submit', submission => {\n                handleFormSubmit(submission);\n            })\n\n            formObj.on('submitError', error => {\n                formObj.alert.remove()\n            })\n\n\n            async function handleFormSubmit(submission) {\n                const dataUrl =  XNAT.url.restUrl('/xapi/pixi/cellline');\n\n                const response = await fetch(dataUrl, {\n                    method: 'POST',\n                    body: JSON.stringify(submission.data),\n                    headers: {'Content-Type': 'application/json'}\n                })\n\n                if (response.ok) {\n                    formObj.emit('submitDone', submission);\n                    XNAT.ui.dialog.closeAll();\n                } else {\n                    const status = response.status;\n                    const errorMsg = await response.text();\n                    xmodal.alert({ title: 'Error', content: 'Error '+ status +': '+ errorMsg });\n                    formObj.emit('submitError', 'Error '+ status +': '+ errorMsg)\n                }\n            }\n        },\n        buttons: []\n    })",
+                                            "input": true,
+                                        }
+                                    ],
+                                    "width": 6,
+                                    "offset": 0,
+                                    "push": 0,
+                                    "pull": 0,
+                                    "size": "md",
+                                    "currentWidth": 6
+                                },
+                                {
+                                    "components": [
+                                        {
+                                            "label": "Injection Date",
+                                            "format": "yyyy-MM-dd",
+                                            "tableView": false,
+                                            "enableMinDateInput": false,
+                                            "datePicker": {
+                                                "disableWeekends": false,
+                                                "disableWeekdays": false
+                                            },
+                                            "enableMaxDateInput": false,
+                                            "enableTime": false,
+                                            "validate": {
+                                                "required": true
+                                            },
+                                            "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine2/injectionDate",
+                                            "type": "datetime",
+                                            "input": true,
+                                            "widget": {
+                                                "type": "calendar",
+                                                "displayInTimezone": "viewer",
+                                                "locale": "en",
+                                                "useLocaleSettings": false,
+                                                "allowInput": true,
+                                                "mode": "single",
+                                                "enableTime": false,
+                                                "noCalendar": false,
+                                                "format": "yyyy-MM-dd",
+                                                "hourIncrement": 1,
+                                                "minuteIncrement": 1,
+                                                "time_24hr": false,
+                                                "minDate": null,
+                                                "disableWeekends": false,
+                                                "disableWeekdays": false,
+                                                "maxDate": null
+                                            }
+                                        }
+                                    ],
+                                    "size": "md",
+                                    "width": 6,
+                                    "offset": 0,
+                                    "push": 0,
+                                    "pull": 0,
+                                    "currentWidth": 6
+                                }
+                            ],
+                            "key": "columns1",
+                            "type": "columns",
+                            "input": false,
+                            "tableView": false
+                        },
+                        {
+                            "label": "Columns",
+                            "columns": [
+                                {
+                                    "components": [
+                                        {
+                                            "label": "Injection Site",
+                                            "tableView": true,
+                                            "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine2/injectionSite",
+                                            "type": "textfield",
+                                            "input": true
+                                        }
+                                    ],
+                                    "width": 6,
+                                    "offset": 0,
+                                    "push": 0,
+                                    "pull": 0,
+                                    "size": "md",
+                                    "currentWidth": 6
+                                },
+                                {
+                                    "components": [
+                                        {
+                                            "label": "Number of Cells Injected",
+                                            "tableView": true,
+                                            "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine2/numCellsInjected",
+                                            "type": "textfield",
+                                            "input": true
+                                        },
+                                        {
+                                            "label": "Injection Type",
+                                            "widget": "choicesjs",
+                                            "tableView": true,
+                                            "data": {
+                                                "values": [
+                                                    {
+                                                        "label": "Subcutaneous",
+                                                        "value": "subcutaneous"
+                                                    },
+                                                    {
+                                                        "label": "Orthotopic",
+                                                        "value": "orthotopic"
+                                                    }
+                                                ]
+                                            },
+                                            "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine2/injectionType",
+                                            "type": "select",
+                                            "input": true
+                                        }
+                                    ],
+                                    "width": 6,
+                                    "offset": 0,
+                                    "push": 0,
+                                    "pull": 0,
+                                    "size": "md",
+                                    "currentWidth": 6
+                                }
+                            ],
+                            "key": "columns6",
+                            "type": "columns",
+                            "input": false,
+                            "tableView": false
+                        }
+                    ],
+                    "collapsed": false
+                },
+
+                // PDX 2
+                {
+                    "title": "Tumor Model",
+                    "collapsible": true,
+                    "hidden": true,
+                    "key": "pdxModel2",
+                    "conditional": {
+                        "show": true,
+                        "when": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/xenograftType2",
+                        "eq": "PDX"
+                    },
+                    "type": "panel",
+                    "label": "Tumor Model",
+                    "input": false,
+                    "tableView": false,
+                    "components": [
+                        {
+                            "label": "Columns",
+                            "columns": [
+                                {
+                                    "components": [
+                                        {
+                                            "label": "PDX",
+                                            "widget": "choicesjs",
+                                            "tableView": true,
+                                            "dataSrc": "custom",
+                                            "data": {
+                                                "custom": "var values;\nXNAT.xhr.get({\n  url: '/xapi/pixi/pdx',\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    values = data;\n  }\n});"
+                                            },
+                                            "idPath": "externalID",
+                                            "valueProperty": "externalID",
+                                            "template": "<span>{{ item.externalID }}</span>",
+                                            "validate": {
+                                                "required": true
+                                            },
+                                            "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx2/externalID",
+                                            "type": "select",
+                                            "input": true,
+                                        },
+                                        {
+                                            "label": "New PDX",
+                                            "action": "custom",
+                                            "showValidations": false,
+                                            "theme": "warning",
+                                            "size": "sm",
+                                            "tableView": false,
+                                            "key": "newCellLineButton2",
+                                            "type": "button",
+                                            "custom": "XNAT.ui.dialog.open({\n        title: \"New PDX\",\n        content: '<div id=\"pdx-modal-form-container\"></div>',\n        beforeShow: async function(obj) {\n\n            let form;\n\n            XNAT.xhr.getJSON({\n                url: XNAT.url.restUrl('/xapi/pixi/pdx/form'),\n                async: false,\n                success: function(json) {\n                    form = json;\n                },\n                error: function(error) {\n                    console.log(error);\n                    error.status = error.status || '';\n                    XNAT.ui.dialog.open({\n                        title: 'Error',\n                        content: '<p><strong>Error ' + error.status + ': '+ error.statusText+'</strong></p><p>' + error.responseText + '</p>',\n                        buttons: [{\n                            label: 'OK',\n                            action: function () { XNAT.ui.dialog.closeAll(); }\n                        }]\n                    });\n                }\n            })\n\n\n            let formObj = await Formio.createForm(document.getElementById('pdx-modal-form-container'), form);\n            formObj.nosubmit = true;\n\n            formObj.on('submit', submission => {\n                handleFormSubmit(submission);\n            })\n\n            formObj.on('submitError', error => {\n                formObj.alert.remove()\n            })\n\n\n            async function handleFormSubmit(submission) {\n                const dataUrl =  XNAT.url.restUrl('/xapi/pixi/pdx');\n\n                const response = await fetch(dataUrl, {\n                    method: 'POST',\n                    body: JSON.stringify(submission.data),\n                    headers: {'Content-Type': 'application/json'}\n                })\n\n                if (response.ok) {\n                    formObj.emit('submitDone', submission);\n                    XNAT.ui.dialog.closeAll();\n                } else {\n                    const status = response.status;\n                    const errorMsg = await response.text();\n                    xmodal.alert({ title: 'Error', content: 'Error '+ status +': '+ errorMsg });\n                    formObj.emit('submitError', 'Error '+ status +': '+ errorMsg)\n                }\n            }\n        },\n        buttons: []\n    })",
+                                            "input": true,
+                                        }
+                                    ],
+                                    "width": 6,
+                                    "offset": 0,
+                                    "push": 0,
+                                    "pull": 0,
+                                    "size": "md",
+                                    "currentWidth": 6
+                                },
+                                {
+                                    "components": [
+                                        {
+                                            "label": "Injection Date",
+                                            "format": "yyyy-MM-dd",
+                                            "tableView": false,
+                                            "enableMinDateInput": false,
+                                            "datePicker": {
+                                                "disableWeekends": false,
+                                                "disableWeekdays": false
+                                            },
+                                            "enableMaxDateInput": false,
+                                            "enableTime": false,
+                                            "validate": {
+                                                "required": true
+                                            },
+                                            "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx2/injectionDate",
+                                            "type": "datetime",
+                                            "input": true,
+                                            "widget": {
+                                                "type": "calendar",
+                                                "displayInTimezone": "viewer",
+                                                "locale": "en",
+                                                "useLocaleSettings": false,
+                                                "allowInput": true,
+                                                "mode": "single",
+                                                "enableTime": false,
+                                                "noCalendar": false,
+                                                "format": "yyyy-MM-dd",
+                                                "hourIncrement": 1,
+                                                "minuteIncrement": 1,
+                                                "time_24hr": false,
+                                                "minDate": null,
+                                                "disableWeekends": false,
+                                                "disableWeekdays": false,
+                                                "maxDate": null
+                                            }
+                                        }
+                                    ],
+                                    "size": "md",
+                                    "width": 6,
+                                    "offset": 0,
+                                    "push": 0,
+                                    "pull": 0,
+                                    "currentWidth": 6
+                                }
+                            ],
+                            "key": "columns2",
+                            "type": "columns",
+                            "input": false,
+                            "tableView": false
+                        },
+                        {
+                            "label": "Columns",
+                            "columns": [
+                                {
+                                    "components": [
+                                        {
+                                            "label": "PDX Passage Number",
+                                            "tableView": true,
+                                            "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx2[@xsi:type=pixi:pdx]/passage",
+                                            "type": "textfield",
+                                            "input": true
+                                        },
+                                        {
+                                            "label": "Injection Site",
+                                            "tableView": true,
+                                            "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx2/injectionSite",
+                                            "type": "textfield",
+                                            "input": true
+                                        }
+                                    ],
+                                    "width": 6,
+                                    "offset": 0,
+                                    "push": 0,
+                                    "pull": 0,
+                                    "size": "md",
+                                    "currentWidth": 6
+                                },
+                                {
+                                    "components": [
+                                        {
+                                            "label": "Number of Cells Injected",
+                                            "tableView": true,
+                                            "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx2/numCellsInjected",
+                                            "type": "textfield",
+                                            "input": true
+                                        },
+                                        {
+                                            "label": "Injection Type",
+                                            "widget": "choicesjs",
+                                            "tableView": true,
+                                            "data": {
+                                                "values": [
+                                                    {
+                                                        "label": "Subcutaneous",
+                                                        "value": "subcutaneous"
+                                                    },
+                                                    {
+                                                        "label": "Orthotopic",
+                                                        "value": "orthotopic"
+                                                    }
+                                                ]
+                                            },
+                                            "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx2/injectionType",
+                                            "type": "select",
+                                            "input": true
+                                        }
+                                    ],
+                                    "width": 6,
+                                    "offset": 0,
+                                    "push": 0,
+                                    "pull": 0,
+                                    "size": "md",
+                                    "currentWidth": 6
+                                }
+                            ],
+                            "key": "columns8",
+                            "type": "columns",
+                            "input": false,
+                            "tableView": false
+                        }
+                    ],
+                    "collapsed": false
+                },
+
+
+            ]};
+
+
+        formIOObjSubj = await Formio.createForm(document.getElementById('formio-subject'), formComponents, formOptions);
+        formIOObjSubj.submission = {data:formData};
+    }
+
+    function validate(){
+        var isValid = true;
+        if (typeof formIOObjSubj !== undefined) {
+            isValid = formIOObjSubj.checkValidity(formIOObjSubj.submission.data);
+            if (!isValid) {
+                formIOObjSubj.submit();
+            } else {
+                modifyElementNames();
+            }
+        }
+        return isValid;
+    }
+
+    initForm()
+
+    jq('#editSubjectForm').submit(function(e){
+        var isValid = validate();
+        if (!isValid) {
+            return false;
+        }
+    });
+
+</script>
+
+
+
+
+
+<div id="formio"  data-id="$!om.getId()" data-type="$!om.getXSIType()" data-project="$!om.getProject()"></div>
+
+<script type="text/javascript">
+    var formOptions = {};
+</script>
+
+#parse('screens/formsioIncludes.vm')
+
+
+
+<!-- END xnat-templates/screens/xnat_subjectData/edit/parameters.vm -->
