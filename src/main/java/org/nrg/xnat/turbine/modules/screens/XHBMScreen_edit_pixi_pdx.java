@@ -6,12 +6,13 @@ import org.nrg.config.entities.Configuration;
 import org.nrg.config.services.ConfigService;
 import org.nrg.xdat.XDAT;
 import org.nrg.xdat.turbine.modules.screens.SecureScreen;
+import org.nrg.xnatx.plugins.pixi.PIXIPlugin;
 
 public class XHBMScreen_edit_pixi_pdx extends SecureScreen {
     @Override
     protected void doBuildTemplate(RunData runData, Context context) throws Exception {
         ConfigService configService = XDAT.getConfigService();
-        Configuration config = configService.getConfig("forms", "datatype/xhbm:pixi:pdx");
+        Configuration config = configService.getConfig("forms", "datatype/" + PIXIPlugin.PIXI_PDX_DATATYPE);
 
         String customFormJson = null;
         if (null != config) {

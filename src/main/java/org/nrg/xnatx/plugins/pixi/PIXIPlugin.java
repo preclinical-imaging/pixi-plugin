@@ -1,12 +1,12 @@
 package org.nrg.xnatx.plugins.pixi;
 
 import lombok.extern.slf4j.Slf4j;
+import org.nrg.config.entities.Configuration;
 import org.nrg.config.exceptions.ConfigServiceException;
 import org.nrg.config.services.ConfigService;
 import org.nrg.framework.annotations.XnatDataModel;
 import org.nrg.framework.annotations.XnatPlugin;
-import org.nrg.xdat.om.PixiModelcreation;
-import org.nrg.xdat.om.PixiTreatment;
+import org.nrg.xdat.om.PixiAnimaldemographicdata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 
@@ -21,14 +21,11 @@ import java.util.stream.Collectors;
 @XnatPlugin(value = "PIXIPlugin", name = "PIXI Plugin",
             logConfigurationFile = "pixi-logback.xml",
             entityPackages = "org.nrg.xnatx.plugins.pixi.entities",
-            dataModels = {@XnatDataModel(value = PixiModelcreation.SCHEMA_ELEMENT_NAME,
-                                         singular = "Model Creation",
-                                         plural = "Model Creations",
-                                         code = "MC"),
-                          @XnatDataModel(value = PixiTreatment.SCHEMA_ELEMENT_NAME,
-                                         singular = "Treatment",
-                                         plural = "Treatments",
-                                         code = "T")})
+            dataModels = {@XnatDataModel(value = PixiAnimaldemographicdata.SCHEMA_ELEMENT_NAME,
+                                         singular = "Animal Demographic Data",
+                                         plural = "Animal Demographics",
+                                         code = "AD"),
+                          })
 @ComponentScan({"org.nrg.xnatx.plugins.pixi.entities",
                 "org.nrg.xnatx.plugins.pixi.repositories",
                 "org.nrg.xnatx.plugins.pixi.services.impl",
@@ -36,13 +33,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PIXIPlugin {
 
+    public static final String PIXI_PDX_DATATYPE = "xhbm:pixi:pdx";
+    public static final String PIXI_CELLLINE_DATATYPE = "xhbm:pixi:cellLine";
+
     private final ConfigService configService;
     private static final Map<String, String> jsonFormFiles;
     static {
         jsonFormFiles = new HashMap<>();
-        jsonFormFiles.put("xnat:subjectData", "/forms/pixi/preclinical-subject.json");
-        jsonFormFiles.put("xhbm:pixi:animalModel", "/forms/pixi/animal-model.json");
-        jsonFormFiles.put("xhbm:pixi:pdx", "/forms/pixi/pdx.json");
+        jsonFormFiles.put(PIXI_PDX_DATATYPE, "/forms/pixi/pdx.json");
+        jsonFormFiles.put(PIXI_CELLLINE_DATATYPE, "/forms/pixi/cellLine.json");
     }
 
     @Autowired
@@ -52,21 +51,25 @@ public class PIXIPlugin {
     }
 
     private void initializePIXIForms() {
-        // TODO: This will overwrite on every restart. Need to check for an existing form.
-        jsonFormFiles.forEach((datatype,fileName) -> {
-            String jsonForm = getJsonFormFromFile(fileName);
-            storeJsonFormConfig(datatype, jsonForm);
+        jsonFormFiles.forEach((xsiType,fileName) -> {
+            String jsonForm = getJsonFromFile(fileName);
+            storeJsonFormConfig(xsiType, jsonForm);
         });
     }
 
-    private String getJsonFormFromFile(final String fileName) {
+    private String getJsonFromFile(final String fileName) {
         InputStream in = getClass().getResourceAsStream(fileName);
         return (new BufferedReader(new InputStreamReader(in))).lines().collect(Collectors.joining());
     }
 
-    private void storeJsonFormConfig(final String datatype, final String jsonForm) {
+    private void storeJsonFormConfig(final String xsiType, final String jsonForm) {
         try {
-            configService.replaceConfig("admin", "", "forms", "datatype/" + datatype, true, jsonForm);
+            final String tool = "forms";
+            final String path = "datatype/" + xsiType;
+            Configuration c = configService.getConfig(tool, path);
+            if (c == null) {
+                configService.replaceConfig("admin", "", "forms", "datatype/" + xsiType, true, jsonForm);
+            }
         } catch (ConfigServiceException e) {
             e.printStackTrace();
         }

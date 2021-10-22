@@ -11,5 +11,5 @@ import lombok.extern.slf4j.Slf4j;
 @SuperBuilder
 @EqualsAndHashCode(callSuper = false)
 @Slf4j
-public class PDX extends Xenograft {
+public class CellLine extends Xenograft{
 }

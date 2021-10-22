@@ -1,6 +1,6 @@
 {
   "display": "form",
-  "title": "Patient Derived Xenograft",
+  "title": "Cell Line",
   "components": [
     {
       "label": "Columns",
@@ -8,8 +8,8 @@
         {
           "components": [
             {
-              "label": "PDX ID",
-              "description": "The original ID at the data source providing this PDX model line. Example: WHIM20",
+              "label": "Cell Line ID",
+              "description": "The original ID at the data source providing this cell line. Example: MCF-7",
               "tableView": true,
               "validate": {
                 "required": true
@@ -30,15 +30,15 @@
           "components": [
             {
               "label": "Source",
-              "description": "The source providing this PDX model line. Example: WUSTL",
+              "description": "The source providing this cell line.",
               "tableView": true,
               "key": "dataSource",
               "type": "textfield",
               "input": true
             },
             {
-              "label": "PDX URL",
-              "description": "Link to this PDX at the data source provider (if available).",
+              "label": "Cell Line URL",
+              "description": "Link to this cell line at the data source provider (if available).",
               "tableView": true,
               "key": "dataSourceURL",
               "type": "url",

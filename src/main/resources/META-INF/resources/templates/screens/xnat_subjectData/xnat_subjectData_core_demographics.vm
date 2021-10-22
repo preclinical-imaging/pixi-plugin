@@ -21,4 +21,36 @@
 </tr>
 #end
 
+#set($properties = [
+    ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/species", "Species"],
+    ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/strain", "Strain"],
+    ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine1/externalID", "Cell Line 1"],
+    ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine1/injectiondate", "Injection Date"],
+    ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine1/injectionSite", "Injection Site"],
+    ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine2/externalID", "Cell Line 2"],
+    ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine2/injectiondate", "Injection Date"],
+    ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine2/injectionSite", "Injection Site"],
+    ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx1/externalID", "PDX 1"],
+    ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx1/injectiondate", "Injection Date"],
+    ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx1/injectionSite", "Injection Site"],
+    ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx2/externalID", "PDX 2"],
+    ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx2/injectiondate", "Injection Date"],
+    ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx2/injectionSite", "Injection Site"]
+])
+
+#foreach ($property in $properties)
+
+    #set ($key = $property[0])
+    #set ($label = $property[1])
+
+    #if($subject.getProperty($key))
+    <tr>
+        <th align="left">$label</th>
+        <td>#escapeCleanHTML("$subject.getProperty($key)")</td>
+    </tr>
+    #end
+#end
+
+
+
 <!-- end /xnat-templates/screens/xnat_subjectData/xnat_subjectData_core_demographics.vm -->

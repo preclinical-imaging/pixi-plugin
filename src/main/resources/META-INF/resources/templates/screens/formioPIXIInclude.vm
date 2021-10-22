@@ -14,7 +14,7 @@
 
         const dataId = getID();
         if (dataId) { // Fetch data if editing
-            const dataUrl = (dataId) ? baseModelUrl + dataId : baseModelUrl // TODO Global
+            const dataUrl =  XNAT.url.restUrl((dataId) ? baseModelUrl + dataId : baseModelUrl);
             const response = await fetch(dataUrl, {
                 method: 'GET',
                 headers: {'Content-Type': 'application/json'}
@@ -36,7 +36,7 @@
 
     async function handleFormSubmit(submission) {
         const dataId = getID();
-        const dataUrl = (dataId) ? baseModelUrl + dataId : baseModelUrl// TODO Global
+        const dataUrl =  XNAT.url.restUrl((dataId) ? baseModelUrl + dataId : baseModelUrl);
 
         const response = await fetch(dataUrl, {
             method: dataId ? 'PUT' : 'POST', // UPDATE : CREATE

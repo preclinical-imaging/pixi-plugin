@@ -5,20 +5,16 @@ import org.apache.velocity.context.Context;
 import org.nrg.xdat.XDAT;
 import org.nrg.xdat.turbine.modules.screens.SecureScreen;
 import org.nrg.xnatx.plugins.pixi.entities.PDXEntity;
-import org.nrg.xnatx.plugins.pixi.models.AnimalModel;
-import org.nrg.xnatx.plugins.pixi.services.AnimalModelService;
-import org.nrg.xnatx.plugins.pixi.services.PDXService;
+import org.nrg.xnatx.plugins.pixi.models.PDX;
+import org.nrg.xnatx.plugins.pixi.services.XenograftService;
+import org.nrg.xnatx.plugins.pixi.services.impl.HibernatePDXEntityService;
 
 import java.util.List;
 
 public class PIXIDatatypeManager extends SecureScreen {
     @Override
     protected void doBuildTemplate(RunData runData, Context context) throws Exception {
-        AnimalModelService animalModelService = XDAT.getContextService().getBean(AnimalModelService.class);
-        List<AnimalModel> animalModels = animalModelService.getAllAnimalModels();
-        context.put("animalModels", animalModels);
-
-        PDXService pdxService = XDAT.getContextService().getBean(PDXService.class);
+        XenograftService<PDXEntity, PDX> pdxService = (HibernatePDXEntityService) XDAT.getContextService().getBean("PDXService");
         List<PDXEntity> pdxs = pdxService.getAll();
         context.put("pdxs", pdxs);
     }
