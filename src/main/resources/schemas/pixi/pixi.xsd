@@ -8,6 +8,7 @@
            attributeFormDefault="unqualified">
     <xs:import namespace="http://nrg.wustl.edu/xnat" schemaLocation="../xnat/xnat.xsd"/>
     <xs:element name="AnimalDemographicData" type="pixi:animalDemographicData"/>
+    <xs:element name="Weight" type="pixi:weightData"/>
     <xs:complexType name="animalDemographicData">
         <xs:annotation>
             <xs:appinfo>
@@ -117,6 +118,35 @@
             <xs:extension base="pixi:xenograft">
                 <xs:sequence>
                     <xs:element name="passage" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="weightData">
+        <xs:annotation>
+                <xs:documentation>An event in which a subject's weight is obtained outside the context of an imaging experiment.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="xnat:subjectAssessorData">
+                <xs:sequence>
+                    <xs:element name="weight">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:decimal">
+                                <xs:minExclusive value="0"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="unit" type="xs:string">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="g"/>
+                                <xs:enumeration value="kg"/>
+                                <xs:enumeration value="lbs"/>
+                                <xs:enumeration value="oz"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

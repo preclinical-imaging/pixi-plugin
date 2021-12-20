@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+$page.setTitle("XDAT")
+$page.setLinkColor($ui.alink)
+$page.setVlinkColor($ui.vlink)
+ ##---------------------------------------- 
+ ## DO NOT MODIFY THIS FILE HERE
+ ##
+ ## TO MODIFY, COPY THIS FILE to src/main/resources/templates/screens/ and modify it there 
+ ##----------------------------------------
+#set($months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"])
+#set($days = [ 1..31 ])
+#set($years = [ $!turbineUtils.getYear()..1900])
+#if ($data.message)
+<font color="red" size="3">$data.message</font>
+#end
+<p>
+<form ID="form1" name="form1" method="post" action="$link.setAction("ModifySubjectAssessorData")">
+<input type="hidden" name="project" value="$!{project}" >
+#if($vr)
+	<font color="red">Invalid parameters:<BR>$vr.toHTML()</font>
+<HR>
+#end
+
+	#set($weight_units = ["g", "kg", "lbs", "oz"])
+
+<TABLE width="100%">
+	<TR>
+		<TD>
+			<table width="100%">
+				<TR>
+					<TD align="left" valign="middle">
+						<DIV class="edit_title">Weight Details</DIV>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<TABLE width="100%">
+				<TR>
+					<TD valign="top">
+						<TABLE>
+							<TR><TD colspan='2'>
+								#parse("/screens/xnat_edit_subjectAssessorData.vm")
+							</TD></TR>
+							<tr>
+								<TD colspan="2">#parse("/screens/EditProjectSpecificFields.vm")</TD>
+							</tr>
+							<TR>#formLabelRequired("Date")<TD>#xdatDateBox("pixi:weightData/date" $item $vr $years)</TD></TR>
+							<TR>#formLabelRequired("Weight")<TD>#xdatTextBox("pixi:weightData/weight" $item "" $vr) #xdatSelectBoxWDefault("pixi:weightData/unit" $item $weight_units $vr)</TD></TR>
+						</TABLE>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+		#xdatEditProps($item $edit_screen)
+		<TR><TD COLSPAN=2 ALIGN=left><input type="button" ONCLICK="validateForm();"  name="eventSubmit_doInsert" value="Submit"/></TD></TR>
+		</TD>
+	</TR>
+</TABLE>
+</form>
+
+<script type="text/javascript">
+function validateForm()
+{
+	const month = document.getElementsByName("pixi:weightData/date.month")[0].value
+	const day = document.getElementsByName("pixi:weightData/date.date")[0].value
+	const year = document.getElementsByName("pixi:weightData/date.year")[0].value
+
+	if (month === 'bad' || day === 'bad' || year === 'bad') {
+		xmodal.message("Error", "Date is a required field.");
+		return false;
+	}
+
+	const weight = document.getElementById("pixi:weightData/weight").value;
+	const unit = document.getElementById("pixi:weightData/unit").value;
+
+	if (weight == null || weight === '') {
+		xmodal.message("Error", "Weight is a required field.");
+		return false;
+	} else if (weight <= 0) {
+		xmodal.message("Error", "Weight must be greater than 0.");
+		return false;
+	}
+
+	if (unit == null || unit === '') {
+		xmodal.message("Error", "Units for weight are required.");
+		return false;
+	}
+
+   validateSubjectAssessorForm();
+   return false;
+}
+</script>
