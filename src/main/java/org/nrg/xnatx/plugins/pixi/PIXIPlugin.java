@@ -7,6 +7,7 @@ import org.nrg.config.services.ConfigService;
 import org.nrg.framework.annotations.XnatDataModel;
 import org.nrg.framework.annotations.XnatPlugin;
 import org.nrg.xdat.om.PixiAnimaldemographicdata;
+import org.nrg.xdat.om.PixiWeightdata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 
@@ -25,6 +26,10 @@ import java.util.stream.Collectors;
                                          singular = "Animal Demographic Data",
                                          plural = "Animal Demographics",
                                          code = "AD"),
+                          @XnatDataModel(value = PixiWeightdata.SCHEMA_ELEMENT_NAME,
+                                         singular = "Weight",
+                                         plural = "Weights",
+                                         code = "WT"),
                           })
 @ComponentScan({"org.nrg.xnatx.plugins.pixi.entities",
                 "org.nrg.xnatx.plugins.pixi.repositories",
