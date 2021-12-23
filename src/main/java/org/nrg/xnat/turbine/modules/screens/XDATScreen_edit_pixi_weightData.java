@@ -9,6 +9,7 @@ import org.nrg.xft.ItemI;
 import org.nrg.xft.XFTItem;
 import org.nrg.xft.security.UserI;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
@@ -34,6 +35,8 @@ public class XDATScreen_edit_pixi_weightData extends EditSubjectAssessorScreen {
             final String label = subjectData.getLabel() + "_WT_" + count;
             pixiWeightdata.setLabel(label);
         }
+
+        pixiWeightdata.setDate(LocalDate.now());
 
         return pixiWeightdata.getItem();
     }
