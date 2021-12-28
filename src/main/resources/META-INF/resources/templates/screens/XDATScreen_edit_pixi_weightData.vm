@@ -48,7 +48,10 @@ $page.setVlinkColor($ui.vlink)
 								<TD colspan="2">#parse("/screens/EditProjectSpecificFields.vm")</TD>
 							</tr>
 							<TR>#formLabelRequired("Date")<TD>#xdatDateBox("pixi:weightData/date" $item $vr $years)</TD></TR>
+							<TR>#formLabel("Time")<TD><input type="time" id="pixi:weightData/time" name="pixi:weightData/time" step="1" value="$!item.getProperty("pixi:weightData/time")"></TD></TR>
+							<TR>#formLabel("Technician")<TD>#xdatStringBox("pixi:weightData/technician" $item "" $vr)</TD></TR>
 							<TR>#formLabelRequired("Weight")<TD>#xdatTextBox("pixi:weightData/weight" $item "" $vr) #xdatSelectBoxWDefault("pixi:weightData/unit" $item $weight_units $vr)</TD></TR>
+							<TR>#formLabel("Notes")<TD>#xdatTextArea("pixi:weightData/note" $item "" $vr 3 19)</TD></TR>
 						</TABLE>
 					</TD>
 				</TR>

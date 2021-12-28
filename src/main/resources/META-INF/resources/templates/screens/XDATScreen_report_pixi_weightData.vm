@@ -29,8 +29,11 @@ $page.setVlinkColor($ui.vlink)
 				<TR>
 					<TD valign="top">
 						<TABLE>
-							<TR><TD>Date: </TD><TD>$!item.getProperty("pixi:weightData/date")</TD></TR>
-							<TR><TD>Weight: </TD><TD>$!item.getProperty("pixi:weightData/weight") $!item.getStringProperty("pixi:weightData/unit")</TD></TR>
+							<TR><TD>Date</TD><TD>$!item.getProperty("pixi:weightData/date")</TD></TR>
+							<TR><TD>Time</TD><TD>$!item.getProperty("pixi:weightData/time")</TD></TR>
+							<TR><TD>Technician</TD><TD>$!item.getProperty("pixi:weightData/technician")</TD></TR>
+							<TR><TD>Weight</TD><TD>$!item.getProperty("pixi:weightData/weight") $!item.getStringProperty("pixi:weightData/unit")</TD></TR>
+							<TR><TD>Notes</TD><TD>$!item.getProperty("pixi:weightData/note")</TD></TR>
 						</TABLE>
 					</TD>
 					<TD valign="top" align="right">

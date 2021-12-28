@@ -121,6 +121,9 @@
     <DisplayField id="UNIT" header="Unit" visible="true" searchable="true">
         <DisplayFieldElement name="Field1" schema-element="pixi:weightData/unit"/>
     </DisplayField>
+    <DisplayField id="TECHNICIAN" header="Technician" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:weightData/technician"/>
+    </DisplayField>
     <DisplayVersion versionName="listing" default-order-by="DATE" default-sort-order="DESC" brief-description="Weight"
                     dark-color="9999CC" light-color="CCCCFF">
         <DisplayFieldRef id="RPT"/>
@@ -129,6 +132,7 @@
         <DisplayFieldRef id="DATE"/>
         <DisplayFieldRef id="WEIGHT"/>
         <DisplayFieldRef id="UNIT"/>
+        <DisplayFieldRef id="TECHNICIAN"/>
     </DisplayVersion>
     <DisplayVersion versionName="listing_csv" default-order-by="DATE" default-sort-order="DESC"
                     brief-description="Weight" dark-color="9999CC" light-color="CCCCFF">
@@ -138,6 +142,7 @@
         <DisplayFieldRef id="AGE"/>
         <DisplayFieldRef id="WEIGHT"/>
         <DisplayFieldRef id="UNIT"/>
+        <DisplayFieldRef id="TECHNICIAN"/>
     </DisplayVersion>
     <DisplayVersion versionName="full" default-order-by="DATE" default-sort-order="DESC" brief-description="Weight"
                     dark-color="9999CC" light-color="CCCCFF">
@@ -147,11 +152,13 @@
         <DisplayFieldRef id="AGE"/>
         <DisplayFieldRef id="WEIGHT"/>
         <DisplayFieldRef id="UNIT"/>
+        <DisplayFieldRef id="TECHNICIAN"/>
     </DisplayVersion>
     <DisplayVersion versionName="detailed" default-order-by="DATE" default-sort-order="DESC" brief-description="Weight"
                     dark-color="9999CC" light-color="CCCCFF">
         <DisplayFieldRef id="WEIGHT"/>
         <DisplayFieldRef id="UNIT"/>
+        <DisplayFieldRef id="TECHNICIAN"/>
     </DisplayVersion>
     <DisplayVersion versionName="project_bundle" default-order-by="DATE" default-sort-order="DESC"
                     brief-description="Weight" dark-color="9999CC" light-color="CCCCFF">
