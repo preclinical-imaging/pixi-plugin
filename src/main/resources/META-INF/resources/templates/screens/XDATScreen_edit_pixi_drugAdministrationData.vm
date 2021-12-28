@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC>
+$page.setTitle("XDAT")
+$page.setLinkColor($ui.alink)
+$page.setVlinkColor($ui.vlink)
+ ##---------------------------------------- 
+ ## DO NOT MODIFY THIS FILE HERE
+ ##
+ ## TO MODIFY, COPY THIS FILE to src/main/resources/templates/screens/ and modify it there 
+ ##----------------------------------------
+#set($months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"])
+#set($days = [ 1..31 ])
+#set($years = [ $!turbineUtils.getYear()..1900])
+#if ($data.message)
+<font color="red" size="3">$data.message</font>
+#end
+<p>
+<form ID="form1" name="form1" method="post" action="$link.setAction("ModifySubjectAssessorData")">
+<input type="hidden" name="project" value="$!{project}" >
+#if($vr)
+	<font color="red">Invalid parameters:<BR>$vr.toHTML()</font>
+<HR>
+#end
+
+#set($routes = [ "Oral", "Intravenous", "Intramuscular", "Subcutaneous", "Intraperitoneal" ])
+<datalist id="routes">
+	#foreach($route in $routes)
+	<option value="$route">
+	#end
+</datalist>
+
+<TABLE width="100%">
+	<TR>
+		<TD>
+			<table width="100%">
+				<TR>
+					<TD align="left" valign="middle">
+						<DIV class="edit_title">Drug Administration Details</DIV>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<TABLE width="100%">
+				<TR>
+					<TD valign="top">
+						<TABLE>
+							<TR><TD colspan='2'>
+								#parse("/screens/xnat_edit_subjectAssessorData.vm")
+							</TD></TR>
+							<tr>
+								<TD colspan="2">#parse("/screens/EditProjectSpecificFields.vm")</TD>
+							</tr>
+							<TR>#formLabelRequired("Date")<TD>#xdatDateBox("pixi:drugAdministrationData/date" $item $vr $years)</TD></TR>
+							<TR>#formLabel("Time")<TD><input type="time" id="pixi:drugAdministrationData/time" name="pixi:drugAdministrationData/time" step="1" value="$!item.getProperty("pixi:drugAdministrationData/time")"></TD></TR>
+							<TR>#formLabelRequired("Technician")<TD>#xdatStringBox("pixi:drugAdministrationData/technician" $item "" $vr)</TD></TR>
+							<TR>#formLabelRequired("Drug")<TD>#xdatStringBox("pixi:drugAdministrationData/drug" $item "" $vr)</TD></TR>
+							<TR>#formLabelRequired("Dose")<TD>#xdatTextBox("pixi:drugAdministrationData/dose" $item "" $vr)</TD></TR>
+							<TR>#formLabelRequired("Dose Unit")<TD>#xdatStringBox("pixi:drugAdministrationData/doseUnit" $item "" $vr)</TD></TR>
+							<TR>#formLabelRequired("Route")<TD><input list="routes" id="pixi:drugAdministrationData/route" name="pixi:drugAdministrationData/route" value="$!item.getProperty("pixi:drugAdministrationData/route")"></TD></TR>
+							<TR>#formLabelRequired("Site")<TD>#xdatStringBox("pixi:drugAdministrationData/site" $item "" $vr)</TD></TR>
+							<TR>#formLabel("Lot Number")<TD>#xdatStringBox("pixi:drugAdministrationData/lotNumber" $item "" $vr)</TD></TR>
+							<TR>#formLabel("Notes")<TD>#xdatTextArea("pixi:drugAdministrationData/note" $item "" $vr 3 19)</TD></TR>
+						</TABLE>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+		#xdatEditProps($item $edit_screen)
+		<TR><TD COLSPAN=2 ALIGN=left><input type="button" ONCLICK="validateForm();"  name="eventSubmit_doInsert" value="Submit"/></TD></TR>
+		</TD>
+	</TR>
+</TABLE>
+</form>
+
+<script type="text/javascript">
+function validateForm()
+{
+	const errors = [];
+
+	const month = document.getElementsByName("pixi:drugAdministrationData/date.month")[0].value
+	const day = document.getElementsByName("pixi:drugAdministrationData/date.date")[0].value
+	const year = document.getElementsByName("pixi:drugAdministrationData/date.year")[0].value
+
+	if (month === 'bad' || day === 'bad' || year === 'bad') {
+		errors.push("Date is a required field.");
+	}
+
+	function isValid(fieldID) {
+		const fieldValue = document.getElementById(fieldID).value;
+		return !(fieldValue == null || fieldValue === '');
+	}
+
+	if (!isValid("pixi:drugAdministrationData/technician")) {
+		errors.push("Technician is a required field.")
+	}
+
+	if (!isValid("pixi:drugAdministrationData/drug")) {
+		errors.push("Drug is a required field.");
+	}
+
+	if (!isValid("pixi:drugAdministrationData/dose")) {
+		errors.push("Dose is a required field.");
+	}
+
+	if (!isValid("pixi:drugAdministrationData/doseUnit")) {
+		errors.push("Dose Unit is a required field.");
+	}
+
+	if (!isValid("pixi:drugAdministrationData/route")) {
+		errors.push("Route is a required field.");
+	}
+
+	if (!isValid("pixi:drugAdministrationData/site")) {
+		errors.push("Site is a required field.");
+	}
+
+	if (errors.length > 0) {
+		xmodal.message("Error", errors.join("<br>"))
+		return false;
+	}
+
+   validateSubjectAssessorForm();
+   return false;
+}
+</script>

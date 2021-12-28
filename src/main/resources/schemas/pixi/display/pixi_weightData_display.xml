@@ -73,7 +73,7 @@
     <DisplayField id="PROJECT" header="Project" visible="true" searchable="true" data-type="string">
         <DisplayFieldElement name="Field1" schema-element="pixi:weightData.project"/>
     </DisplayField>
-    <DisplayField id="PIXI_WEIGHTDATA_PROJECT_IDENTIFIER" header="PIXI_WEIGHTDATA ID" visible="true" searchable="false"
+    <DisplayField id="PIXI_WEIGHTDATA_PROJECT_IDENTIFIER" header="Weight ID" visible="true" searchable="false"
                   data-type="string" xsi:type="SubQueryField">
         <Content type="sql">pixi_weightdata_project_id</Content>
         <HTML-Link>
@@ -139,7 +139,6 @@
         <DisplayFieldRef id="LABEL"/>
         <DisplayFieldRef id="SUBJECT_LABEL" element_name="xnat:subjectData"/>
         <DisplayFieldRef id="DATE"/>
-        <DisplayFieldRef id="AGE"/>
         <DisplayFieldRef id="WEIGHT"/>
         <DisplayFieldRef id="UNIT"/>
         <DisplayFieldRef id="TECHNICIAN"/>
@@ -149,7 +148,6 @@
         <DisplayFieldRef id="EXPT_ID"/>
         <DisplayFieldRef id="SUBJECT_LABEL" element_name="xnat:subjectData"/>
         <DisplayFieldRef id="DATE"/>
-        <DisplayFieldRef id="AGE"/>
         <DisplayFieldRef id="WEIGHT"/>
         <DisplayFieldRef id="UNIT"/>
         <DisplayFieldRef id="TECHNICIAN"/>
