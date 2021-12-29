@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+$page.setTitle("XDAT")
+$page.setLinkColor($ui.alink)
+$page.setVlinkColor($ui.vlink)
+#set($months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"])
+#set($days = [ 1..31 ])
+#set($years = [ $!turbineUtils.getYear()..1900])
+#if ($data.message)
+<font color="red" size="3">$data.message</font>
+#end
+<p>
+<form ID="form1" name="form1" method="post" action="$link.setAction("ModifySubjectAssessorData")">
+<input type="hidden" name="project" value="$!{project}" >
+#if($vr)
+	<font color="red">Invalid parameters:<BR>$vr.toHTML()</font>
+<HR>
+#end
+
+<datalist id="units">
+	<option value="mm">
+</datalist>
+
+<TABLE width="100%">
+	<TR>
+		<TD>
+			<table width="100%">
+				<TR>
+					<TD align="left" valign="middle">
+						<DIV class="edit_title">Caliper Measurement Details</DIV>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<TABLE width="100%">
+				<TR>
+					<TD valign="top">
+						<TABLE>
+							<TR><TD colspan='2'>
+								#parse("/screens/xnat_edit_subjectAssessorData.vm")
+							</TD></TR>
+							<tr>
+								<TD colspan="2">#parse("/screens/EditProjectSpecificFields.vm")</TD>
+							</tr>
+							<TR>#formLabelRequired("Date")<TD>#xdatDateBox("pixi:caliperMeasurementData/date" $item $vr $years)</TD></TR>
+							<TR>#formLabel("Time")<TD><input type="time" id="pixi:caliperMeasurementData/time" name="pixi:caliperMeasurementData/time" step="1" value="$!item.getProperty("pixi:caliperMeasurementData/time")"></TD></TR>
+							<TR>#formLabelRequired("Technician")<TD>#xdatStringBox("pixi:caliperMeasurementData/technician" $item "" $vr)</TD></TR>
+							<TR>#formLabelRequired("Length")<TD>#xdatTextBox("pixi:caliperMeasurementData/length" $item "" $vr)</TD></TR>
+							<TR>#formLabelRequired("Width")<TD>#xdatTextBox("pixi:caliperMeasurementData/width" $item "" $vr)</TD></TR>
+							<TR>#formLabelRequired("Unit")<TD><input list="units" id="pixi:caliperMeasurementData/unit" name="pixi:caliperMeasurementData/unit" value="$!item.getStringProperty("pixi:caliperMeasurementData/unit")"></TD></TR>
+							<TR>#formLabel("Notes")<TD>#xdatTextArea("pixi:caliperMeasurementData/note" $item "" $vr 3 19)</TD></TR>
+						</TABLE>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+		#xdatEditProps($item $edit_screen)
+		<TR><TD COLSPAN=2 ALIGN=left><input type="button" ONCLICK="validateForm();"  name="eventSubmit_doInsert" value="Submit"/></TD></TR>
+		</TD>
+	</TR>
+</TABLE>
+</form>
+
+<script type="text/javascript">
+function validateForm()
+{
+	const errors = [];
+
+	const month = document.getElementsByName("pixi:caliperMeasurementData/date.month")[0].value
+	const day = document.getElementsByName("pixi:caliperMeasurementData/date.date")[0].value
+	const year = document.getElementsByName("pixi:caliperMeasurementData/date.year")[0].value
+
+	if (month === 'bad' || day === 'bad' || year === 'bad') {
+		errors.push("Date is a required field.");
+	}
+
+	function isValid(fieldID) {
+		const fieldValue = document.getElementById(fieldID).value;
+		return !(fieldValue == null || fieldValue === '');
+	}
+
+	if (!isValid("pixi:caliperMeasurementData/technician")) {
+		errors.push("Technician is a required field.")
+	}
+
+	if (!isValid("pixi:caliperMeasurementData/length")) {
+		errors.push("Length is a required field.")
+	}
+
+	if (!isValid("pixi:caliperMeasurementData/width")) {
+		errors.push("Width is a required field.")
+	}
+
+	if (!isValid("pixi:caliperMeasurementData/unit")) {
+		errors.push("Unit is a required field.")
+	}
+
+	if (errors.length > 0) {
+		xmodal.message("Error", errors.join("<br>"))
+		return false;
+	}
+
+   validateSubjectAssessorForm();
+   return false;
+}
+</script>

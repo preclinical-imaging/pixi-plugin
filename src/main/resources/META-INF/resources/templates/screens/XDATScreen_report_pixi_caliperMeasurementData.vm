@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+$page.setTitle("Caliper Measurement Details")
+$page.setLinkColor($ui.alink)
+$page.setVlinkColor($ui.vlink)
+#if ($turbineUtils.GetPassedParameter("popup", $data))
+	#set ($popup = $turbineUtils.GetPassedParameter("popup", data) )
+	#set ($popup = "false")
+#end
+<TABLE width="100%">
+	<TR>
+		<TD>
+			<table width="100%">
+				<TR>
+					<TD align="left" valign="middle">
+						<font face="$ui.sansSerifFonts" size="3"><b>Caliper Measurement Details</b></font>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<TABLE width="100%">
+				<TR>
+					<TD valign="top">
+						<TABLE>
+							<TR><TD>Date</TD><TD>$!item.getProperty("pixi:caliperMeasurementData/date")</TD></TR>
+							<TR><TD>Time</TD><TD>$!item.getProperty("pixi:caliperMeasurementData/time")</TD></TR>
+							<TR><TD>Technician</TD><TD>$!item.getStringProperty("pixi:caliperMeasurementData/technician")</TD></TR>
+							<TR><TD>Length</TD><TD>$!item.getProperty("pixi:caliperMeasurementData/length") $!item.getStringProperty("pixi:caliperMeasurementData/unit")</TD></TR>
+							<TR><TD>Width</TD><TD>$!item.getProperty("pixi:caliperMeasurementData/width") $!item.getStringProperty("pixi:caliperMeasurementData/unit")</TD></TR>
+							<TR><TD>Volume</TD><TD>$!volume $!item.getStringProperty("pixi:caliperMeasurementData/unit")<sup>3</sup></TD></TR>
+							<TR><TD>Notes</TD><TD>$!item.getStringProperty("pixi:caliperMeasurementData/note")</TD></TR>
+						</TABLE>
+					</TD>
+					<TD valign="top" align="right">
+						#parse($turbineUtils.getTemplateName("actions",$om.getXSIType(),$project))
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+</TABLE><BR>#parse("/screens/ReportProjectSpecificFields.vm")

@@ -10,6 +10,7 @@
     <xs:element name="AnimalDemographicData" type="pixi:animalDemographicData"/>
     <xs:element name="Weight" type="pixi:weightData"/>
     <xs:element name="DrugAdministration" type="pixi:drugAdministrationData"/>
+    <xs:element name="CaliperMeasurement" type="pixi:caliperMeasurementData"/>
     <xs:complexType name="animalDemographicData">
         <xs:annotation>
             <xs:appinfo>
@@ -208,6 +209,48 @@
                     <xs:element name="technician" type="xs:string">
                         <xs:annotation>
                             <xs:documentation>Individual who administered this drug.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="caliperMeasurementData">
+        <xs:annotation>
+            <xs:documentation>An event in which a subject's tumor volume is measured manually with calipers.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="xnat:subjectAssessorData">
+                <xs:sequence>
+                    <xs:element name="length">
+                        <xs:annotation>
+                            <xs:documentation>The length of the tumor.</xs:documentation>
+                        </xs:annotation>
+                        <xs:simpleType>
+                            <xs:restriction base="xs:decimal">
+                                <xs:minExclusive value="0"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="width">
+                        <xs:annotation>
+                            <xs:documentation>The width of the tumor.</xs:documentation>
+                        </xs:annotation>
+                        <xs:simpleType>
+                            <xs:restriction base="xs:decimal">
+                                <xs:minExclusive value="0"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="unit" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>The unit of measurement used for both length and width.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="technician" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>Individual who took the measurement.</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                 </xs:sequence>

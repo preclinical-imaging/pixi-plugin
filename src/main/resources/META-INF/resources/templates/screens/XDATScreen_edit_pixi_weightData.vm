@@ -2,11 +2,6 @@
 $page.setTitle("XDAT")
 $page.setLinkColor($ui.alink)
 $page.setVlinkColor($ui.vlink)
- ##---------------------------------------- 
- ## DO NOT MODIFY THIS FILE HERE
- ##
- ## TO MODIFY, COPY THIS FILE to src/main/resources/templates/screens/ and modify it there 
- ##----------------------------------------
 #set($months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"])
 #set($days = [ 1..31 ])
 #set($years = [ $!turbineUtils.getYear()..1900])

@@ -1,7 +1,7 @@
 package org.nrg.xnat.turbine.modules.screens;
 import org.apache.turbine.util.RunData;
 import org.apache.velocity.context.Context;
-import org.nrg.xdat.om.PixiDrugadministrationdata;
+import org.nrg.xdat.om.PixiCalipermeasurementdata;
 import org.nrg.xft.ItemI;
 import org.nrg.xft.XFTItem;
 
@@ -11,22 +11,22 @@ import java.time.LocalDate;
  * @author XDAT
  *
  */
-public class XDATScreen_edit_pixi_drugAdministrationData extends EditSubjectAssessorScreen {
-	static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(XDATScreen_edit_pixi_drugAdministrationData.class);
+public class XDATScreen_edit_pixi_caliperMeasurementData extends EditSubjectAssessorScreen {
+	static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(XDATScreen_edit_pixi_caliperMeasurementData.class);
 	/* (non-Javadoc)
 	 * @see org.nrg.xdat.turbine.modules.screens.EditScreenA#getElementName()
 	 */
 	public String getElementName() {
-	    return "pixi:drugAdministrationData";
+	    return "pixi:caliperMeasurementData";
 	}
 	
 	public ItemI getEmptyItem(RunData data) throws Exception {
-		final PixiDrugadministrationdata pixiDrugadministrationdata =
-				new PixiDrugadministrationdata(XFTItem.NewItem(getElementName(), getUser()));
+		final PixiCalipermeasurementdata pixiCalipermeasurementdata =
+				new PixiCalipermeasurementdata(XFTItem.NewItem(getElementName(), getUser()));
 
-		pixiDrugadministrationdata.setDate(LocalDate.now());
+		pixiCalipermeasurementdata.setDate(LocalDate.now());
 
-		return pixiDrugadministrationdata.getItem();
+		return pixiCalipermeasurementdata.getItem();
 	}
 	/* (non-Javadoc)
 	 * @see org.nrg.xdat.turbine.modules.screens.SecureReport#finalProcessing(org.apache.turbine.util.RunData, org.apache.velocity.context.Context)

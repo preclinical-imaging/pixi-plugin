@@ -2,11 +2,6 @@
 $page.setTitle("Weight Details")
 $page.setLinkColor($ui.alink)
 $page.setVlinkColor($ui.vlink)
- ##---------------------------------------- 
- ## DO NOT MODIFY THIS FILE HERE
- ##
- ## TO MODIFY, COPY THIS FILE to src/main/resources/templates/screens/ and modify it there 
- ##----------------------------------------
 #if ($turbineUtils.GetPassedParameter("popup", $data))
 	#set ($popup = $turbineUtils.GetPassedParameter("popup", $data) )
 	#set ($popup = "false")
