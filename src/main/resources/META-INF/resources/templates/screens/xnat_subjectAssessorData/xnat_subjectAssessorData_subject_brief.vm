@@ -1,0 +1,68 @@
+#if($subject)
+
+	#set($part_id = $subject.getStringProperty("ID"))
+
+	<tr>
+		<th align="left">$displayManager.getSingularDisplayNameForSubject():</th>
+		<td valign="center">
+			<A CLASS=b
+			   HREF="$link.setAction("DisplayItemAction").addPathInfo("search_element","xnat:subjectData").addPathInfo(
+				   "search_field","xnat:subjectData.ID").addPathInfo("search_value",$part_id).addPathInfo(
+				   "popup","$!popup").addPathInfo("project",
+				   "$!project")">#if($project)$!subject.getIdentifier($project,false)#else$!subject.getId()#end</A>
+		</td>
+	</tr>
+
+    ## Core XNAT demographics copied from source
+    #if($subject.getDemographics().getXSIType().equals("xnat:demogrpahicData"))
+        #if($!subject.getGenderText())
+        <tr>
+            <th align="left">Gender:</th>
+            <td>$!subject.getGenderText()</td>
+        </tr>
+        #end
+        #if($subject.getHandedText())
+        <tr>
+            <th align="left">Handedness:</th>
+            <td>$!subject.getHandedText()</td>
+        </tr>
+        #end
+        #if($!subject.Cohort)
+        <tr>
+            <th align="left">Cohort:</th>
+            <td>$!subject.Cohort</td>
+        </tr>
+        #end
+		<tr>
+			<th align="left">Age:</th>
+			<td>$!om.getSubjectAge()</td>
+		</tr>
+
+	## PIXI Demographics
+    #elseif($subject.getDemographics().getXSIType().equals("pixi:animalDemographicData"))
+
+        #set($properties = [
+        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/species", "Species"],
+        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/strain", "Strain"]
+        ])
+
+        #foreach ($property in $properties)
+
+            #set ($key = $property[0])
+            #set ($label = $property[1])
+
+            #if($subject.getProperty($key))
+            <tr>
+                <th align="left">$label:</th>
+                <td>#escapeCleanHTML("$subject.getProperty($key)")</td>
+            </tr>
+            #end
+        #end
+
+    #end
+
+#else
+<tr>
+    <td>* $displayManager.getSingularDisplayNameForSubject() data unavailable</td>
+</tr>
+#end
