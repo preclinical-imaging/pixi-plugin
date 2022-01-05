@@ -24,7 +24,7 @@ $page.setVlinkColor($ui.vlink)
 			<table width="100%">
 				<TR>
 					<TD align="left" valign="middle">
-						<DIV class="edit_title">Weight Details</DIV>
+						<DIV class="edit_title">$om.getSchemaElement().getSingularDescription() Details</DIV>
 					</TD>
 				</TR>
 			</TABLE>
