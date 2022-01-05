@@ -8,7 +8,7 @@ import org.nrg.framework.annotations.XnatDataModel;
 import org.nrg.framework.annotations.XnatPlugin;
 import org.nrg.xdat.om.PixiAnimaldemographicdata;
 import org.nrg.xdat.om.PixiCalipermeasurementdata;
-import org.nrg.xdat.om.PixiDrugadministrationdata;
+import org.nrg.xdat.om.PixiDrugtherapydata;
 import org.nrg.xdat.om.PixiWeightdata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -32,10 +32,10 @@ import java.util.stream.Collectors;
                                          singular = "Weight",
                                          plural = "Weights",
                                          code = "WT"),
-                          @XnatDataModel(value = PixiDrugadministrationdata.SCHEMA_ELEMENT_NAME,
-                                         singular = "Drug Administration",
-                                         plural = "Drug Administrations",
-                                         code = "DA"),
+                          @XnatDataModel(value = PixiDrugtherapydata.SCHEMA_ELEMENT_NAME,
+                                         singular = "Drug Therapy",
+                                         plural = "Drug Therapies",
+                                         code = "DT"),
                           @XnatDataModel(value = PixiCalipermeasurementdata.SCHEMA_ELEMENT_NAME,
                                          singular = "Caliper Measurement",
                                          plural = "Caliper Measurements",

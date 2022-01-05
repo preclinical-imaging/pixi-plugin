@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Displays xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xdat/display.xsd"
-          schema-element="pixi:drugAdministrationData" full-description="DrugAdministration"
-          brief-description="DrugAdministration">
+          schema-element="pixi:drugTherapyData" full-description="DrugTherapy"
+          brief-description="DrugTherapy">
     <Arc name="PARTICIPANT_EXPERIMENT">
         <CommonField id="PART_ID" local-field="SUBJECT_ID"/>
         <CommonField id="DATE" local-field="DATE"/>
         <CommonField id="EXPT_ID" local-field="EXPT_ID"/>
     </Arc>
     <DisplayField id="SUBJECT_ID" header="Subject" visible="true" searchable="true">
-        <DisplayFieldElement name="Field1" schema-element="pixi:drugAdministrationData.subject_ID"/>
+        <DisplayFieldElement name="Field1" schema-element="pixi:drugTherapyData.subject_ID"/>
         <HTML-Link>
             <Property name="HREF" value="none"/>
             <Property name="ONCLICK" value="return rpt('@Field1','xnat:subjectData','xnat:subjectData.ID');">
@@ -17,11 +17,11 @@
         </HTML-Link>
     </DisplayField>
     <DisplayField id="EXPT_ID" header="ID" visible="true" searchable="true">
-        <DisplayFieldElement name="Field1" schema-element="pixi:drugAdministrationData.ID"/>
+        <DisplayFieldElement name="Field1" schema-element="pixi:drugTherapyData.ID"/>
         <HTML-Link>
             <Property name="HREF" value="none"/>
             <Property name="ONCLICK"
-                      value="return rpt('@Field1','pixi:drugAdministrationData','pixi:drugAdministrationData.ID');">
+                      value="return rpt('@Field1','pixi:drugTherapyData','pixi:drugTherapyData.ID');">
                 <InsertValue id="Field1" field="EXPT_ID"/>
             </Property>
         </HTML-Link>
@@ -31,16 +31,16 @@
         <HTML-Link>
             <Property name="HREF" value="none"/>
             <Property name="ONCLICK"
-                      value="return rpt('@Field1','pixi:drugAdministrationData','pixi:drugAdministrationData.ID');">
+                      value="return rpt('@Field1','pixi:drugTherapyData','pixi:drugTherapyData.ID');">
                 <InsertValue id="Field1" field="EXPT_ID"/>
             </Property>
         </HTML-Link>
     </DisplayField>
     <DisplayField id="DATE" header="Date" visible="true" searchable="true">
-        <DisplayFieldElement name="Field1" schema-element="pixi:drugAdministrationData.date"/>
+        <DisplayFieldElement name="Field1" schema-element="pixi:drugTherapyData.date"/>
     </DisplayField>
     <DisplayField id="AGE" header="Age" visible="true" searchable="true" data-type="integer">
-        <DisplayFieldElement name="Field1" schema-element="pixi:drugAdministrationData.date"/>
+        <DisplayFieldElement name="Field1" schema-element="pixi:drugTherapyData.date"/>
         <DisplayFieldElement name="Field2" schema-element="xnat:demographicData.dob"/>
         <DisplayFieldElement name="Field3" schema-element="xnat:demographicData.yob"/>
         <Content type="sql">CAST(COALESCE(FLOOR(CAST((CAST(((@Field1) - (@Field2))AS FLOAT4)/365) AS
@@ -48,24 +48,24 @@
         </Content>
     </DisplayField>
     <DisplayField header="Projects" id="PROJECTS" data-type="string">
-        <DisplayFieldElement name="Field1" viewName="PIXI_DRUGADMINISTRATIONDATA_PROJECTS" viewColumn="PROJECTS"/>
+        <DisplayFieldElement name="Field1" viewName="PIXI_DRUGTHERAPYDATA_PROJECTS" viewColumn="PROJECTS"/>
     </DisplayField>
     <DisplayField header="Label" id="LABEL" data-type="string">
-        <DisplayFieldElement name="Field1" schema-element="pixi:drugAdministrationData.ID"/>
-        <DisplayFieldElement name="Field2" schema-element="pixi:drugAdministrationData.label"/>
+        <DisplayFieldElement name="Field1" schema-element="pixi:drugTherapyData.ID"/>
+        <DisplayFieldElement name="Field2" schema-element="pixi:drugTherapyData.label"/>
         <Content type="sql">COALESCE(@Field2, @Field1)</Content>
         <HTML-Link>
-            <SecureLink elementName="pixi:drugAdministrationData">
+            <SecureLink elementName="pixi:drugTherapyData">
                 <securityMappingValue displayFieldId="PROJECTS"
-                                      schemaElementMap="pixi:drugAdministrationData/sharing/share/project"/>
-                <securityMappingValue displayFieldId="PROJECT" schemaElementMap="pixi:drugAdministrationData/project"/>
+                                      schemaElementMap="pixi:drugTherapyData/sharing/share/project"/>
+                <securityMappingValue displayFieldId="PROJECT" schemaElementMap="pixi:drugTherapyData/project"/>
             </SecureLink>
             <Property name="HREF"
-                      value="@WEBAPPapp/action/DisplayItemAction/search_value/@Field1/search_element/pixi:drugAdministrationData/search_field/pixi:drugAdministrationData.ID">
+                      value="@WEBAPPapp/action/DisplayItemAction/search_value/@Field1/search_element/pixi:drugTherapyData/search_field/pixi:drugTherapyData.ID">
                 <InsertValue id="Field1" field="EXPT_ID"/>
             </Property>
             <Property name="ONCLICK"
-                      value="return rpt('@Field1','pixi:drugAdministrationData','pixi:drugAdministrationData.ID');">
+                      value="return rpt('@Field1','pixi:drugTherapyData','pixi:drugTherapyData.ID');">
                 <InsertValue id="Field1" field="EXPT_ID"/>
             </Property>
             <Property name="TITLE" value="Inserted: @Field1 (@Field2)">
@@ -75,74 +75,74 @@
         </HTML-Link>
     </DisplayField>
     <DisplayField id="PROJECT" header="Project" visible="true" searchable="true" data-type="string">
-        <DisplayFieldElement name="Field1" schema-element="pixi:drugAdministrationData.project"/>
+        <DisplayFieldElement name="Field1" schema-element="pixi:drugTherapyData.project"/>
     </DisplayField>
-    <DisplayField id="PIXI_DRUGADMINISTRATIONDATA_PROJECT_IDENTIFIER" header="Drug Administration ID"
+    <DisplayField id="PIXI_DRUGTHERAPYDATA_PROJECT_IDENTIFIER" header="Drug Therapy ID"
                   visible="true" searchable="false" data-type="string" xsi:type="SubQueryField">
-        <Content type="sql">pixi_drugadministrationdata_project_id</Content>
+        <Content type="sql">pixi_drugtherapydata_project_id</Content>
         <HTML-Link>
-            <SecureLink elementName="pixi:drugAdministrationData">
+            <SecureLink elementName="pixi:drugTherapyData">
                 <securityMappingValue displayFieldId="PROJECTS"
-                                      schemaElementMap="pixi:drugAdministrationData/sharing/share/project"/>
-                <securityMappingValue displayFieldId="PROJECT" schemaElementMap="pixi:drugAdministrationData/project"/>
+                                      schemaElementMap="pixi:drugTherapyData/sharing/share/project"/>
+                <securityMappingValue displayFieldId="PROJECT" schemaElementMap="pixi:drugTherapyData/project"/>
             </SecureLink>
             <Property name="HREF"
-                      value="@WEBAPPapp/action/DisplayItemAction/search_value/@Field1/search_element/pixi:drugAdministrationData/search_field/pixi:drugAdministrationData.ID/project/@Field2">
+                      value="@WEBAPPapp/action/DisplayItemAction/search_value/@Field1/search_element/pixi:drugTherapyData/search_field/pixi:drugTherapyData.ID/project/@Field2">
                 <InsertValue id="Field1" field="EXPT_ID"/>
                 <InsertValue id="Field2" field="@WHERE"/>
             </Property>
         </HTML-Link>
         <SubQuery>SELECT DISTINCT COALESCE(label,sharing_share_xnat_experimentda_id) AS
-            pixi_drugadministrationdata_project_id,sharing_share_xnat_experimentda_id FROM ( SELECT
+            pixi_drugtherapydata_project_id,sharing_share_xnat_experimentda_id FROM ( SELECT
             sharing_share_xnat_experimentda_id,label FROM xnat_experimentdata_share WHERE project='@WHERE' UNION SELECT
             id,label FROM xnat_experimentData WHERE project='@WHERE' )SEARCH
         </SubQuery>
         <MappingColumns>
-            <MappingColumn schemaField="pixi:drugAdministrationData.ID"
+            <MappingColumn schemaField="pixi:drugTherapyData.ID"
                            queryField="sharing_share_xnat_experimentda_id"/>
         </MappingColumns>
     </DisplayField>
     <DisplayField id="INSERT_DATE" header="Inserted" visible="true" searchable="true" data-type="string">
-        <DisplayFieldElement name="Field1" schema-element="pixi:drugAdministrationData.meta.insert_date"/>
+        <DisplayFieldElement name="Field1" schema-element="pixi:drugTherapyData.meta.insert_date"/>
     </DisplayField>
     <DisplayField id="INSERT_USER" header="Creator" visible="true" searchable="true" data-type="string">
-        <DisplayFieldElement name="Field1" schema-element="pixi:drugAdministrationData.meta.insert_user.login"/>
+        <DisplayFieldElement name="Field1" schema-element="pixi:drugTherapyData.meta.insert_user.login"/>
     </DisplayField>
-    <DisplayField id="PIXI_DRUGADMINISTRATIONDATA_FIELD_MAP" header="Field" visible="true" searchable="false"
+    <DisplayField id="PIXI_DRUGTHERAPYDATA_FIELD_MAP" header="Field" visible="true" searchable="false"
                   data-type="string" xsi:type="SubQueryField">
         <Content type="sql">field</Content>
         <SubQuery>SELECT DISTINCT ON ( e.ID) e.ID AS expt_id,field FROM xnat_experimentData_field ef JOIN (SELECT
             ID,extension,element_name FROM xnat_experimentData e JOIN xdat_meta_element xme ON
-            e.extension=xme.xdat_meta_element_id WHERE xme.element_name='pixi:drugAdministrationData') e on
+            e.extension=xme.xdat_meta_element_id WHERE xme.element_name='pixi:drugTherapyData') e on
             ef.fields_field_xnat_experimentdat_id=e.id WHERE name='@WHERE'
         </SubQuery>
         <MappingColumns>
-            <MappingColumn schemaField="pixi:drugAdministrationData.ID" queryField="expt_id"/>
+            <MappingColumn schemaField="pixi:drugTherapyData.ID" queryField="expt_id"/>
         </MappingColumns>
     </DisplayField>
     <DisplayField id="DRUG" header="Drug" visible="true" searchable="true">
-        <DisplayFieldElement name="Field1" schema-element="pixi:drugAdministrationData/drug"/>
+        <DisplayFieldElement name="Field1" schema-element="pixi:drugTherapyData/drug"/>
     </DisplayField>
     <DisplayField id="DOSE" header="Dose" visible="true" searchable="true">
-        <DisplayFieldElement name="Field1" schema-element="pixi:drugAdministrationData/dose"/>
+        <DisplayFieldElement name="Field1" schema-element="pixi:drugTherapyData/dose"/>
     </DisplayField>
     <DisplayField id="DOSEUNIT" header="Dose Unit" visible="true" searchable="true">
-        <DisplayFieldElement name="Field1" schema-element="pixi:drugAdministrationData/doseUnit"/>
+        <DisplayFieldElement name="Field1" schema-element="pixi:drugTherapyData/doseUnit"/>
     </DisplayField>
     <DisplayField id="LOTNUMBER" header="Lot Number" visible="true" searchable="true">
-        <DisplayFieldElement name="Field1" schema-element="pixi:drugAdministrationData/lotNumber"/>
+        <DisplayFieldElement name="Field1" schema-element="pixi:drugTherapyData/lotNumber"/>
     </DisplayField>
     <DisplayField id="ROUTE" header="Route" visible="true" searchable="true">
-        <DisplayFieldElement name="Field1" schema-element="pixi:drugAdministrationData/route"/>
+        <DisplayFieldElement name="Field1" schema-element="pixi:drugTherapyData/route"/>
     </DisplayField>
     <DisplayField id="SITE" header="Site" visible="true" searchable="true">
-        <DisplayFieldElement name="Field1" schema-element="pixi:drugAdministrationData/site"/>
+        <DisplayFieldElement name="Field1" schema-element="pixi:drugTherapyData/site"/>
     </DisplayField>
     <DisplayField id="TECHNICIAN" header="Technician" visible="true" searchable="true">
-        <DisplayFieldElement name="Field1" schema-element="pixi:drugAdministrationData/technician"/>
+        <DisplayFieldElement name="Field1" schema-element="pixi:drugTherapyData/technician"/>
     </DisplayField>
     <DisplayVersion versionName="listing" default-order-by="DATE" default-sort-order="DESC"
-                    brief-description="DrugAdministration" dark-color="9999CC" light-color="CCCCFF">
+                    brief-description="DrugTherapy" dark-color="9999CC" light-color="CCCCFF">
         <DisplayFieldRef id="RPT"/>
         <DisplayFieldRef id="LABEL"/>
         <DisplayFieldRef id="SUBJECT_LABEL" element_name="xnat:subjectData"/>
@@ -155,7 +155,7 @@
         <DisplayFieldRef id="TECHNICIAN"/>
     </DisplayVersion>
     <DisplayVersion versionName="listing_csv" default-order-by="DATE" default-sort-order="DESC"
-                    brief-description="DrugAdministration" dark-color="9999CC" light-color="CCCCFF">
+                    brief-description="DrugTherapy" dark-color="9999CC" light-color="CCCCFF">
         <DisplayFieldRef id="LABEL"/>
         <DisplayFieldRef id="SUBJECT_LABEL" element_name="xnat:subjectData"/>
         <DisplayFieldRef id="DATE"/>
@@ -168,7 +168,7 @@
         <DisplayFieldRef id="TECHNICIAN"/>
     </DisplayVersion>
     <DisplayVersion versionName="full" default-order-by="DATE" default-sort-order="DESC"
-                    brief-description="DrugAdministration" dark-color="9999CC" light-color="CCCCFF">
+                    brief-description="DrugTherapy" dark-color="9999CC" light-color="CCCCFF">
         <DisplayFieldRef id="EXPT_ID"/>
         <DisplayFieldRef id="SUBJECT_LABEL" element_name="xnat:subjectData"/>
         <DisplayFieldRef id="DATE"/>
@@ -181,7 +181,7 @@
         <DisplayFieldRef id="TECHNICIAN"/>
     </DisplayVersion>
     <DisplayVersion versionName="detailed" default-order-by="DATE" default-sort-order="DESC"
-                    brief-description="DrugAdministration" dark-color="9999CC" light-color="CCCCFF">
+                    brief-description="DrugTherapy" dark-color="9999CC" light-color="CCCCFF">
         <DisplayFieldRef id="DRUG"/>
         <DisplayFieldRef id="DOSE"/>
         <DisplayFieldRef id="DOSEUNIT"/>
@@ -191,8 +191,8 @@
         <DisplayFieldRef id="TECHNICIAN"/>
     </DisplayVersion>
     <DisplayVersion versionName="project_bundle" default-order-by="DATE" default-sort-order="DESC"
-                    brief-description="DrugAdministration" dark-color="9999CC" light-color="CCCCFF">
-        <DisplayFieldRef id="PIXI_DRUGADMINISTRATIONDATA_PROJECT_IDENTIFIER"/>
+                    brief-description="DrugTherapy" dark-color="9999CC" light-color="CCCCFF">
+        <DisplayFieldRef id="PIXI_DRUGTHERAPYDATA_PROJECT_IDENTIFIER"/>
         <DisplayFieldRef id="SUB_PROJECT_IDENTIFIER" element_name="xnat:subjectData"/>
         <DisplayFieldRef id="DATE"/>
         <DisplayFieldRef id="DRUG"/>
@@ -202,12 +202,12 @@
         <DisplayFieldRef id="SITE"/>
         <DisplayFieldRef id="TECHNICIAN"/>
     </DisplayVersion>
-    <ViewLink alias="PIXI_DRUGADMINISTRATIONDATA_PROJECTS">
-        <Mapping TableName="PIXI_DRUGADMINISTRATIONDATA_PROJECTS">
-            <MappingColumn rootElement="pixi:drugAdministrationData" fieldElement="pixi:drugAdministrationData.ID"
+    <ViewLink alias="PIXI_DRUGTHERAPYDATA_PROJECTS">
+        <Mapping TableName="PIXI_DRUGTHERAPYDATA_PROJECTS">
+            <MappingColumn rootElement="pixi:drugTherapyData" fieldElement="pixi:drugTherapyData.ID"
                            mapsTo="id"/>
         </Mapping>
     </ViewLink>
-    <SQLView name="PIXI_DRUGADMINISTRATIONDATA_PROJECTS"
-             sql="SELECT id, '&lt;' || expt.project || '&gt;' || xs_a_concat(',&lt;' || shared.project || '&gt;') AS projects FROM xnat_experimentData expt LEFT JOIN xnat_experimentData_share shared ON expt.id=shared.sharing_share_xnat_experimentda_id LEFT JOIN xdat_meta_element xme ON expt.extension = xme.xdat_meta_element_id WHERE element_name='pixi:drugAdministrationData' GROUP BY expt.id,expt.project"/>
+    <SQLView name="PIXI_DRUGTHERAPYDATA_PROJECTS"
+             sql="SELECT id, '&lt;' || expt.project || '&gt;' || xs_a_concat(',&lt;' || shared.project || '&gt;') AS projects FROM xnat_experimentData expt LEFT JOIN xnat_experimentData_share shared ON expt.id=shared.sharing_share_xnat_experimentda_id LEFT JOIN xdat_meta_element xme ON expt.extension = xme.xdat_meta_element_id WHERE element_name='pixi:drugTherapyData' GROUP BY expt.id,expt.project"/>
 </Displays>

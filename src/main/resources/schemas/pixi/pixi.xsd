@@ -9,7 +9,7 @@
     <xs:import namespace="http://nrg.wustl.edu/xnat" schemaLocation="../xnat/xnat.xsd"/>
     <xs:element name="AnimalDemographicData" type="pixi:animalDemographicData"/>
     <xs:element name="Weight" type="pixi:weightData"/>
-    <xs:element name="DrugAdministration" type="pixi:drugAdministrationData"/>
+    <xs:element name="DrugTherapy" type="pixi:drugTherapyData"/>
     <xs:element name="CaliperMeasurement" type="pixi:caliperMeasurementData"/>
     <xs:complexType name="animalDemographicData">
         <xs:annotation>
@@ -164,7 +164,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="drugAdministrationData">
+    <xs:complexType name="drugTherapyData">
         <xs:annotation>
             <xs:documentation>An event in which a subject is administered a drug or medication.</xs:documentation>
         </xs:annotation>

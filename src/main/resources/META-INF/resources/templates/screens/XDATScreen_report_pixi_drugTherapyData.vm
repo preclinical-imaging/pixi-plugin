@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+$page.setTitle("Drug Therapy Details")
+$page.setLinkColor($ui.alink)
+$page.setVlinkColor($ui.vlink)
+#if ($turbineUtils.GetPassedParameter("popup", $data))
+	#set ($popup = $turbineUtils.GetPassedParameter("popup", data) )
+	#set ($popup = "false")
+#end
+<TABLE width="100%">
+	<TR>
+		<TD>
+			<table width="100%">
+				<TR>
+					<TD align="left" valign="middle">
+						<font face="$ui.sansSerifFonts" size="3"><b>Drug Therapy Details</b></font>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<TABLE width="100%">
+				<TR>
+					<TD valign="top">
+						<TABLE>
+							<TR><TD>Date</TD><TD>$!item.getProperty("pixi:drugTherapyData/date")</TD></TR>
+							<TR><TD>Time</TD><TD>$!item.getProperty("pixi:drugTherapyData/time")</TD></TR>
+							<TR><TD>Technician</TD><TD>$!item.getStringProperty("pixi:drugTherapyData/technician")</TD></TR>
+							<TR><TD>Drug</TD><TD>$!item.getStringProperty("pixi:drugTherapyData/drug")</TD></TR>
+							<TR><TD>Dose</TD><TD>$!item.getProperty("pixi:drugTherapyData/dose") $!item.getStringProperty("pixi:drugTherapyData/doseUnit")</TD></TR>
+							<TR><TD>Route</TD><TD>$!item.getStringProperty("pixi:drugTherapyData/route")</TD></TR>
+							<TR><TD>Site</TD><TD>$!item.getStringProperty("pixi:drugTherapyData/site")</TD></TR>
+							<TR><TD>Lot Number</TD><TD>$!item.getStringProperty("pixi:drugTherapyData/lotNumber")</TD></TR>
+							<TR><TD>Notes</TD><TD>$!item.getStringProperty("pixi:drugTherapyData/note")</TD></TR>
+						</TABLE>
+					</TD>
+					<TD valign="top" align="right">
+						#parse($turbineUtils.getTemplateName("actions",$om.getXSIType(),$project))
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+</TABLE><BR>#parse("/screens/ReportProjectSpecificFields.vm")
