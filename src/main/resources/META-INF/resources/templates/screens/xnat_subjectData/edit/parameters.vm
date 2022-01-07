@@ -67,118 +67,12 @@
                                     "label": "Species",
                                     "widget": "choicesjs",
                                     "tableView": true,
+                                    "dataSrc": "custom",
                                     "data": {
-                                        "values": [
-                                            {
-                                                "label": "Mus musculus (House mouse)",
-                                                "value": "Mus musculus"
-                                            },
-                                            {
-                                                "label": "Rattus norvegicus (common rat)",
-                                                "value": "Rattus norvegicus"
-                                            },
-                                            {
-                                                "label": "Felis",
-                                                "value": "Felis"
-                                            },
-                                            {
-                                                "label": "Felis catus (domestic cat)",
-                                                "value": "Felis catus"
-                                            },
-                                            {
-                                                "label": "Equus",
-                                                "value": "Equus"
-                                            },
-                                            {
-                                                "label": "Equus caballus (domestic horse)",
-                                                "value": "Equus caballus"
-                                            },
-                                            {
-                                                "label": "Ovis",
-                                                "value": "Ovis"
-                                            },
-                                            {
-                                                "label": "Ovis aries (domestic sheep)",
-                                                "value": "Ovis aries"
-                                            },
-                                            {
-                                                "label": "Sus",
-                                                "value": "Sus"
-                                            },
-                                            {
-                                                "label": "Sus scrofa",
-                                                "value": "Sus scrofa"
-                                            },
-                                            {
-                                                "label": "Capra",
-                                                "value": "Capra"
-                                            },
-                                            {
-                                                "label": "Capra hircus (domestic goat)",
-                                                "value": "Capra hircus"
-                                            },
-                                            {
-                                                "label": "Canis",
-                                                "value": "Canis"
-                                            },
-                                            {
-                                                "label": "Canis lupus",
-                                                "value": "Canis lupus"
-                                            },
-                                            {
-                                                "label": "Canis lupus familiaris (domestic dog)",
-                                                "value": "Canis lupus familiaris"
-                                            },
-                                            {
-                                                "label": "Bos",
-                                                "value": "Bos"
-                                            },
-                                            {
-                                                "label": "Bovinae",
-                                                "value": "Bovinae"
-                                            },
-                                            {
-                                                "label": "Bos taurus (domestic cow)",
-                                                "value": "Bos taurus"
-                                            },
-                                            {
-                                                "label": "Mus genus",
-                                                "value": "Mus genus"
-                                            },
-                                            {
-                                                "label": "Peromyscus leucopus (American white-footed mouse)",
-                                                "value": "Peromyscus leucopus"
-                                            },
-                                            {
-                                                "label": "Peromyscus maniculatus (Deer mouse)",
-                                                "value": "Peromyscus maniculatus"
-                                            },
-                                            {
-                                                "label": "Rattus",
-                                                "value": "Rattus"
-                                            },
-                                            {
-                                                "label": "Sigmodon genus (cotton rat)",
-                                                "value": "Sigmodon genus"
-                                            },
-                                            {
-                                                "label": "Cavia porcellus (domestic guinea pig)",
-                                                "value": "Cavia porcellus"
-                                            },
-                                            {
-                                                "label": "Mustela putorius furo (ferret)",
-                                                "value": "Mustela putorius furo"
-                                            },
-                                            {
-                                                "label": "Oryctolagus cuniculus (European rabbit)",
-                                                "value": "Oryctolagus cuniculus"
-                                            },
-                                            {
-                                                "label": "Callithrix jacchus (common marmoset)",
-                                                "value": "Callithrix jacchus"
-                                            }
-                                        ]
+                                        "custom": "var values;\nXNAT.xhr.get({\n  url: '/xapi/pixi/preferences/species',\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    data.sort((a,b) => a.id - b.id)\n    values = data;\n  }\n});"
                                     },
+                                    "valueProperty": "scientificName",
+                                    "template": "<span>{{ item.commonName }} / {{ item.scientificName }}</span>",
                                     "validate": {
                                         "required": true
                                     },

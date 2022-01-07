@@ -44,7 +44,9 @@ import java.util.stream.Collectors;
 @ComponentScan({"org.nrg.xnatx.plugins.pixi.entities",
                 "org.nrg.xnatx.plugins.pixi.repositories",
                 "org.nrg.xnatx.plugins.pixi.services.impl",
-                "org.nrg.xnatx.plugins.pixi.rest"})
+                "org.nrg.xnatx.plugins.pixi.rest",
+                "org.nrg.xnatx.plugins.pixi.preferences"
+})
 @Slf4j
 public class PIXIPlugin {
 

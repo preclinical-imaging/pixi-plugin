@@ -1,0 +1,36 @@
+###
+### Species Settings
+###
+
+speciesPreferencesPanel:
+  kind: panel
+  name: speciesPreferencesPanel
+  label: Species Settings
+  contents:
+    speciesPreferencesTable:
+      tag: "div#species-preferences-manager"
+    pixiSiteAdminScripts:
+      tag: script|src="~/scripts/xnat/plugin/pixi/pixi-siteAdmin.js"
+
+
+#################################################
+####  Root Site Admin Spawner Config Object  ####
+#################################################
+
+siteSettings:
+  kind: tabs
+  name: pixiAdminPage
+  label: Administer PIXI
+  meta:
+    tabGroups:
+      pixiTabGroup: PIXI
+  contains: tabs
+  tabs:
+    speciesSettingsTab:
+      kind: tab
+      name: speciesSettingsTab
+      label: Species Settings
+      group: pixiTabGroup
+      active: true
+      contents:
+        ${speciesPreferencesPanel}
