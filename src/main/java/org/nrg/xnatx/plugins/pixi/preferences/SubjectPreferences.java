@@ -17,19 +17,20 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.util.List;
 
-@NrgPreferenceBean(toolId = SpeciesPreferences.TOOL_ID,
-                   toolName = "PIXI Species Preferences",
-                   description = "Manages preferences and settings for PIXI species.")
+@NrgPreferenceBean(toolId = SubjectPreferences.TOOL_ID,
+                   toolName = "PIXI Subject Preferences",
+                   description = "Manages preferences and settings for PIXI subjects.")
 @Slf4j
-public class SpeciesPreferences extends AbstractPreferenceBean {
+public class SubjectPreferences extends AbstractPreferenceBean {
 
-    public static final String TOOL_ID = "pixi-species";
+    public static final String TOOL_ID = "pixi-subject";
     public static final String SPECIES_PREFERENCE_ID =  "species";
+    public static final String VENDOR_PREFERENCE_ID =  "vendors";
 
     private final NamedParameterJdbcTemplate template;
 
     @Autowired
-    protected SpeciesPreferences(final NrgPreferenceService preferenceService,
+    protected SubjectPreferences(final NrgPreferenceService preferenceService,
                                  final ConfigPaths configFolderPaths,
                                  final OrderedProperties initPrefs,
                                  final NamedParameterJdbcTemplate template) {
@@ -69,6 +70,23 @@ public class SpeciesPreferences extends AbstractPreferenceBean {
             setListValue(Scope.Project, projectId, SPECIES_PREFERENCE_ID, species);
         } catch (InvalidPreferenceName exception) {
             log.error("Error setting species preference for project: " + projectId, exception);
+        }
+    }
+
+    @NrgPreference(defaultValue = "[\n   " +
+                                    "{\"id\": \"1\", \"vendor\": \"Charles River Laboratories\"},\n   " +
+                                    "{\"id\": \"2\", \"vendor\": \"The Jackson Laboratory\"}\n" +
+                                  "]",
+            key = "id")
+    public List<Vendor> getVendors() {
+        return getListValue(VENDOR_PREFERENCE_ID);
+    }
+
+    public void setVendors(final List<Vendor> vendors) {
+        try {
+            setListValue(VENDOR_PREFERENCE_ID, vendors);
+        } catch (InvalidPreferenceName exception) {
+            log.error("Error setting vendor preference.", exception);
         }
     }
 

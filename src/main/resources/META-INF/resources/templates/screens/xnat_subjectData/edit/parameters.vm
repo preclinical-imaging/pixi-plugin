@@ -91,22 +91,12 @@
                                     "label": "Strain Source / Vendor",
                                     "widget": "choicesjs",
                                     "tableView": true,
+                                    "dataSrc": "custom",
                                     "data": {
-                                        "values": [
-                                            {
-                                                "label": "Charles River Laboratories",
-                                                "value": "CRL"
-                                            },
-                                            {
-                                                "label": "Jackson Laboratory",
-                                                "value": "JAX"
-                                            },
-                                            {
-                                                "label": "WUSTL",
-                                                "value": "wustl"
-                                            }
-                                        ]
+                                        "custom": "var values;\nXNAT.xhr.get({\n  url: '/xapi/pixi/preferences/vendors',\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    data.sort((a,b) => a.id - b.id)\n    values = data;\n  }\n});"
                                     },
+                                    "valueProperty": "vendor",
+                                    "template": "<span>{{ item.vendor }}</span>",
                                     "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/source",
                                     "type": "select",
                                     "input": true

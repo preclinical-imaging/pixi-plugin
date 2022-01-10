@@ -12,6 +12,18 @@ speciesPreferencesPanel:
     pixiSiteAdminScripts:
       tag: script|src="~/scripts/xnat/plugin/pixi/pixi-siteAdmin.js"
 
+###
+### Vendor Preferences
+###
+
+vendorPreferencesPanel:
+  kind: panel
+  name: vendorPreferencesPanel
+  label: Animal Vendors / Suppliers
+  contents:
+    vendorPreferencesTable:
+      tag: "div#vendor-preferences-manager"
+
 
 #################################################
 ####  Root Site Admin Spawner Config Object  ####
@@ -26,11 +38,12 @@ siteSettings:
       pixiTabGroup: PIXI
   contains: tabs
   tabs:
-    speciesSettingsTab:
+    subjectSettingsTab:
       kind: tab
-      name: speciesSettingsTab
-      label: Species Settings
+      name: subjectSettingsTab
+      label: Subject Settings
       group: pixiTabGroup
       active: true
       contents:
         ${speciesPreferencesPanel}
+        ${vendorPreferencesPanel}

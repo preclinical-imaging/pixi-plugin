@@ -14,18 +14,12 @@ import javax.validation.constraints.Positive;
 @Builder
 @EqualsAndHashCode(callSuper = false)
 @Slf4j
-public class Species {
-
+public class Vendor {
     @ApiModelProperty(required = true, position = 0)
     @NotNull @Positive
     private Integer id;
 
     @ApiModelProperty(required = true, position = 1)
     @NotBlank
-    private String scientificName;
-
-    @ApiModelProperty(required = true, position = 2)
-    @NotBlank
-    private String commonName;
-
+    private String vendor;
 }
