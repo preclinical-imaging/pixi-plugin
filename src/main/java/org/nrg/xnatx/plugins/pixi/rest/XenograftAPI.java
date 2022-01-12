@@ -59,5 +59,4 @@ public abstract class XenograftAPI<E extends XenograftEntity, T extends Xenograf
         xenograftService.deleteXenograft(id);
     }
 
-    public abstract String getForm();
 }

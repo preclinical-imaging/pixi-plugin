@@ -1,9 +1,6 @@
 package org.nrg.xnatx.plugins.pixi;
 
 import lombok.extern.slf4j.Slf4j;
-import org.nrg.config.entities.Configuration;
-import org.nrg.config.exceptions.ConfigServiceException;
-import org.nrg.config.services.ConfigService;
 import org.nrg.framework.annotations.XnatDataModel;
 import org.nrg.framework.annotations.XnatPlugin;
 import org.nrg.xdat.om.PixiAnimaldemographicdata;
@@ -12,13 +9,6 @@ import org.nrg.xdat.om.PixiDrugtherapydata;
 import org.nrg.xdat.om.PixiWeightdata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @XnatPlugin(value = "PIXIPlugin", name = "PIXI Plugin",
@@ -50,45 +40,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PIXIPlugin {
 
-    public static final String PIXI_PDX_DATATYPE = "xhbm:pixi:pdx";
-    public static final String PIXI_CELLLINE_DATATYPE = "xhbm:pixi:cellLine";
-
-    private final ConfigService configService;
-    private static final Map<String, String> jsonFormFiles;
-    static {
-        jsonFormFiles = new HashMap<>();
-        jsonFormFiles.put(PIXI_PDX_DATATYPE, "/forms/pixi/pdx.json");
-        jsonFormFiles.put(PIXI_CELLLINE_DATATYPE, "/forms/pixi/cellLine.json");
-    }
-
     @Autowired
-    public PIXIPlugin(final ConfigService configService) {
-        this.configService = configService;
-        initializePIXIForms();
-    }
-
-    private void initializePIXIForms() {
-        jsonFormFiles.forEach((xsiType,fileName) -> {
-            String jsonForm = getJsonFromFile(fileName);
-            storeJsonFormConfig(xsiType, jsonForm);
-        });
-    }
-
-    private String getJsonFromFile(final String fileName) {
-        InputStream in = getClass().getResourceAsStream(fileName);
-        return (new BufferedReader(new InputStreamReader(in))).lines().collect(Collectors.joining());
-    }
-
-    private void storeJsonFormConfig(final String xsiType, final String jsonForm) {
-        try {
-            final String tool = "forms";
-            final String path = "datatype/" + xsiType;
-            Configuration c = configService.getConfig(tool, path);
-            if (c == null) {
-                configService.replaceConfig("admin", "", "forms", "datatype/" + xsiType, true, jsonForm);
-            }
-        } catch (ConfigServiceException e) {
-            e.printStackTrace();
-        }
-    }
+    public PIXIPlugin() { }
 }

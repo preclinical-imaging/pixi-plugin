@@ -1,14 +1,18 @@
 ###
-### Species Settings
+### Species Preferences
 ###
 
 speciesPreferencesPanel:
   kind: panel
   name: speciesPreferencesPanel
-  label: Species Settings
+  label: Species
   contents:
     speciesPreferencesTable:
       tag: "div#species-preferences-manager"
+    pixiModuleScript:
+      tag: script|src="~/scripts/xnat/plugin/pixi/pixi-module.js"
+    pixiXenograftScripts:
+      tag: script|src="~/scripts/xnat/plugin/pixi/pixi-xenograft.js"
     pixiSiteAdminScripts:
       tag: script|src="~/scripts/xnat/plugin/pixi/pixi-siteAdmin.js"
 
@@ -23,6 +27,31 @@ vendorPreferencesPanel:
   contents:
     vendorPreferencesTable:
       tag: "div#vendor-preferences-manager"
+
+###
+### PDXs
+###
+
+pdxPanel:
+  kind: panel
+  name: pdxPanel
+  label: Patient-Derived Xenografts
+  contents:
+    vendorPreferencesTable:
+      tag: "div#pdx-manager"
+
+###
+### Cell Lines
+###
+
+cellLinePanel:
+  kind: panel
+  name: cellLinePanel
+  label: Cell Line Xenografts
+  contents:
+    vendorPreferencesTable:
+      tag: "div#cell-line-manager"
+
 
 
 #################################################
@@ -47,3 +76,13 @@ siteSettings:
       contents:
         ${speciesPreferencesPanel}
         ${vendorPreferencesPanel}
+    xenograftSettingsTab:
+      kind: tab
+      name: xenograftSettingsTab
+      label: Xenograft Management
+      group: pixiTabGroup
+      active: true
+      contents:
+        ${pdxPanel}
+        ${cellLinePanel}
+

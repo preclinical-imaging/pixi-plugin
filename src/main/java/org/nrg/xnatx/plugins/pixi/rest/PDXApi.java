@@ -5,8 +5,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
-import org.nrg.config.entities.Configuration;
-import org.nrg.config.services.ConfigService;
 import org.nrg.framework.annotations.XapiRestController;
 import org.nrg.xapi.exceptions.DataFormatException;
 import org.nrg.xapi.exceptions.NotFoundException;
@@ -16,7 +14,6 @@ import org.nrg.xapi.rest.XapiRequestMapping;
 import org.nrg.xdat.security.helpers.AccessLevel;
 import org.nrg.xdat.security.services.RoleHolder;
 import org.nrg.xdat.security.services.UserManagementServiceI;
-import org.nrg.xnatx.plugins.pixi.PIXIPlugin;
 import org.nrg.xnatx.plugins.pixi.entities.PDXEntity;
 import org.nrg.xnatx.plugins.pixi.models.PDX;
 import org.nrg.xnatx.plugins.pixi.services.XenograftService;
@@ -35,15 +32,11 @@ import java.util.List;
 @Slf4j
 public class PDXApi extends XenograftAPI<PDXEntity, PDX> {
 
-    private final ConfigService configService;
-
     @Autowired
     public PDXApi(final UserManagementServiceI userManagementService,
                   final RoleHolder roleHolder,
-                  final ConfigService configService,
                   final XenograftService<PDXEntity, PDX> pdxService) {
         super(userManagementService, roleHolder, pdxService, PDX.class);
-        this.configService = configService;
     }
 
     @Override
@@ -97,16 +90,4 @@ public class PDXApi extends XenograftAPI<PDXEntity, PDX> {
         super.delete(externalID);
     }
 
-    @Override
-    @ApiOperation(value = "Returns the create PDX form.", response = String.class)
-    @ApiResponses({@ApiResponse(code = 200, message = "PDX form successfully retrieved."),
-                   @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
-                   @ApiResponse(code = 500, message = "Unexpected error")})
-    @XapiRequestMapping(value = "/pdx/form", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-    public String getForm() {
-        final String tool = "forms";
-        final String path = "datatype/" + PIXIPlugin.PIXI_PDX_DATATYPE;
-        Configuration c = configService.getConfig(tool, path);
-        return c.getContents();
-    }
 }

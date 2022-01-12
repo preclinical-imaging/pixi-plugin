@@ -29,86 +29,6 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
     let undefined,
         restUrl = XNAT.url.restUrl
 
-    function spacer(width) {
-        return spawn('i.spacer', {
-            style: {
-                display: 'inline-block',
-                width: width + 'px'
-            }
-        })
-    }
-
-    function errorHandler(e, title, closeAll) {
-        console.log(e);
-        title = (title) ? 'Error Found: '+ title : 'Error';
-        closeAll = (closeAll === undefined) ? true : closeAll;
-        const errormsg = (e.statusText) ? '<p><strong>Error ' + e.status + ': '+ e.statusText+'</strong></p><p>' + e.responseText + '</p>' : e;
-        XNAT.dialog.open({
-            width: 450,
-            title: title,
-            content: errormsg,
-            buttons: [
-                {
-                    label: 'OK',
-                    isDefault: true,
-                    close: true,
-                    action: function() {
-                        if (closeAll) {
-                            xmodal.closeAll();
-
-                        }
-                    }
-                }
-            ]
-        });
-    }
-
-    function getUrlParams(){
-        const paramObj = {};
-
-        // get the querystring param, redacting the '?', then convert to an array separating on '&'
-        let urlParams = window.location.search.substr(1,window.location.search.length);
-        urlParams = urlParams.split('&');
-
-        urlParams.forEach(function(param) {
-            // iterate over every key=value pair, and add to the param object
-            param = param.split('=');
-            paramObj[param[0]] = param[1];
-        });
-
-        return paramObj;
-    }
-
-    function getProjectId() {
-        if (XNAT.data.context.projectID.length > 0) return XNAT.data.context.projectID;
-        return getUrlParams().id;
-    }
-
-    function inputsValidator(inputs) {
-        const errorMsg = [];
-
-        if (inputs.length) {
-            inputs.forEach(function($input) {
-                if (!$input.val()) {
-                    errorMsg.push('<b>' + $input.prop('name') + '</b> requires a value.');
-                    $input.addClass('invalid');
-                }
-            });
-        }
-
-        return errorMsg;
-    }
-
-    function displayErrors(errorMsg) {
-        var errors = [];
-        errorMsg.forEach(function(msg) { errors.push(spawn('li',msg)) });
-
-        return spawn('div',[
-            spawn('p', 'Errors found:'),
-            spawn('ul', errors)
-        ]);
-    }
-
     /* =========================== *
      * Species Preference Manager  *
      * =========================== */
@@ -121,8 +41,6 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
 
     function speciesPreferencesUrl() {
         let url = '/xapi/pixi/preferences/species';
-        // const projectId = getProjectId();
-        // url = projectId ? url + '/projects/' + projectId : url;
         return restUrl(url);
     }
 
@@ -191,14 +109,14 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
                         $form.find(':input').removeClass('invalid');
 
                         // validate
-                        const errors = inputsValidator($toValidate);
+                        const errors = pixi.inputsValidator($toValidate);
 
                         if (errors.length) {
                             // errors?
                             XNAT.dialog.open({
                                 title: 'Validation Error',
                                 width: 300,
-                                content: displayErrors(errors)
+                                content: pixi.clientErrorHandler(errors)
                             })
                         } else {
                             // no errors -> send to xnat
@@ -243,7 +161,7 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
                                     XNAT.ui.dialog.closeAll();
                                 },
                                 fail: function (e) {
-                                    errorHandler(e, 'Could not ' + doWhat.toLocaleLowerCase() + ' species');
+                                    pixi.serverErrorHandler(e, 'Could not ' + doWhat.toLocaleLowerCase() + ' species');
                                 }
                             })
                         }
@@ -272,7 +190,6 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
 
         // add table header row
         speciesTable.tr()
-            .th('<b>ID #</b>')
             .th('<b>Scientific Name</b>')
             .th('<b>Common Name</b>')
             .th('<b>Actions</b>')
@@ -312,7 +229,7 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
                                     speciesPreferenceManager.refreshTable();
                                 },
                                 fail: function(e) {
-                                    errorHandler(e, 'Could not delete species');
+                                    pixi.serverErrorHandler(e, 'Could not delete species');
                                 }
                             });
                         }
@@ -324,16 +241,15 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
         }
 
         speciesPreferenceManager.getAll().done(function(data) {
-            // Sort table by id.
-            data.sort((a,b) => a.id - b.id)
+            // Sort table by scientificName.
+            data.sort(pixi.compareGenerator('scientificName'))
 
             // create row for each species
             data.forEach(item => {
                 speciesTable.tr()
-                    .td([ spawn('div.center', [item['id']]) ])
                     .td([ spawn('div.center', [item['scientificName']]) ])
                     .td([ spawn('div.center', [item['commonName']]) ])
-                    .td([ spawn('div.center', [editButton(item), spacer(10), deleteButton(item)]) ])
+                    .td([ spawn('div.center', [editButton(item), pixi.spacer(10), deleteButton(item)]) ])
             })
 
             if (container) {
@@ -462,14 +378,14 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
                         $form.find(':input').removeClass('invalid');
 
                         // validate
-                        const errors = inputsValidator($toValidate);
+                        const errors = pixi.inputsValidator($toValidate);
 
                         if (errors.length) {
                             // errors?
                             XNAT.dialog.open({
                                 title: 'Validation Error',
                                 width: 300,
-                                content: displayErrors(errors)
+                                content: pixi.clientErrorHandler(errors)
                             })
                         } else {
                             // no errors -> send to xnat
@@ -514,7 +430,7 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
                                     XNAT.ui.dialog.closeAll();
                                 },
                                 fail: function (e) {
-                                    errorHandler(e, 'Could not ' + doWhat.toLocaleLowerCase() + ' vendor');
+                                    pixi.serverErrorHandler(e, 'Could not ' + doWhat.toLocaleLowerCase() + ' vendor');
                                 }
                             })
                         }
@@ -543,7 +459,6 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
 
         // add table header row
         vendorTable.tr()
-            .th('<b>ID #</b>')
             .th('<b>Vendor</b>')
             .th('<b>Actions</b>')
 
@@ -582,7 +497,7 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
                                     vendorPreferenceManager.refreshTable();
                                 },
                                 fail: function(e) {
-                                    errorHandler(e, 'Could not delete vendor');
+                                    pixi.serverErrorHandler(e, 'Could not delete vendor');
                                 }
                             });
                         }
@@ -593,15 +508,14 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
         }
 
         vendorPreferenceManager.getAll().done(function(data) {
-            // Sort table by id.
-            data.sort((a,b) => a.id - b.id)
+            // Sort table by vendor.
+            data.sort(pixi.compareGenerator('vendor'))
 
             // create row for each vendor
             data.forEach(item => {
                 vendorTable.tr()
-                    .td([ spawn('div.center', [item['id']]) ])
                     .td([ spawn('div.center', [item['vendor']]) ])
-                    .td([ spawn('div.center', [editButton(item), spacer(10), deleteButton(item)]) ])
+                    .td([ spawn('div.center', [editButton(item), pixi.spacer(10), deleteButton(item)]) ])
             })
 
             if (container) {
@@ -655,4 +569,8 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
     };
 
     vendorPreferenceManager.init();
+
+    XNAT.plugin.pixi.pdxManager.init('#pdx-manager');
+    XNAT.plugin.pixi.cellLineManager.init('#cell-line-manager');
+
 }));

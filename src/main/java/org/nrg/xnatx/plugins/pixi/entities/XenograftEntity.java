@@ -2,6 +2,7 @@ package org.nrg.xnatx.plugins.pixi.entities;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.constraints.URL;
 import org.nrg.framework.orm.hibernate.AbstractHibernateEntity;
 
 import javax.annotation.Nullable;
@@ -21,7 +22,7 @@ public abstract class XenograftEntity extends AbstractHibernateEntity {
 
     @NotBlank private String externalID;
     @Nullable private String dataSource;
-    @Nullable private String dataSourceURL;
+    @Nullable @URL private String dataSourceURL;
     @Nullable private String createdBy;
 
 }
