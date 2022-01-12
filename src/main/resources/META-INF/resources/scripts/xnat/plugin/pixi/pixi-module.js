@@ -1,5 +1,6 @@
 /*
  *  PIXI Module
+ *
  *  Contains commonly used functions.
  */
 

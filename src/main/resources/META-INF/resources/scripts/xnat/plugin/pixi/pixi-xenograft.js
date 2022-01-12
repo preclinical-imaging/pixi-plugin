@@ -1,5 +1,7 @@
 /*
- *  Xenograft Management
+ *  PIXI Xenograft Management
+ *
+ *  This script depends on functions in pixi-module.js
  */
 
 console.log('pixi-xenograft.js');
@@ -38,27 +40,13 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
         }
 
         getAll(callback) {
-            // sort by id
-            function compare(a, b) {
-                const aExternalID = a.externalID.toUpperCase(); // ignore case
-                const bExternalID = b.externalID.toUpperCase();
-                if (aExternalID < bExternalID) {
-                    return -1;
-                }
-                if (aExternalID > bExternalID) {
-                    return 1;
-                }
-
-                return 0;
-            }
-
             callback = isFunction(callback) ? callback : function() {};
             const self = this;
             return XNAT.xhr.get({
                 url: this.url(),
                 dataType: 'json',
                 success: function(data) {
-                    self.data = data.sort(compare);
+                    self.data = data.sort(pixi.compareGenerator('externalID'));
                     callback.apply(this, arguments);
                 }
             });
@@ -324,14 +312,5 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
 
     XNAT.plugin.pixi.pdxManager = new PDXManager();
     XNAT.plugin.pixi.cellLineManager = new CellLineManager();
-
-    function compareGenerator(property) {
-        return function(a,b) {
-            const aValue = a[property].toUpperCase()
-            const bValue = b[property].toUpperCase()
-
-            return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-        }
-    }
 
 }));

@@ -11,6 +11,10 @@ speciesPreferencesPanel:
       tag: "div#species-preferences-manager"
     pixiModuleScript:
       tag: script|src="~/scripts/xnat/plugin/pixi/pixi-module.js"
+    pixiSpeciesPreferencesScript:
+      tag: script|src="~/scripts/xnat/plugin/pixi/pixi-speciesPreferences.js"
+    pixiVendorPreferencesScript:
+      tag: script|src="~/scripts/xnat/plugin/pixi/pixi-vendorPreferences.js"
     pixiXenograftScripts:
       tag: script|src="~/scripts/xnat/plugin/pixi/pixi-xenograft.js"
     pixiSiteAdminScripts:
