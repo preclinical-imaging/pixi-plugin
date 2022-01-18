@@ -115,9 +115,9 @@ public class PIXIPreferencesAPI extends AbstractXapiRestController {
     @ApiResponses({@ApiResponse(code = 200, message = "Demographic data implementation preference successfully retrieved."),
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
-    @XapiRequestMapping(value = "/demographic-data-impl", produces = MediaType.TEXT_PLAIN_VALUE, method = RequestMethod.GET)
-    public String getDemographicDataImpl() {
-        return demographicDataPreference.getDemographicDataImpl();
+    @XapiRequestMapping(value = "/demographic-data-impl", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public Map<String, String> getDemographicDataImpl() {
+        return toMap(demographicDataPreference.getDemographicDataImpl());
     }
 
     @ApiOperation(value="Set site-wide preferred abstractDemographicData implementation.")
@@ -125,26 +125,40 @@ public class PIXIPreferencesAPI extends AbstractXapiRestController {
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
     @AuthorizedRoles({"PIXI", "Administrator"})
-    @XapiRequestMapping(value = "/demographic-data-impl", consumes = MediaType.TEXT_PLAIN_VALUE, method = RequestMethod.PUT, restrictTo = AccessLevel.Role)
-    public void setDemographicDataImpl(@RequestBody final String demographicDataImpl) throws DataFormatException {
-        demographicDataPreference.setDemographicDataImpl(demographicDataImpl);
+    @XapiRequestMapping(value = "/demographic-data-impl", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT, restrictTo = AccessLevel.Role)
+    public void setDemographicDataImpl(@RequestBody final Map<String, String> demographicDataImplMap) throws DataFormatException, NotFoundException {
+        demographicDataPreference.setDemographicDataImpl(fromMap(demographicDataImplMap));
     }
 
     @ApiOperation(value = "Returns project preferred abstractDemographicData implementation", response = String.class)
     @ApiResponses({@ApiResponse(code = 200, message = "Demographic data implementation preference successfully retrieved."),
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
-    @XapiRequestMapping(value = "/demographic-data-impl/projects/{projectId}", produces = MediaType.TEXT_PLAIN_VALUE, method = RequestMethod.GET, restrictTo = AccessLevel.Read)
-    public String getDemographicDataImpl(@PathVariable @Project final String projectId) throws NotFoundException {
-        return demographicDataPreference.getDemographicDataImpl(projectId);
+    @XapiRequestMapping(value = "/demographic-data-impl/projects/{projectId}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET, restrictTo = AccessLevel.Read)
+    public Map<String, String> getDemographicDataImpl(@PathVariable @Project final String projectId) throws NotFoundException {
+        return toMap(demographicDataPreference.getDemographicDataImpl(projectId));
     }
 
     @ApiOperation(value="Set project preferred abstractDemographicData implementation.")
     @ApiResponses({@ApiResponse(code = 200, message = "Demographic data implementation preference successfully set."),
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
-    @XapiRequestMapping(value = "/demographic-data-impl/projects/{projectId}", consumes = MediaType.TEXT_PLAIN_VALUE, method = RequestMethod.PUT, restrictTo = AccessLevel.Edit)
-    public void set(@PathVariable @Project final String projectId, @RequestBody final String demographicDataImpl) throws NotFoundException, DataFormatException {
-        demographicDataPreference.setDemographicDataImpl(projectId, demographicDataImpl);
+    @XapiRequestMapping(value = "/demographic-data-impl/projects/{projectId}", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT, restrictTo = AccessLevel.Edit)
+    public void set(@PathVariable @Project final String projectId, @RequestBody final Map<String, String> demographicDataImplMap) throws NotFoundException, DataFormatException {
+        demographicDataPreference.setDemographicDataImpl(projectId, fromMap(demographicDataImplMap));
+    }
+
+    private Map<String, String> toMap(final String preference) {
+        final Map<String, String> preferences = new HashMap<>();
+        preferences.put("demographicDataImpl", preference);
+        return preferences;
+    }
+
+    private String fromMap(final Map<String, String> preferences) throws NotFoundException {
+        if (!preferences.containsKey("demographicDataImpl")) {
+            throw new NotFoundException("No demographicDataImpl submitted");
+        }
+
+        return preferences.get("demographicDataImpl");
     }
 }

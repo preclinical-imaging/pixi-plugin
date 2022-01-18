@@ -1,0 +1,55 @@
+###
+### Demographic Data Implementation Preference
+###
+
+demographicDataImplProjForm:
+  kind: panel.form
+  id: demographicDataImplProjForm
+  name: demographicDataImplProjForm
+  label: Demographic Data Type Preference
+  method: PUT
+  contentType: json
+  contents:
+    ${demographicDataImplProj}
+    ${pixiDemographicDataScript}
+
+pixiDemographicDataScript:
+  tag: script|src="~/scripts/xnat/plugin/pixi/pixi-demographicDataPreference.js"
+
+demographicDataImplProj:
+  kind: panel.select.single
+  id: demographicDataImpl
+  name: demographicDataImpl
+  label: Demographic Data Type Preference
+  description: Select a preferred demographic data type to be used when creating new subjects.
+  options:
+    xnat:
+      label: "xnat:demographicData"
+      value: "xnat:demographicData"
+    pixi:
+      label: "pixi:animalDemographicData"
+      value: "pixi:animalDemographicData"
+
+
+
+#######################################################
+####  Root Project Settings Spawner Config Object  ####
+#######################################################
+
+projectSettings:
+  kind: tabs
+  name: pixiProjectPreferencesPage
+  label: PIXI Preferences
+  meta:
+    tabGroups:
+      pixiProjectTabGroup: PIXI
+  contains: tabs
+  tabs:
+    projectSubjectSettingsTab:
+      kind: tab
+      name: projectSubjectSettingsTab
+      label: Subject Settings
+      group: pixiProjectTabGroup
+      active: true
+      contents:
+        ${demographicDataImplProjForm}

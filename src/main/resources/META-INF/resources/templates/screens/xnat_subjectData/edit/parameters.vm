@@ -3,6 +3,9 @@
 ## CSS Link and JS script required for FormIO are in xnat-templates/navigations/BaseJS.vm file
 #parse('screens/formsioJSIncludes.vm')
 
+<script src="/scripts/xnat/plugin/pixi/pixi-module.js"></script>
+<script src="/scripts/xnat/plugin/pixi/pixi-xenograft.js"></script>
+
 <div id="formio-subject"  data-id="$!om.getId()" data-type="$!om.getXSIType()" data-project="$!om.getProject()"></div>
 
 <script type="text/javascript">
