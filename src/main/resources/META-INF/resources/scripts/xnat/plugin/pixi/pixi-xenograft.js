@@ -180,7 +180,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             xenograftTable.tr()
                 .th({ addClass: 'left', html: '<b>' + this.xenograftType + ' ID</b>' })
                 .th('<b>Source</b>')
-                .th('<b>Details at Source</b>') // TODO Display Links properly
+                .th('<b>Link to Source Details</b>')
                 .th('<b>Actions</b>')
 
             function editButton(item) {
