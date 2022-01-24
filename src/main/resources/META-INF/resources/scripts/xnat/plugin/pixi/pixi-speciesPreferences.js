@@ -179,7 +179,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
 
         // add table header row
         speciesTable.tr()
-            .th('<b>Scientific Name</b>')
+            .th({ addClass: 'left', html: '<b>Scientific Name</b>' })
             .th('<b>Common Name</b>')
             .th('<b>Actions</b>')
 
@@ -236,7 +236,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             // create row for each species
             data.forEach(item => {
                 speciesTable.tr()
-                    .td([ spawn('div.center', [item['scientificName']]) ])
+                    .td([ spawn('div.left', [item['scientificName']]) ])
                     .td([ spawn('div.center', [item['commonName']]) ])
                     .td([ spawn('div.center', [editButton(item), pixi.spacer(10), deleteButton(item)]) ])
             })

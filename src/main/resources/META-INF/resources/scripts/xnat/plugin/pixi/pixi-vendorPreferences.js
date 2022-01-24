@@ -174,7 +174,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
 
         // add table header row
         vendorTable.tr()
-            .th('<b>Vendor</b>')
+            .th({ addClass: 'left', html: '<b>Vendor</b>' })
             .th('<b>Actions</b>')
 
         function editButton(item) {
@@ -229,7 +229,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             // create row for each vendor
             data.forEach(item => {
                 vendorTable.tr()
-                    .td([ spawn('div.center', [item['vendor']]) ])
+                    .td([ spawn('div.left', [item['vendor']]) ])
                     .td([ spawn('div.center', [editButton(item), pixi.spacer(10), deleteButton(item)]) ])
             })
 

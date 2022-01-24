@@ -178,7 +178,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
 
             // add table header row
             xenograftTable.tr()
-                .th('<b>' + this.xenograftType + ' ID</b>')
+                .th({ addClass: 'left', html: '<b>' + this.xenograftType + ' ID</b>' })
                 .th('<b>Source</b>')
                 .th('<b>Details at Source</b>') // TODO Display Links properly
                 .th('<b>Actions</b>')
@@ -236,7 +236,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                 // create row for each xenograft
                 data.forEach(item => {
                     xenograftTable.tr()
-                        .td([ spawn('div.center', [item['externalID']]) ])
+                        .td([ spawn('div.left', [item['externalID']]) ])
                         .td([ spawn('div.center', [item['dataSource']]) ])
                         .td([ spawn('div.center', [detailsButton(item)]) ])
                         .td([ spawn('div.center', [editButton(item), pixi.spacer(10), deleteButton(item)]) ])

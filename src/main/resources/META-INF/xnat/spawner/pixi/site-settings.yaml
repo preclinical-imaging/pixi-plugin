@@ -1,4 +1,11 @@
 ###
+### PIXI Module Script
+###
+
+pixiModuleScript:
+  tag: script|src="~/scripts/xnat/plugin/pixi/pixi-module.js"
+
+###
 ### Demographic Data Implementation Preference
 ###
 
@@ -26,7 +33,6 @@ demographicDataImpl:
       label: "pixi:animalDemographicData"
       value: "pixi:animalDemographicData"
 
-
 ###
 ### Species Preferences
 ###
@@ -38,16 +44,12 @@ speciesPreferencesPanel:
   contents:
     speciesPreferencesTable:
       tag: "div#species-preferences-manager"
-    pixiModuleScript:
-      tag: script|src="~/scripts/xnat/plugin/pixi/pixi-module.js"
-    pixiSpeciesPreferencesScript:
+    speciesPreferencesScript:
       tag: script|src="~/scripts/xnat/plugin/pixi/pixi-speciesPreferences.js"
-    pixiVendorPreferencesScript:
-      tag: script|src="~/scripts/xnat/plugin/pixi/pixi-vendorPreferences.js"
-    pixiXenograftScripts:
-      tag: script|src="~/scripts/xnat/plugin/pixi/pixi-xenograft.js"
-    pixiSiteAdminScripts:
-      tag: script|src="~/scripts/xnat/plugin/pixi/pixi-siteAdmin.js"
+    renderSpeciesPreferencesTable:
+      tag: script
+      content: >
+        XNAT.plugin.pixi.speciesPreferenceManager.init('#species-preferences-manager');
 
 ###
 ### Vendor Preferences
@@ -60,6 +62,12 @@ vendorPreferencesPanel:
   contents:
     vendorPreferencesTable:
       tag: "div#vendor-preferences-manager"
+    vendorPreferencesScript:
+      tag: script|src="~/scripts/xnat/plugin/pixi/pixi-vendorPreferences.js"
+    renderVendorPreferencesTable:
+      tag: script
+      content: >
+        XNAT.plugin.pixi.vendorPreferenceManager.init('#vendor-preferences-manager');
 
 ###
 ### PDXs
@@ -70,8 +78,14 @@ pdxPanel:
   name: pdxPanel
   label: Patient-Derived Xenografts
   contents:
-    vendorPreferencesTable:
+    pdxPreferencesTable:
       tag: "div#pdx-manager"
+    xenograftScript: ## Needed for PDXs and Cell Lines
+      tag: script|src="~/scripts/xnat/plugin/pixi/pixi-xenograft.js"
+    renderPdxPreferencesTable:
+      tag: script
+      content: >
+        XNAT.plugin.pixi.pdxManager.init('#pdx-manager');
 
 ###
 ### Cell Lines
@@ -82,10 +96,12 @@ cellLinePanel:
   name: cellLinePanel
   label: Cell Line Xenografts
   contents:
-    vendorPreferencesTable:
+    cellLinePreferencesTable:
       tag: "div#cell-line-manager"
-
-
+    renderCellLinePreferencesTable:
+      tag: script
+      content: >
+        XNAT.plugin.pixi.cellLineManager.init('#cell-line-manager');
 
 #################################################
 ####  Root Site Admin Spawner Config Object  ####
@@ -107,6 +123,7 @@ siteSettings:
       group: pixiTabGroup
       active: true
       contents:
+        ${pixiModuleScript}
         ${demographicDataImplForm}
         ${speciesPreferencesPanel}
         ${vendorPreferencesPanel}
@@ -119,4 +136,3 @@ siteSettings:
       contents:
         ${pdxPanel}
         ${cellLinePanel}
-
