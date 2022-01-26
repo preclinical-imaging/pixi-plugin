@@ -73,34 +73,6 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
         return errorMsg;
     }
 
-    XNAT.plugin.pixi.urlValidator = function(inputs) {
-        const errorMsg = [];
-
-        if (inputs.length) {
-            inputs.forEach(function($input) {
-                // no error for empty url
-                if ($input.val()) {
-                    // https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url
-                    let url;
-
-                    try {
-                        url = new URL($input.val());
-
-                        if (!(url.protocol === "http:" || url.protocol === "https:")) {
-                            errorMsg.push('<b>' + $input.prop('name') + '</b> is not a valid URL.');
-                            $input.addClass('invalid');
-                        }
-                    } catch (_) {
-                        errorMsg.push('<b>' + $input.prop('name') + '</b> is not a valid URL.');
-                        $input.addClass('invalid');
-                    }
-                }
-            });
-        }
-
-        return errorMsg;
-    }
-
     XNAT.plugin.pixi.spacer = function(width) {
         return spawn('i.spacer', {
             style: {

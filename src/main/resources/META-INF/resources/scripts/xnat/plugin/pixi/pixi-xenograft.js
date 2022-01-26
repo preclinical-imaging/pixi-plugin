@@ -100,37 +100,47 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                         label: 'Submit',
                         isDefault: true,
                         close: false,
-                        action: function(obj) {
+                        action: function() {
                             // on save
                             // get inputs
-                            const $form = obj.$modal.find('form');
-                            const $externalID = $form.find('input[name=externalID]');
-                            const $dataSource = $form.find('input[name=dataSource]');
-                            const $dataSourceURL = $form.find('input[name=dataSourceURL]');
-                            const $toValidate = [$externalID, $dataSource];
-                            const $urlToValidate = [$dataSourceURL];
+                            const externalIDEl = document.getElementById("externalID");
+                            const dataSourceEl = document.getElementById("dataSource");
+                            const dataSourceURLEl = document.getElementById("dataSourceURL");
 
-                            // remove errors from previous save attempt
-                            $form.find(':input').removeClass('invalid');
+                            // validator for externalID (i.e. PDX ID and Cell Line ID)
+                            let validateExternalId = XNAT.validate(externalIDEl).reset().chain();
+                            validateExternalId.minLength(1).failure(`${self.xenograftType} ID is required.`);
 
-                            // validate
-                            let errors = pixi.inputsValidator($toValidate);
-                            let urlErrors = pixi.urlValidator($urlToValidate);
-                            errors = errors.concat(urlErrors);
+                            // validator for dataSource
+                            let validateDataSource = XNAT.validate(dataSourceEl).reset().chain();
+                            validateDataSource.minLength(1).failure('Source is required.');
 
-                            if (errors.length) {
+                            // validator for dataSourceURL
+                            let validateDataSourceURL = XNAT.validate(dataSourceURLEl).reset().chain();
+                            validateDataSourceURL.allowEmpty = true;
+                            validateDataSourceURL.is('url').failure('Invalid url.');
+
+                            // validate fields
+                            let errorMessages = [];
+
+                            [validateExternalId, validateDataSource, validateDataSourceURL].forEach(validator => {
+                                validator.check();
+                                validator.messages.forEach(message => errorMessages.push(message))
+                            })
+
+                            if (errorMessages.length) {
                                 // errors?
                                 XNAT.dialog.open({
                                     title: 'Validation Error',
                                     width: 300,
-                                    content: pixi.clientErrorHandler(errors)
+                                    content: pixi.clientErrorHandler(errorMessages)
                                 })
                             } else {
                                 // no errors -> send to xnat
                                 let xenograftToSubmit = {
-                                    externalID: $externalID.val(),
-                                    dataSource: $dataSource.val(),
-                                    dataSourceURL: $dataSourceURL.val()
+                                    externalID: externalIDEl.value,
+                                    dataSource: dataSourceEl.value,
+                                    dataSourceURL: dataSourceURLEl.value
                                 };
 
                                 XNAT.xhr.ajax({
