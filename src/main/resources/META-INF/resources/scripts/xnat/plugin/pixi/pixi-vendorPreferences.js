@@ -66,6 +66,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                     spawn('!', [
                         XNAT.ui.panel.input.text({
                             name: 'vendor',
+                            id: 'vendor',
                             label: 'Vendor',
                             description: 'The name of the laboratory rodent vendor/supplier.'
                         }).element,
@@ -82,25 +83,29 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                     label: 'Save',
                     isDefault: true,
                     close: false,
-                    action: function(obj) {
+                    action: function() {
                         // on save
                         // get inputs
-                        const $form = obj.$modal.find('form');
-                        const $vendor = $form.find('input[name=vendor]');
-                        const $toValidate = [$vendor];
+                        const vendorEl = document.getElementById("vendor");
 
-                        // remove errors from previous save attempt
-                        $form.find(':input').removeClass('invalid');
+                        // validator for vendor
+                        let validateVendor = XNAT.validate(vendorEl).reset().chain();
+                        validateVendor.minLength(1).failure('Vendor is required.');
 
-                        // validate
-                        const errors = pixi.inputsValidator($toValidate);
+                        // validate fields
+                        let errorMessages = [];
 
-                        if (errors.length) {
+                        [validateVendor].forEach(validator => {
+                            validator.check();
+                            validator.messages.forEach(message => errorMessages.push(message))
+                        })
+
+                        if (errorMessages.length) {
                             // errors?
                             XNAT.dialog.open({
                                 title: 'Validation Error',
                                 width: 300,
-                                content: pixi.clientErrorHandler(errors)
+                                content: pixi.clientErrorHandler(errorMessages)
                             })
                         } else {
                             // no errors -> send to xnat
@@ -112,7 +117,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                             if (!isNew && item) {
                                 // Edit
                                 vendorToSave.id = item['id'];
-                                vendorToSave.vendor = $vendor.val();
+                                vendorToSave.vendor = vendorEl.value;
 
                                 // Update existing vendor
                                 let idx = vendorPreferenceManager.data.findIndex(obj => obj.id === item.id);
@@ -128,7 +133,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                                 }
 
                                 vendorToSave.id = maxID + 1;
-                                vendorToSave.vendor = $vendor.val();
+                                vendorToSave.vendor = vendorEl.value;
 
                                 // add new vendor
                                 vendorPreferenceManager.data.push(vendorToSave);

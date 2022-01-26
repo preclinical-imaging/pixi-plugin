@@ -65,11 +65,13 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                     spawn('!', [
                         XNAT.ui.panel.input.text({
                             name: 'scientificName',
+                            id: 'scientificName',
                             label: 'Scientific Name',
                             description: 'The scientific name of the species. This will be stored in the species field for subjects.'
                         }).element,
                         XNAT.ui.panel.input.text({
                             name: 'commonName',
+                            id: 'commonName',
                             label: 'Common Name',
                             description: 'The common name of the species. This will be displayed to users when selecting the species for a subject.'
                         }).element
@@ -86,26 +88,36 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                     label: 'Save',
                     isDefault: true,
                     close: false,
-                    action: function(obj) {
+                    action: function() {
                         // on save
                         // get inputs
-                        const $form = obj.$modal.find('form');
-                        const $scientificName = $form.find('input[name=scientificName]');
-                        const $commonName = $form.find('input[name=commonName]');
-                        const $toValidate = [$scientificName, $commonName];
+                        const scientificNameEl = document.getElementById("scientificName");
+                        const commonNameEl = document.getElementById("commonName");
 
-                        // remove errors from previous save attempt
-                        $form.find(':input').removeClass('invalid');
+                        // validator for scientific name
+                        let validateScientificName = XNAT.validate(scientificNameEl).reset().chain();
+                        validateScientificName.minLength(1).failure('Scientific Name is required.');
+                        validateScientificName.is('alphaDashSpace').failure('Scientific Name can only contain alphabetical characters, hyphens, and spaces.');
 
-                        // validate
-                        const errors = pixi.inputsValidator($toValidate);
+                        // validator for common name
+                        let validateCommonName = XNAT.validate(commonNameEl).reset().chain();
+                        validateCommonName.minLength(1).failure('Common Name is required.');
+                        validateCommonName.is('alphaDashSpace').failure('Common Name can only contain alphabetical characters, hyphens, and spaces.');
 
-                        if (errors.length) {
+                        // validate fields
+                        let errorMessages = [];
+
+                        [validateScientificName, validateCommonName].forEach(validator => {
+                            validator.check();
+                            validator.messages.forEach(message => errorMessages.push(message))
+                        })
+
+                        if (errorMessages.length) {
                             // errors?
                             XNAT.dialog.open({
                                 title: 'Validation Error',
                                 width: 300,
-                                content: pixi.clientErrorHandler(errors)
+                                content: pixi.clientErrorHandler(errorMessages)
                             })
                         } else {
                             // no errors -> send to xnat
@@ -118,8 +130,8 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                             if (!isNew && item) {
                                 // Edit
                                 speciesToSave.id = item['id'];
-                                speciesToSave.scientificName = $scientificName.val();
-                                speciesToSave.commonName = $commonName.val();
+                                speciesToSave.scientificName = scientificNameEl.value;
+                                speciesToSave.commonName = commonNameEl.value;
 
                                 // Update existing species
                                 let idx = speciesPreferenceManager.data.findIndex(obj => obj.id === item.id);
@@ -132,8 +144,8 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                                     .reduce((el1, el2) => Math.max(el1, el2));
 
                                 speciesToSave.id = maxID + 1;
-                                speciesToSave.scientificName = $scientificName.val();
-                                speciesToSave.commonName = $commonName.val();
+                                speciesToSave.scientificName = scientificNameEl.value;
+                                speciesToSave.commonName = commonNameEl.value;
 
                                 // add new species
                                 speciesPreferenceManager.data.push(speciesToSave);
