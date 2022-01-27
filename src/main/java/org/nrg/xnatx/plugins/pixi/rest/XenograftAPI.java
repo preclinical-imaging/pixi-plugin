@@ -1,12 +1,12 @@
 package org.nrg.xnatx.plugins.pixi.rest;
 
-import org.nrg.xapi.exceptions.DataFormatException;
 import org.nrg.xapi.exceptions.NotFoundException;
 import org.nrg.xapi.exceptions.ResourceAlreadyExistsException;
 import org.nrg.xapi.rest.AbstractXapiRestController;
 import org.nrg.xdat.security.services.RoleHolder;
 import org.nrg.xdat.security.services.UserManagementServiceI;
 import org.nrg.xnatx.plugins.pixi.entities.XenograftEntity;
+import org.nrg.xnatx.plugins.pixi.exceptions.XenograftDeletionException;
 import org.nrg.xnatx.plugins.pixi.models.Xenograft;
 import org.nrg.xnatx.plugins.pixi.services.XenograftService;
 
@@ -36,26 +36,19 @@ public abstract class XenograftAPI<E extends XenograftEntity, T extends Xenograf
     }
 
     public void create(final T t) throws ResourceAlreadyExistsException {
-        if (xenograftService.xenograftExists(t.getExternalID())) {
-            throw new ResourceAlreadyExistsException(type.getSimpleName(), t.getExternalID());
-        }
-
         t.setCreatedBy(getSessionUser().getUsername());
         xenograftService.createXenograft(t);
     }
 
-    public void update(final String id, final T t) throws DataFormatException, NotFoundException {
-        if (!id.equals(t.getExternalID())) {
-            throw new DataFormatException("DataFormatException: Updates to ID are not allowed");
-        }
+    public void update(final String id, final T t) throws NotFoundException, ResourceAlreadyExistsException {
         try {
-            xenograftService.updateXenograft(t);
+            xenograftService.updateXenograft(id, t);
         } catch (org.nrg.framework.exceptions.NotFoundException e) {
             throw new NotFoundException(e.getMessage());
         }
     }
 
-    public void delete(final String id) {
+    public void delete(final String id) throws XenograftDeletionException {
         xenograftService.deleteXenograft(id);
     }
 

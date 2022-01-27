@@ -6,12 +6,11 @@ import org.hibernate.validator.constraints.URL;
 import org.nrg.framework.orm.hibernate.AbstractHibernateEntity;
 
 import javax.annotation.Nullable;
+import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = "externalID"))
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,9 +19,14 @@ import javax.validation.constraints.NotBlank;
 @Slf4j
 public abstract class XenograftEntity extends AbstractHibernateEntity {
 
-    @NotBlank private String externalID;
+    @Getter(AccessLevel.NONE) private String externalID;
     @Nullable private String dataSource;
     @Nullable @URL private String dataSourceURL;
     @Nullable private String createdBy;
 
+    @Column(unique = true)
+    @NotNull @NotBlank
+    public String getExternalID() {
+        return externalID;
+    }
 }

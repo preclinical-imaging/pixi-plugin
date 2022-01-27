@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.nrg.framework.annotations.XapiRestController;
-import org.nrg.xapi.exceptions.DataFormatException;
 import org.nrg.xapi.exceptions.NotFoundException;
 import org.nrg.xapi.exceptions.ResourceAlreadyExistsException;
 import org.nrg.xapi.rest.AuthorizedRoles;
@@ -15,6 +14,7 @@ import org.nrg.xdat.security.helpers.AccessLevel;
 import org.nrg.xdat.security.services.RoleHolder;
 import org.nrg.xdat.security.services.UserManagementServiceI;
 import org.nrg.xnatx.plugins.pixi.entities.CellLineEntity;
+import org.nrg.xnatx.plugins.pixi.exceptions.XenograftDeletionException;
 import org.nrg.xnatx.plugins.pixi.models.CellLine;
 import org.nrg.xnatx.plugins.pixi.services.XenograftService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +75,7 @@ public class CellLineAPI extends XenograftAPI<CellLineEntity, CellLine> {
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
     @XapiRequestMapping(value = "/cellline/{externalID}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
-    public void update(@PathVariable final String externalID, @RequestBody final CellLine cellLine) throws DataFormatException, NotFoundException {
+    public void update(@PathVariable final String externalID, @RequestBody final CellLine cellLine) throws ResourceAlreadyExistsException, NotFoundException {
         super.update(externalID, cellLine);
     }
 
@@ -86,7 +86,7 @@ public class CellLineAPI extends XenograftAPI<CellLineEntity, CellLine> {
                    @ApiResponse(code = 500, message = "Unexpected error")})
     @AuthorizedRoles({"PIXI", "Administrator"})
     @XapiRequestMapping(value = "/cellline/{externalID}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE, restrictTo = AccessLevel.Role)
-    public void delete(@PathVariable final String externalID) {
+    public void delete(@PathVariable final String externalID) throws XenograftDeletionException {
         super.delete(externalID);
     }
 

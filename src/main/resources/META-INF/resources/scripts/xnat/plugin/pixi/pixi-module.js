@@ -28,7 +28,7 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
         console.log(e);
         title = (title) ? 'Error Found: '+ title : 'Error';
         closeAll = (closeAll === undefined) ? true : closeAll;
-        const errormsg = (e.statusText) ? '<p><strong>Error ' + e.status + ': '+ e.statusText+'</strong></p><p>' + e.responseText + '</p>' : e;
+        const errormsg = (e.statusText) ? '<p><strong>Error ' + e.status + '</strong></p><p>' + e.responseText + '</p>' : e;
         XNAT.dialog.open({
             width: 450,
             title: title,

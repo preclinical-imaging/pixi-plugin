@@ -99,11 +99,6 @@
     </xs:complexType>
     <xs:complexType name="xenograft">
         <xs:sequence>
-            <xs:element name="externalID" type="xs:string">
-                <xs:annotation>
-                    <xs:documentation>External ID of the Xenograft (Cell Line or PDX ID)</xs:documentation>
-                </xs:annotation>
-            </xs:element>
             <xs:element name="injectionDate" type="xs:date" minOccurs="0"/>
             <xs:element name="numCellsInjected" type="xs:positiveInteger" minOccurs="0"/>
             <xs:element name="injectionSite" type="xs:string" minOccurs="0"/>
@@ -112,13 +107,36 @@
     </xs:complexType>
     <xs:complexType name="cellLine">
         <xs:complexContent>
-            <xs:extension base="pixi:xenograft"/>
+            <xs:extension base="pixi:xenograft">
+                <xs:sequence>
+                    <xs:element name="externalID" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>External ID of the Cell Line (not the internal XNAT/Hibernate ID)</xs:documentation>
+                            <xs:appinfo>
+                                <xdat:field>
+                                    <xdat:relation foreignKeyTable="xhbm_cell_line_entity" foreignKeyName="xft_cell_line_externalID" foreignCol="externalid" onDelete="none"/>
+                                </xdat:field>
+                            </xs:appinfo>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="pdx">
         <xs:complexContent>
             <xs:extension base="pixi:xenograft">
                 <xs:sequence>
+                    <xs:element name="externalID" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>External ID of the PDX (not the internal XNAT/Hibernate ID)</xs:documentation>
+                            <xs:appinfo>
+                                <xdat:field>
+                                    <xdat:relation foreignKeyTable="xhbm_pdxentity" foreignKeyName="xft_pdx_externalID" foreignCol="externalid"/>
+                                </xdat:field>
+                            </xs:appinfo>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="passage" type="xs:string" minOccurs="0"/>
                 </xs:sequence>
             </xs:extension>
