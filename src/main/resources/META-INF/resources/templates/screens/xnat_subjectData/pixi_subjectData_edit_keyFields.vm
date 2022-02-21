@@ -1,4 +1,84 @@
-<!-- BEGIN xnat-templates/screens/xnat_subjectData/edit/parameters.vm -->
+<!-- BEGIN xnat-templates/screens/xnat_subjectData/pixi_subjectData_edit_keyFields.vm -->
+
+<script type="text/javascript">
+    // Get subject's demographics XSI type. NEW subjects will be empty, existing subjects should have a type defined
+    const subjectDemographicXsiType = "$!subject.getDemographics().getXSIType()" ;
+    console.debug(`Subject demographic type: ${subjectDemographicXsiType}` );
+
+    const projectElId = "xnat:subjectData/project";
+
+    // Demographic XSI types
+    let demographicPreference = "";
+    const xnatDemographics = "xnat:demographicData";
+    const pixiDemographics = "pixi:animalDemographicData";
+
+    const xnatDemographicEl = document.getElementById("xnat-demographics");
+    const pixiDemographicEl = document.getElementById("pixi-demographics");
+
+    function displayXnatDemographicForm() {
+        console.debug("Displaying XNAT demographic form.");
+        xnatDemographicEl.style.display = "";
+        pixiDemographicEl.style.display = "none";
+    }
+
+    function displayPixiDemographicsForm() {
+        console.debug("Displaying PIXI demographic form.");
+        xnatDemographicEl.style.display = "none";
+        pixiDemographicEl.style.display = "";
+    }
+
+    function displayProjectPreferredDemographicForm() {
+        console.debug("Fetching preferred demographics...");
+
+        const projectSelectElement = document.getElementById(projectElId);
+        const selectedProject = projectSelectElement.value;
+
+        let url = '/xapi/pixi/preferences/demographic-data-impl';
+        url = XNAT.url.csrfUrl(selectedProject ? `${url}/projects/${selectedProject}` : url);
+
+        XNAT.xhr.get({
+            url: url,
+            dataType: 'json',
+            success: function(data) {
+                demographicPreference = data['demographicDataImpl'];
+                console.debug(`Successfully retrieved demographic preference: ${demographicPreference}`);
+                if (demographicPreference === xnatDemographics) {
+                    displayXnatDemographicForm();
+                } else if (demographicPreference === pixiDemographics) {
+                    displayPixiDemographicsForm();
+                }
+            },
+            error: function() {
+                console.error("Could not fetch demographic preference. Defaulting to XNAT core demographics.");
+                displayXnatDemographicForm();
+            }
+        });
+    }
+
+    function handleProjectChange() {
+        console.debug("Handling project change...")
+        displayProjectPreferredDemographicForm();
+    }
+
+    window.addEventListener('load', () => {
+        // If subject demographic type is already set then display the appropriate form
+        if (subjectDemographicXsiType === xnatDemographics) {
+            displayXnatDemographicForm();
+        } else if (subjectDemographicXsiType === pixiDemographics) {
+            displayPixiDemographicsForm();
+        } else {
+            // If not set then fetch the preferred demographic type
+            displayProjectPreferredDemographicForm();
+
+            // Add event listener for handling new subject creation.
+            const projectSelectElement = document.getElementById(projectElId);
+            if(typeof projectSelectElement !== 'undefined' && projectSelectElement !== null && projectSelectElement.tagName === 'SELECT') {
+                $(document.getElementById(projectElId)).chosen().change(handleProjectChange);
+            }
+            console.debug("Demographics selector event listener added.");
+        }
+    });
+</script>
 
 ## CSS Link and JS script required for FormIO are in xnat-templates/navigations/BaseJS.vm file
 #parse('screens/formsioJSIncludes.vm')
@@ -13,7 +93,7 @@
     let formIOObjSubj = undefined;
     let formData= undefined;
 
-    async function initForm() {
+    function initForm() {
 
         #if ("$!om.getId()" != "")
             formData = {};
@@ -1006,46 +1086,81 @@
             ]};
 
 
-        formIOObjSubj = await Formio.createForm(document.getElementById('formio-subject'), formComponents, formOptions);
-        formIOObjSubj.submission = {data:formData};
+        Formio.createForm(document.getElementById('formio-subject'), formComponents, formOptions).then(form => {
+            form.submission = {data:formData};
+            formIOObjSubj = form;
+            console.debug("FormIO form initialized.")
+        });
+
+    }
+
+    /*
+     * The following function is used by the FormsIO to rename the name of the HTML elements to conform to XNAT expectations
+     */
+    function modifyElementNames() {
+        var pattern = /^data\[(.*?)\]$/;
+        var pattern2 = /^(data\[.*?\])(\[.*?\])$/;
+        try{
+            $(".form-control, .form-check-input").each(function(i, elt) {
+                var name =  $(elt).attr("name");
+                if (typeof name !== typeof undefined && name !== false) {
+                    if(pattern2.test(name)) {
+                        var match = pattern2.exec(name);
+                        var fieldName = match[1].replace(/^data\[/,'').replace(/\]$/,'');
+                        $(elt).attr("name",fieldName);
+                    }else if (pattern.test(name)) {
+                        var fieldName = name.replace(/^data\[/,'').replace(/\]$/,'');
+                        $(elt).attr("name",fieldName);
+                    }
+                }
+            });
+        }catch(error){
+            console.log(error)
+        }
+        console.debug("FormIO HTML element names modified to match XNAT format.")
     }
 
     function validate(){
-        var isValid = true;
-        if (typeof formIOObjSubj !== undefined) {
-            isValid = formIOObjSubj.checkValidity(formIOObjSubj.submission.data);
-            if (!isValid) {
-                formIOObjSubj.submit();
-            } else {
-                modifyElementNames();
+        let isValid = true;
+
+        // If pixi demographics then validate with formio
+        console.debug("Submitting...")
+        if (demographicPreference === pixiDemographics || subjectDemographicXsiType === pixiDemographics) {
+
+            if (typeof formIOObjSubj !== undefined) {
+                isValid = formIOObjSubj.checkValidity(formIOObjSubj.submission.data);
+                if (!isValid) {
+                    console.debug("FormIO form is invalid.")
+                    formIOObjSubj.submit();
+                } else {
+                    console.debug("FormIO form is valid.")
+                }
             }
+
+            if (!isValid) {
+                return false;
+            }
+            modifyElementNames();
         }
+
         return isValid;
     }
 
-    initForm()
+    initForm();
 
-    jq('#editSubjectForm').submit(function(e){
-        var isValid = validate();
-        if (!isValid) {
-            return false;
+    formsIOValidator={
+        form: YUIDOM.get("editSubjectForm"),
+        priority : 0,
+        validate : function() {
+            return validate();
         }
+    }
+
+    YAHOO.util.Event.onDOMReady(function(){
+        _addFormValidation(formsIOValidator);
     });
 
 </script>
 
-
-
-
-
 <div id="formio"  data-id="$!om.getId()" data-type="$!om.getXSIType()" data-project="$!om.getProject()"></div>
-
-<script type="text/javascript">
-    var formOptions = {};
-</script>
-
-#parse('screens/formsioIncludes.vm')
-
-
-
-<!-- END xnat-templates/screens/xnat_subjectData/edit/parameters.vm -->
+<!-- END xnat-templates/screens/xnat_subjectData/pixi_subjectData_edit_keyFields.vm -->

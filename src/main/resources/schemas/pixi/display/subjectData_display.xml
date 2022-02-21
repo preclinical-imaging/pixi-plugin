@@ -257,25 +257,12 @@
 	<!--PIXI Stop-->
 	<DisplayVersion versionName="listing" default-order-by="SUBJECT_ID" brief-description="Subject Data" dark-color="DEDEDE" light-color="FFFFFF">
 		<DisplayFieldRef id="SUBJECT_LABEL"/>
-		<DisplayFieldRef id="GENDER"/>
-		<DisplayFieldRef id="HANDEDNESS"/>
-		<DisplayFieldRef id="DOB"/>
-		<DisplayFieldRef id="EDUC"/>
-		<DisplayFieldRef id="SES"/>
-		<DisplayFieldRef id="MR_COUNT"/>
 	</DisplayVersion>
 	<DisplayVersion versionName="brief" default-order-by="SUBJECT_ID" brief-description="Subject Data" dark-color="DEDEDE" light-color="FFFFFF">
 		<DisplayFieldRef id="SUBJECT_LABEL"/>
-		<DisplayFieldRef id="GENDER"/>
-		<DisplayFieldRef id="HANDEDNESS"/>
-		<DisplayFieldRef id="DOB"/>
-		<DisplayFieldRef id="EDUC"/>
-		<DisplayFieldRef id="SES"/>
 	</DisplayVersion>
 	<DisplayVersion versionName="project_bundle" default-order-by="SUBJECTID" brief-description="Participant Demographics" dark-color="DEDEDE" light-color="FFFFFF">
 		<DisplayFieldRef id="SUB_PROJECT_IDENTIFIER"/>
-		<DisplayFieldRef id="SPECIES"/>
-		<DisplayFieldRef id="STRAIN"/>
 	</DisplayVersion>
 	<ViewLink alias="SUB_PROJECTS">
 		<Mapping TableName="SUB_PROJECTS">

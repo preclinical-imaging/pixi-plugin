@@ -1,0 +1,14 @@
+<!-- BEGIN /screens/xnat_subjectData/xnat_subjectData_edit_keyFields.vm -->
+
+<div id="xnat-demographics" style="display: none">
+	<h3>Demographics</h3>
+	<table>
+		#parse("/screens/xnat_subjectData/xnat_subjectData_edit_core_demographics.vm")
+	#parse($turbineUtils.getTemplateName("_edit_addtl_demographics","xnat:subjectData",$project))
+	</table>
+</div>
+<div id="pixi-demographics" style="display: none">
+	#parse("/screens/xnat_subjectData/pixi_subjectData_edit_keyFields.vm")
+</div>
+
+<!-- END /screens/xnat_subjectData/xnat_subjectData_edit_keyFields.vm -->

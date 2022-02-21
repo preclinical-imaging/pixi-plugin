@@ -1,0 +1,26 @@
+<!-- BEGIN xnat-templates/screens/formsioJSIncludes.vm -->
+
+<!-- bootstrap -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+
+<!-- Forms.io -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdn.form.io/formiojs/formio.full.min.css">
+<script type="text/javascript" src="https://cdn.form.io/formiojs/formio.full.min.js" charset="utf-8"></script> 
+
+<!-- bootstrap.datetimepicker needs Moment.js -->
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment-with-locales.min.js"></script>
+
+<!-- bootstrap.datetimepicker -->
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker-standalone.css">
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+
+
+<script type="text/javascript"> 
+   Formio.icons = 'fontawesome';
+</script>
+
+
+<!-- END xnat-templates/screens/formsioJSIncludes.vm -->
