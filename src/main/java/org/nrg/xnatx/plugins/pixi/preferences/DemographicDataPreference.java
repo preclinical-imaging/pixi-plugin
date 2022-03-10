@@ -47,7 +47,7 @@ public class DemographicDataPreference extends AbstractPreferenceBean {
         this.template = template;
     }
 
-    @NrgPreference(defaultValue = PixiAnimaldemographicdata.SCHEMA_ELEMENT_NAME)
+    @NrgPreference(defaultValue = XnatDemographicdata.SCHEMA_ELEMENT_NAME)
     public String getDemographicDataImpl() {
         return getValue(DemographicDataPreference.DEMOGRAPHIC_DATA_IMPL_PREFERENCE_ID);
     }
