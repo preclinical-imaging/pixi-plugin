@@ -40,7 +40,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             url: speciesPreferencesUrl(),
             dataType: 'json',
             success: function(data) {
-                speciesPreferenceManager.data = data;
+                speciesPreferenceManager.data = data["species"];
                 callback.apply(this, arguments);
             }
         });
@@ -151,7 +151,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                                 speciesPreferenceManager.data.push(speciesToSave);
                             }
 
-                            XNAT.xhr.put({
+                            XNAT.xhr.post({
                                 url: speciesPreferencesUrl(),
                                 data: JSON.stringify(speciesPreferenceManager.data), // Submit all data, not just the item
                                 contentType: 'application/json',
@@ -221,7 +221,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                                     return el;
                                 });
 
-                            XNAT.xhr.put({
+                            XNAT.xhr.post({
                                 url: speciesPreferencesUrl(),
                                 data: JSON.stringify(newData),
                                 contentType: 'application/json',
@@ -242,6 +242,8 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
         }
 
         speciesPreferenceManager.getAll().done(function(data) {
+            data = data["species"]
+
             // Sort table by scientificName.
             data.sort(pixi.compareGenerator('scientificName'))
 
@@ -302,5 +304,20 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             speciesPreferenceManager.$container.prepend(table);
         });
     };
+
+    /**
+     * Load species into a select element.
+     * @param selectElementId The select element id to load species into.
+     */
+    speciesPreferenceManager.setSelectOptions = function(selectElementId) {
+        console.debug(`Setting species select options for ${selectElementId}`);
+        speciesPreferenceManager.getSpecies(data => {
+            const species = data['species'];
+            const species$ = document.getElementById(selectElementId);
+            species.forEach(specie => {
+                species$[species$.options.length] = new Option(specie['commonName'], specie['scientificName']);
+            });
+        })
+    }
 
 }));

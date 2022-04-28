@@ -33,7 +33,7 @@
         const projectSelectElement = document.getElementById(projectElId);
         const selectedProject = projectSelectElement.value;
 
-        let url = '/xapi/pixi/preferences/demographic-data-impl';
+        let url = '/xapi/pixi/preferences/demographicDataImpl';
         url = XNAT.url.csrfUrl(selectedProject ? `${url}/projects/${selectedProject}` : url);
 
         XNAT.xhr.get({
@@ -83,8 +83,8 @@
 ## CSS Link and JS script required for FormIO are in xnat-templates/navigations/BaseJS.vm file
 #parse('screens/formsioJSIncludes.vm')
 
-<script src="/scripts/xnat/plugin/pixi/pixi-module.js"></script>
-<script src="/scripts/xnat/plugin/pixi/pixi-xenograft.js"></script>
+<script src="$content.getURI("/scripts/xnat/plugin/pixi/pixi-module.js")"></script>
+<script src="$content.getURI("/scripts/xnat/plugin/pixi/pixi-xenograft.js")"></script>
 
 <div id="formio-subject"  data-id="$!om.getId()" data-type="$!om.getXSIType()" data-project="$!om.getProject()"></div>
 
@@ -168,7 +168,7 @@
                                     "tableView": true,
                                     "dataSrc": "custom",
                                     "data": {
-                                        "custom": "var values;\nXNAT.xhr.get({\n  url: '/xapi/pixi/preferences/species',\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    data.sort((a,b) => a.id - b.id)\n    values = data;\n  }\n});"
+                                        "custom": "var values;\nXNAT.xhr.get({\n  url: '/xapi/pixi/preferences/species',\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    data = data[\"species\"];\n    data.sort((a,b) => a.id - b.id);\n    values = data;\n  }\n});"
                                     },
                                     "valueProperty": "scientificName",
                                     "template": "<span>{{ item.commonName }} / {{ item.scientificName }}</span>",
@@ -192,7 +192,7 @@
                                     "tableView": true,
                                     "dataSrc": "custom",
                                     "data": {
-                                        "custom": "var values;\nXNAT.xhr.get({\n  url: '/xapi/pixi/preferences/vendors',\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    data.sort((a,b) => a.id - b.id)\n    values = data;\n  }\n});"
+                                        "custom": "var values;\nXNAT.xhr.get({\n  url: '/xapi/pixi/preferences/vendors',\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    data = data[\"vendors\"];\n    data.sort((a,b) => a.id - b.id);\n    values = data;\n  }\n});"
                                     },
                                     "valueProperty": "vendor",
                                     "template": "<span>{{ item.vendor }}</span>",

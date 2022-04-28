@@ -28,7 +28,7 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
 
     demographicDataPreferenceManager.getDemographicDataPreferenceUrl = function() {
         const projectID = XNAT.data.context.project;
-        return restUrl(`/xapi/pixi/preferences/demographic-data-impl/projects/${projectID}`);
+        return restUrl(`/xapi/pixi/preferences/demographicDataImpl/projects/${projectID}`);
     }
 
     // URL are hard coded into the spawner configuration, need to set after spawner has created the page
@@ -60,8 +60,22 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
 
     demographicDataPreferenceManager.init = function() {
         demographicDataPreferenceManager.initPreference('demographicDataImpl');
-        demographicDataPreferenceManager.setActionUrl("demographicDataImplProjForm")
+        demographicDataPreferenceManager.setActionUrl("subjectDisplayPreferencesProjForm")
     }
 
-    demographicDataPreferenceManager.init();
+    demographicDataPreferenceManager.uiShowHumanSearchFields = function(humanSearchFieldsElementId) {
+        console.debug('pixi-demographicDataPreference.js - uiShowHumanSearchFields');
+        XNAT.plugin.pixi.getPreference('uiShowHumanSearchFields', preference => {
+            const showHumanSearchFields = preference['uiShowHumanSearchFields'];
+            const humanSearchFields$ = document.getElementById(humanSearchFieldsElementId);
+
+            if (showHumanSearchFields) {
+                humanSearchFields$.style.display = 'block';
+                console.debug('pixi-demographicDataPreference.js - uiShowHumanSearchFields - show human search fields');
+            } else {
+                humanSearchFields$.style.display = 'none';
+                console.debug('pixi-demographicDataPreference.js - uiShowHumanSearchFields - hide human search fields');
+            }
+        })
+    }
 }));

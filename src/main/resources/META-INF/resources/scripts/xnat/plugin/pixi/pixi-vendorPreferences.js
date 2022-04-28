@@ -41,7 +41,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             url: vendorPreferencesUrl(),
             dataType: 'json',
             success: function(data) {
-                vendorPreferenceManager.data = data;
+                vendorPreferenceManager.data = data["vendors"];
                 callback.apply(this, arguments);
             }
         });
@@ -139,7 +139,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                                 vendorPreferenceManager.data.push(vendorToSave);
                             }
 
-                            XNAT.xhr.put({
+                            XNAT.xhr.post({
                                 url: vendorPreferencesUrl(),
                                 data: JSON.stringify(vendorPreferenceManager.data), // Submit all data, not just the item
                                 contentType: 'application/json',
@@ -208,7 +208,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                                     return el;
                                 });
 
-                            XNAT.xhr.put({
+                            XNAT.xhr.post({
                                 url: vendorPreferencesUrl(),
                                 data: JSON.stringify(newData),
                                 contentType: 'application/json',
@@ -228,6 +228,8 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
         }
 
         vendorPreferenceManager.getAll().done(function(data) {
+            data = data["vendors"]
+
             // Sort table by vendor.
             data.sort(pixi.compareGenerator('vendor'))
 

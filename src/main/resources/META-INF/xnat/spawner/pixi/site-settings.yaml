@@ -9,22 +9,25 @@ pixiModuleScript:
 ### Demographic Data Implementation Preference
 ###
 
-demographicDataImplForm:
+subjectDisplayPreferencesForm:
   kind: panel.form
-  id: demographicDataImplForm
-  name: demographicDataImplForm
-  label: Demographic Data Type Preference
-  method: PUT
+  id: subjectDisplayPreferencesForm
+  name: subjectDisplayPreferencesForm
+  label: Subject Display Preferences
+  method: POST
   contentType: json
-  url: /xapi/pixi/preferences/demographic-data-impl
+  url: /xapi/pixi/preferences
   contents:
     ${demographicDataImpl}
+    ${uiShowHumanSearchFields}
 
 demographicDataImpl:
   kind: panel.select.single
   name: demographicDataImpl
-  label: Demographic Data Type Preference
-  description: Select a preferred demographic data type to be used when creating new subjects.
+  label: Demographic Data Type
+  description: >
+    Select a preferred demographic data type to be used when creating new subjects. Projects can also select there own
+    preference.
   options:
     xnat:
       label: "xnat:demographicData"
@@ -32,6 +35,13 @@ demographicDataImpl:
     pixi:
       label: "pixi:animalDemographicData"
       value: "pixi:animalDemographicData"
+
+uiShowHumanSearchFields:
+  kind: panel.input.switchbox
+  name: uiShowHumanSearchFields
+  label: Display Huamn Search Fields
+  description: >
+    Display human search fields on the home page and in the advanced search.
 
 ###
 ### Species Preferences
@@ -124,7 +134,7 @@ siteSettings:
       active: true
       contents:
         ${pixiModuleScript}
-        ${demographicDataImplForm}
+        ${subjectDisplayPreferencesForm}
         ${speciesPreferencesPanel}
         ${vendorPreferencesPanel}
     xenograftSettingsTab:

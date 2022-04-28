@@ -2,19 +2,25 @@
 ### Demographic Data Implementation Preference
 ###
 
-demographicDataImplProjForm:
+subjectDisplayPreferencesProjForm:
   kind: panel.form
-  id: demographicDataImplProjForm
-  name: demographicDataImplProjForm
-  label: Demographic Data Type Preference
-  method: PUT
+  id: subjectDisplayPreferencesProjForm
+  name: subjectDisplayPreferencesProjForm
+  label: Subject Display Preferences
+  method: POST
   contentType: json
   contents:
     ${demographicDataImplProj}
     ${pixiDemographicDataScript}
+    ${initDemographicData}
 
 pixiDemographicDataScript:
   tag: script|src="~/scripts/xnat/plugin/pixi/pixi-demographicDataPreference.js"
+
+initDemographicData:
+  tag: script
+  content: >
+    XNAT.plugin.pixi.demographicDataPreferenceManager.init();
 
 demographicDataImplProj:
   kind: panel.select.single
@@ -52,4 +58,4 @@ projectSettings:
       group: pixiProjectTabGroup
       active: true
       contents:
-        ${demographicDataImplProjForm}
+        ${subjectDisplayPreferencesProjForm}

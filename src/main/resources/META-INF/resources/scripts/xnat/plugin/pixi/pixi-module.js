@@ -23,6 +23,7 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
 }(function() {
 
     let undefined;
+    let restUrl = XNAT.url.restUrl
 
     XNAT.plugin.pixi.serverErrorHandler = function(e, title, closeAll) {
         console.log(e);
@@ -90,4 +91,16 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
             return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
         }
     }
+
+    XNAT.plugin.pixi.getPreference = function(preference, callback) {
+        callback = isFunction(callback) ? callback : function() {};
+        return XNAT.xhr.get({
+            url: restUrl(`/xapi/pixi/preferences/${preference}`),
+            dataType: 'json',
+            success: function(data) {
+                callback.apply(this, arguments);
+            }
+        });
+    };
+
 }));
