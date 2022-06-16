@@ -24,11 +24,13 @@ configurations {
 }
 
 dependencies {
-    xnatProvided enforcedPlatform("org.nrg:parent:1.8.2.2")
+    xnatProvided platform("org.nrg:parent:1.8.5-SNAPSHOT")
     xnatProvided "org.nrg:framework"
     xnatProvided "org.nrg.xnat:xnat-data-models"
     xnatProvided "org.nrg.xnat:web"
     xnatProvided "org.nrg.xdat:core"
+    xnatProvided "org.nrg:dicom-xnat-mx"
+    xnatProvided "dcm4che:dcm4che-core"
     xnatProvided "io.springfox:springfox-swagger2"
     xnatProvided "io.springfox:springfox-swagger-ui"
 }

@@ -113,6 +113,28 @@ cellLinePanel:
       content: >
         XNAT.plugin.pixi.cellLineManager.init('#cell-line-manager');
 
+###
+### Mouse Hotels
+###
+
+hotelPanel:
+  kind: panel
+  name: hotelPanel
+  label: Hotel Preferences
+  contents:
+    hotelDescription:
+      tag: div.message
+      contents:
+        "This panel lists all of the 'mouse hotels' which can be used with the hotel image session splitter. They describe the relative position of a subject in the image pixel data. These hotels capture DICOMs 'Subject Relative Position in Image' attribute."
+    hotelContainer:
+      tag: "div#hotel-preferences-manager"
+    hotelPreferencesJs:
+      tag: script|src="~/scripts/xnat/plugin/pixi/pixi-hotelPreferences.js"
+    renderHotelTable:
+      tag: script
+      content: >
+        XNAT.plugin.pixi.hotelPreferenceManager.init('#hotel-preferences-manager');
+
 #################################################
 ####  Root Site Admin Spawner Config Object  ####
 #################################################
@@ -146,3 +168,11 @@ siteSettings:
       contents:
         ${pdxPanel}
         ${cellLinePanel}
+    hotelSplitterSettingsTab:
+      kind: tab
+      name: hotelSplitterSettingsTab
+      label: Hotel Splitter
+      group: pixiTabGroup
+      active: true
+      contents:
+        ${hotelPanel}

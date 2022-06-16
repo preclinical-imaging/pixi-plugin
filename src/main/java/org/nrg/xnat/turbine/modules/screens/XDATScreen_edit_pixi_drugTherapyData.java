@@ -8,10 +8,7 @@ import org.nrg.xft.XFTItem;
 
 import java.time.LocalDate;
 
-/**
- * @author XDAT
- *
- */
+@SuppressWarnings("unused")
 public class XDATScreen_edit_pixi_drugTherapyData extends EditSubjectAssessorScreen {
 	static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(XDATScreen_edit_pixi_drugTherapyData.class);
 	/* (non-Javadoc)

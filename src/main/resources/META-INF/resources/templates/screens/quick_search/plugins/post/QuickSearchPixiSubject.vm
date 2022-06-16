@@ -17,7 +17,6 @@
     const config = { attributes: true, false: true, subtree: false };
 
     const subjectSearchTabLoadedCallback = function(mutationsList, observer) {
-        // Use traditional 'for loops' for IE 11
         for(const mutation of mutationsList) {
             if (mutation.type === 'attributes' && mutation.attributeName === 'data-loaded') {
                 console.debug('Subject search tab loaded.');
@@ -28,7 +27,6 @@
     };
 
     const mrSearchTabLoadedCallback = function(mutationsList, observer) {
-        // Use traditional 'for loops' for IE 11
         for(const mutation of mutationsList) {
             if (mutation.type === 'attributes' && mutation.attributeName === 'data-loaded') {
                 console.debug('MR search tab loaded.');
@@ -39,7 +37,6 @@
     };
 
     const petSearchTabLoadedCallback = function(mutationsList, observer) {
-        // Use traditional 'for loops' for IE 11
         for(const mutation of mutationsList) {
             if (mutation.type === 'attributes' && mutation.attributeName === 'data-loaded') {
                 console.debug('PET search tab loaded.');
@@ -50,7 +47,6 @@
     };
 
     const ctSearchTabLoadedCallback = function(mutationsList, observer) {
-        // Use traditional 'for loops' for IE 11
         for(const mutation of mutationsList) {
             if (mutation.type === 'attributes' && mutation.attributeName === 'data-loaded') {
                 console.debug('CT search tab loaded.');

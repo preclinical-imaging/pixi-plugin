@@ -1,0 +1,358 @@
+#* @vtlvariable name="subjects" type="java.util.List<org.nrg.xdat.om.XnatSubjectdata>" *#
+#* @vtlvariable name="hotel" type="org.nrg.xdat.om.PixiHotel" *#
+
+#if ($data.message)
+<div class="alert">$data.message</div>
+#end
+
+#if ($project)
+#else
+    #set($project=$item.getProperty("project"))
+#end
+
+#set($subjectOptions=["","Empty"])
+#foreach($subject in $subjects)
+    #set($subjectOption = [$subject.id,$subject.label])
+    #set($temp = $subjectOptions.add($subjectOption))
+#end
+
+#set($orientations=[
+    ["HFP","Head First-Prone"],
+    ["HFS","Head First-Supine"],
+    ["FFP","Feet First-Prone"],
+    ["FFS","Feet First-Supine"],
+    ["LFP","Left First-Prone"],
+    ["LFS","Left First-Supine"],
+    ["RFP","Right First-Prone"],
+    ["RFS","Right First-Supine"],
+    ["HFDR","Head First-Decubitus Right"],
+    ["HFDL","Head First-Decubitus Left"],
+    ["FFDR","Feet First-Decubitus Right"],
+    ["FFDL","Feet First-Decubitus Left"],
+    ["AFDR","Anterior First-Decubitus Right"],
+    ["AFDL","Anterior First-Decubitus Left"],
+    ["PFDR","Posterior First-Decubitus Right"],
+    ["PFDL","Posterior First-Decubitus Left"]
+    ])
+
+#macro (pixiTimeBox $name $item $defaultValue $vr)
+<!-- macro: xdatTextBox -->
+    #if ($vr)
+        #if($vr.getField($name))
+        <div class="warning">&#8658;</div>
+        #end
+    #end
+    #if ($item.getProperty($name))
+        #if($item.isPKField($name) && (!$vr.getField($name)))
+        <input id="$name" type="hidden" name="$name" value="$item.getProperty($name)"/>
+            #escapeHTML($!turbineUtils.unescapeParam("$item.getStringProperty($name)"))
+        #else
+        <input id="$name" type="time" steps="10" name="$name" placeholder="--:--:-- --" value="$item.getProperty($name)"/>
+        #end
+    #else
+    <input id="$name" type="time" steps="10" name="$name" placeholder="--:--:-- --" value="$defaultValue"/>
+    #end
+#end
+
+## modify the xdatSelectBox macro and remove custom values
+#macro (pixiSelectBox $name $item $possibleValues $vr)
+    #if ($vr)
+        #if($vr.getField($name))
+        <div class="warning">&#8658;</div>
+        #end
+    #end
+
+    #if($possibleValues)
+        #if ($possibleValues.size()==0)
+            <input id="$name" type="text" name="$name" value="$item.getProperty($name)"/>
+        #else
+            <select id="$name" name="$name">
+                <option value="">(SELECT)</option>
+                #foreach ($pValue in $possibleValues)
+                    #if($pValue.size() > 0)
+                        <option value="$pValue.get(0)" #if($pValue.get(0).equals($item.getProperty($name))) SELECTED #end>$pValue.get(1)</option>
+                    #else
+                        <option value="$pValue" #if($pValue.equals($item.getProperty($name))) SELECTED #end>$pValue</option>
+                    #end
+                #end
+            </select>
+        #end
+    #else
+    <input id="$name" type="text" name="$name" value="$item.getProperty($name)"/>
+    #end
+#end
+
+#set($presetSessionLabel = $!turbineUtils.GetPassedParameter("session_label",$data,""))
+#set($presetSessionDate = $!turbineUtils.GetPassedParameter("session_date",$data,""))
+
+<form ID="form1" name="form1" method="post" action="$link.setAction("ModifyPixiItem")">
+##	<input type="hidden" name="project" value="$!{project}" >
+	#if($vr)
+		<div class="warning">Invalid parameters:<BR>$vr.toHTML()</div>
+	#end
+
+	<h1>#if(!$om.getId())Create #else Edit #end Scan Record for Hotel Session</h1>
+
+    <input id="project" type="hidden" name="project" value="${project}">
+    <input id="pixi:hotelScanRecord/project" type="hidden" name="pixi:hotelScanRecord/project" value="${project}">
+
+##    #parse("/screens/xnat_edit_experimentData.vm")
+
+    <input type="hidden" name="$!item.getXSIType()/ID" id="$!item.getXSIType()/ID" value="$!item.getProperty("ID")"/>
+    <input type="hidden" name="$!item.getXSIType()/label" id="$!item.getXSIType()/label" value="$!item.getProperty("label")"/>
+    <input type="hidden" name="$!{item.getXSIType()}.ID" id="$!{item.getXSIType()}.ID" value="$!item.getProperty("ID")"/>
+
+    #xdatHiddenBox("pixi:hotelScanRecord/status" $item "Ready To Split")
+
+    <script type="text/javascript">
+        var elementName="$!item.getXSIType()";
+    </script>
+    <script type="text/javascript" LANGUAGE="JavaScript" src="$content.getURI('scripts/xnat_edit_experimentData.js')"></script>
+
+    ## If this is a new record, show the session selector interface. If not, show a standard editing UI
+    ## Also check to see if a session was provided in URL parameters
+    #if(!$om.getId() && $!presetSessionLabel.length().equals(0))
+        <h3>Select a Hotel Session</h3>
+
+        <div class="column-container col-2">
+            <div class="column">
+                <div class="panel panel-default session-source active" data-source="existing">
+                    <div class="panel-body">
+                        <div class="panel-element stacked">
+                            <label class="element-label">
+                                <input type="radio" name="session_existence" value="existing" class="session-source-toggle" checked>
+                                Session is already in XNAT
+                            </label>
+                        </div>
+
+                        <div class="panel-element stacked">
+                            <label class="element-label">Select Image Session</label>
+                            <div class="element-wrapper">
+                                <label>
+                                    <select name="pixi:hotelScanRecord/session_label" id="session-selector">
+                                        <option>Select Image Session</option>
+                                    </select>
+                                </label>
+                                <div class="description">
+                                    Session Date: <span class="selected-session-date"></span>
+                                    <input type="hidden" name="pixi:hotelScanRecord/date" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="column">
+                <div class="panel panel-default session-source disabled" data-source="new">
+                    <div class="panel-body">
+                        <div class="panel-element stacked disabled">
+                            <label class="element-label">
+                                <input type="radio" name="session_existence" value="new" class="session-source-toggle">
+                                Session is being scanned now
+                            </label>
+                        </div>
+
+                        <div class="panel-element stacked disabled">
+                            <label class="element-label">
+                                Define Session Label
+                            </label>
+                            <div class="element-wrapper">
+                                <input id="new-session-label" type="text" name="pixi:hotelScanRecord/session_label" disabled />
+                            </div>
+                        </div>
+
+                        <div class="panel-element stacked disabled">
+                            <label class="element-label">
+                                Define Session Date
+                            </label>
+                            <div class="element-wrapper">
+                                <span id="session-datepicker" class="single us today" data-value="" data-validate="onblur" data-input-name="pixi:hotelScanRecord/date"></span>
+                                <script type="text/javascript">
+                                    jq('#session-datepicker').data('value',XNAT.data.todaysDate.us);
+                                    XNAT.app.datePicker.init(jq('#session-datepicker'));
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    #else
+        <h3>Hotel Session</h3>
+        #if($presetSessionLabel)
+            <div class="column">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <p><strong>Image Session:</strong> <a href="$content.getURI("/data/experiments/${presetSessionLabel}?format=html")" class="selected-session-label">${presetSessionLabel}</a> <i class="spacer pad5"></i> <a href="#!" onclick="changeHotelSession()"><button class="btn btn-sm">Edit</button> </a></p>
+                        <p><strong>Session Date:</strong> <span class="selected-session-date">${presetSessionDate}</span></p>
+                        <input type="hidden" name="pixi:hotelScanRecord/date" value="${presetSessionDate}">
+                        <input type="hidden" name="pixi:hotelScanRecord/session_label" value="${presetSessionLabel}">
+                    </div>
+                </div>
+            </div>
+        #else
+            #set ($sessionId=$item.getStringProperty("session_label"))
+            <div class="column">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <p><a href="$content.getURI("/data/experiments/${sessionId}?format=html")" class="selected-session-label">$item.getStringProperty("session_label")</a> <i class="spacer pad5"></i> <a href="#!" onclick="changeHotelSession()"><button class="btn btn-sm">Edit</button> </a></p>
+                        <p><strong>Session Date:</strong> <span class="selected-session-date">$!item.getProperty("pixi:hotelScanRecord/date")</span></p>
+                        #xdatHiddenBox("pixi:hotelScanRecord/session_label" $item "")
+                    </div>
+                </div>
+            </div>
+        #end
+    #end
+
+
+    <h3>Define Hotel Session Record</h3>
+    #if(!$om.getId())
+        <div class="panel-element">
+            <div class="element-wrapper">
+                <label>
+                    <select class="hotel-selector" name="pixi:hotelScanRecord/hotel" id="pixi:hotelScanRecord/hotel" onchange="XNAT.plugin.pixi.handleHotelSelection()">
+                        <option>Select Hotel Type</option>
+                    </select>
+                </label>
+            </div>
+
+        </div>
+    #else
+        <p><strong>Hotel Type:</strong> $item.getStringProperty("pixi:hotelScanRecord/hotel")</p>
+        #xdatHiddenBox("pixi:hotelScanRecord/hotel" $item "")
+    #end
+
+    <div id="hotel-units" class="column-container col-2">
+        #if($om.getId())
+
+            #set($start = 0)
+            #set($end = $hotel.positions_position.size() - 1)
+            #foreach($i in [$start..$end])
+                #set($positionName = $hotel.positions_position.get($i).name)
+
+                <div class="column">
+                <div class="panel panel-default hotel-unit">
+                    <div class="panel-body">
+                        <h4>Position: <span class="hotel-unit-position">$positionName</span></h4>
+                        <input type="hidden" name="pixi:hotelScanRecord/hotel_subjects/subject[$i]/position" value="$positionName" />
+                        <div class="panel-element stacked">
+                            <label class="element-label" for="pixi:hotelScanRecord/hotel_subjects/subject[$i]/subject_id">
+                                Subject ID
+                            </label>
+                            <div class="element-wrapper">
+                                #pixiSelectBox("pixi:hotelScanRecord/hotel_subjects/subject[$i]/subject_id" $item $subjectOptions $vr)
+                            </div>
+                            #xdatHiddenBox("pixi:hotelScanRecord/hotel_subjects/subject[$i]/subject_label" $item "" $vr)
+                        </div>
+
+                        <div class="panel-element stacked">
+                            <label class="element-label">
+                                Orientation
+                            </label>
+                            <div class="element-wrapper">
+                                <label>
+                                    #pixiSelectBox("pixi:hotelScanRecord/hotel_subjects/subject[$i]/orientation" $item $orientations $vr)
+                                </label>
+                            </div>
+
+                        </div>
+
+                        <div class="panel-element stacked">
+                            <label class="element-label" for="pixi:hotelScanRecord/hotel_subjects/subject[$i]/weight">
+                                Weight (g)
+                            </label>
+                            <div class="element-wrapper">
+                                #xdatTextBox("pixi:hotelScanRecord/hotel_subjects/subject[$i]/weight" $item "" $vr)
+                            </div>
+
+                        </div>
+
+                        <div class="panel-element stacked">
+                            <label class="element-label" for="pixi:hotelScanRecord/hotel_subjects/subject[$i]/injection_time">
+                                Injection Time
+                            </label>
+                            <div class="element-wrapper">
+                                #pixiTimeBox("pixi:hotelScanRecord/hotel_subjects/subject[$i]/injection_time" $item "" $vr)
+                            </div>
+
+                        </div>
+
+                        <div class="panel-element stacked">
+                            <label class="element-label" for="pixi:hotelScanRecord/hotel_subjects/subject[$i]/activity">
+                                Activity (mCi)
+                            </label>
+                            <div class="element-wrapper">
+                                #xdatTextBox("pixi:hotelScanRecord/hotel_subjects/subject[$i]/activity" $item "" $vr)
+                            </div>
+
+                        </div>
+
+                        <div class="panel-element stacked">
+                            <label class="element-label" for="pixi:hotelScanRecord/hotel_subjects/subject[$i]/notes">
+                                Notes
+                            </label>
+                            <div class="element-wrapper">
+                                    <textarea cols="4"
+                                              id="pixi:hotelScanRecord/hotel_subjects/subject[$i]/notes"
+                                              name="pixi:hotelScanRecord/hotel_subjects/subject[$i]/notes"
+                                    >$!item.getProperty("pixi:hotelScanRecord/hotel_subjects/subject[$i]/notes")</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            #end
+
+        #else
+            <div class="message">Please select a hotel to display hotel units</div>
+        #end
+
+    </div>
+
+    #xdatEditProps($item "XDATScreen_edit_pixi_hotelScanRecord.vm")
+
+##    #xdatHiddenBox("popup" $item "false")
+##    #xdatHiddenBox("edit_screen" $item "XDATScreen_edit_pixi_hotelScanRecord.vm")
+##    #xdatHiddenBox("ELEMENT_0" $item "pixi:hotelScanRecord")
+
+
+	<p>
+        <input type="button" class="btn1" ONCLICK="validateForm();"  name="eventSubmit_doInsert" value="Submit"/>
+    </p>
+
+</form>
+
+<script type="text/javascript">
+    var XNAT = getObject(XNAT || {});
+    XNAT.plugin = getObject(XNAT.plugin || {});
+    XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
+
+    XNAT.plugin.pixi.pixiSubjects = [{ value: '', label: 'Empty'}];
+    #foreach( $subject in $subjects)
+        XNAT.plugin.pixi.pixiSubjects.push({ value: '$subject.id', label: '$subject.label' });
+    #end
+</script>
+<script src="$content.getURI("scripts/xnat/plugin/pixi/pixi-editScanRecord.js")"></script>
+<script type="text/javascript">
+    const newExperiment = ("$!om.getId()".length === 0);
+    XNAT.plugin.pixi.initScanRecord(newExperiment);
+</script>
+
+#if($!presetSessionLabel.length().equals(0))
+#else
+<script>
+    XNAT.plugin.pixi.setLabel("$presetSessionLabel")
+</script>
+#end
+
+<script type="text/javascript">
+	function validateForm()
+	{
+		//INSERT CUSTOM CONTENT HERE
+
+		validateExperimentForm();
+		return false;
+	}
+</script>

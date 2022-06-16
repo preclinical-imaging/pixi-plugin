@@ -1,0 +1,65 @@
+<!-- BEGIN templates/screens/pixi_hotelScanRecord/actionsBox/Delete.vm -->
+<!-- Sequence: 10 -->
+#if ($item.canDelete($user))
+<script>
+    const deleteScanRecord = function(){
+        #if($project)
+
+        #else
+            #set($project=$om.getProject())
+        #end
+        XNAT.ui.dialog.open({
+            title: 'Deletion Manager',
+            width: 550,
+            content: '<div class="deletion-dialog-contents"></div><div class="deletion-progress"></div>',
+            beforeShow: function(obj) {
+                var body = obj.$dialog.find('.deletion-dialog-contents');
+                body.html(spawn('p','Are you sure you want to delete the Scan Record <b>"${om.getLabel()}"</b>?'))
+            },
+            buttons: [
+                {
+                    label: 'Delete',
+                    isDefault: true,
+                    close: false,
+                    action: function(obj){
+                        var progress = obj.$dialog.find('.deletion-progress');
+                        var deleteBtn = obj.$dialog.find('.btn.default');
+
+                        progress.html('Deleting...');
+                        deleteBtn.addClass('disabled').prop('disabled','disabled');
+                        XNAT.xhr.ajax({
+                            url: XNAT.url.csrfUrl('/data/experiments/${om.getId()}'),
+                            method: 'delete',
+                            error: function(e){
+                                progress.html(spawn('div.warning',[
+                                    spawn('p','Error: Could not delete record.'),
+                                    spawn('p',e.statusText)
+                                ]));
+                                deleteBtn.html('OK')
+                                        .removeClass('disabled')
+                                        .prop('disabled',false)
+                                        .on('click',function(){ XNAT.dialog.closeAll(); return false; })
+                                console.warn(e);
+                            },
+                            success: function(){
+                                progress.html(spawn('div.success','Deletion successful. Sending you to the project page.'));
+                                window.setTimeout(function(){ window.location.assign(XNAT.url.restUrl('/data/projects/${project}')) }, 800);
+                            }
+                        })
+                    }
+                },
+                {
+                    label: 'Cancel',
+                    isDefault: false,
+                    close: true
+                }
+            ]
+        })
+    }
+</script>
+
+<li class="yuimenuitem lockable">
+    <a href="#!" onclick="deleteScanRecord()"><div class="ic"><i class="fa fa-trash-o" style="color: #900"></i></div><div class="ic_spacer">&nbsp;</div>Delete</a>
+</li>
+#end
+<!-- END templates/screens/pixi_hotelScanRecord/actionsBox/Delete.vm -->

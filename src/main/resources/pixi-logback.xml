@@ -10,7 +10,7 @@
             <fileNamePattern>${xnat.home}/logs/pixi.log.%d{yyyy-MM-dd}</fileNamePattern>
         </rollingPolicy>
     </appender>
-    <logger name="org.nrg.xnatx.plugins.pixi" additivity="false" level="DEBUG">
+    <logger name="org.nrg.xnatx.plugins.pixi" additivity="false" level="INFO">
         <appender-ref ref="pixi"/>
     </logger>
 </configuration>

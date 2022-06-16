@@ -168,7 +168,7 @@
                                     "tableView": true,
                                     "dataSrc": "custom",
                                     "data": {
-                                        "custom": "var values;\nXNAT.xhr.get({\n  url: '/xapi/pixi/preferences/species',\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    data = data[\"species\"];\n    data.sort((a,b) => a.id - b.id);\n    values = data;\n  }\n});"
+                                        "custom": "var values;\nXNAT.xhr.get({\n  url: XNAT.url.restUrl('/xapi/pixi/preferences/species'),\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    data = data[\"species\"];\n    data.sort((a,b) => a.id - b.id);\n    values = data;\n  }\n});"
                                     },
                                     "valueProperty": "scientificName",
                                     "template": "<span>{{ item.commonName }} / {{ item.scientificName }}</span>",
@@ -192,7 +192,7 @@
                                     "tableView": true,
                                     "dataSrc": "custom",
                                     "data": {
-                                        "custom": "var values;\nXNAT.xhr.get({\n  url: '/xapi/pixi/preferences/vendors',\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    data = data[\"vendors\"];\n    data.sort((a,b) => a.id - b.id);\n    values = data;\n  }\n});"
+                                        "custom": "var values;\nXNAT.xhr.get({\n  url: XNAT.url.restUrl('/xapi/pixi/preferences/vendors'),\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    data = data[\"vendors\"];\n    data.sort((a,b) => a.id - b.id);\n    values = data;\n  }\n});"
                                     },
                                     "valueProperty": "vendor",
                                     "template": "<span>{{ item.vendor }}</span>",
@@ -400,7 +400,7 @@
                                             "tableView": true,
                                             "dataSrc": "custom",
                                             "data": {
-                                                "custom": "var values;\nXNAT.xhr.get({\n  url: '/xapi/pixi/cellline',\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    values = data;\n  }\n});"
+                                                "custom": "var values;\nXNAT.xhr.get({\n  url: XNAT.url.restUrl('/xapi/pixi/cellline'),\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    values = data;\n  }\n});"
                                             },
                                             "idPath": "externalID",
                                             "valueProperty": "externalID",
@@ -577,7 +577,7 @@
                                             "tableView": true,
                                             "dataSrc": "custom",
                                             "data": {
-                                                "custom": "var values;\nXNAT.xhr.get({\n  url: '/xapi/pixi/pdx',\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    values = data;\n  }\n});"
+                                                "custom": "var values;\nXNAT.xhr.get({\n  url: XNAT.url.restUrl('/xapi/pixi/pdx'),\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    values = data;\n  }\n});"
                                             },
                                             "idPath": "externalID",
                                             "valueProperty": "externalID",
@@ -762,7 +762,7 @@
                                             "tableView": true,
                                             "dataSrc": "custom",
                                             "data": {
-                                                "custom": "var values;\nXNAT.xhr.get({\n  url: '/xapi/pixi/cellline',\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    values = data;\n  }\n});"
+                                                "custom": "var values;\nXNAT.xhr.get({\n  url: XNAT.url.restUrl('/xapi/pixi/cellline'),\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    values = data;\n  }\n});"
                                             },
                                             "idPath": "externalID",
                                             "valueProperty": "externalID",
@@ -940,7 +940,7 @@
                                             "tableView": true,
                                             "dataSrc": "custom",
                                             "data": {
-                                                "custom": "var values;\nXNAT.xhr.get({\n  url: '/xapi/pixi/pdx',\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    values = data;\n  }\n});"
+                                                "custom": "var values;\nXNAT.xhr.get({\n  url: XNAT.url.restUrl('/xapi/pixi/pdx'),\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    values = data;\n  }\n});"
                                             },
                                             "idPath": "externalID",
                                             "valueProperty": "externalID",

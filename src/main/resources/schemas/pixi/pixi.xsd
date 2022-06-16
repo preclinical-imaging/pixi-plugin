@@ -11,6 +11,11 @@
     <xs:element name="Weight" type="pixi:weightData"/>
     <xs:element name="DrugTherapy" type="pixi:drugTherapyData"/>
     <xs:element name="CaliperMeasurement" type="pixi:caliperMeasurementData"/>
+    <xs:element name="Hotel" type="pixi:hotel"/>
+    <xs:element name="HotelPosition" type="pixi:hotelPosition"/>
+    <xs:element name="HotelSubject" type="pixi:hotelSubject"/>
+    <xs:element name="HotelScanRecord" type="pixi:hotelScanRecord"/>
+
     <xs:complexType name="animalDemographicData">
         <xs:annotation>
             <xs:appinfo>
@@ -269,6 +274,175 @@
                     <xs:element name="technician" type="xs:string">
                         <xs:annotation>
                             <xs:documentation>Individual who took the measurement.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="hotel">
+        <xs:sequence>
+            <xs:element name="id" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xdat:field>
+                            <xdat:sqlField primaryKey="true"/>
+                        </xdat:field>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="name" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xdat:field unique="true"/>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="positions">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="position" type="pixi:hotelPosition" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="hotelPosition">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Human readable hotel position name (Example: Top Left)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="x" type="xs:positiveInteger">
+                <xs:annotation>
+                    <xs:documentation>DICOM Subject Relative Position: the first value starts at one for the left most subject holder and monotonically increases by one for each successive subject holder towards the right.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="y" type="xs:positiveInteger">
+                <xs:annotation>
+                    <xs:documentation>DICOM Subject Relative Position: the second value starts at one for the top most subject holder and monotonically increases by one for each successively lower subject holder.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="z" type="xs:positiveInteger">
+                <xs:annotation>
+                    <xs:documentation>DICOM Subject Relative Position: the third value starts at one for the outer most subject holder and monotonically increases by one for each successive subject holder inwards (i.e., increasing values from the front to the back of the gantry along the direction orthogonal to the first two dimensions, usually the long axis of the table)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="hotelSubject">
+        <xs:attribute name="subject_id" type="xs:string">
+            <xs:annotation>
+                <xs:appinfo>
+                    <xdat:field baseElement="xnat:subjectData" baseCol="id">
+                        <xdat:sqlField name="subject_id"/>
+                    </xdat:field>
+                </xs:appinfo>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:sequence>
+            <xs:attribute name="subject_label" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Subject label</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:element name="position" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Subject position in hotel</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="orientation" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Subject orientation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="weight" type="xs:decimal" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Subject weight (g)</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:decimal">
+                        <xs:minInclusive value="0"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="injection_time" type="xs:time" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Radiopharmaceutical Injection Time</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="activity" type="xs:decimal" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Radiopharmaceutical Activity</xs:documentation> <!-- //TODO: Units -->
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:decimal">
+                        <xs:minInclusive value="0"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="notes" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Subject notes</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="split_session_label" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Subject notes</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="hotelScanRecord">
+        <xs:annotation>
+            <xs:appinfo>
+                <xs:documentation>Hotel Scan Record. Captures data needed to split a hotel image session.</xs:documentation>
+                <xdat:element ignoreWarnings="true"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="xnat:abstractProjectAsset">
+                <xs:sequence>
+                    <xs:element name="session_label" type="xs:string">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <xs:documentation>The label of the hotel session to split.</xs:documentation>
+                                <xdat:element ignoreWarnings="true"/>
+                            </xs:appinfo>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="session_uri" type="xs:string" minOccurs="0">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <xs:documentation>The archive path to the hotel session to split. Expected format is "/archive/projects/PROJECT_ID/subjects/XNAT_S00001/experiments/XNAT_E00001"</xs:documentation>
+                                <xdat:element ignoreWarnings="true"/>
+                            </xs:appinfo>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="hotel" type="xs:string">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <xdat:field baseElement="pixi:hotel" baseCol="name">
+                                    <xdat:sqlField name="hotel_name"/>
+                                </xdat:field>
+                            </xs:appinfo>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="hotel_subjects">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="subject" type="pixi:hotelSubject" maxOccurs="unbounded"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="status">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <xs:documentation>Calculated status based on hotel session splitting progress</xs:documentation>
+                                <xdat:element ignoreWarnings="true"/>
+                            </xs:appinfo>
                         </xs:annotation>
                     </xs:element>
                 </xs:sequence>

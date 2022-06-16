@@ -1,0 +1,8 @@
+<!-- Sequence: 99 -->
+#if($om.getLabel().toString().contains('_split_'))
+    ## don't show this link for sessions that have already been split
+#else
+    <li class="yuimenuitem" id="add-scan-record">
+        <a class="yuimenuitemlabel" href="$link.setPage("XDATScreen_edit_pixi_hotelScanRecord.vm").addPathInfo('project',$om.getProject()).addPathInfo('session_label', $om.getLabel()).addPathInfo('session_date', $om.getStringProperty('date'))">Record New Hotel Scan</a>
+    </li>
+#end

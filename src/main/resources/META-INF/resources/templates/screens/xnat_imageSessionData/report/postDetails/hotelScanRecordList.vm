@@ -1,0 +1,61 @@
+
+<div class="data-table-container hidden" id="scan-record-table-container">
+    <div class="data-table-titlerow">
+        <h3 class="data-table-title">Hotel Scan Records</h3>
+    </div>
+    <div class="data-table-wrapper" style="margin-top: 6px;">
+        <table class="xnat-table borderless" id="scan-record-table" width="100%">
+            <thead>
+                <tr>
+                    <th class="left">Hotel Scan Record</th>
+                    <th class="left">Date Added</th>
+                    <th class="left">Added By</th>
+                    <th class="left">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<script>
+    var scanRecords = [];
+    var columns = 'label,insert_date,insert_user,pixi:hotelScanRecord/status,pixi:hotelScanRecord/session_label';
+    var srTable = jq('#scan-record-table');
+
+    XNAT.xhr.getJSON({
+        url: XNAT.url.rootUrl('/data/projects/${om.getProject()}/experiments?xsiType=pixi:hotelScanRecord&columns='+columns),
+        async: false,
+        success: function(data){
+            // find scan records relative to this session
+            data.ResultSet.Result.forEach((record) => {
+                if (record.label.indexOf('$om.getLabel()') >= 0) scanRecords.push(record)
+            });
+
+            scanRecords.forEach((record) => {
+                srTable.find('tbody').append(
+                    spawn('tr',[
+                        spawn('td',[
+                            spawn('a',{
+                                href: XNAT.url.rootUrl('/data/projects/${om.getProject()}/experiments/'+record.label+'?format=html'),
+                                html: record.label
+                            })
+                        ]),
+                        spawn('td',record['insert_date']),
+                        spawn('td',record['insert_user']),
+                        spawn('td',record['pixi:hotelscanrecord/status'])
+                    ])
+                )
+            })
+        }
+    })
+
+    if (scanRecords.length){
+        jq(document).find('div[name=custom-post-details]').removeClass('hidden');
+        jq('#scan-record-table-container').removeClass('hidden');
+    }
+
+</script>

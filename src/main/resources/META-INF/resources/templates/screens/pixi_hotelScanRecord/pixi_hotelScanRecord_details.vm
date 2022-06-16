@@ -1,0 +1,182 @@
+<table border="0" width="920" >
+    <tr>
+        <td valign="top">
+            <!--BEGIN EXPT SUMMARY TABS -->
+            <div ID="expt_summary_module" style="display:none">
+                <div id="exptSummary" class="yui-navset">
+                    <ul class="yui-nav" style="">
+                        <li class="selected"><a href="#tab1"><em>Details<span class="spacer"></span></em></a></li>
+                        #if($user.checkFeature($om,"project_sharing"))
+                            <li><a href="#tab2"><em>$displayManager.getPluralDisplayNameForProject()<span class="spacer"></span></em></a></li>
+                        #end
+                        #foreach($tab in $turbineUtils.getTemplates($om.getXSIType(),"report/tabs"))
+                            <li><a href="#$tab.getProperty("divName")"><em>$tab.getProperty("title")<span class="spacer"></span></em></a></li>
+                        #end
+                    </ul>
+                    <div class="yui-content">
+                        <div id="tab1">
+                            <table>
+                                <tr>
+                                    <td valign="top">
+                                        <table>
+                                            #parse($turbineUtils.getTemplateName("_keyFields",$om.getXSIType(),$project))
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        #if($user.checkFeature($om,"project_sharing"))
+                            <div id="tab2">
+                                #parse($turbineUtils.getTemplateName("sharing",$om.getXSIType(),$!project))
+                            </div>
+                        #end
+
+                        #foreach($tab in $turbineUtils.getTemplates($om.getXSIType(),"report/tabs"))
+                            <div id="$tab.getProperty("divName")">
+                                #set($path = "screens/${tab.getProperty('path')}")
+                                #parse($path)
+                            </div>
+                        #end
+
+                    </div>
+                </div>
+            </div>
+            <script type="text/javascript">
+                function summaryIndexChanged(){
+                    var activeIndex=this.get("activeIndex");
+                    #define($projectIdEsc)#escapeJS("$!project.getId()")#end
+                    YAHOO.util.Cookie.set("${projectIdEsc.trim()}.summary.index",activeIndex);
+                }
+                function toggleLI(_name){
+                    var elements = document.getElementsByName("li_"+_name);
+                    for(var trI=0;trI<elements.length;trI++){
+                        if(elements[trI].style.display=="none"){
+                            elements[trI].style.display="block";
+                        }else{
+                            elements[trI].style.display="none";
+                        }
+                    }
+                }
+
+                function summaryTabManagerInit(){
+                    window.summaryTabView = new YAHOO.widget.TabView('exptSummary');
+
+                    window.expt_summary_module = new YAHOO.widget.Module("expt_summary_module",{visible:false,zIndex:5});
+
+                    #addCustomScreenJS($om.getXSIType() "report/tabs_js")
+
+                    window.expt_summary_module.show();
+                    #define($omIdEsc)#escapeJS("$!om.getId()")#end
+                    var tabIndex=YAHOO.util.Cookie.get("${omIdEsc.trim()}.summary.index}");
+                    window.summaryTabView.set('activeIndex',tabIndex||0);
+
+                    window.summaryTabView.subscribe("activeTabChange",summaryIndexChanged);
+                }
+                summaryTabManagerInit();
+            </script>
+            <!--END SUBJECT SUMMARY TABS -->
+
+        </td>
+        <td valign="top" align="right" rowspan="2">
+            #parse($turbineUtils.getTemplateName("actions",$om.getXSIType(),$project))
+        </td>
+    </tr>
+</table>
+#if($item.getStringProperty("note"))
+<div class="report-section">
+    <h3>Notes: </h3>
+    <div>#escapeCleanHTML("$!item.getStringProperty('note')")</div>
+</div>
+#end
+
+
+#set ($status=$item.getStringProperty("status"))
+<div class="report-section">
+    <h3>Status: $status</h3>
+    <br>
+    <h3>Hotel Session</h3>
+    <table class="xnat-table">
+    #set($sessionId = $!item.getProperty("session_label"))
+    #if ($sessionId)
+        <tr>
+            <th class="left">Image Session ID</th>
+
+            <td>
+                #if ($status.toString().equals("Waiting for Session"))
+                    $sessionId (<a href="$content.getURI("/app/template/XDATScreen_prearchives.vm")">Check Prearchive</a>)
+                #else
+                    <a href="$content.getURI("/data/projects/${project}/experiments/${sessionId}?format=html")" class="insert-session-label">$sessionId</a>
+                #end
+            </td>
+        </tr>
+        <tr>
+            <th class="left">Image Session Date</th>
+            <td>$!item.getProperty("date")</td>
+        </tr>
+        #else
+            <tr><td>No Hotel Session Found</td></tr>
+        #end
+    </table>
+    <br class="clear">
+    <h3>Hotel Type: $!item.getProperty("hotel")</h3>
+</div>
+
+#set($hotelSubjects = $!item.getChildItems("hotel_subjects/subject").size())
+
+<div class="report-section column-container col-${hotelSubjects}">
+###foreach($i in [0..3])
+##    #set($positionName = $hotel.positions_position.get($i).name)
+
+#foreach($subject in $!item.getChildItems("hotel_subjects/subject"))
+    <div class="column">
+        <div class="panel panel-default hotel-unit">
+            <div class="panel-body">
+                <h4>Position: $!subject.getProperty("position")</h4>
+                <table cellspacing="10">
+                    <tr>
+                        <th>Subject ID</th>
+                        <td>
+                            #if ($!subject.getProperty("subject_label")) $!subject.getProperty("subject_label")
+                            #else $!subject.getProperty("subject_id")
+                            #end
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Orientation</th>
+                        <td>$!subject.getProperty("orientation")</td>
+                    </tr>
+                    <tr>
+                        <th>Weight (g)</th>
+                        <td>$!subject.getProperty("weight")</td>
+                    </tr>
+                    <tr>
+                        <th>Injection Time</th>
+                        <td>$!subject.getProperty("injection_time")</td>
+                    </tr>
+                    <tr>
+                        <th>Activity (mCi)</th>
+                        <td>$!subject.getProperty("activity")</td>
+                    </tr>
+                    <tr>
+                        <th>Notes</th>
+                        <td>$!subject.getProperty("notes")</td>
+                    </tr>
+                    #set($splitSessionLabel = $!subject.getProperty("split_session_label"))
+                    #if ($splitSessionLabel)
+                        <tr>
+                            <th class="left">Split Image Session</th>
+                            <td><a href="$content.getURI("/data/projects/${project}/experiments/${splitSessionLabel}?format=html")" class="insert-session-label">$splitSessionLabel</td>
+                        </tr>
+                    #else
+                        <tr>
+                            <th class="left">Split Image Session</th>
+                            <td>No Image Session Found</td>
+                        </tr>
+                    #end
+                </table>
+
+            </div>
+        </div>
+    </div>
+#end
+</div>

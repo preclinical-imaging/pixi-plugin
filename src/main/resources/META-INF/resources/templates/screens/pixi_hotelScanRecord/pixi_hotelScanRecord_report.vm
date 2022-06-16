@@ -1,0 +1,23 @@
+<!-- BEGIN pixi_hotelScanRecord/report.vm -->
+#if($project)
+
+#else
+    #set($project=$om.getProject())
+#end
+
+<h1>$om.getSchemaElement().getSingularDescription() Details</h1>
+
+<table width="100%" border="0">
+    <tr>
+        <td align=left>
+            #parse($turbineUtils.getTemplateName("_details",$om.getXSIType(),$project))
+        </td>
+    </tr>
+    <tr>
+        <td colspan=2>
+            #parse("/screens/ReportProjectSpecificFields.vm")
+        </td>
+    </tr>
+</table>
+
+<!-- END imageAssessor/xnat_imageAssessorData_report.vm -->

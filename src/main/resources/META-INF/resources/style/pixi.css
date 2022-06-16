@@ -1,0 +1,73 @@
+.column-container {
+    margin: 1em 0;
+    padding: 0;
+}
+.column-container .column {
+    display: inline-block;
+    vertical-align: top;
+}
+.column-container .column+.column {
+    margin-left: 2.5%;
+}
+.column-container.col-2 .column {
+    width: 45%;
+}
+.column-container.col-3 .column {
+    width: 30%;
+}
+.column-container.col-4 .column {
+    width: 20%;
+}
+.column-container.col-2 .column:nth-child(2n),
+.column-container.col-3 .column:nth-child(3n),
+.column-container.col-4 .column:nth-child(4n){
+    clear-after: both;
+}
+.column-container.col-2 .column:nth-child(2n+1),
+.column-container.col-3 .column:nth-child(3n+1),
+.column-container.col-4 .column:nth-child(4n+1){
+    margin-left: 0;
+}
+
+body.xnat .column .panel {
+    background-color: #f8f8f8;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+body.xnat .column .panel.disabled {
+    background-color: #efefef;
+    border-color: #dedede;
+}
+body.xnat .column .panel.disabled:hover {
+    background-color: #fff;
+    border-color: #ccc;
+    cursor: pointer;
+}
+body.xnat .column .panel.disabled:hover * {
+    cursor: pointer;
+}
+
+body.xnat .column .panel.active {
+    background-color: #e4efff;
+    border-color: #c4cfdf;
+}
+
+.panel-default .panel-body {
+    padding: 10px 15px;
+}
+.panel .panel-element.stacked .element-label {
+    display: block;
+    padding-bottom: 6px;
+}
+.panel .panel-element.stacked {
+    margin: 0 0 20px;
+}
+
+.hotel-unit-position {
+    text-transform: capitalize;
+}
+
+.column table th {
+    text-align: left;
+}
