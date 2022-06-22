@@ -117,6 +117,125 @@ console.log('pixi-editScanRecord.js');
     };
     XNAT.plugin.pixi.hotelScanRecords = hotelScanRecords = [];
 
+    XNAT.plugin.pixi.updateScanRecord = function(status, scanRecordLabel, msg){
+        if (status === 'Ready To Split') {
+            XNAT.xhr.ajax({
+                method: 'PUT',
+                url: XNAT.url.csrfUrl('/xapi/pixi/hotelscanrecords/'+scanRecordLabel+'/project/'+project+'/status'),
+                data: status,
+                contentType: 'text/plain',
+                success: function(data){
+                    $('#status-updater').html(
+                        spawn('div.success',[
+                            'Session found in project archive! Status updated to "'+status+'". ',
+                            spawn('a', { href: '.' },'Reload the page'),
+                            ' to update.'
+                        ])
+                    );
+                },
+                fail: function(e){
+                    function showError() {
+                        XNAT.ui.dialog.open({ title: 'Error', content: e.responseText });
+                    }
+                    $('#status-updater').html(
+                        spawn('div.warning',[
+                            'Session found in project archive, but could not update status. ',
+                            spawn('a', { href: '#!', onclick: 'showError()' },'View error report'),
+                            '.'
+                        ])
+                    );
+                }
+            })
+        }
+    };
+
+    XNAT.plugin.pixi.checkSession = function(e,sessionLabel,scanRecordLabel) {
+        if (e) {
+            e.preventDefault();
+            if (!sessionLabel)  window.location.assign(e.target.href);
+        }
+
+        var sessionFound = false,
+            sessionStatus = false,
+            statusDiv = $('#status-updater');
+
+        statusDiv.html(spawn('div.note',[
+            spawn('i.fa.fa-clock-o.pull-left', {
+                style: { 'margin-left': '-20px' }
+            }),
+            'Searching for image session...'
+        ]));
+
+        // first, check to see if session is archived
+        XNAT.xhr.getJSON({
+            url: XNAT.url.rootUrl('/data/projects/'+ project +'/experiments/'+sessionLabel ),
+            async: false,
+            success: function (data,e){
+                if (e === 'success') {
+                    sessionFound = true;
+                    sessionStatus = 'Ready To Split';
+                }
+            }
+        });
+
+        if (sessionFound) {
+            window.setTimeout(function(){
+                XNAT.plugin.pixi.updateScanRecord(sessionStatus,scanRecordLabel, 'Image session found in Project Archive');
+            },1200);
+            return false;
+        }
+
+        // second, see if session is in the listing of Prearchive items for this project
+        XNAT.xhr.getJSON({
+            url: XNAT.url.rootUrl('/data/prearchive/projects/'+project),
+            async: false,
+            success: function (data){
+                var prearchiveSessions = data.ResultSet.Result;
+                if (prearchiveSessions.length) {
+                    var prearcSession = prearchiveSessions.filter((session) => { return session.name === sessionLabel })
+                    if (prearcSession.length){
+                        sessionFound = true;
+                        sessionStatus = prearcSession[0].status;
+                    }
+                }
+            }
+        });
+
+        if (sessionFound) {
+            var msg = 'This image session was found in the Prearchive with a status of '+sessionStatus+'. ',
+                okayLink = '<a href="'+ XNAT.url.rootUrl('/app/template/XDATScreen_prearchives.vm') +'">Go to the Prearchive</a>',
+                messageType = 'note';
+            switch (sessionStatus) {
+                case 'READY' :
+                    msg+='It is ready to be archived. '+ okayLink +' to add it to your project archive.';
+                    messageType = 'success';
+                    break;
+                case 'RECEIVING' :
+                    msg+='It is still receiving data. We recommend checking back when the session has a status of "READY". ';
+                    messageType = 'message';
+                    break;
+                case 'ERROR' :
+                    msg+= okayLink + ' to determine what to do next.';
+                    messageType = 'warning';
+                    break;
+                default:
+                    msg += okayLink + '.';
+                    break;
+            }
+
+            window.setTimeout(function(){
+                statusDiv.html(spawn('div', { addClass: messageType, html: msg }));
+            }, 1200);
+        }
+        else {
+            window.setTimeout(function(){
+                statusDiv.html(spawn('div.message', 'No record of this image session was found in the prearchive or the archive. You might continue waiting, or double-check your session name.'));
+            }, 1200);
+
+        }
+
+    };
+
     XNAT.plugin.pixi.initScanRecord = function(newExperiment = true){
         // get all known scan records
         XNAT.xhr.getJSON({

@@ -93,26 +93,27 @@
 #set ($status=$item.getStringProperty("status"))
 <div class="report-section">
     <h3>Status: $status</h3>
+    <div id="status-updater" style="margin-top: 1em"></div>
     <br>
     <h3>Hotel Session</h3>
     <table class="xnat-table">
-    #set($sessionId = $!item.getProperty("session_label"))
-    #if ($sessionId)
-        <tr>
-            <th class="left">Image Session ID</th>
+        #set($sessionId = $!item.getProperty("session_label"))
+        #if ($sessionId)
+            <tr>
+                <th class="left">Image Session ID</th>
 
-            <td>
-                #if ($status.toString().equals("Waiting for Session"))
-                    $sessionId (<a href="$content.getURI("/app/template/XDATScreen_prearchives.vm")">Check Prearchive</a>)
-                #else
-                    <a href="$content.getURI("/data/projects/${project}/experiments/${sessionId}?format=html")" class="insert-session-label">$sessionId</a>
-                #end
-            </td>
-        </tr>
-        <tr>
-            <th class="left">Image Session Date</th>
-            <td>$!item.getProperty("date")</td>
-        </tr>
+                <td>
+                    #if ($status.toString().equals("Waiting for Session"))
+                        $sessionId (<a href="$content.getURI("/app/template/XDATScreen_prearchives.vm")" onclick="XNAT.plugin.pixi.checkSession('${sessionId}')">Check Prearchive</a>)
+                    #else
+                        <a href="$content.getURI("/data/projects/${project}/experiments/${sessionId}?format=html")" class="insert-session-label">$sessionId</a>
+                    #end
+                </td>
+            </tr>
+            <tr>
+                <th class="left">Image Session Date</th>
+                <td>$!item.getProperty("date")</td>
+            </tr>
         #else
             <tr><td>No Hotel Session Found</td></tr>
         #end
@@ -127,56 +128,66 @@
 ###foreach($i in [0..3])
 ##    #set($positionName = $hotel.positions_position.get($i).name)
 
-#foreach($subject in $!item.getChildItems("hotel_subjects/subject"))
-    <div class="column">
-        <div class="panel panel-default hotel-unit">
-            <div class="panel-body">
-                <h4>Position: $!subject.getProperty("position")</h4>
-                <table cellspacing="10">
-                    <tr>
-                        <th>Subject ID</th>
-                        <td>
-                            #if ($!subject.getProperty("subject_label")) $!subject.getProperty("subject_label")
+    #foreach($subject in $!item.getChildItems("hotel_subjects/subject"))
+        <div class="column">
+            <div class="panel panel-default hotel-unit">
+                <div class="panel-body">
+                    <h4>Position: $!subject.getProperty("position")</h4>
+                    <table cellspacing="10">
+                        <tr>
+                            <th>Subject ID</th>
+                            <td>
+                                #if ($!subject.getProperty("subject_label")) $!subject.getProperty("subject_label")
                             #else $!subject.getProperty("subject_id")
-                            #end
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Orientation</th>
-                        <td>$!subject.getProperty("orientation")</td>
-                    </tr>
-                    <tr>
-                        <th>Weight (g)</th>
-                        <td>$!subject.getProperty("weight")</td>
-                    </tr>
-                    <tr>
-                        <th>Injection Time</th>
-                        <td>$!subject.getProperty("injection_time")</td>
-                    </tr>
-                    <tr>
-                        <th>Activity (mCi)</th>
-                        <td>$!subject.getProperty("activity")</td>
-                    </tr>
-                    <tr>
-                        <th>Notes</th>
-                        <td>$!subject.getProperty("notes")</td>
-                    </tr>
-                    #set($splitSessionLabel = $!subject.getProperty("split_session_label"))
-                    #if ($splitSessionLabel)
-                        <tr>
-                            <th class="left">Split Image Session</th>
-                            <td><a href="$content.getURI("/data/projects/${project}/experiments/${splitSessionLabel}?format=html")" class="insert-session-label">$splitSessionLabel</td>
+                                #end
+                            </td>
                         </tr>
-                    #else
                         <tr>
-                            <th class="left">Split Image Session</th>
-                            <td>No Image Session Found</td>
+                            <th>Orientation</th>
+                            <td>$!subject.getProperty("orientation")</td>
                         </tr>
-                    #end
-                </table>
+                        <tr>
+                            <th>Weight (g)</th>
+                            <td>$!subject.getProperty("weight")</td>
+                        </tr>
+                        <tr>
+                            <th>Injection Time</th>
+                            <td>$!subject.getProperty("injection_time")</td>
+                        </tr>
+                        <tr>
+                            <th>Activity (mCi)</th>
+                            <td>$!subject.getProperty("activity")</td>
+                        </tr>
+                        <tr>
+                            <th>Notes</th>
+                            <td>$!subject.getProperty("notes")</td>
+                        </tr>
+                        #set($splitSessionLabel = $!subject.getProperty("split_session_label"))
+                        #if ($splitSessionLabel)
+                            <tr>
+                                <th class="left">Split Image Session</th>
+                                <td><a href="$content.getURI("/data/projects/${project}/experiments/${splitSessionLabel}?format=html")" class="insert-session-label">$splitSessionLabel</td>
+                            </tr>
+                        #else
+                            <tr>
+                                <th class="left">Split Image Session</th>
+                                <td>No Image Session Found</td>
+                            </tr>
+                        #end
+                    </table>
 
+                </div>
             </div>
         </div>
-    </div>
-#end
+    #end
 </div>
+
+<script type="text/javascript" src="$content.getURI("/scripts/xnat/plugin/pixi/pixi-editScanRecord.js")"></script>
+<script>
+    // if user is waiting for session to be archived, do a check automatically
+    // var XNAT = getObject(XNAT || {});
+    // XNAT.plugin = getObject(XNAT.plugin || {});
+    // XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
+
+    if ('$status.toString()' === 'Waiting for Session') XNAT.plugin.pixi.checkSession(null,'${sessionId}','$om.getLabel()');
+</script>
