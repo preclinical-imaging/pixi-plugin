@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+$page.setTitle("BliSession Details")
+$page.setLinkColor($ui.alink)
+$page.setVlinkColor($ui.vlink)
+ ##---------------------------------------- 
+ ## DO NOT MODIFY THIS FILE HERE
+ ##
+ ## TO MODIFY, COPY THIS FILE to src/main/resources/templates/screens/ and modify it there 
+ ##----------------------------------------
+#if ($turbineUtils.GetPassedParameter("popup", $data))
+	#set ($popup = $turbineUtils.GetPassedParameter("popup", data) )
+	#set ($popup = "false")
+#end
+<TABLE width="100%">
+	<TR>
+		<TD>
+			<table width="100%">
+				<TR>
+					<TD align="left" valign="middle">
+						$turbineUtils.getTemplateName("_report",$om.getXSIType(),$project)
+						<font face="$ui.sansSerifFonts" size="3"><b>BliSession Details</b></font>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<TABLE width="100%">
+				<TR>
+					<TD valign="top">
+						<TABLE>
+							<TR><TD>scanner</TD><TD>$!item.getStringProperty("pixi:bliSessionData/scanner")</TD></TR>
+							<TR><TD>scanner/manufacturer</TD><TD>$!item.getStringProperty("pixi:bliSessionData/scanner/manufacturer")</TD></TR>
+							<TR><TD>scanner/model</TD><TD>$!item.getStringProperty("pixi:bliSessionData/scanner/model")</TD></TR>
+							<TR><TD>operator</TD><TD>$!item.getStringProperty("pixi:bliSessionData/operator")</TD></TR>
+							<TR><TD>prearchivePath</TD><TD>$!item.getStringProperty("pixi:bliSessionData/prearchivePath")</TD></TR>
+							<TR><TD>dcmAccessionNumber</TD><TD>$!item.getStringProperty("pixi:bliSessionData/dcmAccessionNumber")</TD></TR>
+							<TR><TD>dcmPatientId</TD><TD>$!item.getStringProperty("pixi:bliSessionData/dcmPatientId")</TD></TR>
+							<TR><TD>dcmPatientName</TD><TD>$!item.getStringProperty("pixi:bliSessionData/dcmPatientName")</TD></TR>
+							<TR><TD>dcmPatientBirthDate</TD><TD>$!item.getProperty("pixi:bliSessionData/dcmPatientBirthDate")</TD></TR>
+							<TR><TD>dcmPatientWeight</TD><TD>$!item.getDoubleProperty("pixi:bliSessionData/dcmPatientWeight")</TD></TR>
+							<TR><TD>session_type</TD><TD>$!item.getStringProperty("pixi:bliSessionData/session_type")</TD></TR>
+							<TR><TD>modality</TD><TD>$!item.getStringProperty("pixi:bliSessionData/modality")</TD></TR>
+							<TR><TD>UID</TD><TD>$!item.getStringProperty("pixi:bliSessionData/UID")</TD></TR>
+							<TR><TD>study_id</TD><TD>$!item.getStringProperty("pixi:bliSessionData/study_id")</TD></TR>
+							<TR><TD>subject_ID</TD><TD>$!item.getStringProperty("pixi:bliSessionData/subject_ID")</TD></TR>
+							<TR><TD>age</TD><TD>$!item.getDoubleProperty("pixi:bliSessionData/age")</TD></TR>
+							<TR><TD>date</TD><TD>$!item.getProperty("pixi:bliSessionData/date")</TD></TR>
+							<TR><TD>time</TD><TD>$!item.getProperty("pixi:bliSessionData/time")</TD></TR>
+							<TR><TD>duration</TD><TD>$!item.getProperty("pixi:bliSessionData/duration")</TD></TR>
+							<TR><TD>delay</TD><TD>$!item.getIntegerProperty("pixi:bliSessionData/delay")</TD></TR>
+							<TR><TD>delay/ref_expt_id</TD><TD>$!item.getStringProperty("pixi:bliSessionData/delay/ref_expt_id")</TD></TR>
+							<TR><TD>note</TD><TD>$!item.getStringProperty("pixi:bliSessionData/note")</TD></TR>
+							<TR><TD>acquisition_site</TD><TD>$!item.getStringProperty("pixi:bliSessionData/acquisition_site")</TD></TR>
+							<TR><TD>ID</TD><TD>$!item.getStringProperty("pixi:bliSessionData/ID")</TD></TR>
+							<TR><TD>project</TD><TD>$!item.getStringProperty("pixi:bliSessionData/project")</TD></TR>
+							<TR><TD>visit_id</TD><TD>$!item.getStringProperty("pixi:bliSessionData/visit_id")</TD></TR>
+							<TR><TD>visit</TD><TD>$!item.getStringProperty("pixi:bliSessionData/visit")</TD></TR>
+							<TR><TD>version</TD><TD>$!item.getIntegerProperty("pixi:bliSessionData/version")</TD></TR>
+							<TR><TD>original</TD><TD>$!item.getStringProperty("pixi:bliSessionData/original")</TD></TR>
+							<TR><TD>protocol</TD><TD>$!item.getStringProperty("pixi:bliSessionData/protocol")</TD></TR>
+							<TR><TD>label</TD><TD>$!item.getStringProperty("pixi:bliSessionData/label")</TD></TR>
+						</TABLE>
+					</TD>
+					<TD valign="top" align="right">
+						#parse($turbineUtils.getTemplateName("actions",$om.getXSIType(),$project))
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+
+</TABLE><BR>#parse("/screens/ReportProjectSpecificFields.vm")

@@ -3,6 +3,8 @@ package org.nrg.xnatx.plugins.pixi;
 import lombok.extern.slf4j.Slf4j;
 import org.nrg.framework.annotations.XnatDataModel;
 import org.nrg.framework.annotations.XnatPlugin;
+import org.nrg.xdat.om.*;
+import org.nrg.xnat.restlet.actions.importer.ImporterHandlerPackages;
 import org.nrg.xdat.om.PixiAnimaldemographicdata;
 import org.nrg.xdat.om.PixiHotel;
 import org.nrg.xdat.om.PixiHotelscanrecord;
@@ -49,7 +51,15 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.*;
                           @XnatDataModel(value = PixiHotel.SCHEMA_ELEMENT_NAME,
                                          singular = "Hotel",
                                          plural = "Hotels",
-                                         code = "HTL")
+                                         code = "HTL"),
+                          @XnatDataModel(value = PixiBlisessiondata.SCHEMA_ELEMENT_NAME,
+                                         singular = "BLI Session",
+                                         plural = "BLI Sessions",
+                                         code = "BLI"),
+                          @XnatDataModel(value = PixiBliscandata.SCHEMA_ELEMENT_NAME,
+                                         singular = "BLI Scan",
+                                         plural = "BLI Scans",
+                                         code = "BLIScan")
                           })
 @ComponentScan({"org.nrg.xnatx.plugins.pixi.xenografts.entities",
                 "org.nrg.xnatx.plugins.pixi.xenografts.repositories",
@@ -59,8 +69,11 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.*;
                 "org.nrg.xnatx.plugins.pixi.hotelsplitter.rest",
                 "org.nrg.xnatx.plugins.pixi.hotelsplitter.initialize",
                 "org.nrg.xnatx.plugins.pixi.hotelsplitter.dcm.identifiers",
-                "org.nrg.xnatx.plugins.pixi.preferences"
+                "org.nrg.xnatx.plugins.pixi.preferences",
+                "org.nrg.xnatx.plugins.pixi.bli.helpers",
+                "org.nrg.xnatx.plugins.pixi.bli.helpers.impl"
 })
+
 @Slf4j
 public class PIXIPlugin {
 
@@ -76,4 +89,10 @@ public class PIXIPlugin {
         generator.setCode("HTL");
         return generator;
     }
+
+    @Bean
+    public ImporterHandlerPackages pixiImporterHandlerPackages() {
+        return new ImporterHandlerPackages("org.nrg.xnatx.plugins.pixi.bli.importer");
+    }
+
 }

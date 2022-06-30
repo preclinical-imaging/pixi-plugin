@@ -1,0 +1,17 @@
+<!-- BEGIN /templates/screens/pixi_bliSessionData/pixi_bliSessionData_title.vm -->
+
+#define ($reportTitle)
+    #if ($!om.getIdentifier($project,true))
+        $!om.getIdentifier($project,true)
+    #elseif ($om.getLabel())
+        $om.getLabel()
+    #else
+        $om.getId()
+    #end
+#end
+
+<div id="report_title" class="edit_title">
+    BLI Session: #escapeCleanHTML($reportTitle)
+</div>
+
+<!-- END /templates/screens/pixi_bliSessionData/pixi_bliSessionData_title.vm -->

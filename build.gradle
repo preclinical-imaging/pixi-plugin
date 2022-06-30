@@ -20,6 +20,7 @@ repositories {
 
 configurations {
     implementation.extendsFrom(xnatProvided)
+    implementation.canBeResolved(true)
     testImplementation.exclude group: 'org.slf4j', module: 'log4j-over-slf4j'
 }
 
@@ -33,6 +34,7 @@ dependencies {
     xnatProvided "dcm4che:dcm4che-core"
     xnatProvided "io.springfox:springfox-swagger2"
     xnatProvided "io.springfox:springfox-swagger-ui"
+    implementation "com.twelvemonkeys.imageio:imageio-tiff:3.8.2"
 }
 
 dependencies {
@@ -60,6 +62,14 @@ sourceSets {
         resources {
             srcDir 'src/main/resources'
             srcDir "build/xnat-generated/src/main/resources"
+        }
+    }
+}
+
+jar {
+    from {
+        (configurations.implementation - configurations.xnatProvided).collect {
+            it.isDirectory() ? it : zipTree(it)
         }
     }
 }

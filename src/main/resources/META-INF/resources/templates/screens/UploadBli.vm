@@ -1,0 +1,209 @@
+<!-- BEGIN pixi-plugin templates/screens/UploadBli.vm -->
+<div>
+    <h2>PIXI Bioluminescent Imaging Uploader</h2>
+
+    <p>Upload zipped (.zip) bioluminescent imaging sessions to a specified project.</p>
+
+    <form id="upload-form" name="upload-form" method="post">
+
+        <label for="project" class="project-label">$displayManager.getSingularDisplayNameForProject()</label>
+
+        <section class="project-inputs">
+            <select id="project" name="project" form="upload-form"  required>
+                <option value="" disabled selected>Select Project</option>
+            </select>
+        </section>
+
+        <label class="file-label" for="file">File</label>
+
+        <section class="file-inputs">
+            <input type="file" id="file" name="file" accept="application/zip" required/>
+        </section>
+
+        <input class="submit" id="uploadButton" type="button" name="eventSubmit_doPerform" value="Begin Upload" onclick="submitForm();"/>
+    </form>
+</div>
+
+<style>
+    .project-label { grid-area: project-label; }
+    .project-inputs { grid-area: project-inputs; }
+
+    .file-label { grid-area: file-label; }
+    .file-inputs { grid-area: file-inputs; }
+
+    .submit { grid-area: submit; }
+
+    .project-label, .file-label {
+        font-weight: bold;
+    }
+
+    #upload-form {
+        width: 400px;
+        display: grid;
+        grid-template-columns: 100px 120px 180px;
+        row-gap: 1em;
+        grid-template-areas:
+            'project-label project-inputs project-inputs'
+            'file-label file-inputs file-inputs'
+            '. submit .'
+    }
+</style>
+
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-projects.js')"></script>
+
+<script type="text/javascript">
+
+    // Form Elements
+    let formEl            = document.getElementById("upload-form");
+    let projectEl         = document.getElementById("project");
+    let prearchiveCode0El = document.getElementById("prearchive-code-0");
+    let prearchiveCode1El = document.getElementById("prearchive-code-1");
+    let fileEl            = document.getElementById("file");
+
+    // Load projects then render project select box
+    let projects;
+    XNAT.plugin.pixi.projects.getAll().then(resultSet => resultSet['ResultSet']['Result'])
+                                      .then(prjs => {
+                                          projects = prjs;
+                                          renderProjectSelectBox(projectEl, prjs);
+                                      });
+
+    let renderProjectSelectBox = function(selectBox, projects) {
+        console.debug('renderProjectSelectBox()')
+
+        // Clear select box
+        selectBox.options.length = 0;
+
+        // Placeholder
+        selectBox.options[0] = new Option("Select " + XNAT.app.displayNames.singular.project, "");
+        selectBox.options[0].disabled = true;
+        selectBox.options[0].selected = true;
+
+        projects.forEach(project => {
+            selectBox.options[selectBox.length] = new Option(project['id'], project['id'])
+        })
+    }
+
+    function evaluateProject(ele) {
+
+    }
+
+    async function submitForm() {
+        console.debug('submitForm()')
+
+        function validateForm() {
+            let validProject = XNAT.validate(projectEl).required().check();
+            let validImageArchiveFile = XNAT.validate(fileEl).is('fileType', 'zip').check()
+
+            return validProject && validImageArchiveFile;
+        }
+
+        let isValid = validateForm()
+
+        console.debug(`BLI uploader form validation: ${isValid}`);
+
+        if (!isValid) {
+            return;
+        }
+
+        let projectId = projectEl.value;
+        let uploadId = new Date().toISOString()
+                                 .replaceAll('-', '_')
+                                 .replaceAll(':', '_')
+                                 .replaceAll('.', '_');
+
+        let file = fileEl.files[0];
+        let encodedFileName = encodeURIComponent(file.name);
+        let cachePath = `/user/cache/resources/${uploadId}/files/${encodedFileName}`;
+        let encodedCachePath = encodeURIComponent(cachePath);
+        let userResourceCacheUrl = XNAT.url.csrfUrl(`/data/${cachePath}`);
+
+        let formDataFileOnly = new FormData()
+        formDataFileOnly.append('file', file)
+
+        // Upload the zip file to the users cache
+        console.debug(`Uploading ${file.name}`);
+        XNAT.ui.dialog.static.wait(`Uploading ${file.name}`,{id: "bli_upload"});
+
+        let response = await fetch(userResourceCacheUrl, {
+            method: 'PUT',
+            body : formDataFileOnly
+        })
+
+        if (response.ok) {
+            console.debug('Upload successful');
+            XNAT.ui.dialog.close("bli_upload");
+        } else {
+            console.error(`Failed to upload ${file.name}`)
+            XNAT.ui.dialog.close("bli_upload");
+            XNAT.ui.dialog.open({
+                title: 'Upload Failed',
+                content: `<div class="error">Failed to upload ${file.name}.</div>`,
+                buttons: [
+                    {
+                        label: 'OK',
+                        isDefault: true,
+                        close: true,
+                    }
+                ]
+            })
+            return;
+        }
+
+        let importServiceUrl = XNAT.url.csrfUrl('/data/services/import');
+        importServiceUrl = XNAT.url.addQueryString(importServiceUrl, ['import-handler=BLI',
+                                                                      `PROJECT_ID=${projectId}`,
+                                                                      `src=${encodedCachePath}`]);
+
+        // Extract the zip file from the users cache
+        console.debug(`Extracting ${file.name}`);
+        XNAT.ui.dialog.static.wait(`Extracting ${file.name}`,{id: "bli_extraction"});
+
+        response = await fetch(importServiceUrl, {method: 'POST'})
+
+        if (response.ok) {
+            console.debug('Extraction successful');
+            XNAT.ui.dialog.close("bli_extraction");
+
+            XNAT.ui.dialog.open({
+                title: 'Upload/Extraction Successful',
+                content: `<div class="success">Upload/Extraction of ${file.name} successful. Visit the <a target="_blank" href="/app/template/XDATScreen_prearchives.vm">prearchive</a> to review.</div>`,
+                buttons: [
+                    {
+                        label: 'OK',
+                        isDefault: true,
+                        close: true,
+                    }
+                ]
+            })
+        } else {
+            console.error(`Failed to extract ${file.name}`)
+            XNAT.ui.dialog.close("bli_extraction");
+
+            response.text().then(text => {
+                // Error message is returned as html. Try to extract from the h3 tags.
+                let error = text.match(/<h3>(.*)<\/h3>/);
+
+                if (error.length === 2) {
+                    return `Failed to extract ${file.name}: <br> <b>${error[1]}</b>`;
+                } else {
+                    return `Failed to extract ${file.name}`;
+                }
+            }).then(error => {
+                XNAT.ui.dialog.open({
+                    title: 'Extraction Failed',
+                    content: `<div class="error">${error}</div>`,
+                    buttons: [
+                        {
+                            label: 'OK',
+                            isDefault: true,
+                            close: true,
+                        }
+                    ]
+                })
+            })
+        }
+    }
+</script>
+
+<!-- END pixi-plugin templates/screens/UploadBli.vm -->

@@ -1,0 +1,7 @@
+<!--BEGIN /templates/screens/pixi_bliSessionData/pixi_bliSessionData_keyFields.vm -->
+#parse($turbineUtils.getTemplateName("_keyFields","xnat:imageSessionData",$project))
+##<TR>
+##    <TH align="left">Key Field</TH>
+##    <TD>Key Field Data</TD>
+##</TR>
+<!--END /templates/screens/pixi_bliSessionData/pixi_bliSessionData_keyFields.vm -->

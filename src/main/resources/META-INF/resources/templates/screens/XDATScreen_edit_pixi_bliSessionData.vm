@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+$page.setTitle("XDAT")
+$page.setLinkColor($ui.alink)
+$page.setVlinkColor($ui.vlink)
+ ##---------------------------------------- 
+ ## DO NOT MODIFY THIS FILE HERE
+ ##
+ ## TO MODIFY, COPY THIS FILE to src/main/resources/templates/screens/ and modify it there 
+ ##----------------------------------------
+#set($months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"])
+#set($days = [ 1..31 ])
+#set($years = [ $!turbineUtils.getYear()..1900])
+#if ($data.message)
+<font color="red" size="3">$data.message</font>
+#end
+<p>
+<form ID="form1" name="form1" method="post" action="$link.setAction("ModifySubjectAssessorData")">
+<input type="hidden" name="project" value="$!{project}" >
+#if($vr)
+	<font color="red">Invalid parameters:<BR>$vr.toHTML()</font>
+<HR>
+#end
+
+<TABLE width="100%">
+	<TR>
+		<TD>
+			<table width="100%">
+				<TR>
+					<TD align="left" valign="middle">
+						<DIV class="edit_title">BliSession Details</DIV>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<TABLE width="100%">
+				<TR>
+					<TD valign="top">
+						<TABLE>
+							<TR><TD colspan='2'>
+								#parse("/screens/xnat_edit_subjectAssessorData.vm")
+							</TD></TR>
+							<tr>
+								<TD colspan="2">#parse("/screens/EditProjectSpecificFields.vm")</TD>
+							</tr>
+							<TR><TD>scanner</TD><TD>#xdatStringBox("pixi:bliSessionData/scanner" $item "" $vr)</TD></TR>
+							<TR><TD>scanner/manufacturer</TD><TD>#xdatStringBox("pixi:bliSessionData/scanner/manufacturer" $item "" $vr)</TD></TR>
+							<TR><TD>scanner/model</TD><TD>#xdatStringBox("pixi:bliSessionData/scanner/model" $item "" $vr)</TD></TR>
+							<TR><TD>operator</TD><TD>#xdatStringBox("pixi:bliSessionData/operator" $item "" $vr)</TD></TR>
+							<TR><TD>prearchivePath</TD><TD>#xdatStringBox("pixi:bliSessionData/prearchivePath" $item "" $vr)</TD></TR>
+							<TR><TD>dcmAccessionNumber</TD><TD>#xdatStringBox("pixi:bliSessionData/dcmAccessionNumber" $item "" $vr)</TD></TR>
+							<TR><TD>dcmPatientId</TD><TD>#xdatStringBox("pixi:bliSessionData/dcmPatientId" $item "" $vr)</TD></TR>
+							<TR><TD>dcmPatientName</TD><TD>#xdatStringBox("pixi:bliSessionData/dcmPatientName" $item "" $vr)</TD></TR>
+							<TR><TD>dcmPatientBirthDate</TD><TD>#xdatDateBox("pixi:bliSessionData/dcmPatientBirthDate" $item $vr $years)</TD></TR>
+							<TR><TD>dcmPatientWeight</TD><TD>#xdatTextBox("pixi:bliSessionData/dcmPatientWeight" $item "" $vr)</TD></TR>
+							<TR><TD>session_type</TD><TD>#xdatStringBox("pixi:bliSessionData/session_type" $item "" $vr)</TD></TR>
+							<TR><TD>modality</TD><TD>#xdatStringBox("pixi:bliSessionData/modality" $item "" $vr)</TD></TR>
+							<TR><TD>UID</TD><TD>#xdatStringBox("pixi:bliSessionData/UID" $item "" $vr)</TD></TR>
+							<TR><TD>study_id</TD><TD>#xdatStringBox("pixi:bliSessionData/study_id" $item "" $vr)</TD></TR>
+							<TR><TD>age</TD><TD>#xdatTextBox("pixi:bliSessionData/age" $item "" $vr)</TD></TR>
+							<TR><TD>date</TD><TD>#xdatDateBox("pixi:bliSessionData/date" $item $vr $years)</TD></TR>
+							<TR><TD>time</TD><TD>#xdatTextBox("pixi:bliSessionData/time" $item "" $vr)</TD></TR>
+							<TR><TD>duration</TD><TD>#xdatTextBox("pixi:bliSessionData/duration" $item "" $vr)</TD></TR>
+							<TR><TD>delay</TD><TD>#xdatTextBox("pixi:bliSessionData/delay" $item "" $vr)</TD></TR>
+							<TR><TD>delay/ref_expt_id</TD><TD>#xdatStringBox("pixi:bliSessionData/delay/ref_expt_id" $item "" $vr)</TD></TR>
+							<TR><TD>note</TD><TD>#xdatStringBox("pixi:bliSessionData/note" $item "" $vr)</TD></TR>
+							<TR><TD>acquisition_site</TD><TD>#xdatStringBox("pixi:bliSessionData/acquisition_site" $item "" $vr)</TD></TR>
+							<TR><TD>visit_id</TD><TD>#xdatStringBox("pixi:bliSessionData/visit_id" $item "" $vr)</TD></TR>
+							<TR><TD>visit</TD><TD>#xdatStringBox("pixi:bliSessionData/visit" $item "" $vr)</TD></TR>
+							<TR><TD>version</TD><TD>#xdatTextBox("pixi:bliSessionData/version" $item "" $vr)</TD></TR>
+							<TR><TD>original</TD><TD>#xdatStringBox("pixi:bliSessionData/original" $item "" $vr)</TD></TR>
+							<TR><TD>protocol</TD><TD>#xdatStringBox("pixi:bliSessionData/protocol" $item "" $vr)</TD></TR>
+							<TR><TD>label</TD><TD>#xdatStringBox("pixi:bliSessionData/label" $item "" $vr)</TD></TR>
+						</TABLE>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+		#xdatEditProps($item $edit_screen)
+		<TR><TD COLSPAN=2 ALIGN=left><input type="button" ONCLICK="validateForm();"  name="eventSubmit_doInsert" value="Submit"/></TD></TR>
+		</TD>
+	</TR>
+</TABLE>
+</form>
+
+<script type="text/javascript">
+function validateForm()
+{
+   //INSERT CUSTOM CONTENT HERE
+
+   validateSubjectAssessorForm();
+   return false;
+}
+</script>

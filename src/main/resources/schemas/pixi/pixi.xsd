@@ -16,6 +16,9 @@
     <xs:element name="HotelSubject" type="pixi:hotelSubject"/>
     <xs:element name="HotelScanRecord" type="pixi:hotelScanRecord"/>
 
+    <xs:element name="BliSession" type="pixi:bliSessionData"/>
+    <xs:element name="BliScan" type="pixi:bliScanData"/>
+
     <xs:complexType name="animalDemographicData">
         <xs:annotation>
             <xs:appinfo>
@@ -280,6 +283,60 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
+
+    <xs:complexType name="bliSessionData">
+        <xs:annotation>
+            <xs:documentation>An event in which BLI scans are obtained on a subject</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="xnat:imageSessionData">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="luciferin" type="xs:decimal" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Amount of luciferin injected.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="luciferinInjectionTime" type="xs:dateTime" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>The datetime when the luciferin was injected.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="hotelSession" type="xs:boolean" default="false">
+                        <xs:annotation>
+                            <xs:documentation>Is this a multi-subject / hotel session?</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="bliHotelSubject" minOccurs="0" maxOccurs="unbounded">
+                        <xs:complexType>
+                            <xs:attribute name="subjectLabel" type="xs:string"/>
+                            <xs:attribute name="position" type="xs:string"/>
+                            <xs:attribute name="splitSessionLabel" type="xs:string"/>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="bliScanData">
+        <xs:complexContent>
+            <xs:extension base="xnat:imageScanData">
+                <xs:sequence minOccurs="0">
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="luminescenceData">
+        <xs:complexContent>
+            <xs:extension base="xnat:imageAssessorData">
+                <xs:sequence>
+                    <xs:element name="luminescence" type="xs:decimal"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
 
     <xs:complexType name="hotel">
         <xs:sequence>
