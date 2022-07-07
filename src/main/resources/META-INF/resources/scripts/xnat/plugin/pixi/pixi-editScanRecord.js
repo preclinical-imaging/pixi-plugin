@@ -348,7 +348,6 @@ console.log('pixi-editScanRecord.js');
             var iterator = (existingRecords.length) ? '_'+existingRecords.length : '';
 
             document.getElementById('pixi:hotelScanRecord/label').value = session+'_scan_record'+iterator;
-            document.getElementById('pixi:hotelScanRecord.ID').value = session+'_scan_record'+iterator+'_id';
         }
     };
 
