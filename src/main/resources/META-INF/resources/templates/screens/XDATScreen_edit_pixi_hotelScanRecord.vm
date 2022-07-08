@@ -331,7 +331,9 @@
 
     XNAT.plugin.pixi.pixiSubjects = [{ value: '', label: 'Empty'}];
     #foreach( $subject in $subjects)
-        XNAT.plugin.pixi.pixiSubjects.push({ value: '$subject.id', label: '$subject.label' });
+        #if (!$subject.label.equalsIgnoreCase("Hotel"))
+            XNAT.plugin.pixi.pixiSubjects.push({ value: '$subject.id', label: '$subject.label' });
+        #end
     #end
 </script>
 <script src="$content.getURI("scripts/xnat/plugin/pixi/pixi-editScanRecord.js")"></script>
