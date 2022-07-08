@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Displays xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xdat/display.xsd"
+          schema-element="pixi:hotelScanRecord" full-description="HotelScanRecord" brief-description="HotelScanRecord">
+    <DisplayField id="EXPT_ID" header="ID" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:hotelScanRecord.ID"/>
+        <HTML-Link>
+            <Property name="HREF" value="none"/>
+            <Property name="ONCLICK" value="return rpt('@Field1','pixi:hotelScanRecord','pixi:hotelScanRecord.ID');">
+                <InsertValue id="Field1" field="EXPT_ID"/>
+            </Property>
+        </HTML-Link>
+    </DisplayField>
+    <DisplayField id="RPT" header="ID" visible="true" image="true">
+        <Content type="sql">'/@WEBAPP/images/r.gif'::text</Content>
+        <HTML-Link>
+            <Property name="HREF" value="none"/>
+            <Property name="ONCLICK" value="return rpt('@Field1','pixi:hotelScanRecord','pixi:hotelScanRecord.ID');">
+                <InsertValue id="Field1" field="EXPT_ID"/>
+            </Property>
+        </HTML-Link>
+    </DisplayField>
+    <DisplayField id="DATE" header="Date" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:hotelScanRecord.date"/>
+    </DisplayField>
+    <DisplayField header="Projects" id="PROJECTS" data-type="string">
+        <DisplayFieldElement name="Field1" viewName="PIXI_HOTELSCANRECORD_PROJECTS" viewColumn="PROJECTS"/>
+    </DisplayField>
+    <DisplayField header="Label" id="LABEL" data-type="string">
+        <DisplayFieldElement name="Field1" schema-element="pixi:hotelScanRecord.ID"/>
+        <DisplayFieldElement name="Field2" schema-element="pixi:hotelScanRecord.label"/>
+        <Content type="sql">COALESCE(@Field2, @Field1)</Content>
+        <HTML-Link>
+            <SecureLink elementName="pixi:hotelScanRecord">
+                <securityMappingValue displayFieldId="PROJECTS"
+                                      schemaElementMap="pixi:hotelScanRecord/sharing/share/project"/>
+                <securityMappingValue displayFieldId="PROJECT" schemaElementMap="pixi:hotelScanRecord/project"/>
+            </SecureLink>
+            <Property name="HREF"
+                      value="@WEBAPPapp/action/DisplayItemAction/search_value/@Field1/search_element/pixi:hotelScanRecord/search_field/pixi:hotelScanRecord.ID">
+                <InsertValue id="Field1" field="EXPT_ID"/>
+            </Property>
+            <Property name="ONCLICK" value="return rpt('@Field1','pixi:hotelScanRecord','pixi:hotelScanRecord.ID');">
+                <InsertValue id="Field1" field="EXPT_ID"/>
+            </Property>
+            <Property name="TITLE" value="Inserted: @Field1 (@Field2)">
+                <InsertValue id="Field1" field="INSERT_DATE"/>
+                <InsertValue id="Field2" field="INSERT_USER"/>
+            </Property>
+        </HTML-Link>
+    </DisplayField>
+    <DisplayField id="PROJECT" header="Project" visible="true" searchable="true" data-type="string">
+        <DisplayFieldElement name="Field1" schema-element="pixi:hotelScanRecord.project"/>
+    </DisplayField>
+    <DisplayField id="PIXI_HOTELSCANRECORD_PROJECT_IDENTIFIER" header="Hotel Scan Record" visible="true"
+                  searchable="false" data-type="string" xsi:type="SubQueryField">
+        <Content type="sql">pixi_hotelscanrecord_project_id</Content>
+        <HTML-Link>
+            <SecureLink elementName="pixi:hotelScanRecord">
+                <securityMappingValue displayFieldId="PROJECTS"
+                                      schemaElementMap="pixi:hotelScanRecord/sharing/share/project"/>
+                <securityMappingValue displayFieldId="PROJECT" schemaElementMap="pixi:hotelScanRecord/project"/>
+            </SecureLink>
+            <Property name="HREF"
+                      value="@WEBAPPapp/action/DisplayItemAction/search_value/@Field1/search_element/pixi:hotelScanRecord/search_field/pixi:hotelScanRecord.ID/project/@Field2">
+                <InsertValue id="Field1" field="EXPT_ID"/>
+                <InsertValue id="Field2" field="@WHERE"/>
+            </Property>
+        </HTML-Link>
+        <SubQuery>SELECT DISTINCT COALESCE(label,sharing_share_xnat_experimentda_id) AS
+            pixi_hotelscanrecord_project_id,sharing_share_xnat_experimentda_id FROM ( SELECT
+            sharing_share_xnat_experimentda_id,label FROM xnat_experimentdata_share WHERE project='@WHERE' UNION SELECT
+            id,label FROM xnat_experimentData WHERE project='@WHERE' )SEARCH
+        </SubQuery>
+        <MappingColumns>
+            <MappingColumn schemaField="pixi:hotelScanRecord.ID" queryField="sharing_share_xnat_experimentda_id"/>
+        </MappingColumns>
+    </DisplayField>
+    <DisplayField id="INSERT_DATE" header="Inserted" visible="true" searchable="true" data-type="string">
+        <DisplayFieldElement name="Field1" schema-element="pixi:hotelScanRecord.meta.insert_date"/>
+    </DisplayField>
+    <DisplayField id="INSERT_USER" header="Creator" visible="true" searchable="true" data-type="string">
+        <DisplayFieldElement name="Field1" schema-element="pixi:hotelScanRecord.meta.insert_user.login"/>
+    </DisplayField>
+    <DisplayField id="PIXI_HOTELSCANRECORD_FIELD_MAP" header="Field" visible="true" searchable="false"
+                  data-type="string" xsi:type="SubQueryField">
+        <Content type="sql">field</Content>
+        <SubQuery>SELECT DISTINCT ON ( e.ID) e.ID AS expt_id,field FROM xnat_experimentData_field ef JOIN (SELECT
+            ID,extension,element_name FROM xnat_experimentData e JOIN xdat_meta_element xme ON
+            e.extension=xme.xdat_meta_element_id WHERE xme.element_name='pixi:hotelScanRecord') e on
+            ef.fields_field_xnat_experimentdat_id=e.id WHERE name='@WHERE'
+        </SubQuery>
+        <MappingColumns>
+            <MappingColumn schemaField="pixi:hotelScanRecord.ID" queryField="expt_id"/>
+        </MappingColumns>
+    </DisplayField>
+    <DisplayField id="SESSION_LABEL" header="Hotel Session" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:hotelScanRecord/session_label"/>
+        <HTML-Link>
+            <Property name="HREF"
+                      value="@WEBAPPdata/projects/@Field1/experiments/@Field2?format=html">
+                <InsertValue id="Field1" field="PROJECT"/>
+                <InsertValue id="Field2" field="SESSION_LABEL"/>
+            </Property>
+        </HTML-Link>
+    </DisplayField>
+    <DisplayField id="SESSION_URI" header="Session URI" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:hotelScanRecord/session_uri"/>
+    </DisplayField>
+    <DisplayField id="HOTEL_NAME" header="Hotel" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:hotelScanRecord/hotel"/>
+    </DisplayField>
+    <DisplayField id="STATUS" header="Status" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:hotelScanRecord/status"/>
+    </DisplayField>
+    <DisplayVersion versionName="listing" default-order-by="DATE" default-sort-order="DESC"
+                    brief-description="HotelScanRecord" dark-color="9999CC" light-color="CCCCFF">
+        <DisplayFieldRef id="RPT"/>
+        <DisplayFieldRef id="PROJECT"/>
+        <DisplayFieldRef id="LABEL"/>
+        <DisplayFieldRef id="SESSION_LABEL"/>
+        <DisplayFieldRef id="DATE"/>
+        <DisplayFieldRef id="STATUS"/>
+    </DisplayVersion>
+    <DisplayVersion versionName="listing_csv" default-order-by="DATE" default-sort-order="DESC"
+                    brief-description="HotelScanRecord" dark-color="9999CC" light-color="CCCCFF">
+        <DisplayFieldRef id="LABEL"/>
+        <DisplayFieldRef id="SESSION_LABEL"/>
+        <DisplayFieldRef id="DATE"/>
+        <DisplayFieldRef id="STATUS"/>
+    </DisplayVersion>
+    <DisplayVersion versionName="full" default-order-by="DATE" default-sort-order="DESC"
+                    brief-description="HotelScanRecord" dark-color="9999CC" light-color="CCCCFF">
+        <DisplayFieldRef id="EXPT_ID"/>
+        <DisplayFieldRef id="PROJECT"/>
+        <DisplayFieldRef id="LABEL"/>
+        <DisplayFieldRef id="SESSION_LABEL"/>
+        <DisplayFieldRef id="DATE"/>
+        <DisplayFieldRef id="STATUS"/>
+    </DisplayVersion>
+    <DisplayVersion versionName="detailed" default-order-by="DATE" default-sort-order="DESC"
+                    brief-description="HotelScanRecord" dark-color="9999CC" light-color="CCCCFF">
+        <DisplayFieldRef id="EXPT_ID"/>
+        <DisplayFieldRef id="PROJECT"/>
+        <DisplayFieldRef id="LABEL"/>
+        <DisplayFieldRef id="SESSION_LABEL"/>
+        <DisplayFieldRef id="DATE"/>
+        <DisplayFieldRef id="STATUS"/>
+    </DisplayVersion>
+    <DisplayVersion versionName="project_bundle" default-order-by="DATE" default-sort-order="DESC"
+                    brief-description="HotelScanRecord" dark-color="9999CC" light-color="CCCCFF">
+        <DisplayFieldRef id="PIXI_HOTELSCANRECORD_PROJECT_IDENTIFIER"/>
+        <DisplayFieldRef id="SESSION_LABEL"/>
+        <DisplayFieldRef id="DATE"/>
+        <DisplayFieldRef id="STATUS"/>
+    </DisplayVersion>
+    <ViewLink alias="PIXI_HOTELSCANRECORD_PROJECTS">
+        <Mapping TableName="PIXI_HOTELSCANRECORD_PROJECTS">
+            <MappingColumn rootElement="pixi:hotelScanRecord" fieldElement="pixi:hotelScanRecord.ID" mapsTo="id"/>
+        </Mapping>
+    </ViewLink>
+    <SQLView name="PIXI_HOTELSCANRECORD_PROJECTS"
+             sql="SELECT id, '&lt;' || expt.project || '&gt;' || xs_a_concat(',&lt;' || shared.project || '&gt;') AS projects FROM xnat_experimentData expt LEFT JOIN xnat_experimentData_share shared ON expt.id=shared.sharing_share_xnat_experimentda_id LEFT JOIN xdat_meta_element xme ON expt.extension = xme.xdat_meta_element_id WHERE element_name='pixi:hotelScanRecord' GROUP BY expt.id,expt.project"/>
+</Displays>
