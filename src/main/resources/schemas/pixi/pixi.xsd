@@ -390,21 +390,8 @@
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="hotelSubject">
-        <xs:attribute name="subject_id" type="xs:string">
-            <xs:annotation>
-                <xs:appinfo>
-                    <xdat:field baseElement="xnat:subjectData" baseCol="id">
-                        <xdat:sqlField name="subject_id"/>
-                    </xdat:field>
-                </xs:appinfo>
-            </xs:annotation>
-        </xs:attribute>
         <xs:sequence>
-            <xs:attribute name="subject_label" type="xs:string">
-                <xs:annotation>
-                    <xs:documentation>Subject label</xs:documentation>
-                </xs:annotation>
-            </xs:attribute>
+
             <xs:element name="position" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Subject position in hotel</xs:documentation>
@@ -451,6 +438,20 @@
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
+        <xs:attribute name="subject_id" type="xs:string">
+            <xs:annotation>
+                <xs:appinfo>
+                    <xdat:field baseElement="xnat:subjectData" baseCol="id">
+                        <xdat:sqlField name="subject_id"/>
+                    </xdat:field>
+                </xs:appinfo>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="subject_label" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Subject label</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="hotelScanRecord">
         <xs:annotation>
