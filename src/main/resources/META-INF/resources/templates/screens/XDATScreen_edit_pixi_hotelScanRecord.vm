@@ -49,10 +49,10 @@
         <input id="$name" type="hidden" name="$name" value="$item.getProperty($name)"/>
             #escapeHTML($!turbineUtils.unescapeParam("$item.getStringProperty($name)"))
         #else
-        <input id="$name" type="time" steps="10" name="$name" placeholder="--:--:-- --" value="$item.getProperty($name)"/>
+        <input id="$name" type="time" step="10" name="$name" placeholder="--:--:-- --" value="$item.getProperty($name)"/>
         #end
     #else
-    <input id="$name" type="time" steps="10" name="$name" placeholder="--:--:-- --" value="$defaultValue"/>
+    <input id="$name" type="time" step="10" name="$name" placeholder="--:--:-- --" value="$defaultValue"/>
     #end
 #end
 
