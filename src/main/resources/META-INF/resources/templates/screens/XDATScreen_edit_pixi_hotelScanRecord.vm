@@ -10,10 +10,12 @@
     #set($project=$item.getProperty("project"))
 #end
 
-#set($subjectOptions=["","Empty"])
+#set($subjectOptions=[["", "Empty"]])
 #foreach($subject in $subjects)
-    #set($subjectOption = [$subject.id,$subject.label])
-    #set($temp = $subjectOptions.add($subjectOption))
+    #if (!$subject.label.equalsIgnoreCase("Hotel"))
+        #set($subjectOption = [$subject.id,$subject.label])
+        #set($temp = $subjectOptions.add($subjectOption))
+    #end
 #end
 
 #set($orientations=[
@@ -36,7 +38,7 @@
     ])
 
 #macro (pixiTimeBox $name $item $defaultValue $vr)
-<!-- macro: xdatTextBox -->
+<!-- macro: pixiTimeBox -->
     #if ($vr)
         #if($vr.getField($name))
         <div class="warning">&#8658;</div>
@@ -55,7 +57,8 @@
 #end
 
 ## modify the xdatSelectBox macro and remove custom values
-#macro (pixiSelectBox $name $item $possibleValues $vr)
+#macro (pixiSelectBox $name $class $item $possibleValues $vr)
+<!-- macro: pixiSelectBox -->
     #if ($vr)
         #if($vr.getField($name))
         <div class="warning">&#8658;</div>
@@ -64,9 +67,9 @@
 
     #if($possibleValues)
         #if ($possibleValues.size()==0)
-            <input id="$name" type="text" name="$name" value="$item.getProperty($name)"/>
+            <input id="$name" type="text" name="$name" class="$class" value="$item.getProperty($name)"/>
         #else
-            <select id="$name" name="$name">
+            <select id="$name" name="$name" class="$class">
                 <option value="">(SELECT)</option>
                 #foreach ($pValue in $possibleValues)
                     #if($pValue.size() > 0)
@@ -79,6 +82,15 @@
         #end
     #else
     <input id="$name" type="text" name="$name" value="$item.getProperty($name)"/>
+    #end
+#end
+
+#macro (pixiHiddenBox $name $class $item $defaultValue)
+<!-- macro: pixiHiddenBox -->
+    #if ($item.getProperty($name))
+    <input id="$name" type="hidden" name="$name" class="$class" value="$item.getProperty($name)"/>
+    #else
+    <input id="$name" type="hidden" name="$name" class="$class" value="$defaultValue"/>
     #end
 #end
 
@@ -270,9 +282,9 @@
                                 Subject ID
                             </label>
                             <div class="element-wrapper">
-                                #pixiSelectBox("pixi:hotelScanRecord/hotel_subjects/subject[$i]/subject_id" $item $subjectOptions $vr)
+                                #pixiSelectBox("pixi:hotelScanRecord/hotel_subjects/subject[$i]/subject_id" "subject-selector" $item $subjectOptions $vr)
                             </div>
-                            #xdatHiddenBox("pixi:hotelScanRecord/hotel_subjects/subject[$i]/subject_label" $item "" $vr)
+                            #pixiHiddenBox("pixi:hotelScanRecord/hotel_subjects/subject[$i]/subject_label" "subject-label-selector" $item "" $vr)
                         </div>
 
                         <div class="panel-element stacked">
@@ -281,7 +293,7 @@
                             </label>
                             <div class="element-wrapper">
                                 <label>
-                                    #pixiSelectBox("pixi:hotelScanRecord/hotel_subjects/subject[$i]/orientation" $item $orientations $vr)
+                                    #pixiSelectBox("pixi:hotelScanRecord/hotel_subjects/subject[$i]/orientation" "" $item $orientations $vr)
                                 </label>
                             </div>
 
