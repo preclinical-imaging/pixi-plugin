@@ -236,7 +236,79 @@ console.log('pixi-editScanRecord.js');
 
     };
 
+    XNAT.plugin.pixi.toggleSessionSource = function(source){
+        // toggle the source of the image session -- either already in the project, or awaiting import
+        $('.session-source').each(function(){
+            if ($(this).data('source') === source) {
+                $(this).removeClass('disabled').addClass('active');
+                $(this).find('.panel-element').removeClass('disabled');
+                $(this).find('input').prop('disabled',false);
+                $(this).find('select').prop('disabled',false);
+                $(this).find('input.session-source-toggle').prop('checked','checked');
+            }
+            else {
+                $(this).removeClass('active').addClass('disabled');
+                $(this).find('.panel-element').addClass('disabled');
+                $(this).find('input').prop('disabled','disabled');
+                $(this).find('select').prop('disabled','disabled');
+                $(this).find('input.session-source-toggle').prop('checked',false);
+            }
+        });
+
+        // toggle Scan Record Status based on Session source
+        var statusEl = document.getElementById('pixi:hotelScanRecord/status');
+        if (['Split Begun','Complete','Error'].indexOf(statusEl.value) <0 ) {
+            statusEl.value = (source === 'existing') ? 'Ready to Split' : 'Waiting for Session';
+        }
+
+    };
+
+    XNAT.plugin.pixi.setLabel = setLabel = function(session){
+        // check for existence of other scan records for this session
+        var existingRecords = hotelScanRecords.filter((record) => { return record.session === session });
+        var iterator = (existingRecords.length) ? '_'+existingRecords.length : '';
+
+        document.getElementById('pixi:hotelScanRecord/label').value = session+'_scan_record'+iterator;
+    };
+
+    function setSessionDate(sessionDate){
+        $('.selected-session-date').html(sessionDate);
+        $('.session-source.active').find('input[name="pixi:hotelScanRecord/date"]').val(sessionDate);
+    }
+
+    $(document).on('click','.session-source',function(){
+        if (!$(this).hasClass('active')) {
+            var source = $(this).data('source');
+            XNAT.plugin.pixi.toggleSessionSource(source);
+        }
+    });
+
+    $(document).on('change','input.session-source-toggle',function(){
+        var source = $(this).val();
+        XNAT.plugin.pixi.toggleSessionSource(source);
+    });
+
+    $(document).on('change','#session-selector',function(){
+        var session = $(this).find('option:selected');
+        setLabel(session.val());
+
+        var sessionDate = session.data('sessiondate');
+        setSessionDate(sessionDate);
+    });
+
+    $(document).on('change','.subject-selector',function(){
+        var subjectLabel = $(this).find('option:selected').html();
+        $(this).parents('.hotel-unit').find('input.subject-label-selector').val(subjectLabel);
+    });
+
+    $(document).on('blur','#new-session-label',function(){
+        setLabel($(this).val());
+    });
+
     XNAT.plugin.pixi.initScanRecord = function(newExperiment = true){
+        // Check for a known session ID that needs to be edited
+        var editSessionId = $('input[name=edit_session_id]').val();
+
         // get all known scan records
         XNAT.xhr.getJSON({
             url: XNAT.url.rootUrl('/data/projects/' + project + '/experiments?xsiType=pixi:hotelScanRecord'),
@@ -268,12 +340,19 @@ console.log('pixi-editScanRecord.js');
                         .filter((session) => { return session.label.indexOf('_split_')<0 })
                         .sort((a, b) => {return(a.label < b.label) ? -1 : 1 });
                     sessions.forEach(session => {
+                        let selected = false;
+                        if (session.label === editSessionId) {
+                            selected = 'selected';
+                            setSessionDate(session.date);
+                        }
                         $('select#session-selector').append(
                             spawn('option', {
                                 data: {sessiondate: session.date, sessionid: session['session_ID']},
                                 value: session.label,
-                                html: session.label
+                                html: session.label,
+                                selected: selected
                             }))
+
                     });
 
                     if (!newExperiment){
@@ -281,6 +360,11 @@ console.log('pixi-editScanRecord.js');
                         var selectedSessionId = document.getElementById("pixi:hotelScanRecord/session_label").value;
                         var selectedSession = sessions.filter((session) => {return session['session_ID'] === selectedSessionId})[0];
                         $('.selected-session-label').html(selectedSession.label);
+                    }
+
+                    // if the editSessionId exists and is not listed in these sessions, toggle to the "Session is being scanned" input
+                    if (editSessionId && sessions.filter((session) => { return session.label === editSessionId }).length ) {
+                        XNAT.plugin.pixi.toggleSessionSource('new');
                     }
                 }
             }
@@ -310,75 +394,5 @@ console.log('pixi-editScanRecord.js');
             }
         }
     };
-
-    XNAT.plugin.pixi.toggleSessionSource = function(source){
-        // toggle the source of the image session -- either already in the project, or awaiting import
-        $('.session-source').each(function(){
-            if ($(this).data('source') === source) {
-                $(this).removeClass('disabled').addClass('active');
-                $(this).find('.panel-element').removeClass('disabled');
-                $(this).find('input').prop('disabled',false);
-                $(this).find('select').prop('disabled',false);
-                $(this).find('input.session-source-toggle').prop('checked','checked');
-            }
-            else {
-                $(this).removeClass('active').addClass('disabled');
-                $(this).find('.panel-element').addClass('disabled');
-                $(this).find('input').prop('disabled','disabled');
-                $(this).find('select').prop('disabled','disabled');
-                $(this).find('input.session-source-toggle').prop('checked',false);
-            }
-        });
-
-        // toggle Scan Record Status based on Session source
-        var statusEl = document.getElementById('pixi:hotelScanRecord/status');
-        if (['Split Begun','Complete','Error'].indexOf(statusEl.value) <0 ) {
-            statusEl.value = (source === 'existing') ? 'Ready to Split' : 'Waiting for Session';
-        }
-
-    };
-
-    XNAT.plugin.pixi.setLabel = setLabel = function(session){
-        // check for existence of ID field, which means these fields should not be edited
-        var idField = document.getElementById('pixi:hotelScanRecord/ID');
-
-        if (!idField.value) {
-            // check for existence of other scan records for this session
-            var existingRecords = hotelScanRecords.filter((record) => { return record.session === session });
-            var iterator = (existingRecords.length) ? '_'+existingRecords.length : '';
-
-            document.getElementById('pixi:hotelScanRecord/label').value = session+'_scan_record'+iterator;
-        }
-    };
-
-    $(document).on('click','.session-source',function(){
-        if (!$(this).hasClass('active')) {
-            var source = $(this).data('source');
-            XNAT.plugin.pixi.toggleSessionSource(source);
-        }
-    });
-
-    $(document).on('change','input.session-source-toggle',function(){
-        var source = $(this).val();
-        XNAT.plugin.pixi.toggleSessionSource(source);
-    });
-
-    $(document).on('change','#session-selector',function(){
-        var session = $(this).find('option:selected');
-        setLabel(session.val());
-
-        var sessionDate = session.data('sessiondate');
-        $('.selected-session-date').html(sessionDate);
-        $('.session-source.active').find('input[name="pixi:hotelScanRecord/date"]').val(sessionDate);
-    });
-
-    $(document).on('change','.subject-selector',function(){
-        var subjectLabel = $(this).find('option:selected').html();
-        $(this).parents('.hotel-unit').find('input.subject-label-selector').val(subjectLabel);
-    });
-
-    $(document).on('blur','#new-session-label',function(){
-        setLabel($(this).val());
-    });
 
 }));

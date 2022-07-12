@@ -84,6 +84,7 @@
 
 #set($presetSessionLabel = $!turbineUtils.GetPassedParameter("session_label",$data,""))
 #set($presetSessionDate = $!turbineUtils.GetPassedParameter("session_date",$data,""))
+#set($editSessionId = $!turbineUtils.GetPassedParameter("edit_session",$data,"n/a"))
 
 <form ID="form1" name="form1" method="post" action="$link.setAction("ModifyPixiItem")">
 ##	<input type="hidden" name="project" value="$!{project}" >
@@ -111,8 +112,10 @@
 
     ## If this is a new record, show the session selector interface. If not, show a standard editing UI
     ## Also check to see if a session was provided in URL parameters
-    #if(!$om.getId() && $!presetSessionLabel.length().equals(0))
+    ## Finally, check to see if the user wants to edit the existing session in a scan record -- if so, show the full UI
+    #if((!$om.getId() && $!presetSessionLabel.length().equals(0)) || $!editSessionId != "n/a")
         <h3>Select a Hotel Session</h3>
+        <input name="edit_session_id" value="$!{editSessionId}" type="hidden">
 
         <div class="column-container col-2">
             <div class="column">
@@ -181,14 +184,15 @@
         </div>
     #else
         <h3>Hotel Session</h3>
-        #if($presetSessionLabel)
+        #if(!$!presetSessionLabel.length().equals(0))
+            #set ($sessionId=$presetSessionLabel)
             <div class="column">
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        <p><strong>Image Session:</strong> <a href="$content.getURI("/data/experiments/${presetSessionLabel}?format=html")" class="selected-session-label">${presetSessionLabel}</a> <i class="spacer pad5"></i> <a href="#!" onclick="changeHotelSession()"><button class="btn btn-sm">Edit</button> </a></p>
+                        <p><strong>Image Session:</strong> <a href="$content.getURI("/data/projects/${project}/experiments/${presetSessionLabel}?format=html")" class="selected-session-label">${presetSessionLabel}</a> <i class="spacer pad5"></i> <a href="#!" onclick="changeHotelSession()"><button class="btn btn-sm">Edit</button> </a></p>
                         <p><strong>Session Date:</strong> <span class="selected-session-date">${presetSessionDate}</span></p>
-                        <input type="hidden" name="pixi:hotelScanRecord/date" value="${presetSessionDate}">
-                        <input type="hidden" name="pixi:hotelScanRecord/session_label" value="${presetSessionLabel}">
+                        <input type="hidden" id="pixi:hotelScanRecord/date" name="pixi:hotelScanRecord/date" value="${presetSessionDate}">
+                        <input type="hidden" id="pixi:hotelScanRecord/session_label" name="pixi:hotelScanRecord/session_label" value="${presetSessionLabel}">
                     </div>
                 </div>
             </div>
@@ -197,13 +201,37 @@
             <div class="column">
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        <p><a href="$content.getURI("/data/experiments/${sessionId}?format=html")" class="selected-session-label">$item.getStringProperty("session_label")</a> <i class="spacer pad5"></i> <a href="#!" onclick="changeHotelSession()"><button class="btn btn-sm">Edit</button> </a></p>
+                        <p><strong>Image Session:</strong> <a href="$content.getURI("/data/projects/${project}/experiments/${sessionId}?format=html")" class="selected-session-label">$item.getStringProperty("session_label")</a> <i class="spacer pad5"></i> <a href="#!" onclick="changeHotelSession()"><button class="btn btn-sm">Edit</button> </a></p>
                         <p><strong>Session Date:</strong> <span class="selected-session-date">$!item.getProperty("pixi:hotelScanRecord/date")</span></p>
                         #xdatHiddenBox("pixi:hotelScanRecord/session_label" $item "")
                     </div>
                 </div>
             </div>
         #end
+        <script>
+            function changeHotelSession(){
+                XNAT.dialog.open({
+                    title: 'Page Reload Required',
+                    width: 350,
+                    content: '<p>A page reload is required to change the session associated with this scan record. Any edits on this page will be lost.</p>',
+                    buttons: [
+                        {
+                            label: 'OK',
+                            isDefault: true,
+                            close: true,
+                            action: function(){
+                                let url = window.location.href+'/edit_session/${sessionId}';
+                                window.location.assign(url);
+                            }
+                        },
+                        {
+                            label: 'Cancel',
+                            close: true
+                        }
+                    ]
+                })
+            }
+        </script>
     #end
 
 
@@ -332,7 +360,7 @@
     XNAT.plugin.pixi.pixiSubjects = [{ value: '', label: 'Empty'}];
     #foreach( $subject in $subjects)
         #if (!$subject.label.equalsIgnoreCase("Hotel"))
-            XNAT.plugin.pixi.pixiSubjects.push({ value: '$subject.id', label: '$subject.label' });
+        XNAT.plugin.pixi.pixiSubjects.push({ value: '$subject.id', label: '$subject.label' });
         #end
     #end
 </script>
