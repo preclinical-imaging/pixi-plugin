@@ -50,6 +50,7 @@ console.log('pixi-editScanRecord.js');
                             name: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/orientation',
                             label: 'Orientation',
                             options: {
+                                "": '(SELECT)',
                                 HFP:'Head First-Prone',
                                 HFS:'Head First-Supine',
                                 HFDR:'Head First-Decubitus Right',
