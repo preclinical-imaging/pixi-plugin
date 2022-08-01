@@ -1,0 +1,97 @@
+<!-- BEGIN /templates/screens/pixi_bliSessionData/upload/pixi_bliSessionData_fields.vm -->
+
+<tr valign="top">
+    <th align="left"><p style="margin-top: 0.5em">Scanner Name</p></th>
+
+    #set($currentScanner=$item.getProperty("scanner"))
+    #set($scanners = $data.getSession().getAttribute("userHelper").getQueryResultsAsArrayList(
+        "SELECT DISTINCT isd.scanner FROM xnat_imageSessionData isd LEFT JOIN xnat_experimentData expt ON isd.id=expt.id LEFT JOIN xdat_meta_element xme ON expt.extension=xme.xdat_meta_element_id LEFT JOIN xnat_imageScanData scan ON isd.id=scan.image_session_id WHERE xme.element_name='${datatype}' AND scan.scanner='$currentScanner'"))
+
+    #if($scanners.size()==0)
+        #if($project)
+            #set($scanners = $data.getSession().getAttribute("userHelper").getQueryResultsAsArrayList(
+                "SELECT DISTINCT isd.scanner FROM pixi_bliSessionData bli LEFT JOIN xnat_imageSessionData isd ON bli.id=isd.id LEFT JOIN xnat_experimentData expt ON isd.id=expt.id WHERE expt.project='$project'"))
+            #if($scanners.size()==0)
+                #set($scanners = $data.getSession().getAttribute("userHelper").getQueryResultsAsArrayList(
+                    "SELECT DISTINCT isd.scanner  FROM pixi_bliSessionData bli LEFT JOIN xnat_imageSessionData isd ON bli.id=isd.id"))
+            #end
+        #else
+            #set($scanners = $data.getSession().getAttribute("userHelper").getQueryResultsAsArrayList(
+                "SELECT DISTINCT isd.scanner  FROM pixi_bliSessionData bli LEFT JOIN xnat_imageSessionData isd ON bli.id=isd.id"))
+        #end
+    #end
+
+    #if($scanners.size()==0)
+        <td> #xdatTextBox("${datatype}.scanner" $item "" $vr)</td>
+    #else
+        <td>
+            #if (!$datatype)
+                #set ($datatype = 'pixi:bliSessionData')
+            #end
+			#parse('/screens/xnat_imageSessionData/upload/scanners.vm')
+        </td>
+    #end
+</tr>
+
+<tr>
+    <th align="left">Acquisition Site</th>
+    <td>
+        #xdatTextBox("pixi:bliSessionData.acquisition_site" $item "" $vr)
+    </td>
+    <td></td>
+</tr>
+
+<script type="text/javascript">
+    window.tr_visibility = "none";
+
+    function toggleAdditionalFields() {
+        if (window.tr_visibility == "") {
+            window.tr_visibility = "none";
+        } else {
+            window.tr_visibility = "";
+        }
+        document.getElementById("operator.tr").style.display = window.tr_visibility;
+        document.getElementById("stab.tr").style.display = window.tr_visibility;
+        document.getElementById("mark.tr").style.display = window.tr_visibility;
+        document.getElementById("coil.tr").style.display = window.tr_visibility;
+    }
+</script>
+
+<tr align="left" id="operator.tr" name="additional_fields">
+    <th>Operator</th>
+    <td>
+        #if ($vr)
+            #if($vr.getField("${datatype}.operator"))
+                <font color="red">&#8658</font>
+            #end
+        #end
+        #if ($item.getProperty("${datatype}.operator"))
+            <input type="text" name="${datatype}.operator"
+                #if ($item.getProperty("${datatype}.operator")=="null")
+                   value=""
+                #else
+                   value="$item.getProperty("${datatype}.operator")"
+                #end
+            />
+        #else
+            <input type="text" name="${datatype}.operator" value=""/>
+        #end
+    </td>
+    <td></td>
+</tr>
+
+
+<tr align="left" id="luciferin.tr" name="additional_fields">
+    <th>Luciferin</th>
+    <td>#xdatTextBox("pixi:bliSessionData.luciferin" $item "" $vr)</td>
+    <td>Units</td>
+    <td>#xdatTextBox("pixi:bliSessionData.luciferinUnit" $item "" $vr)</td>
+</tr>
+
+<tr align="left" id="luciferinInjectionTime.tr" name="additional_fields">
+    <th>Luciferin Injection Time</th>
+    <td>#xdatTimeBox("pixi:bliSessionData/luciferinInjectionTime" $item $vr)</td>
+</tr>
+
+
+<!-- END /templates/screens/pixi_bliSessionData/upload/pixi_bliSessionData_fields.vm -->

@@ -296,12 +296,17 @@
                             <xs:documentation>Amount of luciferin injected.</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="luciferinUnit" type="xs:string" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Unit for the amount luciferin injected.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="luciferinInjectionTime" type="xs:dateTime" minOccurs="0">
                         <xs:annotation>
                             <xs:documentation>The datetime when the luciferin was injected.</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="hotelSession" type="xs:boolean" default="false">
+                    <xs:element name="hotelSession" type="xs:boolean" default="false" minOccurs="0">
                         <xs:annotation>
                             <xs:documentation>Is this a multi-subject / hotel session?</xs:documentation>
                         </xs:annotation>
