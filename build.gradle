@@ -5,10 +5,12 @@ plugins {
     id "java"
     id "org.nrg.xnat.build.xnat-data-builder" version "1.8.5-SNAPSHOT"
     id "io.freefair.lombok" version "6.0.0-m2"
+    id "com.palantir.git-version" version "0.13.0"
 }
 
-group "org.nrg.xnatx"
+group "org.nrg.xnatx.plugins"
 version "0.1"
+description "PIXI Plugin for XNAT."
 
 repositories {
     mavenLocal()
@@ -47,6 +49,56 @@ test {
     useJUnitPlatform()
 }
 
+// Pulls in the Jenkins BUILD_NUMBER environment variable if available.
+def buildDate = new Date()
+def buildNumber = System.getenv().BUILD_NUMBER?.toInteger() ?: "Manual"
+def isDirty, branchName, gitHash, gitHashFull, commitDistance, lastTag, isCleanTag
+
+try {
+    def gitDetails = versionDetails()
+    isDirty = gitVersion().endsWith ".dirty"
+    branchName = gitDetails.branchName ?: "Unknown"
+    gitHash = gitDetails.gitHash
+    gitHashFull = gitDetails.gitHashFull
+    commitDistance = gitDetails.commitDistance
+    lastTag = gitDetails.lastTag
+    isCleanTag = gitDetails.isCleanTag
+} catch (IllegalArgumentException ignored) {
+    logger.info "Got an error trying to read VCS metadata from git. It's possible this project is not under VCS control. Using placeholder values for manifest entries."
+    isDirty = true
+    branchName = "Unknown"
+    gitHash = "None"
+    gitHashFull = "None"
+    commitDistance = 0
+    lastTag = "None"
+    isCleanTag = false
+}
+
+logger.info "Build-Date:              ${buildDate}"
+logger.info "Build-Number:            ${buildNumber}"
+logger.info "Implementation-Version:  ${version}"
+logger.info "Implementation-Sha-Full: ${gitHashFull}"
+logger.info "Implementation-Sha:      ${gitHash}"
+logger.info "Implementation-Commit:   ${commitDistance}"
+logger.info "Implementation-LastTag:  ${lastTag}"
+logger.info "Implementation-Branch:   ${branchName}"
+logger.info "Implementation-CleanTag: ${isCleanTag}"
+logger.info "Implementation-Dirty:    ${isDirty}"
+
+ext.gitManifest = manifest {
+    attributes "Application-Name": "XNAT",
+            "Build-Date": buildDate,
+            "Build-Number": buildNumber,
+            "Implementation-Version": project.version,
+            "Implementation-Sha": gitHash,
+            "Implementation-Sha-Full": gitHashFull,
+            "Implementation-Commit": commitDistance,
+            "Implementation-LastTag": lastTag,
+            "Implementation-Branch": branchName,
+            "Implementation-CleanTag": isCleanTag,
+            "Implementation-Dirty": isDirty
+}
+
 // Configure the compileJava task to call the xnatDataBuilder task before trying to compile any
 // Java code in the plugin. This is required for custom data types
 compileJava.dependsOn project.tasks["xnatDataBuilder"]
@@ -66,7 +118,15 @@ sourceSets {
     }
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
 jar {
+    manifest = project.manifest {
+        from gitManifest
+    }
     from {
         (configurations.implementation - configurations.xnatProvided).collect {
             it.isDirectory() ? it : zipTree(it)
