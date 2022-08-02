@@ -7,8 +7,10 @@ import java.io.InputStream;
 import java.nio.file.Path;
 
 public interface AnalyzedClickInfoHelper {
-    AnalyzedClickInfo parse(InputStream inputStream) throws IOException;
-    AnalyzedClickInfo parse(InputStream inputStream, Path outputPath) throws IOException;
-    AnalyzedClickInfo parse(InputStream inputStream, Path outputPath, Path jsonOutputPath) throws IOException;
+    AnalyzedClickInfo parseTxt(InputStream inputStream) throws IOException;
+    AnalyzedClickInfo parseTxt(InputStream inputStream, Path outputPath) throws IOException;
+    AnalyzedClickInfo parseTxt(InputStream inputStream, Path outputPath, Path jsonOutputPath) throws IOException;
     AnalyzedClickInfo readJson(Path jsonFile) throws IOException;
+    AnalyzedClickInfo readJson(InputStream inputStream) throws IOException;
+    AnalyzedClickInfo readJson(InputStream inputStream, Path jsonOutputPath) throws IOException;
 }

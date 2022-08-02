@@ -19,13 +19,29 @@ import java.util.Date;
 @Slf4j
 public class LuminescentImage {
 
-    private String luminescentImageFileName;
-
-    @JsonFormat(pattern = "EEEE, MMMM dd, yyyy")
-    private LocalDate acquisitionDate;
-
-    @JsonFormat(pattern = "HH:mm:ss")
-    private LocalTime acquisitionTime;
+    private String luminescentImage;
+    @JsonFormat(pattern = "EEEE, MMMM dd, yyyy") private LocalDate acquisitionDate;
+    @JsonFormat(pattern = "HH:mm:ss") private LocalTime acquisitionTime;
+    private Long acquisitionSeconds;
+    private Integer pixelWidth;
+    private Integer pixelHeight;
+    private String imageUnits;
+    private Integer binningFactor;
+    private Integer luminescentExposureSeconds;
+    private String luminescentExposureUnits;
+    private Integer fNumber;
+    private Integer fieldOfView;
+    private Double readBiasLevel;
+    private String emissionFilter;
+    private Integer filterPosition;
+    private String excitationFilter;
+    private Double subjectSize;
+    private Integer demandTemperature;
+    private Integer measuredTemperature;
+    private String errorWave;
+    private Integer cosmic;
+    private Integer backgroundCorrected;
+    private Integer FlatFieldCorrected;
 
     @JsonIgnore
     public LocalDateTime getLocalAcquisitionDateTime() {

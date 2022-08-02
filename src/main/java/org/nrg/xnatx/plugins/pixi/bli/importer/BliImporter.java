@@ -191,50 +191,14 @@ public class BliImporter extends ImporterHandlerA {
             Files.createFile(prearchiveFile);
 
             // AnalyzedClickInfo.txt is the header file and contains all session metadata
-            // Other file can be directly save to the prearchive
-            if (fileName.equalsIgnoreCase("AnalyzedClickInfo.txt")) {
-
+            // Other file can be directly saved to the prearchive
+            if (fileName.equalsIgnoreCase("AnalyzedClickInfo.txt") && !analyzedClickInfo.isPresent()) {
                 Path analyzedClickInfoJson = prearchiveTempDirectoryPath.resolve("AnalyzedClickInfo.json");
                 Files.createFile(analyzedClickInfoJson);
-
-                analyzedClickInfo = Optional.of(analyzedClickInfoHelper.parse(zin, prearchiveFile, analyzedClickInfoJson));
-
-                if (!sessionLabel.isPresent()) {
-                    sessionLabel = Optional.ofNullable(replaceWhitespace(analyzedClickInfo.get().getUserLabelNameSet().getExperiment()));
-                }
-
-                if (!subjectId.isPresent()) {
-                    String animalNumber = analyzedClickInfo.get().getUserLabelNameSet().getAnimalNumber();
-
-                    if (animalNumber != null) {
-                        if (animalNumber.contains(",")) {
-                            // Comma separated animal numbers will indicate a hotel session
-                            subjectId = Optional.of("Hotel");
-                        } else {
-                            subjectId = Optional.of(animalNumber);
-                        }
-                    }
-                }
-
-                scanDate = Optional.of(analyzedClickInfo.get().getLuminescentImage().getAcquisitionDateTime());
-                scanLabel = Optional.ofNullable(replaceWhitespace(analyzedClickInfo.get().getUserLabelNameSet().getView()));
-                uid = Optional.ofNullable(replaceWhitespace(analyzedClickInfo.get().getClickNumber().getClickNumber()));
-
-                // Populate session
-                session.setFolderName(sessionLabel.orElse(UNKNOWN_SESSION_LABEL));
-                session.setName(sessionLabel.orElse(UNKNOWN_SESSION_LABEL));
-                session.setProject(projectId);
-                session.setScan_date(scanDate.orElse(null));
-                session.setUploadDate(uploadDate);
-                session.setTimestamp(timestamp);
-                session.setStatus(PrearcUtils.PrearcStatus.RECEIVING);
-                session.setLastBuiltDate(Calendar.getInstance().getTime());
-                session.setSubject(subjectId.orElse(""));
-                session.setSource(params.get(URIManager.SOURCE));
-                session.setPreventAnon(Boolean.valueOf((String) params.get(URIManager.PREVENT_ANON)));
-                session.setPreventAutoCommit(Boolean.valueOf((String) params.get(URIManager.PREVENT_AUTO_COMMIT)));
-                session.setAutoArchive(shouldAutoArchive(projectId));
-
+                analyzedClickInfo = Optional.of(analyzedClickInfoHelper.parseTxt(zin, prearchiveFile, analyzedClickInfoJson));
+            } else if (fileName.equalsIgnoreCase("AnalyzedClickInfo.json") && !analyzedClickInfo.isPresent()) {
+                Path analyzedClickInfoJson = prearchiveTempDirectoryPath.resolve("AnalyzedClickInfo.json");
+                analyzedClickInfo = Optional.of(analyzedClickInfoHelper.readJson(zin, analyzedClickInfoJson));
             } else {
                 // Not AnalyzedClickInfo.txt, file can be written to prearchive. Nothing to parse
                 ZipEntryFileWriterWrapper zipEntryFileWriterWrapper = new ZipEntryFileWriterWrapper(ze,zin);
@@ -245,6 +209,43 @@ public class BliImporter extends ImporterHandlerA {
         }
 
         if (analyzedClickInfo.isPresent()) {
+
+            if (!sessionLabel.isPresent()) {
+                sessionLabel = Optional.ofNullable(replaceWhitespace(analyzedClickInfo.get().getUserLabelNameSet().getExperiment()));
+            }
+
+            if (!subjectId.isPresent()) {
+                String animalNumber = analyzedClickInfo.get().getUserLabelNameSet().getAnimalNumber();
+
+                if (animalNumber != null) {
+                    if (animalNumber.contains(",")) {
+                        // Comma separated animal numbers will indicate a hotel session
+                        subjectId = Optional.of("Hotel");
+                    } else {
+                        subjectId = Optional.of(animalNumber);
+                    }
+                }
+            }
+
+            scanDate = Optional.of(analyzedClickInfo.get().getLuminescentImage().getAcquisitionDateTime());
+            scanLabel = Optional.ofNullable(replaceWhitespace(analyzedClickInfo.get().getUserLabelNameSet().getView()));
+            uid = Optional.ofNullable(replaceWhitespace(analyzedClickInfo.get().getClickNumber().getClickNumber()));
+
+            // Populate session
+            session.setFolderName(sessionLabel.orElse(UNKNOWN_SESSION_LABEL));
+            session.setName(sessionLabel.orElse(UNKNOWN_SESSION_LABEL));
+            session.setProject(projectId);
+            session.setScan_date(scanDate.orElse(null));
+            session.setUploadDate(uploadDate);
+            session.setTimestamp(timestamp);
+            session.setStatus(PrearcUtils.PrearcStatus.RECEIVING);
+            session.setLastBuiltDate(Calendar.getInstance().getTime());
+            session.setSubject(subjectId.orElse(""));
+            session.setSource(params.get(URIManager.SOURCE));
+            session.setPreventAnon(Boolean.valueOf((String) params.get(URIManager.PREVENT_ANON)));
+            session.setPreventAutoCommit(Boolean.valueOf((String) params.get(URIManager.PREVENT_AUTO_COMMIT)));
+            session.setAutoArchive(shouldAutoArchive(projectId));
+
             if (!scanLabel.isPresent()) {
                 if (uid.isPresent()) {
                     scanLabel = uid;

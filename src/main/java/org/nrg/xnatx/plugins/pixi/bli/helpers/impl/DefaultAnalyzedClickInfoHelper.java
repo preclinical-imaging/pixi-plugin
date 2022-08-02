@@ -1,5 +1,6 @@
 package org.nrg.xnatx.plugins.pixi.bli.helpers.impl;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -25,16 +26,16 @@ import java.util.Scanner;
 @Slf4j
 public class DefaultAnalyzedClickInfoHelper implements AnalyzedClickInfoHelper {
 
-    public AnalyzedClickInfo parse(InputStream inputStream) throws IOException {
-        return parse(inputStream, null, null);
+    public AnalyzedClickInfo parseTxt(InputStream inputStream) throws IOException {
+        return parseTxt(inputStream, null, null);
     }
 
-    public AnalyzedClickInfo parse(InputStream inputStream, Path outputPath) throws IOException {
-        return parse(inputStream, outputPath, null);
+    public AnalyzedClickInfo parseTxt(InputStream inputStream, Path outputPath) throws IOException {
+        return parseTxt(inputStream, outputPath, null);
     }
 
-    public AnalyzedClickInfo parse(InputStream inputStream, Path outputPath, Path jsonOutputPath) throws IOException {
-        log.info("Parsing AnalyzedClickInfo.txt.");
+    public AnalyzedClickInfo parseTxt(InputStream inputStream, Path outputPath, Path jsonOutputPath) throws IOException {
+        log.debug("Parsing AnalyzedClickInfo.txt.");
 
         BufferedWriter outputWriter = null;
 
@@ -72,14 +73,28 @@ public class DefaultAnalyzedClickInfoHelper implements AnalyzedClickInfoHelper {
                     // ClickNumber
                     case("*** ClickNumber"): {
                         clickNumber.setClickNumber(value);
+
+                        // ClickInfoType
+                        String clickInfoType = analyzedClickInfoScanner.nextLine();
+
+                        if (outputWriter != null) {
+                            outputWriter.write(clickInfoType);
+                            outputWriter.newLine();
+                        }
+
+                        clickInfoType = clickInfoType.split(":", 2)[1];
+                        clickInfoType = clickInfoType.trim();
+
+                        clickNumber.setClickInfoType(clickInfoType);
+
                         break;
                     }
 
                     // Luminescent Image
                     case ("*** luminescent image"): {
-                        luminescentImage.setLuminescentImageFileName(value);
+                        luminescentImage.setLuminescentImage(value);
 
-                        // There are a few acquisition dates and times. Need to read each line after *** luminescent image
+                        // Acquisition Date
                         String acqDate = analyzedClickInfoScanner.nextLine();
 
                         if (outputWriter != null) {
@@ -93,6 +108,7 @@ public class DefaultAnalyzedClickInfoHelper implements AnalyzedClickInfoHelper {
                         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
                         luminescentImage.setAcquisitionDate(LocalDate.parse(acqDate, dateFormatter));
 
+                        // Acquisition Time
                         String acqTime = analyzedClickInfoScanner.nextLine();
 
                         if (outputWriter != null) {
@@ -105,6 +121,19 @@ public class DefaultAnalyzedClickInfoHelper implements AnalyzedClickInfoHelper {
 
                         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
                         luminescentImage.setAcquisitionTime(LocalTime.parse(acqTime, timeFormatter));
+
+                        // Acquisition Seconds
+                        String acqSeconds = analyzedClickInfoScanner.nextLine();
+
+                        if (outputWriter != null) {
+                            outputWriter.write(acqSeconds);
+                            outputWriter.newLine();
+                        }
+
+                        acqSeconds = acqSeconds.split(":", 2)[1];
+                        acqSeconds = acqSeconds.trim();
+
+                        luminescentImage.setAcquisitionSeconds(Long.parseLong(acqSeconds));
 
                         break;
                     }
@@ -209,5 +238,25 @@ public class DefaultAnalyzedClickInfoHelper implements AnalyzedClickInfoHelper {
         ObjectMapper mapper = new ObjectMapper();
         mapper.findAndRegisterModules();
         return mapper.readValue(jsonFile.toFile(), AnalyzedClickInfo.class);
+    }
+
+    @Override
+    public AnalyzedClickInfo readJson(InputStream inputStream) throws IOException {
+        return readJson(inputStream, null);
+    }
+
+    @Override
+    public AnalyzedClickInfo readJson(InputStream inputStream, Path jsonOutputPath) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.findAndRegisterModules();
+        mapper.disable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
+        final AnalyzedClickInfo analyzedClickInfo = mapper.readValue(inputStream, AnalyzedClickInfo.class);
+
+        if (jsonOutputPath != null) {
+            ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
+            writer.writeValue(jsonOutputPath.toFile(), analyzedClickInfo);
+        }
+
+        return analyzedClickInfo;
     }
 }
