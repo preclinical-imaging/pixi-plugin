@@ -46,11 +46,12 @@ public class BliSessionBuilder extends SessionBuilder {
         String subject = parameters.getOrDefault(PrearcUtils.PARAM_SUBJECT_ID, "");
         String label = parameters.getOrDefault(PrearcUtils.PARAM_LABEL, null);
 
-        log.debug("Building BLI session for Project: {} Subject: {} Sesssion: {}", project, subject, label);
+        log.debug("Building BLI session for Project: {} Subject: {} Session: {}", project, subject, label);
 
         // Initialize the session and populate
         PixiBlisessiondataBean bliSession = new PixiBlisessiondataBean();
 
+        bliSession.setPrearchivepath(sessionDir.getPath());
         bliSession.setProject(project);
         bliSession.setSubjectId(subject);
         bliSession.setLabel(label);
