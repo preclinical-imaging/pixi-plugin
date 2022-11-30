@@ -103,7 +103,8 @@
                 "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/source",
                 "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/geneticModifications",
                 "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/sex",
-                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/dateOfBirth"
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/dateOfBirth",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/litter"
             ])
             #foreach($property in $properties)
                 #if($om.getProperty($property))
@@ -136,7 +137,7 @@
                             "components": [
                                 {
                                     "label": "Species",
-                                    "widget": "choicesjs",
+                                    "widget": "html5",
                                     "tableView": true,
                                     "dataSrc": "custom",
                                     "data": {
@@ -144,54 +145,13 @@
                                     },
                                     "valueProperty": "scientificName",
                                     "template": "<span>{{ item.commonName }} / {{ item.scientificName }}</span>",
-                                    "validate": {
-                                        "required": true
-                                    },
                                     "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/species",
                                     "type": "select",
                                     "input": true
                                 },
                                 {
-                                    "label": "Strain",
-                                    "tableView": true,
-                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/strain",
-                                    "type": "textfield",
-                                    "input": true
-                                },
-                                {
-                                    "label": "Strain Source / Vendor",
-                                    "widget": "choicesjs",
-                                    "tableView": true,
-                                    "dataSrc": "custom",
-                                    "data": {
-                                        "custom": "var values;\nXNAT.xhr.get({\n  url: XNAT.url.restUrl('/xapi/pixi/preferences/vendors'),\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    data = data[\"vendors\"];\n    data.sort((a,b) => a.id - b.id);\n    values = data;\n  }\n});"
-                                    },
-                                    "valueProperty": "vendor",
-                                    "template": "<span>{{ item.vendor }}</span>",
-                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/source",
-                                    "type": "select",
-                                    "input": true
-                                },
-                                {
-                                    "label": "Genetic Modifications",
-                                    "tableView": true,
-                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/geneticModifications",
-                                    "type": "textfield",
-                                    "input": true
-                                }
-                            ],
-                            "width": 6,
-                            "offset": 0,
-                            "push": 0,
-                            "pull": 0,
-                            "size": "md",
-                            "currentWidth": 6
-                        },
-                        {
-                            "components": [
-                                {
                                     "label": "Sex",
-                                    "widget": "choicesjs",
+                                    "widget": "html5",
                                     "tableView": true,
                                     "data": {
                                         "values": [
@@ -241,6 +201,51 @@
                                         "disableWeekdays": false,
                                         "maxDate": null
                                     }
+                                },
+                                {
+                                    "label": "Litter ID",
+                                    "tableView": true,
+                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/litter",
+                                    "type": "textfield",
+                                    "input": true
+                                }
+                            ],
+                            "width": 6,
+                            "offset": 0,
+                            "push": 0,
+                            "pull": 0,
+                            "size": "md",
+                            "currentWidth": 6
+                        },
+                        {
+                            "components": [
+                                {
+                                    "label": "Strain",
+                                    "tableView": true,
+                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/strain",
+                                    "type": "textfield",
+                                    "input": true
+                                },
+                                {
+                                    "label": "Strain Source / Vendor",
+                                    "widget": "html5",
+                                    "tableView": true,
+                                    "dataSrc": "custom",
+                                    "data": {
+                                        "custom": "var values;\nXNAT.xhr.get({\n  url: XNAT.url.restUrl('/xapi/pixi/preferences/vendors'),\n  dataType: 'json',\n  async: false,\n  success: function(data) {\n    data = data[\"vendors\"];\n    data.sort((a,b) => a.id - b.id);\n    values = data;\n  }\n});"
+                                    },
+                                    "valueProperty": "vendor",
+                                    "template": "<span>{{ item.vendor }}</span>",
+                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/source",
+                                    "type": "select",
+                                    "input": true
+                                },
+                                {
+                                    "label": "Genetic Modifications",
+                                    "tableView": true,
+                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/geneticModifications",
+                                    "type": "textfield",
+                                    "input": true
                                 }
                             ],
                             "width": 6,
