@@ -27,18 +27,10 @@
     #set($properties = [
         ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/species", "Species"],
         ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/strain", "Strain"],
-        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine1/externalID", "Cell Line 1"],
-        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine1/injectiondate", "Injection Date"],
-        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine1/injectionSite", "Injection Site"],
-        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine2/externalID", "Cell Line 2"],
-        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine2/injectiondate", "Injection Date"],
-        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/cellLine2/injectionSite", "Injection Site"],
-        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx1/externalID", "PDX 1"],
-        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx1/injectiondate", "Injection Date"],
-        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx1/injectionSite", "Injection Site"],
-        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx2/externalID", "PDX 2"],
-        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx2/injectiondate", "Injection Date"],
-        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/pdx2/injectionSite", "Injection Site"]
+        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/source", "Source / Vendor"],
+        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/geneticModifications", "Genetic Modifications"],
+        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/sex", "Sex"],
+        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/dateOfBirth", "DOB"]
     ])
 
     #foreach ($property in $properties)

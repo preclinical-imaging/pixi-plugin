@@ -54,9 +54,9 @@ public class PDXApi extends XenograftAPI<PDXEntity, PDX> {
     @ApiResponses({@ApiResponse(code = 200, message = "PDX successfully retrieved."),
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
-    @XapiRequestMapping(value = "/pdx/{externalID}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-    public PDX get(@PathVariable final String externalID) throws NotFoundException {
-        return super.get(externalID);
+    @XapiRequestMapping(value = "/pdx/{sourceId}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public PDX get(@PathVariable final String sourceId) throws NotFoundException {
+        return super.get(sourceId);
     }
 
     @Override
@@ -74,9 +74,9 @@ public class PDXApi extends XenograftAPI<PDXEntity, PDX> {
     @ApiResponses({@ApiResponse(code = 200, message = "PDX successfully updated."),
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
-    @XapiRequestMapping(value = "/pdx/{externalID}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
-    public void update(@PathVariable final String externalID, @RequestBody final PDX pdx) throws ResourceAlreadyExistsException, NotFoundException {
-        super.update(externalID, pdx);
+    @XapiRequestMapping(value = "/pdx/{sourceId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
+    public void update(@PathVariable final String sourceId, @RequestBody final PDX pdx) throws ResourceAlreadyExistsException, NotFoundException {
+        super.update(sourceId, pdx);
     }
 
     @Override
@@ -85,9 +85,9 @@ public class PDXApi extends XenograftAPI<PDXEntity, PDX> {
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
     @AuthorizedRoles({"PIXI", "Administrator"})
-    @XapiRequestMapping(value = "/pdx/{externalID}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE, restrictTo = AccessLevel.Role)
-    public void delete(@PathVariable final String externalID) throws XenograftDeletionException {
-        super.delete(externalID);
+    @XapiRequestMapping(value = "/pdx/{sourceId}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE, restrictTo = AccessLevel.Role)
+    public void delete(@PathVariable final String sourceId) throws XenograftDeletionException {
+        super.delete(sourceId);
     }
 
 }

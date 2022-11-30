@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+$page.setTitle("CellLine Details")
+$page.setLinkColor($ui.alink)
+$page.setVlinkColor($ui.vlink)
+#if ($turbineUtils.GetPassedParameter("popup", $data))
+	#set ($popup = $turbineUtils.GetPassedParameter("popup", data) )
+	#set ($popup = "false")
+#end
+<TABLE width="100%">
+	<TR>
+		<TD>
+			<table width="100%">
+				<TR>
+					<TD align="left" valign="middle">
+						<font face="$ui.sansSerifFonts" size="3"><b>Cell Line Details</b></font>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<TABLE width="100%">
+				<TR>
+					<TD valign="top">
+						<TABLE>
+							<TR><TD>Cell Line ID</TD><TD>$!item.getStringProperty("pixi:cellLineData/sourceId")</TD></TR>
+							<TR><TD>Injection Date</TD><TD>$!item.getProperty("pixi:cellLineData/date")</TD></TR>
+							<TR><TD>Injection Site</TD><TD>$!item.getStringProperty("pixi:cellLineData/injectionSite")</TD></TR>
+							<TR><TD>Num Cells Injected</TD><TD>$!item.getProperty("pixi:cellLineData/numCellsInjected")</TD></TR>
+							<TR><TD>Injection Type</TD><TD>$!item.getStringProperty("pixi:cellLineData/injectionType")</TD></TR>
+							<tr><td><td></td></tr>
+							<TR><TD>Notes</TD><TD>$!item.getStringProperty("pixi:cellLineData/note")</TD></TR>
+						</TABLE>
+					</TD>
+					<TD valign="top" align="right">
+						#parse($turbineUtils.getTemplateName("actions",$om.getXSIType(),$project))
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+</TABLE><BR>#parse("/screens/ReportProjectSpecificFields.vm")

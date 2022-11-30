@@ -18,11 +18,11 @@ import javax.validation.constraints.NotBlank;
 public class CellLineEntity extends XenograftEntity {
 
     @Builder
-    public CellLineEntity(@NotBlank final String externalID,
-                          @Nullable final String dataSource,
-                          @Nullable final String dataSourceURL,
+    public CellLineEntity(@NotBlank final String sourceId,
+                          @Nullable final String source,
+                          @Nullable final String sourceURL,
                           @Nullable final String createdBy) {
-        super(externalID, dataSource, dataSourceURL, createdBy);
+        super(sourceId, source, sourceURL, createdBy);
     }
 
 }

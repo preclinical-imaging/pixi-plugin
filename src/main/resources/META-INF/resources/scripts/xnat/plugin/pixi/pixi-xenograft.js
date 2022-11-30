@@ -46,7 +46,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                 url: this.url(),
                 dataType: 'json',
                 success: function(data) {
-                    self.data = data.sort(pixi.compareGenerator('externalID'));
+                    self.data = data.sort(pixi.compareGenerator('sourceId'));
                     callback.apply(this, arguments);
                 }
             });
@@ -70,21 +70,21 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                     obj.$modal.find('form').append(
                         spawn('!', [
                             XNAT.ui.panel.input.text({
-                                name: 'externalID',
+                                name: 'sourceId',
                                 label: self.xenograftType + ' ID *',
-                                id: 'externalID',
-                                description: 'Required: The original ID at the data source providing this ' + self.xenograftType + ' model. Example: WHIM20.'
+                                id: 'sourceId',
+                                description: 'Required: The original ID at the source providing this ' + self.xenograftType + ' model.'
                             }).element,
                             XNAT.ui.panel.input.text({
-                                name: 'dataSource',
+                                name: 'source',
                                 label: 'Source *',
-                                id: 'dataSource',
-                                description: 'Required: The source providing this ' + self.xenograftType + ' model. Example: WUSTL.'
+                                id: 'source',
+                                description: 'Required: The source providing this ' + self.xenograftType + ' model.'
                             }).element,
                             XNAT.ui.panel.input.text({
-                                name: 'dataSourceURL',
+                                name: 'sourceURL',
                                 label: self.xenograftType + ' URL',
-                                id: 'dataSourceURL',
+                                id: 'sourceURL',
                                 description: 'A link to this ' + self.xenograftType + ' at the data source provider (if available).'
                             }).element
                         ])
@@ -103,27 +103,27 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                         action: function() {
                             // on save
                             // get inputs
-                            const externalIDEl = document.getElementById("externalID");
-                            const dataSourceEl = document.getElementById("dataSource");
-                            const dataSourceURLEl = document.getElementById("dataSourceURL");
+                            const sourceIdEl = document.getElementById("sourceId");
+                            const sourceEl = document.getElementById("source");
+                            const sourceURLEl = document.getElementById("sourceURL");
 
-                            // validator for externalID (i.e. PDX ID and Cell Line ID)
-                            let validateExternalId = XNAT.validate(externalIDEl).reset().chain();
-                            validateExternalId.minLength(1).failure(`${self.xenograftType} ID is required.`);
+                            // validator for sourceId (i.e. PDX ID and Cell Line ID)
+                            let validateSourceId = XNAT.validate(sourceIdEl).reset().chain();
+                            validateSourceId.minLength(1).failure(`${self.xenograftType} ID is required.`);
 
-                            // validator for dataSource
-                            let validateDataSource = XNAT.validate(dataSourceEl).reset().chain();
-                            validateDataSource.minLength(1).failure('Source is required.');
+                            // validator for source
+                            let validateSource = XNAT.validate(sourceEl).reset().chain();
+                            validateSource.minLength(1).failure('Source is required.');
 
-                            // validator for dataSourceURL
-                            let validateDataSourceURL = XNAT.validate(dataSourceURLEl).reset().chain();
-                            validateDataSourceURL.allowEmpty = true;
-                            validateDataSourceURL.is('url').failure('Invalid url.');
+                            // validator for sourceURL
+                            let validateSourceURL = XNAT.validate(sourceURLEl).reset().chain();
+                            validateSourceURL.allowEmpty = true;
+                            validateSourceURL.is('url').failure('Invalid url.');
 
                             // validate fields
                             let errorMessages = [];
 
-                            [validateExternalId, validateDataSource, validateDataSourceURL].forEach(validator => {
+                            [validateSourceId, validateSource, validateSourceURL].forEach(validator => {
                                 validator.check();
                                 validator.messages.forEach(message => errorMessages.push(message))
                             })
@@ -138,18 +138,18 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                             } else {
                                 // no errors -> send to xnat
                                 let xenograftToSubmit = {
-                                    externalID: externalIDEl.value,
-                                    dataSource: dataSourceEl.value,
-                                    dataSourceURL: dataSourceURLEl.value
+                                    sourceId: sourceIdEl.value,
+                                    source: sourceEl.value,
+                                    sourceURL: sourceURLEl.value
                                 };
 
                                 XNAT.xhr.ajax({
-                                    url: isNew ? self.url() : self.url(item['externalID']),
+                                    url: isNew ? self.url() : self.url(item['sourceId']),
                                     data: JSON.stringify(xenograftToSubmit),
                                     method: isNew ? 'POST' : 'PUT',
                                     contentType: 'application/json',
                                     success: function () {
-                                        XNAT.ui.banner.top(1000, '<b>"' + xenograftToSubmit['externalID'] + '"</b> saved.', 'success');
+                                        XNAT.ui.banner.top(1000, '<b>"' + xenograftToSubmit['sourceId'] + '"</b> saved.', 'success');
                                         xmodal.closeAll();
                                         XNAT.ui.dialog.closeAll();
 
@@ -213,10 +213,10 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                                 "<p><b>This action cannot be undone.</b></p>",
                             okAction: function() {
                                 XNAT.xhr.delete({
-                                    url: self.url(item['externalID']),
+                                    url: self.url(item['sourceId']),
                                     contentType: 'application/json',
                                     success: function() {
-                                        XNAT.ui.banner.top(1000, '<b>"'+ item['externalID'] + '"</b> deleted.', 'success');
+                                        XNAT.ui.banner.top(1000, '<b>"'+ item['sourceId'] + '"</b> deleted.', 'success');
                                         self.refreshTable();
                                     },
                                     fail: function(e) {
@@ -232,11 +232,11 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
 
             function detailsButton(item) {
                 // only make button if link exists
-                if (item['dataSourceURL']) {
+                if (item['sourceURL']) {
                     return spawn('a.link|href=#!', {
                         onclick: function(e){
                             e.preventDefault();
-                            window.open(item['dataSourceURL']).focus();
+                            window.open(item['sourceURL']).focus();
                         }
                     }, [['b', 'Details']]);
                 }
@@ -246,8 +246,8 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                 // create row for each xenograft
                 data.forEach(item => {
                     xenograftTable.tr()
-                        .td([ spawn('div.left', [item['externalID']]) ])
-                        .td([ spawn('div.center', [item['dataSource']]) ])
+                        .td([ spawn('div.left', [item['sourceId']]) ])
+                        .td([ spawn('div.center', [item['source']]) ])
                         .td([ spawn('div.center', [detailsButton(item)]) ])
                         .td([ spawn('div.center', [editButton(item), pixi.spacer(10), deleteButton(item)]) ])
                 })

@@ -18,14 +18,14 @@ public abstract class Xenograft {
 
     @ApiModelProperty(required = true, position = 0)
     @NotBlank
-    private String externalID;
+    private String sourceId;
 
     @ApiModelProperty(position = 1)
     @Nullable
-    private String dataSource;
+    private String source;
 
     @ApiModelProperty(position = 2)
-    @Nullable private String dataSourceURL;
+    @Nullable private String sourceURL;
 
     @ApiModelProperty(hidden = true)
     @Nullable private String createdBy;

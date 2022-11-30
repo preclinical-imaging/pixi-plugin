@@ -1,0 +1,4 @@
+<!-- BEGIN xnat-templates/screens/choiceJSIncludes.vm -->
+<link rel="stylesheet" href="$content.getURI('style/pixi/choice.css')"/>
+<script src="https://cdn.jsdelivr.net/npm/choices.js@10.1.0/public/assets/scripts/choices.min.js"></script>
+<!-- END xnat-templates/screens/choiceJSIncludes.vm -->

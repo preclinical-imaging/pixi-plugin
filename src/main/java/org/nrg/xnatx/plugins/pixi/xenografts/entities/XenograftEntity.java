@@ -19,14 +19,14 @@ import javax.validation.constraints.NotNull;
 @Slf4j
 public abstract class XenograftEntity extends AbstractHibernateEntity {
 
-    @Getter(AccessLevel.NONE) private String externalID;
-    @Nullable private String dataSource;
-    @Nullable @URL private String dataSourceURL;
+    @Getter(AccessLevel.NONE) private String sourceId;
+    @Nullable private String source;
+    @Nullable @URL private String sourceURL;
     @Nullable private String createdBy;
 
     @Column(unique = true)
     @NotNull @NotBlank
-    public String getExternalID() {
-        return externalID;
+    public String getSourceId() {
+        return sourceId;
     }
 }

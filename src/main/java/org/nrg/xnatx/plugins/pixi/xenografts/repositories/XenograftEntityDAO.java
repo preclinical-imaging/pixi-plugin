@@ -8,12 +8,12 @@ import java.util.Optional;
 
 public abstract class XenograftEntityDAO<E extends XenograftEntity> extends AbstractHibernateDAO<E> {
 
-    public Optional<E> findByExternalID(final String externalID) {
-        return Optional.ofNullable(this.findByUniqueProperty("externalID", externalID));
+    public Optional<E> findBySourceId(final String sourceId) {
+        return Optional.ofNullable(this.findByUniqueProperty("sourceId", sourceId));
     }
 
-    public boolean xenograftExists(final String externalID) {
-        return exists("externalID", externalID);
+    public boolean xenograftExists(final String sourceId) {
+        return exists("sourceId", sourceId);
     }
 
 }

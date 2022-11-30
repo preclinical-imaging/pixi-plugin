@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 public class HibernatePDXEntityService extends HibernateXenograftEnityService<PDXEntity, PDXEntityDAO, PDX> {
 
     private final NamedParameterJdbcTemplate template;
-    private static final String EXTERNAL_ID_PARAMETER = "external_id";
-    private static final String QUERY_HAS_SUBJECT_REFERENCES = "SELECT EXISTS(SELECT externalid FROM pixi_pdx WHERE externalid = :external_id)";
+    private static final String SOURCE_ID_PARAMETER = "source_id";
+    private static final String QUERY_HAS_SUBJECT_REFERENCES = "SELECT EXISTS(SELECT sourceid FROM pixi_pdxdata WHERE sourceid = :source_id)";
 
     @Autowired
     public HibernatePDXEntityService(NamedParameterJdbcTemplate template) {
@@ -22,16 +22,16 @@ public class HibernatePDXEntityService extends HibernateXenograftEnityService<PD
     }
 
     @Override
-    public boolean hasSubjectReferences(final String externalID) {
-        return template.queryForObject(QUERY_HAS_SUBJECT_REFERENCES, new MapSqlParameterSource(EXTERNAL_ID_PARAMETER, externalID), Boolean.class);
+    public boolean hasSubjectReferences(final String sourceId) {
+        return template.queryForObject(QUERY_HAS_SUBJECT_REFERENCES, new MapSqlParameterSource(SOURCE_ID_PARAMETER, sourceId), Boolean.class);
     }
 
     @Override
     protected PDX toDTO(PDXEntity pdxEntity) {
         return PDX.builder()
-                .externalID(pdxEntity.getExternalID())
-                .dataSource(pdxEntity.getDataSource())
-                .dataSourceURL(pdxEntity.getDataSourceURL())
+                .sourceId(pdxEntity.getSourceId())
+                .source(pdxEntity.getSource())
+                .sourceURL(pdxEntity.getSourceURL())
                 .createdBy(pdxEntity.getCreatedBy())
                 .build();
     }
@@ -45,9 +45,9 @@ public class HibernatePDXEntityService extends HibernateXenograftEnityService<PD
 
     @Override
     protected void updateEntity(PDXEntity pdxEntity, PDX pdx) {
-        pdxEntity.setExternalID(pdx.getExternalID());
-        pdxEntity.setDataSource(pdx.getDataSource());
-        pdxEntity.setDataSourceURL(pdx.getDataSourceURL());
+        pdxEntity.setSourceId(pdx.getSourceId());
+        pdxEntity.setSource(pdx.getSource());
+        pdxEntity.setSourceURL(pdx.getSourceURL());
         pdxEntity.setCreatedBy(pdx.getCreatedBy());
     }
 }

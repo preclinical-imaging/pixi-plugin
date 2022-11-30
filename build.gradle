@@ -9,7 +9,7 @@ plugins {
 }
 
 group "org.nrg.xnatx.plugins"
-version "0.1"
+version "0.2.0-SNAPSHOT"
 description "PIXI Plugin for XNAT."
 
 repositories {
@@ -86,7 +86,7 @@ logger.info "Implementation-CleanTag: ${isCleanTag}"
 logger.info "Implementation-Dirty:    ${isDirty}"
 
 ext.gitManifest = manifest {
-    attributes "Application-Name": "XNAT",
+    attributes "Application-Name": "PIXI-PLUGIN",
             "Build-Date": buildDate,
             "Build-Number": buildNumber,
             "Implementation-Version": project.version,

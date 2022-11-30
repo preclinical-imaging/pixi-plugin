@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface XenograftService<E extends XenograftEntity, X extends Xenograft> extends BaseHibernateService<E> {
-    boolean xenograftExists(final String externalID);
-    Optional<X> getXenograft(final String externalID);
+    boolean xenograftExists(final String sourceId);
+    Optional<X> getXenograft(final String sourceId);
     List<X> getAllXenografts();
     void createXenograft(X x) throws ResourceAlreadyExistsException;
-    void updateXenograft(final String externalID, X x) throws ResourceAlreadyExistsException, NotFoundException;
-    void deleteXenograft(String externalID) throws XenograftDeletionException;
-    boolean hasSubjectReferences(String externalID);
+    void updateXenograft(final String sourceId, X x) throws ResourceAlreadyExistsException, NotFoundException;
+    void deleteXenograft(String sourceId) throws XenograftDeletionException;
+    boolean hasSubjectReferences(String sourceId);
 }

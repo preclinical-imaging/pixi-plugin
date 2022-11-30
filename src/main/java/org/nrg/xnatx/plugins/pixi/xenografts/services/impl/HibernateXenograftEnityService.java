@@ -29,14 +29,14 @@ public abstract class HibernateXenograftEnityService<E extends XenograftEntity, 
 
     @Override
     @Transactional
-    public boolean xenograftExists(final String externalID) {
-        return super.getDao().xenograftExists(externalID);
+    public boolean xenograftExists(final String sourceId) {
+        return super.getDao().xenograftExists(sourceId);
     }
 
     @Override
     @Transactional
-    public Optional<X> getXenograft(final String externalID) {
-        return super.getDao().findByExternalID(externalID).map(this::toDTO);
+    public Optional<X> getXenograft(final String sourceId) {
+        return super.getDao().findBySourceId(sourceId).map(this::toDTO);
     }
 
     @Override
@@ -48,9 +48,9 @@ public abstract class HibernateXenograftEnityService<E extends XenograftEntity, 
     @Override
     @Transactional
     public void createXenograft(X x) throws ResourceAlreadyExistsException {
-        // If a xenograft with the same external id already exists, cannot create
-        if (getDao().findByExternalID(x.getExternalID()).isPresent()) {
-            throw new ResourceAlreadyExistsException(type.getSimpleName(), x.getExternalID());
+        // If a xenograft with the same source id already exists, cannot create
+        if (getDao().findBySourceId(x.getSourceId()).isPresent()) {
+            throw new ResourceAlreadyExistsException(type.getSimpleName(), x.getSourceId());
         }
 
         super.create(toEntity(x));
@@ -58,31 +58,31 @@ public abstract class HibernateXenograftEnityService<E extends XenograftEntity, 
 
     @Override
     @Transactional
-    public void updateXenograft(final String externalID, X x) throws ResourceAlreadyExistsException, NotFoundException {
+    public void updateXenograft(final String sourceId, X x) throws ResourceAlreadyExistsException, NotFoundException {
         // If changing the xenograft id (not the hibernate entity id)
-        if (!externalID.equals(x.getExternalID())) {
+        if (!sourceId.equals(x.getSourceId())) {
             // Check to see if the new id is already in use
-            if (xenograftExists(x.getExternalID())) {
+            if (xenograftExists(x.getSourceId())) {
                 // If it is, not allowed to change ids as they should be unique
-                throw new ResourceAlreadyExistsException(type.getSimpleName(), x.getExternalID());
+                throw new ResourceAlreadyExistsException(type.getSimpleName(), x.getSourceId());
             }
         }
 
-        E e = getDao().findByExternalID(externalID)
-                      .orElseThrow(() -> new NotFoundException("Entity with ID " + externalID + " not found. Cannot update."));
+        E e = getDao().findBySourceId(sourceId)
+                      .orElseThrow(() -> new NotFoundException("Entity with ID " + sourceId + " not found. Cannot update."));
         updateEntity(e, x);
         super.update(e);
     }
 
     @Override
     @Transactional
-    public void deleteXenograft(String externalID) throws XenograftDeletionException {
-        // Don't delete a xenograft if its referenced by a subject
-        if (hasSubjectReferences(externalID)) {
+    public void deleteXenograft(String sourceId) throws XenograftDeletionException {
+        // Don't delete a xenograft if it's referenced by a subject
+        if (hasSubjectReferences(sourceId)) {
             throw new XenograftDeletionException();
         }
 
-        super.getDao().findByExternalID(externalID).ifPresent(super::delete);
+        super.getDao().findBySourceId(sourceId).ifPresent(super::delete);
     }
 
     protected abstract X toDTO(final E e);

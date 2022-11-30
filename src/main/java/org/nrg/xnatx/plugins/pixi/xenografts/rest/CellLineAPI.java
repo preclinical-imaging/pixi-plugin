@@ -54,9 +54,9 @@ public class CellLineAPI extends XenograftAPI<CellLineEntity, CellLine> {
     @ApiResponses({@ApiResponse(code = 200, message = "Cell Line successfully retrieved."),
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
-    @XapiRequestMapping(value = "/cellline/{externalID}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-    public CellLine get(@PathVariable final String externalID) throws NotFoundException {
-        return super.get(externalID);
+    @XapiRequestMapping(value = "/cellline/{sourceId}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public CellLine get(@PathVariable final String sourceId) throws NotFoundException {
+        return super.get(sourceId);
     }
 
     @Override
@@ -74,9 +74,9 @@ public class CellLineAPI extends XenograftAPI<CellLineEntity, CellLine> {
     @ApiResponses({@ApiResponse(code = 200, message = "Cell Line successfully updated."),
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
-    @XapiRequestMapping(value = "/cellline/{externalID}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
-    public void update(@PathVariable final String externalID, @RequestBody final CellLine cellLine) throws ResourceAlreadyExistsException, NotFoundException {
-        super.update(externalID, cellLine);
+    @XapiRequestMapping(value = "/cellline/{sourceId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
+    public void update(@PathVariable final String sourceId, @RequestBody final CellLine cellLine) throws ResourceAlreadyExistsException, NotFoundException {
+        super.update(sourceId, cellLine);
     }
 
     @Override
@@ -85,9 +85,9 @@ public class CellLineAPI extends XenograftAPI<CellLineEntity, CellLine> {
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
     @AuthorizedRoles({"PIXI", "Administrator"})
-    @XapiRequestMapping(value = "/cellline/{externalID}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE, restrictTo = AccessLevel.Role)
-    public void delete(@PathVariable final String externalID) throws XenograftDeletionException {
-        super.delete(externalID);
+    @XapiRequestMapping(value = "/cellline/{sourceId}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE, restrictTo = AccessLevel.Role)
+    public void delete(@PathVariable final String sourceId) throws XenograftDeletionException {
+        super.delete(sourceId);
     }
 
 }

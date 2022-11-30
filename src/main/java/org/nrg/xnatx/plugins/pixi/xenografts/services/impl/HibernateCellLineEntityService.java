@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 public class HibernateCellLineEntityService extends HibernateXenograftEnityService<CellLineEntity, CellLineEntityDAO, CellLine>{
 
     private final NamedParameterJdbcTemplate template;
-    private static final String EXTERNAL_ID_PARAMETER = "external_id";
-    private static final String QUERY_HAS_SUBJECT_REFERENCES = "SELECT EXISTS(SELECT externalid FROM pixi_cellline WHERE externalid = :external_id)";
+    private static final String SOURCE_ID_PARAMETER = "source_id";
+    private static final String QUERY_HAS_SUBJECT_REFERENCES = "SELECT EXISTS(SELECT sourceid FROM pixi_celllinedata WHERE sourceid = :source_id)";
 
     @Autowired
     public HibernateCellLineEntityService(NamedParameterJdbcTemplate template) {
@@ -22,16 +22,16 @@ public class HibernateCellLineEntityService extends HibernateXenograftEnityServi
     }
 
     @Override
-    public boolean hasSubjectReferences(final String externalID) {
-        return template.queryForObject(QUERY_HAS_SUBJECT_REFERENCES, new MapSqlParameterSource(EXTERNAL_ID_PARAMETER, externalID), Boolean.class);
+    public boolean hasSubjectReferences(final String sourceId) {
+        return template.queryForObject(QUERY_HAS_SUBJECT_REFERENCES, new MapSqlParameterSource(SOURCE_ID_PARAMETER, sourceId), Boolean.class);
     }
 
     @Override
     protected CellLine toDTO(CellLineEntity cellLineEntity) {
         return CellLine.builder()
-                .externalID(cellLineEntity.getExternalID())
-                .dataSource(cellLineEntity.getDataSource())
-                .dataSourceURL(cellLineEntity.getDataSourceURL())
+                .sourceId(cellLineEntity.getSourceId())
+                .source(cellLineEntity.getSource())
+                .sourceURL(cellLineEntity.getSourceURL())
                 .createdBy(cellLineEntity.getCreatedBy())
                 .build();
     }
@@ -45,9 +45,9 @@ public class HibernateCellLineEntityService extends HibernateXenograftEnityServi
 
     @Override
     protected void updateEntity(CellLineEntity cellLineEntity, CellLine cellLine) {
-        cellLineEntity.setExternalID(cellLine.getExternalID());
-        cellLineEntity.setDataSource(cellLine.getDataSource());
-        cellLineEntity.setDataSourceURL(cellLine.getDataSourceURL());
+        cellLineEntity.setSourceId(cellLine.getSourceId());
+        cellLineEntity.setSource(cellLine.getSource());
+        cellLineEntity.setSourceURL(cellLine.getSourceURL());
         cellLineEntity.setCreatedBy(cellLine.getCreatedBy());
     }
 }

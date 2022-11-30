@@ -1,0 +1,193 @@
+#* @vtlvariable name="pdxs" type="java.util.List<org.nrg.xnatx.plugins.pixi.xenografts.models.PDX>" *#
+$page.setTitle("XDAT")
+$page.setLinkColor($ui.alink)
+$page.setVlinkColor($ui.vlink)
+#set($months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
+    "November", "December"])
+#set($days = [ 1..31 ])
+#set($years = [ $!turbineUtils.getYear()..1900])
+#if ($data.message)
+<font color="red" size="3">$data.message</font>
+#end
+<p>
+<form ID="form1" name="form1" method="post" action="$link.setAction("ModifySubjectAssessorData")">
+    <input type="hidden" name="project" value="$!{project}">
+    #if($vr)
+        <font color="red">Invalid parameters:<BR>$vr.toHTML()</font>
+        <HR>
+    #end
+
+    <TABLE width="100%">
+        <TR>
+            <TD>
+                <table width="100%">
+                    <TR>
+                        <TD align="left" valign="middle">
+                            <DIV class="edit_title">PDX Details</DIV>
+                        </TD>
+                    </TR>
+                </TABLE>
+            </TD>
+        </TR>
+        <TR>
+            <TD>
+                <TABLE width="100%">
+                    <TR>
+                        <TD valign="top">
+                            <TABLE>
+                                <TR>
+                                    <TD colspan='2'>
+                                        #parse("/screens/xnat_edit_subjectAssessorData.vm")
+                                    </TD>
+                                </TR>
+                                <tr>
+                                    <TD colspan="2">#parse("/screens/EditProjectSpecificFields.vm")</TD>
+                                </tr>
+                                <style type="text/css">
+                                    input#pixi\:pdxData\/label {
+                                        width: 8rem;
+                                    }
+
+                                    .choices__select__pixi,
+                                    .choices__select__pixi *,
+                                    .choices__select__pixi *::before,
+                                    .choices__select__pixi *::after {
+                                        box-sizing: border-box;
+                                    }
+
+                                    button#new-pdx-button {
+                                        margin-left: 0.6rem;
+                                    }
+
+                                    .form-control {
+                                        display: block;
+                                        width: 100%;
+                                        font-size: 14px;
+                                        box-sizing: border-box;
+                                    }
+                                </style>
+                                <tr>
+                                    #formLabelRequired("PDX ID")
+                                    <td>
+                                        <div class="choices__select__pixi form-control" id="pixi:pdxData/sourceId-select">
+                                            <select name="pixi:pdxData/sourceId" id="pixi:pdxData/sourceId" required>
+                                                <option value="" #if(!$om.getProperty("pixi:pdxData/sourceId")) SELECTED #end>(SELECT)</option>
+                                                #foreach($pdx in $pdxs)
+                                                    <option value="$pdx.getSourceId()" #if($om.getProperty("pixi:pdxData/sourceId").equals($pdx.getSourceId())) SELECTED #end>$pdx.getSourceId()</option>
+                                                #end
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td><button id="new-pdx-button" type="button" onclick="XNAT.plugin.pixi.pdxManager.dialog({}, true, updateChoices)">New PDX</button></td>
+                                </tr>
+                                <tr>
+                                    #formLabelRequired("Injection Date")
+                                    <td>#xdatDateBox("pixi:pdxData/date" $item $vr $years)</td>
+                                </tr>
+                                <tr>
+                                    #formLabel("Injection Site")
+                                    <td>#xdatStringBoxOnChange("pixi:pdxData/injectionSite" $item "" "" $vr "form-control")</td>
+                                </tr>
+                                <tr>
+                                    #formLabel("Injection Type")
+                                    <td>
+                                        <select class="form-control" name="pixi:pdxData/injectionType" id="pixi:pdxData/injectionType">
+                                            <option value="" #if(!$om.getProperty("pixi:pdxData/sourceId")) SELECTED #end></option>
+                                            <option value="Subcutaneous" #if($!item.getStringProperty("pixi:pdxData/injectionType").equals("Subcutaneous")) SELECTED #end>Subcutaneous</option>
+                                            <option value="Orthotopic" #if($!item.getStringProperty("pixi:pdxData/injectionType").equals("Orthotopic")) SELECTED #end>Orthotopic</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    #formLabel("Number of Cells Injected")
+                                    <td>#xdatStringBoxOnChange("pixi:pdxData/numCellsInjected" $item "" "" $vr "form-control")</td>
+                                </tr>
+                                <tr>
+                                    #formLabel("PDX Passage Number")
+                                    <td>#xdatStringBoxOnChange("pixi:pdxData/passage" $item "" "" $vr "form-control")</td>
+                                </tr>
+                                <tr>
+                                    #formLabel("PDX Passage Method")
+                                    <td>#xdatStringBoxOnChange("pixi:pdxData/passageMethod" $item "" "" $vr "form-control")</td>
+                                </tr>
+                                <TR>#formLabel("Notes")<TD>#xdatTextArea("pixi:pdxData/note" $item "" $vr 3 45)</TD></TR>
+                            </TABLE>
+                        </TD>
+                    </TR>
+                </TABLE>
+            </TD>
+        </TR>
+        <TR>
+            <TD>
+                #xdatEditProps($item $edit_screen)
+        <TR>
+            <TD COLSPAN=2 ALIGN=left><input type="button" ONCLICK="validateForm();" name="eventSubmit_doInsert"
+                                            value="Submit"/></TD>
+        </TR>
+    </TABLE>
+</form>
+
+#parse('screens/choiceJSIncludes.vm')
+
+<script type="text/javascript" src="$content.getURI("/scripts/xnat/plugin/pixi/pixi-module.js")"></script>
+<script type="text/javascript" src="$content.getURI("/scripts/xnat/plugin/pixi/pixi-xenograft.js")"></script>
+
+<script type="text/javascript">
+    let pdxSourceEl = document.getElementById("pixi:pdxData/sourceId");
+    let pdxSourceChoice = new Choices(pdxSourceEl, {shouldSortItems: true});
+
+    function updateChoices() {
+        let getPDXs = async () => {
+            try {
+                let pdxs = await XNAT.plugin.pixi.pdxManager.getAll();
+                return pdxs.sort(pixi.compareGenerator('sourceId'))
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        pdxSourceChoice.setChoices(getPDXs, 'sourceId', 'sourceId', true);
+    }
+
+    function validateForm() {
+        const sourceIdEl = document.getElementById("pixi:pdxData/sourceId");
+        const injectionMonthEl = document.getElementsByName("pixi:pdxData/date.month")[0]
+        const injectionDayEl = document.getElementsByName("pixi:pdxData/date.date")[0]
+        const injectionYearEl = document.getElementsByName("pixi:pdxData/date.year")[0]
+
+        let validateSourceId = XNAT.validate(sourceIdEl).reset().chain();
+        validateSourceId.required(true).failure("PDX ID is required.")
+
+        let validateMonth = XNAT.validate(injectionMonthEl).reset().chain();
+        validateMonth.is('integer').failure("Injection Date is required.")
+
+        let validateDay = XNAT.validate(injectionDayEl).reset().chain();
+        validateDay.is('integer').failure("Injection Date is required.")
+
+        let validateYear = XNAT.validate(injectionYearEl).reset().chain();
+        validateYear.is('integer').failure("Injection Date is required.")
+
+        let errorMessages = [];
+        if (!validateSourceId.check()) {
+            validateSourceId.messages.forEach(message => errorMessages.push(message))
+        }
+
+        if (!validateMonth.check() || !validateDay.check() || !validateYear.check()) {
+            errorMessages.push("Injection Date is required.")
+        }
+
+        if (errorMessages.length) {
+            // errors?
+            XNAT.dialog.open({
+                title: 'Validation Error',
+                width: 300,
+                content: pixi.clientErrorHandler(errorMessages)
+            })
+
+            return false;
+        }
+
+        validateSubjectAssessorForm();
+        return false;
+    }
+</script>

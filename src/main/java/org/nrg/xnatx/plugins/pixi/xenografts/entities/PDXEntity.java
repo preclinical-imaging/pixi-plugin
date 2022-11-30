@@ -15,11 +15,11 @@ import javax.validation.constraints.NotBlank;
 public class PDXEntity extends XenograftEntity {
 
     @Builder
-    public PDXEntity(@NotBlank final String externalID,
-                     @Nullable final String dataSource,
-                     @Nullable final String dataSourceURL,
+    public PDXEntity(@NotBlank final String sourceId,
+                     @Nullable final String source,
+                     @Nullable final String sourceURL,
                      @Nullable final String createdBy) {
-        super(externalID, dataSource, dataSourceURL, createdBy);
+        super(sourceId, source, sourceURL, createdBy);
     }
 
 }
