@@ -65,6 +65,10 @@ $page.setVlinkColor($ui.vlink)
                                         font-size: 14px;
                                         box-sizing: border-box;
                                     }
+
+                                    div#date_container select {
+                                        font-size: 14px;
+                                    }
                                 </style>
                                 <tr>
                                     #formLabelRequired("Cell Line ID")
