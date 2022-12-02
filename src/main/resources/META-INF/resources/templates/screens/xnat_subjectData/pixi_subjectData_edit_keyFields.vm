@@ -101,6 +101,7 @@
                 "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/species",
                 "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/strain",
                 "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/source",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/stockNumber",
                 "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/geneticModifications",
                 "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/sex",
                 "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/dateOfBirth",
@@ -238,6 +239,13 @@
                                     "template": "<span>{{ item.vendor }}</span>",
                                     "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/source",
                                     "type": "select",
+                                    "input": true
+                                },
+                                {
+                                    "label": "Stock Number",
+                                    "tableView": true,
+                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/stockNumber",
+                                    "type": "textfield",
                                     "input": true
                                 },
                                 {

@@ -175,6 +175,9 @@
 	<DisplayField id="SOURCE" header="Source" visible="true" searchable="true">
 		<DisplayFieldElement name="Field1" schema-element="pixi:animalDemographicData/source"/>
 	</DisplayField>
+	<DisplayField id="STOCKNUMBER" header="Stock Number" visible="true" searchable="true">
+		<DisplayFieldElement name="Field1" schema-element="pixi:animalDemographicData/stockNumber"/>
+	</DisplayField>
 	<DisplayField id="GENETICMODIFICATIONS" header="Genetic Modifications" visible="true" searchable="true">
 		<DisplayFieldElement name="Field1" schema-element="pixi:animalDemographicData/geneticModifications"/>
 	</DisplayField>
