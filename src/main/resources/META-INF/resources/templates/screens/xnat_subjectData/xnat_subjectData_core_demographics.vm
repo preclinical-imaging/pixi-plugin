@@ -30,6 +30,7 @@
         ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/source", "Source / Vendor"],
         ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/stockNumber", "Stock Number"],
         ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/geneticModifications", "Genetic Modifications"],
+        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/geneticModificationsSecondary", "Genetic Modifications"],
         ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/sex", "Sex"],
         ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/dateOfBirth", "DOB"],
         ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/litter", "Litter"]

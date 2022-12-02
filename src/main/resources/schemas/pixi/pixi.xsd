@@ -53,7 +53,12 @@
                     </xs:element>
                     <xs:element name="geneticModifications" type="xs:string" minOccurs="0">
                         <xs:annotation>
-                            <xs:documentation>Genetic Modifications</xs:documentation>
+                            <xs:documentation>Genetic Modifications (based on International Committee on Standardized Genetic Nomenclature)</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="geneticModificationsSecondary" type="xs:string" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Genetic Modifications (if different from standardized nomenclature)</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="dateOfBirth" type="xs:date" minOccurs="0">

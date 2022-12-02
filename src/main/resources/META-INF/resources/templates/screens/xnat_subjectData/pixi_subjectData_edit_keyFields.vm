@@ -103,6 +103,7 @@
                 "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/source",
                 "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/stockNumber",
                 "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/geneticModifications",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/geneticModificationsSecondary",
                 "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/sex",
                 "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/dateOfBirth",
                 "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/litter"
@@ -250,8 +251,17 @@
                                 },
                                 {
                                     "label": "Genetic Modifications",
+                                    "description": "Based on International Committee on Standardized Genetic Nomenclature",
                                     "tableView": true,
                                     "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/geneticModifications",
+                                    "type": "textfield",
+                                    "input": true
+                                },
+                                {
+                                    "label": "Genetic Modifications",
+                                    "description": "If different from standard nomenclature",
+                                    "tableView": true,
+                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/geneticModificationsSecondary",
                                     "type": "textfield",
                                     "input": true
                                 }
