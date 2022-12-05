@@ -32,6 +32,7 @@ public class HibernatePDXEntityService extends HibernateXenograftEnityService<PD
                 .sourceId(pdxEntity.getSourceId())
                 .source(pdxEntity.getSource())
                 .sourceURL(pdxEntity.getSourceURL())
+                .storage(pdxEntity.getStorage())
                 .createdBy(pdxEntity.getCreatedBy())
                 .build();
     }
@@ -48,6 +49,7 @@ public class HibernatePDXEntityService extends HibernateXenograftEnityService<PD
         pdxEntity.setSourceId(pdx.getSourceId());
         pdxEntity.setSource(pdx.getSource());
         pdxEntity.setSourceURL(pdx.getSourceURL());
+        pdxEntity.setStorage(pdx.getStorage());
         pdxEntity.setCreatedBy(pdx.getCreatedBy());
     }
 }

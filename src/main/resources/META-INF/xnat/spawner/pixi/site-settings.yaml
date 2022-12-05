@@ -104,7 +104,7 @@ pdxPanel:
 cellLinePanel:
   kind: panel
   name: cellLinePanel
-  label: Cell Line Xenografts
+  label: Cell Lines
   contents:
     cellLinePreferencesTable:
       tag: "div#cell-line-manager"
@@ -162,7 +162,7 @@ siteSettings:
     xenograftSettingsTab:
       kind: tab
       name: xenograftSettingsTab
-      label: Xenograft Management
+      label: PDXs and Cell Lines
       group: pixiTabGroup
       active: true
       contents:

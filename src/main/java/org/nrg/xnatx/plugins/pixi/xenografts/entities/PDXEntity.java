@@ -14,12 +14,17 @@ import javax.validation.constraints.NotBlank;
 @Slf4j
 public class PDXEntity extends XenograftEntity {
 
+    @Nullable private String storage;
+
     @Builder
     public PDXEntity(@NotBlank final String sourceId,
                      @Nullable final String source,
                      @Nullable final String sourceURL,
+                     @Nullable final String storage,
                      @Nullable final String createdBy) {
         super(sourceId, source, sourceURL, createdBy);
+
+        this.storage = storage;
     }
 
 }

@@ -52,6 +52,31 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             });
         }
 
+        getSpawnerElements() {
+            const self = this;
+
+            return [
+                XNAT.ui.panel.input.text({
+                    name: 'sourceId',
+                    label: self.xenograftType + ' ID *',
+                    id: 'sourceId',
+                    description: 'Required: The original ID at the source providing this ' + self.xenograftType + ' model.'
+                }).element,
+                XNAT.ui.panel.input.text({
+                    name: 'source',
+                    label: 'Source *',
+                    id: 'source',
+                    description: 'Required: The source providing this ' + self.xenograftType + ' model.'
+                }).element,
+                XNAT.ui.panel.input.text({
+                    name: 'sourceURL',
+                    label: self.xenograftType + ' URL',
+                    id: 'sourceURL',
+                    description: 'Optional: A link to this ' + self.xenograftType + ' at the data source provider (if available).'
+                }).element
+            ];
+        }
+
         // dialog to create/edit xenograft
         dialog(item, isNew, successCallback) {
             const self = this;
@@ -67,27 +92,11 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                     // spawn xenograft form
                     const $formContainer = obj.$modal.find('.xnat-dialog-content');
                     $formContainer.addClass('panel');
+
+                    let spawnerElements = self.getSpawnerElements();
+
                     obj.$modal.find('form').append(
-                        spawn('!', [
-                            XNAT.ui.panel.input.text({
-                                name: 'sourceId',
-                                label: self.xenograftType + ' ID *',
-                                id: 'sourceId',
-                                description: 'Required: The original ID at the source providing this ' + self.xenograftType + ' model.'
-                            }).element,
-                            XNAT.ui.panel.input.text({
-                                name: 'source',
-                                label: 'Source *',
-                                id: 'source',
-                                description: 'Required: The source providing this ' + self.xenograftType + ' model.'
-                            }).element,
-                            XNAT.ui.panel.input.text({
-                                name: 'sourceURL',
-                                label: self.xenograftType + ' URL',
-                                id: 'sourceURL',
-                                description: 'A link to this ' + self.xenograftType + ' at the data source provider (if available).'
-                            }).element
-                        ])
+                        spawn('!', spawnerElements)
                     );
 
                     // fill in form if editing
@@ -142,6 +151,11 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                                     source: sourceEl.value,
                                     sourceURL: sourceURLEl.value
                                 };
+
+                                if (self.xenograftType === "PDX") {
+                                    const storageEl = document.getElementById("storage");
+                                    xenograftToSubmit['storage'] = storageEl.value;
+                                }
 
                                 XNAT.xhr.ajax({
                                     url: isNew ? self.url() : self.url(item['sourceId']),
@@ -310,11 +324,29 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
         constructor() {
             super('PDX');
         }
+
+        getSpawnerElements() {
+            let spawnerElements = super.getSpawnerElements();
+
+            spawnerElements.push(
+                XNAT.ui.panel.input.text({
+                name: 'storage',
+                label: 'PDX Storage',
+                id: 'storage',
+                description: 'Optional: PDX storage method.'
+            }).element)
+
+            return spawnerElements;
+        }
     }
 
     class CellLineManager extends XenograftManager {
         constructor() {
             super('Cell Line');
+        }
+
+        getSpawnerElements() {
+            return super.getSpawnerElements();
         }
     }
 
