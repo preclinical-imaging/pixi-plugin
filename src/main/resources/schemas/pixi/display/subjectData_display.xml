@@ -190,6 +190,9 @@
 	<DisplayField id="LITTER" header="Litter" visible="true" searchable="true">
 		<DisplayFieldElement name="Field1" schema-element="pixi:animalDemographicData/litter"/>
 	</DisplayField>
+	<DisplayField id="STRAINIMMUNESYSTEMHUMANIZATIONTYPE" header="Humanization Type" visible="true" searchable="true">
+		<DisplayFieldElement name="Field1" schema-element="pixi:animalDemographicData/strainImmuneSystemHumanizationType"/>
+	</DisplayField>
 	<!--PIXI Stop-->
 	<DisplayVersion versionName="listing" default-order-by="SUBJECT_ID" brief-description="Subject Data" dark-color="DEDEDE" light-color="FFFFFF">
 		<DisplayFieldRef id="SUBJECT_LABEL"/>

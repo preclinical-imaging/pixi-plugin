@@ -88,6 +88,12 @@
 
 <div id="formio-subject"  data-id="$!om.getId()" data-type="$!om.getXSIType()" data-project="$!om.getProject()"></div>
 
+<style type="text/css">
+    .formio-select-autocomplete-input {
+        display: none
+    }
+</style>
+
 <script type="text/javascript">
 
     let formIOObjSubj = undefined;
@@ -106,7 +112,8 @@
                 "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/geneticModificationsSecondary",
                 "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/sex",
                 "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/dateOfBirth",
-                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/litter"
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/litter",
+                "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/strainImmuneSystemHumanizationType"
             ])
             #foreach($property in $properties)
                 #if($om.getProperty($property))
@@ -139,6 +146,7 @@
                             "components": [
                                 {
                                     "label": "Species",
+                                    "tabindex": "1",
                                     "widget": "html5",
                                     "tableView": true,
                                     "dataSrc": "custom",
@@ -152,27 +160,8 @@
                                     "input": true
                                 },
                                 {
-                                    "label": "Sex",
-                                    "widget": "html5",
-                                    "tableView": true,
-                                    "data": {
-                                        "values": [
-                                            {
-                                                "label": "Male",
-                                                "value": "male"
-                                            },
-                                            {
-                                                "label": "Female",
-                                                "value": "female"
-                                            }
-                                        ]
-                                    },
-                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/sex",
-                                    "type": "select",
-                                    "input": true
-                                },
-                                {
                                     "label": "Date of Birth",
+                                    "tabindex": "3",
                                     "format": "yyyy-MM-dd",
                                     "tableView": false,
                                     "enableMinDateInput": false,
@@ -205,9 +194,27 @@
                                     }
                                 },
                                 {
-                                    "label": "Litter ID",
+                                    "label": "Strain",
+                                    "tabindex": "5",
                                     "tableView": true,
-                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/litter",
+                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/strain",
+                                    "type": "textfield",
+                                    "input": true
+                                },
+                                {
+                                    "label": "Stock Number",
+                                    "tabindex": "7",
+                                    "tableView": true,
+                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/stockNumber",
+                                    "type": "textfield",
+                                    "input": true
+                                },
+                                {
+                                    "label": "Genetic Modifications",
+                                    "tabindex": "9",
+                                    "description": "Based on International Committee on Standardized Genetic Nomenclature",
+                                    "tableView": true,
+                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/geneticModifications",
                                     "type": "textfield",
                                     "input": true
                                 }
@@ -222,14 +229,37 @@
                         {
                             "components": [
                                 {
-                                    "label": "Strain",
+                                    "label": "Sex",
+                                    "tabindex": "2",
+                                    "widget": "html5",
                                     "tableView": true,
-                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/strain",
+                                    "data": {
+                                        "values": [
+                                            {
+                                                "label": "Male",
+                                                "value": "male"
+                                            },
+                                            {
+                                                "label": "Female",
+                                                "value": "female"
+                                            }
+                                        ]
+                                    },
+                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/sex",
+                                    "type": "select",
+                                    "input": true
+                                },
+                                {
+                                    "label": "Litter ID",
+                                    "tabindex": "4",
+                                    "tableView": true,
+                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/litter",
                                     "type": "textfield",
                                     "input": true
                                 },
                                 {
                                     "label": "Strain Source / Vendor",
+                                    "tabindex": "6",
                                     "widget": "html5",
                                     "tableView": true,
                                     "dataSrc": "custom",
@@ -243,28 +273,78 @@
                                     "input": true
                                 },
                                 {
-                                    "label": "Stock Number",
+                                    "label": "Strain Immune System Humanization Type",
+                                    "tabindex": "8",
                                     "tableView": true,
-                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/stockNumber",
+                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/strainImmuneSystemHumanizationType",
                                     "type": "textfield",
                                     "input": true
                                 },
                                 {
                                     "label": "Genetic Modifications",
-                                    "description": "Based on International Committee on Standardized Genetic Nomenclature",
-                                    "tableView": true,
-                                    "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/geneticModifications",
-                                    "type": "textfield",
-                                    "input": true
-                                },
-                                {
-                                    "label": "Genetic Modifications",
+                                    "tabindex": "10",
                                     "description": "If different from standard nomenclature",
                                     "tableView": true,
                                     "key": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/geneticModificationsSecondary",
                                     "type": "textfield",
                                     "input": true
                                 }
+                                // {
+                                //     "label": "HTML",
+                                //     "tag": "datalist",
+                                //     "attrs": [
+                                //         {
+                                //             "attr": "id",
+                                //             "value": "units"
+                                //         }
+                                //     ],
+                                //     "content": "<option value=\"Type1\">\n<option value=\"Type2\">\n<option value=\"Type3\">\n<option value=\"Type4\">",
+                                //     "refreshOnChange": false,
+                                //     "key": "html1",
+                                //     "type": "htmlelement",
+                                //     "input": false,
+                                //     "tableView": false
+                                // },
+                                // {
+                                //     "label": "typeOfHumanizationLabel",
+                                //     "tag": "label",
+                                //     "attrs": [
+                                //         {
+                                //             "attr": "",
+                                //             "value": ""
+                                //         }
+                                //     ],
+                                //     "content": "Strain Immune System Humanization Type",
+                                //     "refreshOnChange": false,
+                                //     "key": "typeOfHumanizationLabel",
+                                //     "type": "htmlelement",
+                                //     "input": false,
+                                //     "tableView": false
+                                // },
+                                // {
+                                //     "label": "Strain Immune System Humanization Type",
+                                //     "tag": "input",
+                                //     "className": "form-control",
+                                //     "attrs": [
+                                //         {
+                                //             "attr": "list",
+                                //             "value": "units"
+                                //         },
+                                //         {
+                                //             "attr": "name",
+                                //             "value": "data[xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/typeOfHumanization]"
+                                //         },
+                                //         {
+                                //             "attr": "id",
+                                //             "value": "xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/typeOfHumanization"
+                                //         }
+                                //     ],
+                                //     "refreshOnChange": false,
+                                //     "key": "typeOfHumanization",
+                                //     "type": "htmlelement",
+                                //     "input": false,
+                                //     "tableView": false
+                                // }
                             ],
                             "width": 6,
                             "offset": 0,
@@ -286,6 +366,14 @@
             form.submission = {data:formData};
             formIOObjSubj = form;
             console.debug("FormIO form initialized.")
+        }).then(() => {
+            // custom element -> set value manually
+            const humanizationTypeEl = document.getElementById("xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/strainImmuneSystemHumanizationType");
+            const humanizationTypeVal = formData["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/strainImmuneSystemHumanizationType"];
+            if (humanizationTypeVal !== undefined) {
+                humanizationTypeEl.value = formData["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/strainImmuneSystemHumanizationType"];
+            }
+            console.debug("Humanization type set.")
         });
 
     }
