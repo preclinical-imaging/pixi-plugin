@@ -141,6 +141,12 @@
     <DisplayField id="TECHNICIAN" header="Technician" visible="true" searchable="true">
         <DisplayFieldElement name="Field1" schema-element="pixi:drugTherapyData/technician"/>
     </DisplayField>
+    <DisplayField id="WEIGHT" header="Weight" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:drugTherapyData/weight"/>
+    </DisplayField>
+    <DisplayField id="WEIGHTUNIT" header="Weight Unit" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:drugTherapyData/weightUnit"/>
+    </DisplayField>
     <DisplayVersion versionName="listing" default-order-by="DATE" default-sort-order="DESC"
                     brief-description="DrugTherapy" dark-color="9999CC" light-color="CCCCFF">
         <DisplayFieldRef id="RPT"/>

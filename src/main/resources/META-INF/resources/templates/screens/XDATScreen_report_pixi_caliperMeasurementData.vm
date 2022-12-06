@@ -30,6 +30,7 @@ $page.setVlinkColor($ui.vlink)
 							<TR><TD>Length</TD><TD>$!item.getProperty("pixi:caliperMeasurementData/length") $!item.getStringProperty("pixi:caliperMeasurementData/unit")</TD></TR>
 							<TR><TD>Width</TD><TD>$!item.getProperty("pixi:caliperMeasurementData/width") $!item.getStringProperty("pixi:caliperMeasurementData/unit")</TD></TR>
 							<TR><TD>Volume</TD><TD>$!volume $!item.getStringProperty("pixi:caliperMeasurementData/unit")<sup>3</sup></TD></TR>
+							<TR><TD>Weight</TD><TD>$!item.getProperty("pixi:caliperMeasurementData/weight") $!item.getStringProperty("pixi:caliperMeasurementData/weightUnit")</TD></TR>
 							<TR><TD>Notes</TD><TD>$!item.getStringProperty("pixi:caliperMeasurementData/note")</TD></TR>
 						</TABLE>
 					</TD>

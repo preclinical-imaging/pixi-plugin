@@ -132,6 +132,12 @@
     <DisplayField id="TECHNICIAN" header="Technician" visible="true" searchable="true">
         <DisplayFieldElement name="Field1" schema-element="pixi:caliperMeasurementData/technician"/>
     </DisplayField>
+    <DisplayField id="WEIGHT" header="Weight" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:caliperMeasurementData/weight"/>
+    </DisplayField>
+    <DisplayField id="WEIGHTUNIT" header="Weight Unit" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:caliperMeasurementData/weightUnit"/>
+    </DisplayField>
     <DisplayField header="Volume" id="VOLUME" data-type="float">
         <DisplayFieldElement name="Field1" schema-element="pixi:caliperMeasurementData.length"/>
         <DisplayFieldElement name="Field2" schema-element="pixi:caliperMeasurementData.width"/>

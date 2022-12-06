@@ -20,6 +20,14 @@ $page.setVlinkColor($ui.vlink)
 	<option value="mm">
 </datalist>
 
+	<style type="text/css">
+		input#pixi\:caliperMeasurementData\/label {
+			width: 8rem;
+		}
+	</style>
+
+	#set($weight_units = ["", "g"])
+
 <TABLE width="100%">
 	<TR>
 		<TD>
@@ -50,6 +58,7 @@ $page.setVlinkColor($ui.vlink)
 							<TR>#formLabelRequired("Length")<TD>#xdatTextBox("pixi:caliperMeasurementData/length" $item "" $vr)</TD></TR>
 							<TR>#formLabelRequired("Width")<TD>#xdatTextBox("pixi:caliperMeasurementData/width" $item "" $vr)</TD></TR>
 							<TR>#formLabelRequired("Unit")<TD><input list="units" id="pixi:caliperMeasurementData/unit" name="pixi:caliperMeasurementData/unit" value="$!item.getStringProperty("pixi:caliperMeasurementData/unit")"></TD></TR>
+							<TR>#formLabel("Weight")<TD>#xdatTextBox("pixi:caliperMeasurementData/weight" $item "" $vr) #xdatSelectBoxWDefault("pixi:caliperMeasurementData/weightUnit" $item $weight_units $vr)</TD></TR>
 							<TR>#formLabel("Notes")<TD>#xdatTextArea("pixi:caliperMeasurementData/note" $item "" $vr 3 19)</TD></TR>
 						</TABLE>
 					</TD>

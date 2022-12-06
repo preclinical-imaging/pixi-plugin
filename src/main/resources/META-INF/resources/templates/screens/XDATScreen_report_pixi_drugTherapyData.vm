@@ -32,6 +32,7 @@ $page.setVlinkColor($ui.vlink)
 							<TR><TD>Route</TD><TD>$!item.getStringProperty("pixi:drugTherapyData/route")</TD></TR>
 							<TR><TD>Site</TD><TD>$!item.getStringProperty("pixi:drugTherapyData/site")</TD></TR>
 							<TR><TD>Lot Number</TD><TD>$!item.getStringProperty("pixi:drugTherapyData/lotNumber")</TD></TR>
+							<TR><TD>Weight</TD><TD>$!item.getProperty("pixi:drugTherapyData/weight") $!item.getStringProperty("pixi:drugTherapyData/weightUnit")</TD></TR>
 							<TR><TD>Notes</TD><TD>$!item.getStringProperty("pixi:drugTherapyData/note")</TD></TR>
 						</TABLE>
 					</TD>

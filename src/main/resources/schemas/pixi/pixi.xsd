@@ -234,6 +234,23 @@
                             <xs:documentation>Individual who administered this drug.</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="weight" minOccurs="0">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:decimal">
+                                <xs:minExclusive value="0"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="weightUnit" type="xs:string" minOccurs="0">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="g"/>
+                                <xs:enumeration value="kg"/>
+                                <xs:enumeration value="lbs"/>
+                                <xs:enumeration value="oz"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -275,6 +292,23 @@
                         <xs:annotation>
                             <xs:documentation>Individual who took the measurement.</xs:documentation>
                         </xs:annotation>
+                    </xs:element>
+                    <xs:element name="weight" minOccurs="0">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:decimal">
+                                <xs:minExclusive value="0"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="weightUnit" type="xs:string" minOccurs="0">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="g"/>
+                                <xs:enumeration value="kg"/>
+                                <xs:enumeration value="lbs"/>
+                                <xs:enumeration value="oz"/>
+                            </xs:restriction>
+                        </xs:simpleType>
                     </xs:element>
                 </xs:sequence>
             </xs:extension>

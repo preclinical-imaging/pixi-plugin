@@ -16,12 +16,19 @@ $page.setVlinkColor($ui.vlink)
 <HR>
 #end
 
+#set($weight_units = ["", "g"])
 #set($routes = [ "Oral", "Intravenous", "Intramuscular", "Subcutaneous", "Intraperitoneal" ])
 <datalist id="routes">
 	#foreach($route in $routes)
 	<option value="$route">
 	#end
 </datalist>
+
+<style type="text/css">
+	input#pixi\:drugTherapyData\/label {
+		width: 8rem;
+	}
+</style>
 
 <TABLE width="100%">
 	<TR>
@@ -56,6 +63,7 @@ $page.setVlinkColor($ui.vlink)
 							<TR>#formLabelRequired("Route")<TD><input list="routes" id="pixi:drugTherapyData/route" name="pixi:drugTherapyData/route" value="$!item.getProperty("pixi:drugTherapyData/route")"></TD></TR>
 							<TR>#formLabelRequired("Site")<TD>#xdatStringBox("pixi:drugTherapyData/site" $item "" $vr)</TD></TR>
 							<TR>#formLabel("Lot Number")<TD>#xdatStringBox("pixi:drugTherapyData/lotNumber" $item "" $vr)</TD></TR>
+							<TR>#formLabel("Weight")<TD>#xdatTextBox("pixi:drugTherapyData/weight" $item "" $vr) #xdatSelectBoxWDefault("pixi:drugTherapyData/weightUnit" $item $weight_units $vr)</TD></TR>
 							<TR>#formLabel("Notes")<TD>#xdatTextArea("pixi:drugTherapyData/note" $item "" $vr 3 19)</TD></TR>
 						</TABLE>
 					</TD>
