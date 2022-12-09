@@ -96,7 +96,7 @@
 
     <xs:complexType name="cellLineData">
         <xs:annotation>
-            <xs:documentation>An event in which a Cell Line is applied to a subject.</xs:documentation>
+            <xs:documentation>An event in which a cell line is implanted into a small animal subject.</xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="xnat:subjectAssessorData">
@@ -123,7 +123,7 @@
 
     <xs:complexType name="pdxData">
         <xs:annotation>
-            <xs:documentation>An event in which a PDX is applied to a subject.</xs:documentation>
+            <xs:documentation>An event in which human tumor tissue is implanted into a small animal subject.</xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="xnat:subjectAssessorData">
