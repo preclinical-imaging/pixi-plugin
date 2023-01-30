@@ -14,7 +14,7 @@
             #if(!$siteConfig.getBooleanValue("uiHideDicomScpUploadOption"))
                 <li><a href="$link.setPage("DICOMSCPPage.vm")">DICOM SCP</a></li>
             #end
-            <li><a href="$link.setPage("UploadBli.vm")">Upload BLI Session</a></li>
+##            <li><a href="$link.setPage("UploadBli.vm")">Upload BLI Session</a></li>
         </ul>
     </li>
     <li><a href="$link.setPage("XMLUpload.vm")">XML</a></li>

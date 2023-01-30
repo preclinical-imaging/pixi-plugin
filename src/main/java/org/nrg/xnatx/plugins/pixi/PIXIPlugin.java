@@ -60,14 +60,14 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.*;
                                          singular = "Hotel",
                                          plural = "Hotels",
                                          code = "HTL"),
-                          @XnatDataModel(value = PixiBlisessiondata.SCHEMA_ELEMENT_NAME,
-                                         singular = "BLI Session",
-                                         plural = "BLI Sessions",
-                                         code = "BLI"),
-                          @XnatDataModel(value = PixiBliscandata.SCHEMA_ELEMENT_NAME,
-                                         singular = "BLI Scan",
-                                         plural = "BLI Scans",
-                                         code = "BLIScan")
+//                          @XnatDataModel(value = PixiBlisessiondata.SCHEMA_ELEMENT_NAME,
+//                                         singular = "BLI Session",
+//                                         plural = "BLI Sessions",
+//                                         code = "BLI"),
+//                          @XnatDataModel(value = PixiBliscandata.SCHEMA_ELEMENT_NAME,
+//                                         singular = "BLI Scan",
+//                                         plural = "BLI Scans",
+//                                         code = "BLIScan")
                           })
 @ComponentScan({"org.nrg.xnatx.plugins.pixi.xenografts.entities",
                 "org.nrg.xnatx.plugins.pixi.xenografts.repositories",
