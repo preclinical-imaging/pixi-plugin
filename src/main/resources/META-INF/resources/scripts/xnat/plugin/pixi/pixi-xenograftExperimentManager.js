@@ -64,7 +64,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                     'passageMethod':    '',
                     'notes':            ''
                 }))
-                : new Array(5).fill({
+                : new Array(5).fill(undefined).map(() => ({
                                         'subjectId':        '',
                                         'experimentId':     '',
                                         'sourceId':         '',
@@ -75,8 +75,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                                         'passage':          '',
                                         'passageMethod':    '',
                                         'notes':            ''
-                                    });
-            
+                                    }));
             
             let colHeaders = [
                 "Subject ID *",
@@ -296,7 +295,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                     'numCellsInjected': '',
                     'notes':            ''
                 }))
-                : new Array(5).fill({
+                : new Array(5).fill(undefined).map(() =>({
                                         'subjectId':        '',
                                         'experimentId':     '',
                                         'sourceId':         '',
@@ -305,7 +304,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                                         'injectionType':    '',
                                         'numCellsInjected': '',
                                         'notes':            ''
-                                    });
+                                    }));
             
             
             let colHeaders = [
