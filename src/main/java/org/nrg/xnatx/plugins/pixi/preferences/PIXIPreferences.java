@@ -110,8 +110,8 @@ public class PIXIPreferences extends AbstractPreferenceBean {
     }
 
     @NrgPreference(defaultValue = "[\n   " +
-            "{\"id\": \"1\", \"vendor\": \"Charles River Laboratories\"},\n   " +
-            "{\"id\": \"2\", \"vendor\": \"The Jackson Laboratory\"}\n" +
+            "{\"id\": \"1\", \"vendor\": \"CRL\"},\n   " +
+            "{\"id\": \"2\", \"vendor\": \"JAX\"}\n" +
             "]",
             key = "id")
     public List<Vendor> getVendors() {

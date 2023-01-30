@@ -1,0 +1,138 @@
+<!-- BEGIN pixi-plugin templates/screens/Pixi_DataManager_Includes.vm -->
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/external/handsontable.full.js')"></script>
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/external/moment.min.js')"></script>
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/external/pikaday.min.js')"></script>
+
+<link rel="stylesheet" href="$content.getURI('style/pixi/handsontable.full.css')"/>
+
+<style>
+    div.containerBody {
+        margin-top: 1rem;
+    }
+
+    div.instructions li {
+        font-size: 14px;
+    }
+
+    div.row {
+        display: flex;
+        flex-direction: row;
+        align-items: baseline;
+        col-gap: 0.4rem;
+    }
+
+    div.col {
+        display: flex;
+        flex-direction: column;
+        align-items: baseline;
+        row-gap: 0.4rem;
+    }
+
+    div.third {
+        width: 33%;
+    }
+
+    div.half {
+        width: 50%;
+    }
+
+    div.whole {
+        width: 100%;
+    }
+
+    div.form-component {
+        display: flex;
+
+        border: 1px #ccc solid;
+        border-radius: 3px;
+
+        background-color: #f7f7f7;
+
+        color: #444;
+        padding: 10px 15px 10px 10px;
+    }
+
+    div.form-component.active {
+        background-color: #e4efff;
+        border-color: #c4cfdf;
+    }
+
+    div.form-component.disabled {
+        background-color: #fff;
+        border-color: #ccc;
+    }
+
+    div.form-component.disabled:hover {
+        cursor: pointer;
+    }
+
+    div.form-component.disabled:hover * {
+        cursor: pointer;
+    }
+
+    div.containerBody > div > div.form-component {
+        padding: 10px 15px 10px 10px;
+    }
+
+    div.form-component.invalid {
+        background-color: #ffeaf5;
+    }
+
+    div.form-component label {
+        display: flex;
+        align-items: center;
+        font-weight: bold;
+        font-size: 13px;
+    }
+
+    div.form-component label.required:after {
+        content: " *";
+        color: red;
+        margin-left: 4px;
+    }
+
+    div.form-component select {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Reset app.css*/
+    div.form-component select[multiple] {
+        max-width: 100%;
+        height: 125px;
+    }
+
+    .hot-container {
+        overflow: hidden;
+        margin: 1rem 15px;
+        height: 330px;
+    }
+
+    .error, .success, .info, .warning {
+        margin: 15px;
+    }
+
+    div.containerBody > div.error > div,
+    div.containerBody > div.success > div,
+    div.containerBody > div.info > div,
+    div.containerBody > div.warning > div,
+    div.containerBody > div > div.prj-error,
+    div.containerBody > div > div.hot-table,
+    div.containerBody > div > div.instructions {
+        padding: 0;
+    }
+
+    .submit-right > input {
+        margin: 0 0 0 15px;
+    }
+
+    div.form-component input[type="radio"] {
+        margin: 3px 5px 3px 5px;
+    }
+
+    .handsontable td.htInvalid {
+        background-color: #ffeaf5!important;
+    }
+</style>
+<!-- END pixi-plugin templates/screens/Pixi_DataManager_Includes.vm -->

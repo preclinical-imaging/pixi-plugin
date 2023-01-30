@@ -1,0 +1,178 @@
+<!-- BEGIN pixi-plugin templates/screens/Pixi_add_experiment.vm -->
+<div class="pixi-experiments">
+
+    <h2>Record PIXI Experiments for Multiple Small Animal Subjects</h2>
+    <p>Use the following links to record experiments for multiple small animal subjects at once.</p>
+
+    <div class="form-component col third">
+        <label class="required" for="project">Select a Project</label>
+        <select id="project"></select>
+        <div class="error project-error" style="visibility: hidden">No project selected</div>
+    </div>
+
+    <ul>
+        <li>
+            <a class="caliper-measurement">Record Caliper Measurements</a>
+            <p>Record and update tumor caliper measurements for small animal subjects.</p>
+        </li>
+        <li>
+            <a class="drug-therapy">Record Drug Therapies</a>
+            <p>Record and update drug therapies administered to small animal subjects.</p>
+        </li>
+        <li>
+            <a class="subject-weight">Record Subject Weights</a>
+            <p>Record and update subject weight measurements without the need for an imaging session<./p>
+        </li>
+        <li>
+            <a class="hotel-scan">Record New Hotel Scan</a>
+            <p>Record a small animal imaging hotel scan.</p>
+        </li>
+        <li>
+            <a class="pdx">Record Patient-derived Tumor Engraftments</a>
+            <p>Record and update patient-derived tumor tissue engraftments for small animal subjects.</p>
+        </li>
+        <li>
+            <a class="cell-line">Record Cell Line Injection</a>
+            <p>Record and update cell line injections for small animal subjects.</p>
+        </li>
+    </ul>
+
+</div>
+
+<script type="text/javascript">
+    const projectSelectId = 'project';
+
+    if (XNAT.data.context.project) {
+        document.getElementById(projectSelectId).parentElement.style.display = 'none';
+    } else {
+        XNAT.plugin.pixi.projects.populateSelectBox(projectSelectId);
+    }
+
+    const getProject = () => {
+        if (XNAT.data.context.project) {
+            return XNAT.data.context.project;
+        } else {
+            return document.getElementById(projectSelectId).value;
+        }
+    }
+
+    const createHref = (experiment, project) => {
+        if (!project) {
+            project = getProject();
+
+            if (!project) {
+                throw new Error('No project selected');
+            }
+        }
+
+        switch (experiment) {
+            case 'caliper-measurement':
+                return `$link.setPage("Pixi_CaliperMeasurementRecorder.vm")/project/${project}`;
+            case 'drug-therapy':
+                return `$link.setPage("Pixi_DrugTherapyRecorder.vm")/project/${project}`;
+            case 'subject-weight':
+                return `$link.setPage("Pixi_SubjectWeightRecorder.vm")/project/${project}`;
+            case 'hotel-scan':
+                return `$link.setPage("XDATScreen_edit_pixi_hotelScanRecord.vm")/project/${project}`;
+            case 'pdx':
+                return `$link.setPage("Pixi_PdxExperimentManager.vm")/project/${project}`;
+            case 'cell-line':
+                return `$link.setPage("Pixi_CellLineExperimentManager.vm")/project/${project}`;
+            default:
+                throw new Error(`Unknown experiment type: ${experiment}`);
+        }
+    }
+
+    const onclick = (event, experiment, project) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        try {
+            let href = createHref(experiment, project);
+            window.location = href;
+        } catch (e) {
+            document.querySelector('.project-error').innerHTML = e.message;
+            document.querySelector('.project-error').style.visibility = 'visible';
+        }
+    }
+
+    document.querySelector('.caliper-measurement').addEventListener('click', event => onclick(event, 'caliper-measurement'));
+    document.querySelector('.drug-therapy').addEventListener('click', event => onclick(event, 'drug-therapy'));
+    document.querySelector('.subject-weight').addEventListener('click', event => onclick(event, 'subject-weight'));
+    document.querySelector('.hotel-scan').addEventListener('click', event => onclick(event, 'hotel-scan'));
+    document.querySelector('.pdx').addEventListener('click', event => onclick(event, 'pdx'));
+    document.querySelector('.cell-line').addEventListener('click', event => onclick(event, 'cell-line'));
+
+    document.getElementById(projectSelectId).addEventListener('change', () => {
+        document.querySelector('.project-error').style.visibility = 'hidden';
+    });
+
+</script>
+
+<style type="text/css">
+    .pixi-experiments ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .pixi-experiments li {
+        margin: 25px 0;
+        font-size: 13px;
+        width: 100%
+    }
+
+    .pixi-experiments a {
+        text-decoration: none;
+        font-weight: bold;
+        font-size: medium;
+    }
+
+    .pixi-experiments p {
+        font-size: 12px;
+        color: #555;
+        margin: 5px 0;
+    }
+
+    .pixi-experiments label {
+        font-weight: bold;
+        font-size: 13px;
+    }
+
+    .pixi-experiments label.required:after {
+        content: " *";
+        color: red;
+        margin-left: 4px;
+    }
+
+    .pixi-experiments .form-component:first-of-type {
+        padding: 20px 0 0 0;
+    }
+
+    .pixi-experiments .form-component select {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .pixi-experiments .row {
+        display: flex;
+        flex-direction: row;
+        align-items: baseline;
+        col-gap: 0.4rem;
+    }
+
+    .pixi-experiments .col {
+        display: flex;
+        flex-direction: column;
+        align-items: baseline;
+        row-gap: 0.4rem;
+    }
+
+    .pixi-experiments .third {
+        width: 33%;
+    }
+
+</style>
+
+<!-- END pixi-plugin templates/screens/Pixi_add_experiment.vm -->

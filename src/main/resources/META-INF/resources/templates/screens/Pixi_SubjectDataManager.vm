@@ -1,0 +1,14 @@
+<!-- BEGIN pixi-plugin templates/screens/Pixi_SubjectDataManager.vm -->
+<div id="pixi-container"></div>
+
+#parse("/screens/Pixi_DataManager_Includes.vm")
+
+<script type="text/javascript">
+    let subjectDataManager;
+
+    (async () => {
+        subjectDataManager = await XNAT.plugin.pixi.subjectDataManager.init('pixi-container', XNAT.data.context.projectID);
+    })();
+</script>
+
+<!-- END pixi-plugin templates/screens/Pixi_SubjectDataManager.vm -->

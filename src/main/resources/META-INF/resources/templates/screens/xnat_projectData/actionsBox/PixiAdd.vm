@@ -1,0 +1,42 @@
+#* @vtlvariable name="data" type="org.apache.turbine.util.RunData" *#
+#* @vtlvariable name="dataType" type="java.lang.String" *#
+#* @vtlvariable name="displayManager" type="org.nrg.xdat.display.DisplayManager" *#
+#* @vtlvariable name="exptCounts" type="java.util.Hashtable" *#
+#* @vtlvariable name="link" type="org.apache.turbine.services.pull.tools.TemplateLink" *#
+#* @vtlvariable name="project" type="org.nrg.xdat.om.XnatProjectdata" *#
+#* @vtlvariable name="popup" type="java.lang.Boolean" *#
+#* @vtlvariable name="userHelper" type="org.nrg.xdat.security.services.UserHelperServiceI" *#
+
+<!-- Sequence: 100 -->
+<!-- BEGIN xnat_projectData/actionsBox/PixiAdd.vm -->
+
+#set($userHelper = $data.getSession().getAttribute("userHelper"))
+
+#if($userHelper.canEdit("xnat:subjectData/project", $project.getId()))
+<li class="yuimenuitem">
+    <a class="yuimenuitemlabel" href="#insertbox">PIXI</a>
+    <div id="insertbox" class="yuimenu">
+        <div class="bd">
+            <ul class="first-of-type" style="width: 350px;">
+                <li class="yuimenuitem">
+                    <a class="yuimenuitemlabel" href="$link.setPage("Pixi_SubjectDataManager.vm").addPathInfo('project',$project.getId())">Record Small Animal Subjects</a>
+                </li>
+                <li class="yuimenuitem">
+                    <a class="yuimenuitemlabel" href="$link.setPage("Pixi_CaliperMeasurementRecorder.vm").addPathInfo('project',$project.getId())">Record Caliper Measurements</a>
+                </li>
+                <li class="yuimenuitem">
+                    <a class="yuimenuitemlabel" href="$link.setPage("Pixi_DrugTherapyRecorder.vm").addPathInfo('project',$project.getId())">Record Drug Therapies</a>
+                </li>
+                <li class="yuimenuitem">
+                    <a class="yuimenuitemlabel" href="$link.setPage("Pixi_SubjectWeightRecorder.vm").addPathInfo('project',$project.getId())">Record Subject Weights</a>
+                </li>
+                <li class="yuimenuitem">
+                    <a class="yuimenuitemlabel" href="$link.setPage("XDATScreen_edit_pixi_hotelScanRecord.vm").addPathInfo('project',$project.getId())">Record New Hotel Scan</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</li>
+#end
+
+<!-- END xnat_projectData/actionsBox/PixiAdd.vm -->

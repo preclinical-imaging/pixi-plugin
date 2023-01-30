@@ -1,0 +1,13 @@
+<!-- BEGIN pixi-plugin templates/screens/Pixi_SubjectWeightRecorder.vm -->
+<div id="pixi-container"></div>
+
+#parse("/screens/Pixi_DataManager_Includes.vm")
+
+<script type="text/javascript">
+    let subjectWeightRecorder;
+
+    (async () => {
+        subjectWeightRecorder = await XNAT.plugin.pixi.subjectWeightRecorder.create('pixi-container', XNAT.data.context.projectID);
+    })();
+</script>
+<!-- END pixi-plugin templates/screens/Pixi_SubjectWeightRecorder.vm -->

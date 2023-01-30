@@ -9,6 +9,8 @@ console.log('pixi-xenograft.js');
 var XNAT = getObject(XNAT || {});
 XNAT.plugin = getObject(XNAT.plugin || {});
 XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
+XNAT.plugin.pixi.cellLines = getObject(XNAT.plugin.pixi.cellLines || {});
+XNAT.plugin.pixi.pdxs = getObject(XNAT.plugin.pixi.pdxs || {});
 
 
 (function(factory) {
@@ -26,6 +28,36 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
     console.log('pixi-xenograft.js - Xenograft Manager');
 
     let restUrl = XNAT.url.restUrl
+
+    XNAT.plugin.pixi.cellLines.get = async function() {
+        console.debug(`pixi-xenograft.js: XNAT.plugin.pixi.cellLines.get`);
+
+        const response = await fetch('/xapi/pixi/cellline', {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json'}
+        })
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch cell lines.");
+        }
+
+        return await response.json();
+    }
+
+    XNAT.plugin.pixi.pdxs.get = async function() {
+        console.debug(`pixi-xenograft.js: XNAT.plugin.pixi.pdxs.get`);
+
+        const response = await fetch('/xapi/pixi/pdx', {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json'}
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch pdxs.");
+        }
+
+        return await response.json();
+    }
 
     class XenograftManager {
         constructor(xenograftType) {

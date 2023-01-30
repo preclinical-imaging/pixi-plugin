@@ -9,6 +9,7 @@ console.log('pixi-speciesPreferences.js');
 var XNAT = getObject(XNAT || {});
 XNAT.plugin = getObject(XNAT.plugin || {});
 XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
+XNAT.plugin.pixi.speices = getObject(XNAT.plugin.pixi.speices || {});
 
 (function(factory) {
     if (typeof define === 'function' && define.amd) {
@@ -27,6 +28,23 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
 
     let speciesPreferenceManager;
     XNAT.plugin.pixi.speciesPreferenceManager = speciesPreferenceManager = getObject(XNAT.plugin.pixi.speciesPreferenceManager || {});
+
+    XNAT.plugin.pixi.speices.get = async function() {
+        console.debug(`pixi-speciesPreferences.js: XNAT.plugin.pixi.species.get`);
+
+        const response = await fetch(speciesPreferencesUrl(), {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json'}
+        })
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch species.");
+        }
+
+        let data = await response.json();
+
+        return data['species'];
+    }
 
     function speciesPreferencesUrl() {
         let url = '/xapi/pixi/preferences/species';

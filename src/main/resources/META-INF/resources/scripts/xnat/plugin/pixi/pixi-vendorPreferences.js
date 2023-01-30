@@ -9,6 +9,7 @@ console.log('pixi-vendorPreferences.js');
 var XNAT = getObject(XNAT || {});
 XNAT.plugin = getObject(XNAT.plugin || {});
 XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
+XNAT.plugin.pixi.vendors = getObject(XNAT.plugin.pixi.vendors || {});
 
 (function(factory) {
     if (typeof define === 'function' && define.amd) {
@@ -28,6 +29,23 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
     let vendorPreferenceManager;
 
     XNAT.plugin.pixi.vendorPreferenceManager = vendorPreferenceManager = getObject(XNAT.plugin.pixi.vendorPreferenceManager || {});
+
+    XNAT.plugin.pixi.vendors.get = async function() {
+        console.debug(`pixi-vendorPreferences.js: XNAT.plugin.pixi.vendors.get`);
+
+        const response = await fetch(vendorPreferencesUrl(), {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json'}
+        })
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch vendors.");
+        }
+
+        let data = await response.json();
+
+        return data['vendors'];
+    }
 
     function vendorPreferencesUrl() {
         let url = '/xapi/pixi/preferences/vendors';

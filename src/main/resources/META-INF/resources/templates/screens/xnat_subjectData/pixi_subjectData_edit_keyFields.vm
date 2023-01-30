@@ -236,12 +236,12 @@
                                     "data": {
                                         "values": [
                                             {
-                                                "label": "Male",
-                                                "value": "male"
+                                                "label": "M",
+                                                "value": "M"
                                             },
                                             {
-                                                "label": "Female",
-                                                "value": "female"
+                                                "label": "F",
+                                                "value": "F"
                                             }
                                         ]
                                     },

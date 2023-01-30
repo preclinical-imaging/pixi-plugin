@@ -1,0 +1,14 @@
+<!-- BEGIN pixi-plugin templates/screens/Pixi_PdxExperimentManager.vm -->
+<div id="pixi-container"></div>
+
+#parse("/screens/Pixi_DataManager_Includes.vm")
+
+<script type="text/javascript">
+    let pdxExperimentManager;
+
+    (async () => {
+        pdxExperimentManager = await XNAT.plugin.pixi.pdxExperimentManager.create("pixi-container", XNAT.data.context.projectID);
+    })();
+</script>
+
+<!-- END pixi-plugin templates/screens/Pixi_PdxExperimentManager.vm -->

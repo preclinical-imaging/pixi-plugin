@@ -1,1 +1,15 @@
 <link rel="stylesheet" type="text/css" href="${SITE_ROOT}/style/pixi.${css}">
+
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-module.js')"></script>
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-projects.js')"></script>
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-subjects.js')"></script>
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-experiments.js')"></script>
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-speciesPreferences.js')"></script>
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-vendorPreferences.js')"></script>
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-xenograft.js')"></script>
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-experimentManager.js')"></script>
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-subjectDataManager.js')"></script>
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-xenograftExperimentManager.js')"></script>
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-caliperMeasurementsRecorder.js')"></script>
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-drugTherapyRecorder.js')"></script>
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-subjectWeightRecorder.js')"></script>
