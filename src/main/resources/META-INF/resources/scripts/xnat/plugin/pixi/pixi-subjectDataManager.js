@@ -91,23 +91,23 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                     source: ['', 'F', 'M']
                 },
                 {
-                    data: 'dob',
+                    data: 'dateOfBirth',
                     type: 'date',
                     dateFormat: 'MM/DD/YYYY'
                 },
                 {data: 'litter'},
                 {data: 'strain'},
                 {
-                    data: 'vendor',
+                    data: 'source',
                     type: 'autocomplete',
                     filter: true,
                     strict: false,
                     source: []
                 },
                 {data: 'stockNumber'},
-                {data: 'humanizationType'},
+                {data: 'strainImmuneSystemHumanizationType'},
                 {data: 'geneticModifications'},
-                {data: 'geneticModificationsNonStd'}
+                {data: 'geneticModificationsSecondary'}
             ]
             
             const initData = new Array(5).fill(undefined).map(u => ({
@@ -116,14 +116,14 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                 'project': '',
                 'group': '',
                 'sex': '',
-                'dob': '',
+                'dateOfBirth': '',
                 'litter': '',
                 'strain': '',
-                'vendor': '',
+                'source': '',
                 'stockNumber': '',
-                'humanizationType': '',
+                'strainImmuneSystemHumanizationType': '',
                 'geneticModifications': '',
-                'geneticModificationsNonStd': '',
+                'geneticModificationsSecondary': '',
             }))
             
             let hotSettings = {
@@ -230,6 +230,12 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
         
         async getDataForSubject(subject) {
             const subjectDetails = await XNAT.plugin.pixi.subjects.get(this.getProjectSelection(), subject);
+            
+            // yyyy-mm-dd to mm/dd/yyyy
+            if (subjectDetails['dateOfBirth']) {
+                subjectDetails['dateOfBirth'] = subjectDetails['dateOfBirth'].replace(/(\d{4})-(\d{2})-(\d{2})/, "$2/$3/$1");
+            }
+            
             return Promise.resolve([subjectDetails]);
         }
     
@@ -357,14 +363,14 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                     let group = this.hot.getDataAtRowProp(iRow, 'group');
                     let species = this.hot.getDataAtRowProp(iRow, 'species');
                     let sex = this.hot.getDataAtRowProp(iRow, 'sex');
-                    let dob = this.hot.getDataAtRowProp(iRow, 'dob');
+                    let dob = this.hot.getDataAtRowProp(iRow, 'dateOfBirth');
                     let litter = this.hot.getDataAtRowProp(iRow, 'litter');
                     let strain = this.hot.getDataAtRowProp(iRow, 'strain');
-                    let source = this.hot.getDataAtRowProp(iRow, 'vendor');
+                    let source = this.hot.getDataAtRowProp(iRow, 'source');
                     let stockNumber = this.hot.getDataAtRowProp(iRow, 'stockNumber');
-                    let humanizationType = this.hot.getDataAtRowProp(iRow, 'humanizationType');
+                    let humanizationType = this.hot.getDataAtRowProp(iRow, 'strainImmuneSystemHumanizationType');
                     let geneticModifications = this.hot.getDataAtRowProp(iRow, 'geneticModifications');
-                    let geneticModificationsNonStd = this.hot.getDataAtRowProp(iRow, 'geneticModificationsNonStd');
+                    let geneticModificationsNonStd = this.hot.getDataAtRowProp(iRow, 'geneticModificationsSecondary');
 
                     await XNAT.plugin.pixi.subjects.createOrUpdate(projectId, subjectLabel, group, species,
                         sex, dob, litter, strain, source, stockNumber, humanizationType, geneticModifications,

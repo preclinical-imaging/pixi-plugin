@@ -55,14 +55,14 @@ XNAT.plugin.pixi.subjects = getObject(XNAT.plugin.pixi.subjects || {});
                 ...subject,
                 'species': demographicsJson[0]['items'][0]['data_fields']['species'],
                 'sex': demographicsJson[0]['items'][0]['data_fields']['sex'],
-                'dob': demographicsJson[0]['items'][0]['data_fields']['dob'],
+                'dateOfBirth': demographicsJson[0]['items'][0]['data_fields']['dateOfBirth'],
                 'litter': demographicsJson[0]['items'][0]['data_fields']['litter'],
                 'strain': demographicsJson[0]['items'][0]['data_fields']['strain'],
-                'vendor': demographicsJson[0]['items'][0]['data_fields']['vendor'],
+                'source': demographicsJson[0]['items'][0]['data_fields']['source'],
                 'stockNumber': demographicsJson[0]['items'][0]['data_fields']['stockNumber'],
-                'humanizationType': demographicsJson[0]['items'][0]['data_fields']['humanizationType'],
+                'strainImmuneSystemHumanizationType': demographicsJson[0]['items'][0]['data_fields']['strainImmuneSystemHumanizationType'],
                 'geneticModifications': demographicsJson[0]['items'][0]['data_fields']['geneticModifications'],
-                'geneticModificationsNonStd': demographicsJson[0]['items'][0]['data_fields']['geneticModificationsSecondary'],
+                'geneticModificationsSecondary': demographicsJson[0]['items'][0]['data_fields']['geneticModificationsSecondary'],
             }
         }
         
