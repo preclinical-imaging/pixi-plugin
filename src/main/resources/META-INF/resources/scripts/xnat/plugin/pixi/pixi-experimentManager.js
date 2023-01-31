@@ -414,6 +414,8 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
         }
         
         async subjectsSelected(subjects) {
+            XNAT.ui.dialog.static.wait('Retrieving data from XNAT');
+            
             // Copy the source data
             let hotData = JSON.parse(JSON.stringify(this.hot.getSourceData()));
             
@@ -436,6 +438,8 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             this.updateHeight();
             
             this.validateCells();
+    
+            XNAT.ui.dialog.closeAll();
         }
         
         
