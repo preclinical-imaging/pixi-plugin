@@ -76,8 +76,15 @@ $page.setVlinkColor($ui.vlink)
                                         <div class="choices__select__pixi form-control" id="pixi:cellLineData/sourceId-select">
                                             <select name="pixi:cellLineData/sourceId" id="pixi:cellLineData/sourceId" required>
                                                 <option value="" #if(!$om.getProperty("pixi:cellLineData/sourceId")) SELECTED #end>(SELECT)</option>
+
+                                                #if($om.getProperty("pixi:cellLineData/sourceId"))
+                                                    <option value="$om.getProperty("pixi:cellLineData/sourceId")" SELECTED>$om.getProperty("pixi:cellLineData/sourceId")</option>
+                                                #end
+
                                                 #foreach($cellLine in $cellLines)
-                                                    <option value="$cellLine.getSourceId()" #if($om.getProperty("pixi:cellLineData/sourceId").equals($cellLine.getSourceId())) SELECTED #end>$cellLine.getSourceId()</option>
+                                                    #if(! $om.getProperty("pixi:cellLineData/sourceId").equals($cellLine.getSourceId()))
+                                                        <option value="$cellLine.getSourceId()">$cellLine.getSourceId()</option>
+                                                    #end
                                                 #end
                                             </select>
                                         </div>
