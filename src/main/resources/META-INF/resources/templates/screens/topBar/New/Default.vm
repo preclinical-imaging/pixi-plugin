@@ -21,7 +21,7 @@
                 <li><a href="#!" class="nolink">Subjects</a>
                     <ul>
                         <li><a href="$link.setAction("XDATActionRouter").addPathInfo("xdataction","edit").addPathInfo("search_element","xnat:subjectData")/project/$!project.getId()">Create a Single $displayManager.getSingularDisplayNameForSubject()</a></li>
-                        <li><a href="$link.setPage("Pixi_SubjectDataManager.vm")/project/$!project.getId()">Create Multiple $displayManager.getSingularDisplayNameForSubject()</a></li>
+                        <li><a href="$link.setPage("Pixi_SubjectDataManager.vm")/project/$!project.getId()">Create Multiple $displayManager.getPluralDisplayNameForSubject()</a></li>
                     </ul>
                 </li>
             #end
