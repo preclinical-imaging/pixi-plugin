@@ -63,7 +63,7 @@
 
         <div id="mr-pixi-subject-data-fields">
             <!-- pixi / animal subject fields -->
-            <h4>Animal $displayManager.getSingularDisplayNameForSubject() Fields</h4>
+            <h4>Small Animal $displayManager.getSingularDisplayNameForSubject() Fields</h4>
 
             <table cellspacing="0">
                 <tr>
