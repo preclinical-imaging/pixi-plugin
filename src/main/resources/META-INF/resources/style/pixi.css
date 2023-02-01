@@ -59,6 +59,7 @@ body.xnat .column .panel.active {
 .panel .panel-element.stacked .element-label {
     display: block;
     padding-bottom: 6px;
+    text-transform: none;
 }
 .panel .panel-element.stacked {
     margin: 0 0 20px;
