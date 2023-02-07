@@ -26,7 +26,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                   "Record and update tumor caliper measurements for small animal subjects within a project",
                   "<div class='instructions action create whole'><ol>\n" +
                       "  <li>Select the project from the list of available projects in XNAT.</li>\n" +
-                      "  <li>In the Subject ID column, type the subject's ID or select the subject from the drop down menu.</li>\n" +
+                      "  <li>Select the subject(s) to record caliper measurements for.</li>\n" +
                       "  <li>Record the measurement of the length and width of the tumor from the caliper measurement tool in the designated Length and Width columns.</li>\n" +
                       "  <li>Record the subject's weight, the date of the measurement, and the technician who is performing the measurement in the appropriate columns.</li>\n" +
                       "  <li>In the notes column, add any additional information or observations regarding the subject.</li>\n" +

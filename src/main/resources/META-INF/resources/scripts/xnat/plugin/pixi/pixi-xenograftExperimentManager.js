@@ -25,8 +25,8 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             super("PIXI Patient-derived Tumor Engraftment Data Manager",
                   "Record and update patient-derived tumor tissue engraftments for small animal subjects within a project.",
                   "<div class='instructions action create whole'><ol>\n" +
-                      "  <li>Select the project from the list of available projects in XNAT that contains the subject(s) for which you want to record patient-derived tumor engraftments for.</li>\n" +
-                      "  <li>In the Subject ID column, type the subject's ID or select the subject from the drop down menu.</li>\n" +
+                      "  <li>Select the project from the list of available projects in XNAT.</li>\n" +
+                      "  <li>Select the subject(s) to record engraftments for.</li>\n" +
                       "  <li>In the designated columns, record the date, site, type of the engraftment, as well as the number of cells engrafted.</li>\n" +
                       "  <li>In the appropriate columns, optionally record the PDX passage and PDX passage method.</li>\n" +
                       "  <li>In the notes column, add any additional information or observations regarding the subject.</li>\n" +
@@ -266,8 +266,8 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             super("PIXI Cell Line Data Manager",
                   "Record and update cell line injections for small animal subjects within a project.",
                   "<div class='instructions action create whole'><ol>\n" +
-                      "  <li>Select the project from the list of available projects in XNAT that contains the subject(s) for which you want to record cell line injections for.</li>\n" +
-                      "  <li>In the Subject ID column, type the subject's ID or select the subject from the drop down menu.</li>\n" +
+                      "  <li>Select the project from the list of available projects in XNAT.</li>\n" +
+                      "  <li>In the subject selection box, choose the subject(s) for which you want to record cell line injections for.</li>\n" +
                       "  <li>In the designated columns, record the date, site, type of injections, as well as the number of cells injected.</li>\n" +
                       "  <li>In the notes column, add any additional information or observations regarding the subject.</li>\n" +
                       "  <li>Repeat steps 2-4 for each subject you wish to record a cell line injection for. You may record multiple injections for a subject.</li>\n" +
