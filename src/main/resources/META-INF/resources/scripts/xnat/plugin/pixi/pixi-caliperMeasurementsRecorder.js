@@ -70,13 +70,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             let columns = [
                 {
                     data:         'subjectId',
-                    type:         'autocomplete',
-                    filter:       true,
-                    strict:       true,
-                    source:       [],
-                    allowEmpty:   true,
-                    allowInvalid: true,
-                    validator:    (value, callback) => caliperMeasurementManager.validateExistingSubjectLabel(caliperMeasurementManager.getProjectSelection(), value, callback)
+                    readOnly:     true,
                 },
                 { data: 'experimentId' },
                 { data: 'experimentLabel' },
@@ -123,7 +117,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                 columns:            columns,
                 rowHeaders:         true,
                 manualColumnResize: true,
-                contextMenu:        ['row_above', 'row_below', '---------', 'remove_row', '---------', 'undo', 'redo', '---------', 'copy', 'cut'],
+                contextMenu:        ['undo', 'redo', '---------', 'copy', 'cut'],
                 width:              '100%',
                 licenseKey:         'non-commercial-and-evaluation',
                 minRows:            1,
@@ -190,6 +184,21 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                        })
         }
         
+        getEmptyRow(subject) {
+            return [{
+                'subjectId':       subject,
+                'experimentId':    '',
+                'experimentLabel': '',
+                'tumorLength':     '',
+                'tumorWidth':      '',
+                'subjectWeight':   '',
+                'measurementDate': '',
+                'measurementTime': '',
+                'technician':      '',
+                'notes':           '',
+            }];
+        }
+    
         async getDataForSubject(subject) {
             const response = await XNAT.plugin.pixi.experiments.get(this.getProjectSelection(),
                                                                     subject,

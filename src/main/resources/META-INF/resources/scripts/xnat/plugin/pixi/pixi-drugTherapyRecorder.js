@@ -72,13 +72,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             let columns = [
                 {
                     data:         'subjectId',
-                    type:         'autocomplete',
-                    filter:       true,
-                    strict:       true,
-                    source:       [],
-                    allowEmpty:   true,
-                    allowInvalid: true,
-                    validator:    (value, callback) => drugTherapyRecorder.validateExistingSubjectLabel(drugTherapyRecorder.getProjectSelection(), value, callback),
+                    readOnly: true
                 },
                 { data: 'experimentId' },
                 { data: 'experimentLabel' },
@@ -147,7 +141,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                 columns:            columns,
                 rowHeaders:         true,
                 manualColumnResize: true,
-                contextMenu:        ['row_above', 'row_below', '---------', 'remove_row', '---------', 'undo', 'redo', '---------', 'copy', 'cut'],
+                contextMenu:        ['undo', 'redo', '---------', 'copy', 'cut'],
                 width:              '100%',
                 licenseKey:         'non-commercial-and-evaluation',
                 minRows:            1,
@@ -176,6 +170,25 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             return 'Update existing drug therapies'
         }
         
+        getEmptyRow(subject) {
+            return [{
+                subjectId:         subject,
+                experimentId:    '',
+                experimentLabel: '',
+                treatmentDate:   '',
+                time:            '',
+                technician:      '',
+                drug:            '',
+                dose:            '',
+                doseUnit:        '',
+                route:           '',
+                site:            '',
+                lotNumber:       '',
+                subjectWeight:   '',
+                notes:           '',
+            }];
+        }
+    
         async submitRow(row) {
             console.debug(`Submitting drug therapy experiment for row ${row}`);
             

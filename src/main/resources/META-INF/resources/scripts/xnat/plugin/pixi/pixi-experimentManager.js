@@ -132,6 +132,11 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
         getXsiType() {
             throw new Error("Method 'getXsiType()' must be implemented.");
         }
+    
+        getEmptyRow(subject) {
+            throw new Error("Method 'getEmptyRow()' must be implemented.");
+        }
+        
         
         async init(containerId, hotSettings, project, subjects) {
             const self = this;
@@ -179,7 +184,6 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                        .then(() => {
                            this.hot = new Handsontable(this.container.querySelector('.hot-table'), hotSettings);
                            this.getDataAtRowProp = (row, prop) => this.hot.getDataAtRowProp(row, prop);
-                           this.addKeyboardShortCuts();
                            this.updateHeight();
                            this.hot.addHook('afterChange', (changes, source) => this.updateHeight());
                            this.hot.addHook('afterCreateRow', () => this.updateHeight());
@@ -200,8 +204,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                                    })
                            }
                        })
-                       .then(() => this.populateSubjectSelector())
-                       .then(() => this.subjectsSelector.populate(project));
+                       .then(() => this.populateSubjectSelector());
         }
         
         additionalButtons() {
@@ -315,6 +318,8 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                 disable:  () => document.getElementById('subjects').disabled = true,
                 enable:   () => document.getElementById('subjects').disabled = false,
                 clear:   () => document.getElementById('subjects').value = '',
+                hide: () => this.subjectsSelector.elements.style.display = 'none',
+                show: () => this.subjectsSelector.elements.style.display = '',
                 populate: async (project) => {
                     const element = document.getElementById('subjects');
                     
@@ -338,6 +343,9 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                                        element.options.add(new Option(subject['label'], subject['id']))
                                    });
                                })
+                },
+                populateAndShow: async (project) => {
+                    return this.subjectsSelector.populate(project).then(() => this.subjectsSelector.show());
                 }
             }
             
@@ -377,35 +385,6 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                     input.style.display = 'none';
                 }
             })
-            
-            if (action === 'create') {
-                document.querySelector(`.subjects-component`).style.display = 'none';
-                const subjectLabelColumn = this.getColumn(this.getSubjectColumnKey());
-                
-                if (subjectLabelColumn) {
-                    
-                    if (this.getXsiType() === 'xnat:subjectData') {
-                        subjectLabelColumn.validator =
-                            (value, callback) => this.validateNewSubjectLabel(this.getProjectSelection(), value, callback);
-                    } else {
-                        subjectLabelColumn.validator =
-                            (value, callback) => this.validateExistingSubjectLabel(this.getProjectSelection(), value, callback);
-                    }
-                    
-                    subjectLabelColumn['readOnly'] = false;
-                    this.updateColumns();
-                }
-            } else if (action === 'update') {
-                document.querySelector(`.subjects-component`).style.display = '';
-                const subjectLabelColumn = this.getColumn(this.getSubjectColumnKey());
-                
-                if (subjectLabelColumn) {
-                    subjectLabelColumn.validator =
-                        (value, callback) => this.validateExistingSubjectLabel(this.getProjectSelection(), value, callback);
-                    subjectLabelColumn['readOnly'] = true;
-                    this.updateColumns();
-                }
-            }
     
             this.updateData([{}, {}, {}, {}, {}]);
             this.clearAndHideMessage();
@@ -427,7 +406,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             
             for (const subject of subjects) {
                 if (!currentSubjects.contains(subject)) {
-                    const data = await this.getDataForSubject(subject);
+                    const data = this.actionSelector.get() === 'update' ? await this.getDataForSubject(subject) : this.getEmptyRow(subject);
                     hotData.push(...data);
                 }
             }
@@ -502,32 +481,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
         }
         
         async populateSubjectSelector() {
-            const self = this;
-            
-            let project = self.getProjectSelection();
-            
-            if (project === null || project === undefined || project === '') {
-                return;
-            }
-            
-            return XNAT.plugin.pixi.subjects.getAll(project)
-                       .then(resultSet => resultSet['ResultSet']['Result'])
-                       .then(subjects => {
-                           // remove subject with 'label' = 'hotel'
-                           return subjects.filter(subject => subject['label'].toLowerCase() !== 'hotel');
-                       })
-                       .then(subjects => {
-                           let options = [];
-                
-                           subjects.sort(pixi.compareGenerator('label'));
-                           subjects.forEach(subject => {
-                               options.push(subject['label'])
-                           });
-                
-                           let subjectIdColumn = this.getColumn('subjectId');
-                           subjectIdColumn['source'] = options;
-                           this.updateColumns();
-                       })
+            return this.subjectsSelector.populateAndShow(this.getProjectSelection());
         }
         
         enableSubmitButton() {

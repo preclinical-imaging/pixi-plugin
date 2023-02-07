@@ -141,63 +141,14 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             }
     
             return super.init(containerId, hotSettings, project, subjects)
+                        .then(() => this.subjectsSelector.hide())
+                        .then(() => this.addKeyboardShortCuts())
                         .then(() => this.initSpeciesSelector())
                         .then(() => this.initVendorSelector())
                         .then(() => this.hot.addHook('beforeChange', (changes, source) => this.beforeChange(changes, source)))
                         .then(() => this.hot.addHook('afterValidate', (isValid, value, row, prop) => this.afterValidate(isValid, value, row, prop)))
                         .then(() => this);
         }
-        
-        // additionalButtons() {
-        //     const self = this;
-        //
-        //     let buttons = super.additionalButtons();
-        //
-        //     buttons.push(
-        //         spawn('input.btn.pull-right|type=button|value=Enter PDX Details', {
-        //             onclick: () => {
-        //                 xmodal.confirm({
-        //                     title: "Leave Subject Editor",
-        //                     height: 150,
-        //                     scroll: false,
-        //                     okLabel: 'Yes',
-        //                     cancelLabel: 'No',
-        //                     content: `<p>Please ensure that all data has been submitted before leaving. Unsubmitted data will not be saved.</p>`,
-        //                     okAction: () => {
-        //                         let project = self.getProjectSelection();
-        //                         let subjects = self.hot.getDataAtProp('label').filter(s => s !== null && s !== '');
-        //
-        //                         (async () => {
-        //                             window.pdxExperimentManager = await XNAT.plugin.pixi.pdxExperimentManager.create(self.containerId, project, subjects);
-        //                         })();
-        //                     },
-        //                 })
-        //             }
-        //         }),
-        //         spawn('input.btn.pull-right|type=button|value=Enter Cell Line Details', {
-        //             onclick: () => {
-        //                 xmodal.confirm({
-        //                     title: "Leave Subject Editor",
-        //                     height: 150,
-        //                     scroll: false,
-        //                     okLabel: 'Yes',
-        //                     cancelLabel: 'No',
-        //                     content: `<p>Please ensure that all data has been submitted before leaving. Unsubmitted data will not be saved.</p>`,
-        //                     okAction: () => {
-        //                         let project = self.getProjectSelection();
-        //                         let subjects = self.hot.getDataAtProp('label').filter(s => s !== null && s !== '');
-        //
-        //                         (async () => {
-        //                             window.cellLineExperimentManager = await XNAT.plugin.pixi.cellLineExperimentManager.create(self.containerId, project, subjects);
-        //                         })();
-        //                     },
-        //                 })
-        //             }
-        //         })
-        //     )
-        //
-        //     return buttons;
-        // }
         
         async populateSubjectSelector() {
             const self = this;
@@ -237,6 +188,28 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             }
             
             return Promise.resolve([subjectDetails]);
+        }
+        
+        actionSelected(action) {
+            if (action === 'create') {
+                this.subjectsSelector.hide();
+    
+                const subjectLabelColumn = this.getColumn(this.getSubjectColumnKey());
+                subjectLabelColumn.validator = (value, callback) => this.validateNewSubjectLabel(this.getProjectSelection(), value, callback);
+                subjectLabelColumn['readOnly'] = false;
+                this.updateColumns();
+                
+            } else if (action === 'update') {
+                this.subjectsSelector.show();
+                
+                const subjectLabelColumn = this.getColumn(this.getSubjectColumnKey());
+                subjectLabelColumn.validator = (value, callback) => this.validateExistingSubjectLabel(this.getProjectSelection(), value, callback);
+                subjectLabelColumn['readOnly'] = true;
+                this.updateColumns();
+
+            }
+            
+            super.actionSelected(action);
         }
     
         initSpeciesSelector() {

@@ -99,13 +99,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             let columns = [
                 {
                     data:         'subjectId',
-                    type:         'autocomplete',
-                    filter:       true,
-                    strict:       true,
-                    source:       [],
-                    allowEmpty:   true,
-                    allowInvalid: true,
-                    validator:    (value, callback) => pdxExperimentManager.validateExistingSubjectLabel(pdxExperimentManager.getProjectSelection(), value, callback)
+                    readOnly: true
                 },
                 {
                     data: 'experimentId'
@@ -152,7 +146,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                 columns:            columns,
                 rowHeaders:         true,
                 manualColumnResize: true,
-                contextMenu:        ['row_above', 'row_below', '---------', 'remove_row', '---------', 'undo', 'redo', '---------', 'copy', 'cut'],
+                contextMenu:        ['undo', 'redo', '---------', 'copy', 'cut'],
                 width:              '100%',
                 licenseKey:         'non-commercial-and-evaluation',
                 minRows:            1,
@@ -217,11 +211,23 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                        })
         }
         
+        getEmptyRow(subject) {
+            return [{
+                'subjectId':        subject,
+                'experimentId':     '',
+                'sourceId':         '',
+                'injectionDate':    '',
+                'injectionSite':    '',
+                'injectionType':    '',
+                'numCellsInjected': '',
+                'passage':          '',
+                'passageMethod':    '',
+                'notes':            ''
+            }];
+        }
+    
         async getDataForSubject(subject) {
-            const response = await XNAT.plugin.pixi.experiments.get(this.getProjectSelection(),
-                                                                    subject,
-                                                                    '',
-                                                                    this.getXsiType());
+            const response = await XNAT.plugin.pixi.experiments.get(this.getProjectSelection(), subject, '', this.getXsiType());
             
             // Skip subjects without experiments
             if (response['ResultSet']['Result'].length === 0) {
@@ -327,13 +333,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             let columns = [
                 {
                     data:         'subjectId',
-                    type:         'autocomplete',
-                    filter:       true,
-                    strict:       true,
-                    source:       [],
-                    allowEmpty:   true,
-                    allowInvalid: true,
-                    validator:    (value, callback) => cellLineExperimentManager.validateExistingSubjectLabel(cellLineExperimentManager.getProjectSelection(), value, callback),
+                    readOnly: true
                 },
                 {
                     data: 'experimentId'
@@ -378,7 +378,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                 columns:            columns,
                 rowHeaders:         true,
                 manualColumnResize: true,
-                contextMenu:        ['row_above', 'row_below', '---------', 'remove_row', '---------', 'undo', 'redo', '---------', 'copy', 'cut'],
+                contextMenu:        ['undo', 'redo', '---------', 'copy', 'cut'],
                 width:              '100%',
                 licenseKey:         'non-commercial-and-evaluation',
                 minRows:            1,
@@ -407,6 +407,19 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             return 'Update existing cell line injections';
         }
         
+        getEmptyRow(subject) {
+            return [{
+                'subjectId':        subject,
+                'experimentId':     '',
+                'sourceId':         '',
+                'injectionDate':    '',
+                'injectionSite':    '',
+                'injectionType':    '',
+                'numCellsInjected': '',
+                'notes':            ''
+            }];
+        }
+    
         async submitRow(row) {
             console.debug(`Submitting cell line experiment for row ${row}`);
             

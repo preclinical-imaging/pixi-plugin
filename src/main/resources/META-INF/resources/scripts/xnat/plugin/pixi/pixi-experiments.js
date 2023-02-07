@@ -129,8 +129,8 @@ XNAT.plugin.pixi.experiments.subjectWeight = getObject(XNAT.plugin.pixi.experime
         return XNAT.plugin.pixi.experiments.get(project, subject, experiment, 'pixi:pdxData');
     }
     
-    XNAT.plugin.pixi.experiments.pdx.cellLine = async function(project, subject, experiment) {
-        return XNAT.plugin.pixi.experiments.get(project, subject, experiment, 'pixi:pdxData');
+    XNAT.plugin.pixi.experiments.cellLine.get = async function(project, subject, experiment) {
+        return XNAT.plugin.pixi.experiments.get(project, subject, experiment, 'pixi:cellLineData');
     }
 
     XNAT.plugin.pixi.experiments.pdx.createOrUpdate = async function({
