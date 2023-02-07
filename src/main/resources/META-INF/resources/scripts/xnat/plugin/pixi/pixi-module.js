@@ -102,5 +102,9 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
             }
         });
     };
+    
+    XNAT.plugin.pixi.unescapeHtml = function(str) {
+        return window.unescapeHtml(str);
+    }
 
 }));

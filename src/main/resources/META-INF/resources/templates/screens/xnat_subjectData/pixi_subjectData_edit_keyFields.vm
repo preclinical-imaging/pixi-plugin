@@ -117,7 +117,7 @@
             ])
             #foreach($property in $properties)
                 #if($om.getProperty($property))
-                    formData["$property"] = "$om.getProperty($property)";
+                    formData["$property"] = XNAT.plugin.pixi.unescapeHtml("$om.getProperty($property)");
                 #end
             #end
         #end

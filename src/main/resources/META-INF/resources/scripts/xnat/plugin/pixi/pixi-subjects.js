@@ -51,18 +51,19 @@ XNAT.plugin.pixi.subjects = getObject(XNAT.plugin.pixi.subjects || {});
         
         if (demographicsJson.length === 1) {
             // Has demographics
+            let demographicsData = demographicsJson[0]['items'][0]['data_fields'];
             subject = {
                 ...subject,
-                'species': demographicsJson[0]['items'][0]['data_fields']['species'],
-                'sex': demographicsJson[0]['items'][0]['data_fields']['sex'],
-                'dateOfBirth': demographicsJson[0]['items'][0]['data_fields']['dateOfBirth'],
-                'litter': demographicsJson[0]['items'][0]['data_fields']['litter'],
-                'strain': demographicsJson[0]['items'][0]['data_fields']['strain'],
-                'source': demographicsJson[0]['items'][0]['data_fields']['source'],
-                'stockNumber': demographicsJson[0]['items'][0]['data_fields']['stockNumber'],
-                'strainImmuneSystemHumanizationType': demographicsJson[0]['items'][0]['data_fields']['strainImmuneSystemHumanizationType'],
-                'geneticModifications': demographicsJson[0]['items'][0]['data_fields']['geneticModifications'],
-                'geneticModificationsSecondary': demographicsJson[0]['items'][0]['data_fields']['geneticModificationsSecondary'],
+                'species': demographicsData['species'] ? XNAT.plugin.pixi.unescapeHtml(demographicsData['species']) : '',
+                'sex': demographicsData['sex'] ? XNAT.plugin.pixi.unescapeHtml(demographicsData['sex']) : '',
+                'dateOfBirth': demographicsData['dateOfBirth'] ? XNAT.plugin.pixi.unescapeHtml(demographicsJson[0]['items'][0]['data_fields']['dateOfBirth']) : '',
+                'litter': demographicsData['litter'] ? XNAT.plugin.pixi.unescapeHtml(demographicsJson[0]['items'][0]['data_fields']['litter']) : '',
+                'strain': demographicsData['strain'] ? XNAT.plugin.pixi.unescapeHtml(demographicsJson[0]['items'][0]['data_fields']['strain']) : '',
+                'source': demographicsData['source'] ? XNAT.plugin.pixi.unescapeHtml(demographicsJson[0]['items'][0]['data_fields']['source']) : '',
+                'stockNumber': demographicsData['stockNumber'] ? XNAT.plugin.pixi.unescapeHtml(demographicsJson[0]['items'][0]['data_fields']['stockNumber']) : '',
+                'strainImmuneSystemHumanizationType': demographicsData['strainImmuneSystemHumanizationType'] ? XNAT.plugin.pixi.unescapeHtml(demographicsJson[0]['items'][0]['data_fields']['strainImmuneSystemHumanizationType']) : '',
+                'geneticModifications': demographicsData['geneticModifications'] ? XNAT.plugin.pixi.unescapeHtml(demographicsJson[0]['items'][0]['data_fields']['geneticModifications']) : '',
+                'geneticModificationsSecondary': demographicsData['geneticModificationsSecondary'] ? XNAT.plugin.pixi.unescapeHtml(demographicsJson[0]['items'][0]['data_fields']['geneticModificationsSecondary']) : '',
             }
         }
         
