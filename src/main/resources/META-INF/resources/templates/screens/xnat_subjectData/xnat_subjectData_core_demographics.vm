@@ -49,6 +49,20 @@
     #end
 #end
 
+#if($subject.getLabel().toLowerCase().equals("hotel"))
+    <tr>
+        <th align="left"></th>
+        <td style="visibility: hidden;">Empty row</td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <div class="info">
+                The 'hotel' subject is a placeholder subject for multi-subject 'hotel' image session data. The hotel image session can be split into single subject image sessions using XNAT's container service and the PIXI hotel splitter container.
+            </div>
+        </td>
+    </tr>
+#end
+
 
 
 <!-- end /xnat-templates/screens/xnat_subjectData/xnat_subjectData_core_demographics.vm -->

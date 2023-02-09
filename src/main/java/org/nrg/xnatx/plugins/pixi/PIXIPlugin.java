@@ -77,6 +77,7 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.*;
                 "org.nrg.xnatx.plugins.pixi.hotelsplitter.rest",
                 "org.nrg.xnatx.plugins.pixi.hotelsplitter.initialize",
                 "org.nrg.xnatx.plugins.pixi.hotelsplitter.dcm.identifiers",
+                "org.nrg.xnatx.plugins.pixi.hotelsplitter.eventservice.actions",
                 "org.nrg.xnatx.plugins.pixi.preferences",
                 "org.nrg.xnatx.plugins.pixi.bli.helpers",
                 "org.nrg.xnatx.plugins.pixi.bli.helpers.impl"
