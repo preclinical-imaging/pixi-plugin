@@ -4,15 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.nrg.framework.annotations.XnatDataModel;
 import org.nrg.framework.annotations.XnatPlugin;
 import org.nrg.xdat.om.*;
-import org.nrg.xnat.restlet.actions.importer.ImporterHandlerPackages;
-import org.nrg.xdat.om.PixiAnimaldemographicdata;
-import org.nrg.xdat.om.PixiHotel;
-import org.nrg.xdat.om.PixiHotelscanrecord;
-import org.nrg.xdat.om.PixiCalipermeasurementdata;
-import org.nrg.xdat.om.PixiDrugtherapydata;
-import org.nrg.xdat.om.PixiWeightdata;
 import org.nrg.xdat.preferences.SiteConfigPreferences;
 import org.nrg.xft.identifier.IDGeneratorI;
+import org.nrg.xnat.restlet.actions.importer.ImporterHandlerPackages;
 import org.nrg.xnat.services.XnatAppInfo;
 import org.nrg.xnat.services.system.HostInfoService;
 import org.nrg.xnat.turbine.utils.IDGenerator;
@@ -21,7 +15,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import static org.nrg.xft.identifier.IDGeneratorFactory.*;
+import static org.nrg.xft.identifier.IDGeneratorFactory.DEFAULT_COLUMN;
+import static org.nrg.xft.identifier.IDGeneratorFactory.DEFAULT_DIGITS;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @XnatPlugin(value = "PIXIPlugin", name = "PIXI Plugin",
@@ -76,13 +71,11 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.*;
                 "org.nrg.xnatx.plugins.pixi.hotelsplitter.services.impl",
                 "org.nrg.xnatx.plugins.pixi.hotelsplitter.rest",
                 "org.nrg.xnatx.plugins.pixi.hotelsplitter.initialize",
-                "org.nrg.xnatx.plugins.pixi.hotelsplitter.dcm.identifiers",
                 "org.nrg.xnatx.plugins.pixi.hotelsplitter.eventservice.actions",
                 "org.nrg.xnatx.plugins.pixi.preferences",
                 "org.nrg.xnatx.plugins.pixi.bli.helpers",
                 "org.nrg.xnatx.plugins.pixi.bli.helpers.impl"
 })
-
 @Slf4j
 public class PIXIPlugin {
 
