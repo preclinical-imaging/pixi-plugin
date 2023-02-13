@@ -17,7 +17,7 @@
         <div id="ct-xnat-subject-data-fields" style="display: none">
 
             <!-- subject fields -->
-            <h4>Human $displayManager.getSingularDisplayNameForSubject() Fields</h4>
+            <h4>Clinical $displayManager.getSingularDisplayNameForSubject() Fields</h4>
 
             <div class="search-item">
                 <h5>$displayManager.getSingularDisplayNameForSubject():</h5>
@@ -50,7 +50,7 @@
 
         <div id="ct-pixi-subject-data-fields">
             <!-- pixi / animal subject fields -->
-            <h4>Small Animal $displayManager.getSingularDisplayNameForSubject() Fields</h4>
+            <h4>Preclinical $displayManager.getSingularDisplayNameForSubject() Fields</h4>
 
             <table cellspacing="0">
                 <tr>

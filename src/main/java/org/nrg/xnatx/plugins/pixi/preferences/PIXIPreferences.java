@@ -126,7 +126,7 @@ public class PIXIPreferences extends AbstractPreferenceBean {
         }
     }
 
-    @NrgPreference(defaultValue = "true")
+    @NrgPreference(defaultValue = "false")
     public Boolean getUiShowHumanSearchFields() {
         return getBooleanValue(UI_SHOW_HUMAN_SEARCH_FIELDS_PREFERENCE_ID);
     }

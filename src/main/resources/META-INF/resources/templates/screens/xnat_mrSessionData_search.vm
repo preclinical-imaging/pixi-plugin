@@ -21,7 +21,7 @@
 
             <!-- subject fields -->
             <h4>
-                <label>Human $displayManager.getSingularDisplayNameForSubject() Fields</label>
+                <label>Clinical $displayManager.getSingularDisplayNameForSubject() Fields</label>
             </h4>
 
             <div class="search-item">
@@ -63,7 +63,7 @@
 
         <div id="mr-pixi-subject-data-fields">
             <!-- pixi / animal subject fields -->
-            <h4>Small Animal $displayManager.getSingularDisplayNameForSubject() Fields</h4>
+            <h4>Preclinical $displayManager.getSingularDisplayNameForSubject() Fields</h4>
 
             <table cellspacing="0">
                 <tr>

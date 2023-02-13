@@ -333,7 +333,7 @@ XNAT.plugin.pixi.speices = getObject(XNAT.plugin.pixi.speices || {});
             const species = data['species'];
             const species$ = document.getElementById(selectElementId);
             species.forEach(specie => {
-                species$[species$.options.length] = new Option(specie['commonName'], specie['scientificName']);
+                species$[species$.options.length] = new Option(specie['scientificName'], specie['scientificName']);
             });
         })
     }
