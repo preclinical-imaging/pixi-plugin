@@ -30,7 +30,7 @@ public class CreateDefaultHotelScpReceiver extends AbstractInitializingTask {
 
     @Override
     public String getTaskName() {
-        return "InitializeHotelScpReceiver";
+        return "CreateDefaultHotelScpReceiver";
     }
 
     @Override
