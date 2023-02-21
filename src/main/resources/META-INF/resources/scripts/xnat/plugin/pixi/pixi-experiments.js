@@ -16,6 +16,7 @@ XNAT.plugin.pixi.experiments.pdx = getObject(XNAT.plugin.pixi.experiments.pdx ||
 XNAT.plugin.pixi.experiments.caliperMeasurement = getObject(XNAT.plugin.pixi.experiments.caliperMeasurement || {});
 XNAT.plugin.pixi.experiments.drugTherapy = getObject(XNAT.plugin.pixi.experiments.drugTherapy || {});
 XNAT.plugin.pixi.experiments.subjectWeight = getObject(XNAT.plugin.pixi.experiments.subjectWeight || {});
+XNAT.plugin.pixi.experiments.animalHusbandry = getObject(XNAT.plugin.pixi.experiments.animalHusbandry || {});
 
 (function(factory) {
     if (typeof define === 'function' && define.amd) {
@@ -375,6 +376,76 @@ XNAT.plugin.pixi.experiments.subjectWeight = getObject(XNAT.plugin.pixi.experime
         
         if (!response.ok) {
             throw new Error(`Error create/update of pixi:weightData ${experimentLabel} for subject ${subject}: ${response.statusText}`);
+        }
+        
+        return response.text();
+    }
+    
+    XNAT.plugin.pixi.experiments.animalHusbandry.createOrUpdate = async function ({
+                                                                                      project, subject, experimentId,
+                                                                                      experimentLabel, animalFeed,
+                                                                                      feedSource, feedManufacturer,
+                                                                                      feedProductName, feedProductCode,
+                                                                                      feedingMethod, waterType, waterDelivery,
+                                                                                      numberOfAnimalsWithinSameHousingUnit,
+                                                                                      sexOfAnimalsWithinSameHousingUnit,
+                                                                                      environmentalTemperature,
+                                                                                      housingHumidity, notes
+                                                                                  }) {
+        console.debug(`pixi-experiments.js: XNAT.plugin.pixi.experiments.animalHusbandry.createOrUpdate`);
+        
+        let experimentUrl;
+        
+        if (experimentId) {
+            experimentUrl = XNAT.url.csrfUrl(`/data/projects/${project}/subjects/${subject}/experiments/${experimentId}`);
+        } else {
+            // If no experiment label, try to create one as SubjectID_AH_##
+            if (!experimentLabel) {
+                let response = await fetch(`/data/projects/${project}/subjects/${subject}/experiments?xsiType=pixi:animalHusbandryData`, {method: 'GET'});
+                
+                if (!response.ok) {
+                    throw new Error(`Error fetching pixi:animalHusbandryData for subject ${subject}: ${response.statusText}`);
+                }
+                
+                let json = await response.json();
+                let numExperiments = json['ResultSet']['Result'].length + 1;
+                experimentLabel = `${subject}_AH_${numExperiments}`;
+            }
+            
+            experimentUrl = XNAT.url.csrfUrl(`/data/projects/${project}/subjects/${subject}/experiments/${experimentLabel}`);
+        }
+        
+        let queryString = []
+        let addQueryString = (xmlPath, data) => {
+            if (data !== null && data !== undefined) {
+                let encodedXmlPath = XNAT.url.encodeURIComponent(xmlPath);
+                let encodedData = XNAT.url.encodeURIComponent(data);
+                queryString.push(`${encodedXmlPath}=${encodedData}`)
+            }
+        }
+        
+        addQueryString('xsiType', 'pixi:animalHusbandryData');
+        
+        addQueryString('pixi:animalHusbandryData/animalFeed', animalFeed);
+        addQueryString('pixi:animalHusbandryData/feedSource', feedSource);
+        addQueryString('pixi:animalHusbandryData/feedManufacturer', feedManufacturer);
+        addQueryString('pixi:animalHusbandryData/feedProductName', feedProductName);
+        addQueryString('pixi:animalHusbandryData/feedProductCode', feedProductCode);
+        addQueryString('pixi:animalHusbandryData/feedingMethod', feedingMethod);
+        addQueryString('pixi:animalHusbandryData/waterType', waterType);
+        addQueryString('pixi:animalHusbandryData/waterDelivery', waterDelivery);
+        addQueryString('pixi:animalHusbandryData/numberOfAnimalsWithinSameHousingUnit', numberOfAnimalsWithinSameHousingUnit);
+        addQueryString('pixi:animalHusbandryData/sexOfAnimalsWithinSameHousingUnit', sexOfAnimalsWithinSameHousingUnit);
+        addQueryString('pixi:animalHusbandryData/environmentalTemperature', environmentalTemperature);
+        addQueryString('pixi:animalHusbandryData/housingHumidity', housingHumidity);
+        addQueryString('pixi:animalHusbandryData/note', notes);
+        
+        experimentUrl = XNAT.url.addQueryString(experimentUrl, queryString);
+        
+        let response = await fetch(experimentUrl, {method: 'PUT'});
+        
+        if (!response.ok) {
+            throw new Error(`Error create/update of pixi:animalHusbandryData ${experimentLabel} for subject ${subject}: ${response.statusText}`);
         }
         
         return response.text();

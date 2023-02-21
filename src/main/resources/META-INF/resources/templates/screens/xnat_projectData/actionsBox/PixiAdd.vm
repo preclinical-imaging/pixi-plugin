@@ -33,6 +33,9 @@
                 <li class="yuimenuitem">
                     <a class="yuimenuitemlabel" href="$link.setPage("XDATScreen_edit_pixi_hotelScanRecord.vm").addPathInfo('project',$project.getId())">Record New Hotel Scan</a>
                 </li>
+                <li class="yuimenuitem">
+                    <a class="yuimenuitemlabel" href="$link.setPage("Pixi_AnimalHusbandryRecorder.vm").addPathInfo('project',$project.getId())">Record Animal Husbandry Data</a>
+                </li>
             </ul>
         </div>
     </div>

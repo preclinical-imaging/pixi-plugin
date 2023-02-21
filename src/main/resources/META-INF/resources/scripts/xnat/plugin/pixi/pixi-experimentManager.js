@@ -621,14 +621,16 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                 
                 XNAT.ui.dialog.static.wait('Submitting to XNAT', { id: "submit" });
                 
-                let successfulRows = [];
-                let failedRows = [];
+                let submissionReports = [];
                 
                 for (let iRow = 0; iRow < this.hot.countRows(); iRow++) {
                     await this.submitRow(iRow)
-                              .then(submissionReport => successfulRows.push(submissionReport))
-                              .catch(submissionReport => failedRows.push(submissionReport));
+                              .then(submissionReport => submissionReports.push(submissionReport))
+                              .catch(submissionReport => submissionReports.push(submissionReport));
                 }
+    
+                let successfulRows = submissionReports.filter(submissionReport => !('error' in submissionReport));
+                let failedRows = submissionReports.filter(submissionReport => 'error' in submissionReport);
                 
                 XNAT.ui.dialog.close('submit');
                 

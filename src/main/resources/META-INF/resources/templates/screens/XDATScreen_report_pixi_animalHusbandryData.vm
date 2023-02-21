@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+$page.setTitle($om.getSchemaElement().getSingularDescription().concat(" Details"))
+$page.setLinkColor($ui.alink)
+$page.setVlinkColor($ui.vlink)
+#if ($turbineUtils.GetPassedParameter("popup", $data))
+	#set ($popup = $turbineUtils.GetPassedParameter("popup", data) )
+	#set ($popup = "false")
+#end
+<TABLE width="100%">
+	<TR>
+		<TD>
+			<table width="100%">
+				<TR>
+					<TD align="left" valign="middle">
+						<font face="$ui.sansSerifFonts" size="3"><b>$om.getSchemaElement().getSingularDescription().concat(" Details")</b></font>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<TABLE width="100%">
+				<TR>
+					<TD valign="top">
+						<TABLE>
+							<TR><TD>Project</TD><TD>$!item.getStringProperty("pixi:animalHusbandryData/project")</TD></TR>
+							<TR><TD>Subject ID</TD><TD>$!item.getStringProperty("pixi:animalHusbandryData/subject_ID")</TD></TR>
+							<TR><TD>Experiment ID</TD><TD>$!item.getStringProperty("pixi:animalHusbandryData/ID")</TD></TR>
+							<TR><TD>Experiment Label</TD><TD>$!item.getStringProperty("pixi:animalHusbandryData/label")</TD></TR>
+							<TR><TD colspan="2"><HR></TD></TR>
+							<TR><TD>Animal Feed</TD><TD>$!item.getStringProperty("pixi:animalHusbandryData/animalFeed")</TD></TR>
+							<TR><TD>Feed Source</TD><TD>$!item.getStringProperty("pixi:animalHusbandryData/feedSource")</TD></TR>
+							<TR><TD>Feed Manufacturer</TD><TD>$!item.getStringProperty("pixi:animalHusbandryData/feedManufacturer")</TD></TR>
+							<TR><TD>Feed Product Name</TD><TD>$!item.getStringProperty("pixi:animalHusbandryData/feedProductName")</TD></TR>
+							<TR><TD>Feed Product Code</TD><TD>$!item.getStringProperty("pixi:animalHusbandryData/feedProductCode")</TD></TR>
+							<TR><TD>Feeding Method</TD><TD>$!item.getStringProperty("pixi:animalHusbandryData/feedingMethod")</TD></TR>
+							<TR><TD>Water Type</TD><TD>$!item.getStringProperty("pixi:animalHusbandryData/waterType")</TD></TR>
+							<TR><TD>Water Delivery</TD><TD>$!item.getStringProperty("pixi:animalHusbandryData/waterDelivery")</TD></TR>
+							<TR><TD colspan="2"><HR></TD></TR>
+							<TR><TD style="width: 72%">Number Of Animals Within Same Housing Unit</TD><TD>$!item.getIntegerProperty("pixi:animalHusbandryData/numberOfAnimalsWithinSameHousingUnit")</TD></TR>
+							<TR><TD>Sex Of Animals Within Same Housing Unit</TD><TD>$!item.getStringProperty("pixi:animalHusbandryData/sexOfAnimalsWithinSameHousingUnit")</TD></TR>
+							<TR><TD>Environmental Temperature (C)</TD><TD>$!item.getProperty("pixi:animalHusbandryData/environmentalTemperature")</TD></TR>
+							<TR><TD>Housing Humidity (%)</TD><TD>$!item.getProperty("pixi:animalHusbandryData/housingHumidity")</TD></TR>
+							<TR><TD colspan="2"><HR></TD></TR>
+							<TR><TD>Notes</TD><TD>$!item.getStringProperty("pixi:animalHusbandryData/note")</TD></TR>
+						</TABLE>
+					</TD>
+					<TD valign="top" align="right">
+						#parse($turbineUtils.getTemplateName("actions",$om.getXSIType(),$project))
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+</TABLE><BR>#parse("/screens/ReportProjectSpecificFields.vm")

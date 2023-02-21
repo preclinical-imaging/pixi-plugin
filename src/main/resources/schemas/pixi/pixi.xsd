@@ -13,6 +13,7 @@
     <xs:element name="Weight" type="pixi:weightData"/>
     <xs:element name="DrugTherapy" type="pixi:drugTherapyData"/>
     <xs:element name="CaliperMeasurement" type="pixi:caliperMeasurementData"/>
+    <xs:element name="AnimalHusbandry" type="pixi:animalHusbandryData"/>
     <xs:element name="Hotel" type="pixi:hotel"/>
     <xs:element name="HotelPosition" type="pixi:hotelPosition"/>
     <xs:element name="HotelSubject" type="pixi:hotelSubject"/>
@@ -93,6 +94,78 @@
                     <xs:element name="strainImmuneSystemHumanizationType" type="xs:string" minOccurs="0">
                         <xs:annotation>
                             <xs:documentation>Litter</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="animalHusbandryData">
+        <xs:annotation>
+            <xs:documentation>Record animal feeding and housing information over an interval during which conditions are relatively homogeneous.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="xnat:subjectAssessorData">
+                <xs:sequence>
+                    <xs:element name="animalFeed" type="xs:string" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>The animal feed type</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="feedSource" type="xs:string" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>The source of animal feed.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="feedManufacturer" type="xs:string" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>The manufacturer of the animal feed.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="feedProductName" type="xs:string" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>The manufacturer's product name of the feed.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="feedProductCode" type="xs:string" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>The manufacturer's product code of the feed.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="feedingMethod" type="xs:string" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>The animal feeding method</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="waterType" type="xs:string" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>The type of water used.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="waterDelivery" type="xs:string" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>The method of water delivery.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="numberOfAnimalsWithinSameHousingUnit" type="xs:integer" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>The number of animals within the same housing unit.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="sexOfAnimalsWithinSameHousingUnit" type="xs:string" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>The sex of the animals within the same housing unit.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="environmentalTemperature" type="xs:decimal" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>The environmental temperature.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="housingHumidity" type="xs:decimal" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>The humidity of the housing unit.</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                 </xs:sequence>

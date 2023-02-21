@@ -1,0 +1,14 @@
+<!-- BEGIN pixi-plugin templates/screens/Pixi_AnimalHusbandryRecorder.vm -->
+<div id="pixi-container"></div>
+
+#parse("/screens/Pixi_DataManager_Includes.vm")
+
+<script type="text/javascript">
+    let animalHusbandryRecorder;
+
+    (async () => {
+        animalHusbandryRecorder = await XNAT.plugin.pixi.animalHusbandryRecorder.create("pixi-container", XNAT.data.context.projectID);
+    })();
+</script>
+
+<!-- END pixi-plugin templates/screens/Pixi_AnimalHusbandryRecorder.vm -->

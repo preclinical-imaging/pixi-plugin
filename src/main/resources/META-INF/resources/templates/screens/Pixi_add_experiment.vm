@@ -35,6 +35,10 @@
             <a class="cell-line">Record Cell Line Injection</a>
             <p>Record and update cell line injections for small animal subjects.</p>
         </li>
+        <li>
+            <a class="animal-husbandry">Record Animal Husbandry Data</a>
+            <p>Record and update animal husbandry data for small animal subjects.</p>
+        </li>
     </ul>
 
 </div>
@@ -78,6 +82,8 @@
                 return `$link.setPage("Pixi_PdxExperimentManager.vm")/project/${project}`;
             case 'cell-line':
                 return `$link.setPage("Pixi_CellLineExperimentManager.vm")/project/${project}`;
+            case 'animal-husbandry':
+                return `$link.setPage("Pixi_AnimalHusbandryRecorder.vm")/project/${project}`;
             default:
                 throw new Error(`Unknown experiment type: ${experiment}`);
         }
@@ -102,6 +108,7 @@
     document.querySelector('.hotel-scan').addEventListener('click', event => onclick(event, 'hotel-scan'));
     document.querySelector('.pdx').addEventListener('click', event => onclick(event, 'pdx'));
     document.querySelector('.cell-line').addEventListener('click', event => onclick(event, 'cell-line'));
+    document.querySelector('.animal-husbandry').addEventListener('click', event => onclick(event, 'animal-husbandry'));
 
     document.getElementById(projectSelectId).addEventListener('change', () => {
         document.querySelector('.project-error').style.visibility = 'hidden';

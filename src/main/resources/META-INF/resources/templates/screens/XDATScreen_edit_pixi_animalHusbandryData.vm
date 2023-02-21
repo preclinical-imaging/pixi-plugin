@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+$page.setTitle($om.getSchemaElement().getSingularDescription().concat(" Details"))
+$page.setLinkColor($ui.alink)
+$page.setVlinkColor($ui.vlink)
+#set($months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
+    "November", "December"])
+#set($days = [ 1..31 ])
+#set($years = [ $!turbineUtils.getYear()..1900])
+#if ($data.message)
+<font color="red" size="3">$data.message</font>
+#end
+<p>
+<form ID="form1" name="form1" method="post" action="$link.setAction("ModifySubjectAssessorData")">
+    <input type="hidden" name="project" value="$!{project}">
+    #if($vr)
+        <font color="red">Invalid parameters:<BR>$vr.toHTML()</font>
+        <HR>
+    #end
+
+    #set($animal_feed_types = ["NIH07", "NIH31", "AIN76", "AIN93G", "AIN93M"])
+    #set($animal_feed_sources = ["Commercial product", "Locally manufactured product"])
+    #set($feeding_methods = ["ab libitum", "Restricted diet", "Food treat", "Gavage"])
+    #set($water_types = ["Tap water", "Distilled water", "Reverse osmosis purified water", "Reverse osmosis purified, HCl acidified water"])
+    #set($sex_of_animals = ["Male", "Female", "Both"])
+
+    <datalist id="animal_feed_types">
+        #foreach($animal_feed_type in $animal_feed_types)
+        <option value="$animal_feed_type">
+        #end
+    </datalist>
+
+	<datalist id="animal_feed_sources">
+		#foreach($animal_feed_source in $animal_feed_sources)
+		<option value="$animal_feed_source">
+		#end
+	</datalist>
+
+	<datalist id="feeding_methods">
+		#foreach($feeding_method in $feeding_methods)
+		<option value="$feeding_method">
+		#end
+	</datalist>
+
+	<datalist id="water_types">
+		#foreach($water_type in $water_types)
+		<option value="$water_type">
+		#end
+	</datalist>
+
+    <datalist id="sex_of_animals">
+        #foreach($sex_of_animal in $sex_of_animals)
+        <option value="$sex_of_animal">
+        #end
+    </datalist>
+
+    <TABLE width="100%">
+        <TR>
+            <TD>
+                <table width="100%">
+                    <TR>
+                        <TD align="left" valign="middle">
+                            <DIV class="edit_title">$om.getSchemaElement().getSingularDescription().concat(
+                                " Details")</DIV>
+                        </TD>
+                    </TR>
+                </TABLE>
+            </TD>
+        </TR>
+        <TR>
+            <TD>
+                <TABLE width="100%">
+                    <TR>
+                        <TD valign="top">
+                            <TABLE>
+                                <TR>
+                                    <TD colspan='2'>
+                                        #parse("/screens/xnat_edit_subjectAssessorData.vm")
+                                    </TD>
+                                </TR>
+                                <tr>
+                                    <TD colspan="2">#parse("/screens/EditProjectSpecificFields.vm")</TD>
+                                </tr>
+                                <style type="text/css">
+                                    input#pixi\:animalHusbandryData\/label {
+                                        width: 8rem;
+                                    }
+
+                                    .form-control {
+                                        display: block;
+                                        width: 95%;
+                                        font-size: 14px;
+                                        box-sizing: border-box;
+                                        margin: 1px 0 1px 10px;
+                                    }
+
+                                </style>
+
+                                <TR>#formLabel("Animal Feed")<TD><input class="form-control" list="animal_feed_types" id="pixi:animalHusbandryData/animalFeed" name="pixi:animalHusbandryData/animalFeed" value="$!item.getProperty("pixi:animalHusbandryData/animalFeed")"></TD></TR>
+                                <TR>#formLabel("Feed Source")<TD><input class="form-control" list="animal_feed_sources" id="pixi:animalHusbandryData/feedSource" name="pixi:animalHusbandryData/feedSource" value="$!item.getProperty("pixi:animalHusbandryData/feedSource")"></TD></TR>
+                                <TR>#formLabel("Feed Manufacturer")<TD>#xdatStringBoxOnChange("pixi:animalHusbandryData/feedManufacturer" $item "" "" $vr "form-control")</TD></TR>
+                                <TR>#formLabel("Feed Product Name")<TD>#xdatStringBoxOnChange("pixi:animalHusbandryData/feedProductName" $item "" "" $vr "form-control")</TD></TR>
+                                <TR>#formLabel("Feed Product Code")<TD>#xdatStringBoxOnChange("pixi:animalHusbandryData/feedProductCode" $item "" "" $vr "form-control")</TD></TR>
+								<TR>#formLabel("Feeding Method")<TD><input class="form-control" list="feeding_methods" id="pixi:animalHusbandryData/feedingMethod" name="pixi:animalHusbandryData/feedingMethod" value="$!item.getProperty("pixi:animalHusbandryData/feedingMethod")"></TD></TR>
+								<TR>#formLabel("Water Type")<TD><input class="form-control" list="water_types" id="pixi:animalHusbandryData/waterType" name="pixi:animalHusbandryData/waterType" value="$!item.getProperty("pixi:animalHusbandryData/waterType")"></TD></TR>
+								<TR>#formLabel("Water Delivery")<TD><input class="form-control" list="feeding_methods" id="pixi:animalHusbandryData/waterDelivery" name="pixi:animalHusbandryData/waterDelivery" value="$!item.getProperty("pixi:animalHusbandryData/waterDelivery")"></TD></TR>
+                                <TR><TD colspan="2"><HR></TD></TR>
+                                <TR>#formLabel("Number Of Animals Within Same Housing Unit")<TD>#xdatStringBoxOnChange("pixi:animalHusbandryData/numberOfAnimalsWithinSameHousingUnit" $item "" "" $vr "form-control")</TD></TR>
+                                <TR>#formLabel("Sex Of Animals Within Same Housing Unit")<TD><input class="form-control" list="sex_of_animals" id="pixi:animalHusbandryData/sexOfAnimalsWithinSameHousingUnit" name="pixi:animalHusbandryData/sexOfAnimalsWithinSameHousingUnit" value="$!item.getProperty("pixi:animalHusbandryData/sexOfAnimalsWithinSameHousingUnit")"></TD></TR>
+                                <TR>#formLabel("Environmental Temperature (C)")<TD>#xdatStringBoxOnChange("pixi:animalHusbandryData/environmentalTemperature" $item "" "" $vr "form-control")</TD></TR>
+                                <TR>#formLabel("Housing Humidity (%)")<TD>#xdatStringBoxOnChange("pixi:animalHusbandryData/housingHumidity" $item "" "" $vr "form-control")</TD></TR>
+                                <TR><TD colspan="2"><HR></TD></TR>
+                                <TR>#formLabel("Notes")<TD>#xdatTextArea("pixi:animalHusbandryData/note" $item "" $vr 3 35)</TD></TR>
+                            </TABLE>
+                        </TD>
+                    </TR>
+                </TABLE>
+            </TD>
+        </TR>
+        <TR>
+            <TD>
+                #xdatEditProps($item $edit_screen)
+        <TR>
+            <TD COLSPAN=2 ALIGN=left><input type="button" ONCLICK="validateForm();" name="eventSubmit_doInsert"
+                                            value="Submit"/></TD>
+        </TR>
+        </TD>
+        </TR>
+    </TABLE>
+</form>
+
+<script type="text/javascript">
+    function validateForm() {
+        const numberOfAnimalsWithinSameHousingUnit = document.getElementById("pixi:animalHusbandryData/numberOfAnimalsWithinSameHousingUnit");
+        const environmentalTemperature = document.getElementById("pixi:animalHusbandryData/environmentalTemperature");
+        const housingHumidity = document.getElementById("pixi:animalHusbandryData/housingHumidity");
+
+        let validateNumberOfAnimalsWithinSameHousingUnit = XNAT.validate(numberOfAnimalsWithinSameHousingUnit).reset().chain();
+        validateNumberOfAnimalsWithinSameHousingUnit.is('allow-empty')
+                                                    .is(/^[0-9]+$/) // only numbers
+                                                    .failure('Please enter a valid number for the number of animals within the same housing unit.');
+
+        let validateEnvironmentalTemperature = XNAT.validate(environmentalTemperature).reset().chain();
+        validateEnvironmentalTemperature.is('allow-empty')
+                                        .is(/^[0-9]*\.?[0-9]*$/) // only numbers
+                                        .failure('Please enter a valid number for the environmental temperature.');
+
+        let validateHousingHumidity = XNAT.validate(housingHumidity).reset().chain();
+        validateHousingHumidity.is('allow-empty')
+                               .is(/^[0-9]*\.?[0-9]*$/) // only numbers
+                               .failure('Please enter a valid number for the housing humidity.');
+
+        let errorMessages = [];
+        if (!validateNumberOfAnimalsWithinSameHousingUnit.check()) {
+            validateNumberOfAnimalsWithinSameHousingUnit.messages.forEach(message => {
+                errorMessages.push(message);
+            });
+        }
+
+        if (!validateEnvironmentalTemperature.check()) {
+            validateEnvironmentalTemperature.messages.forEach(message => {
+                errorMessages.push(message);
+            });
+        }
+
+        if (!validateHousingHumidity.check()) {
+            validateHousingHumidity.messages.forEach(message => {
+                errorMessages.push(message);
+            });
+        }
+
+        if (errorMessages.length > 0) {
+            // errors?
+            XNAT.dialog.open({
+                title: 'Validation Error',
+                width: 600,
+                content: pixi.clientErrorHandler(errorMessages)
+            })
+
+            return false;
+        }
+
+        validateSubjectAssessorForm();
+        return false;
+    }
+</script>
