@@ -24,11 +24,17 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
                 "Record and update animal husbandry data for small animal subjects within a project",
                 "<div class='instructions action create whole'><ol>\n" +
                 "  <li>Select the project from the list of available projects in XNAT.</li>\n" +
-                "  <li>Select the subject(s) to record animal husbandry data for.</li>\n" +
+                "  <li>Select the subject(s) from the subject list that you wish to record animal husbandry data for.</li>\n" +
+                "  <li>Enter the animal husbandry data for the selected subject(s).</li>\n" +
+                "  <li>Review the input data and ensure that it is accurate and consistent.</li>\n" +
+                "  <li>Click the 'Submit' button to save the animal husbandry data to XNAT.</li>\n" +
                 "</ol></div>",
                 "<div class='instructions action update whole' style='display: none'><ol>\n" +
-                "  <li>From the project selection menu, select the project that contains the subjects and animal husbandry data you wish to update.</li>\n" +
-                "  <li>In the subject selection box, select the subject(s) whose animal husbandry data you wish to update.</li>\n" +
+                "  <li>Select the project from the list of available projects in XNAT.</li>\n" +
+                "  <li>Select the subject(s) from the subject list that you wish to update animal husbandry data for.</li>\n" +
+                "  <li>Enter the updated animal husbandry data for the selected subject(s).</li>\n" +
+                "  <li>Review the input data and ensure that it is accurate and consistent.</li>\n" +
+                "  <li>Click the 'Submit' button to save the updated animal husbandry data to XNAT.</li>\n" +
                 "</ol></div>");
         }
         
