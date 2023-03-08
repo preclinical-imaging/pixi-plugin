@@ -142,6 +142,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
     
             return super.init(containerId, hotSettings, project, subjects)
                         .then(() => this.subjectsSelector.hide())
+                        .then(() => this.numSubjectsInput.show())
                         .then(() => this.addKeyboardShortCuts())
                         .then(() => this.initSpeciesSelector())
                         .then(() => this.initVendorSelector())
@@ -193,6 +194,9 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
         actionSelected(action) {
             if (action === 'create') {
                 this.subjectsSelector.hide();
+                this.numSubjectsInput.show();
+                this.numSubjectsInput.enable();
+                this.numSubjectsInput.set(5);
     
                 const subjectLabelColumn = this.getColumn(this.getSubjectColumnKey());
                 subjectLabelColumn.validator = (value, callback) => this.validateNewSubjectLabel(this.getProjectSelection(), value, callback);
@@ -201,6 +205,8 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                 
             } else if (action === 'update') {
                 this.subjectsSelector.show();
+                this.numSubjectsInput.hide();
+                this.numSubjectsInput.disable();
                 
                 const subjectLabelColumn = this.getColumn(this.getSubjectColumnKey());
                 subjectLabelColumn.validator = (value, callback) => this.validateExistingSubjectLabel(this.getProjectSelection(), value, callback);
@@ -240,6 +246,29 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             });
         }
         
+        numSubjectsChanged(source) {
+            super.numSubjectsChanged(source);
+            
+            if (this.numSubjectsInput.isDisabled()) {
+                return;
+            }
+            
+            if (source === 'hot') {
+                this.numSubjectsInput.set(this.hot.countRows());
+            }
+            else if (source === 'num-subjects-input') {
+                // update hot with new number of subjects
+                let numSubjects = this.numSubjectsInput.get();
+                let data = this.hot.getSourceData();
+                let numSubjectsToAdd = numSubjects - data.length;
+                if (numSubjectsToAdd > 0) {
+                    this.hot.alter('insert_row_above', data.length, numSubjectsToAdd);
+                } else if (numSubjectsToAdd < 0) {
+                    this.hot.alter('remove_row', data.length + numSubjectsToAdd, -numSubjectsToAdd);
+                }
+            }
+        }
+    
         beforeChange(changes, source) {
             for (let i = changes.length - 1; i >= 0; i--) {
                 if (changes[i][1] === 'label') {

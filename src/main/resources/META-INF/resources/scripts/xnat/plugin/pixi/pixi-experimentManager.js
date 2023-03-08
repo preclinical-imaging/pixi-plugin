@@ -188,6 +188,8 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                            this.hot.addHook('afterChange', (changes, source) => this.updateHeight());
                            this.hot.addHook('afterCreateRow', () => this.updateHeight());
                            this.hot.addHook('afterRemoveRow', () => this.updateHeight());
+                           this.hot.addHook('afterCreateRow', () => this.numSubjectsChanged('hot'));
+                           this.hot.addHook('afterRemoveRow', () => this.numSubjectsChanged('hot'));
                            // Place cursor at first cell
                            this.hot.selectCell(0, 0, 0, 0);
                        })
@@ -348,13 +350,36 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                     return this.subjectsSelector.populate(project).then(() => this.subjectsSelector.show());
                 }
             }
+    
+            this.numSubjectsInput = {
+                elements: spawn('div.form-component.col.containerItem.eighth',
+                    { style: { display: 'none' } },
+                    [
+                        spawn('label|for=\'numSubjects\'', 'Number of Subjects'),
+                        spawn('input.form-control|type=\'number\'|id=\'numSubjects\'|name=\'numSubjects\'|min=\'1\'|value=\'5\'|step=\'1\'|max=\'100\'', {
+                            onchange: () => {
+                                document.dispatchEvent(new Event('num-subjects-changed'));
+                                let source = 'num-subjects-input';
+                                this.numSubjectsChanged(source);
+                            }
+                        }),
+                    ]),
+                get: () => document.getElementById('numSubjects').value,
+                set: (value) => document.getElementById('numSubjects').value = value,
+                hide: () => this.numSubjectsInput.elements.style.display = 'none',
+                show: () => this.numSubjectsInput.elements.style.display = '',
+                enable: () => document.getElementById('numSubjects').disabled = false,
+                disable: () => document.getElementById('numSubjects').disabled = true,
+                isEnabled: () => !document.getElementById('numSubjects').disabled,
+                isDisabled: () => document.getElementById('numSubjects').disabled,
+            }
             
             return [
                 this.actionSelector.elements,
                 spawn('hr'),
                 spawn('div.containerItem', [self.#instructions1, self.#instructions2]),
                 spawn('hr'),
-                spawn('div.row', [this.projectSelector, this.subjectsSelector.elements])
+                spawn('div.row', [this.projectSelector, this.numSubjectsInput.elements, this.subjectsSelector.elements])
             ];
         }
         
@@ -421,6 +446,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             XNAT.ui.dialog.closeAll();
         }
         
+        numSubjectsChanged(source) {}
         
         addKeyboardShortCuts() {
             const self = this;

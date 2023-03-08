@@ -28,6 +28,18 @@
         row-gap: 0.4rem;
     }
 
+    div.eighth {
+        width: 12.5%;
+    }
+
+    div.fifth {
+        width: 20%;
+    }
+
+    div.quarter {
+        width: 25%;
+    }
+
     div.third {
         width: 33%;
     }
@@ -92,6 +104,12 @@
     }
 
     div.form-component select {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    div.form-component input[type="number"] {
         display: block;
         width: 100%;
         box-sizing: border-box;
