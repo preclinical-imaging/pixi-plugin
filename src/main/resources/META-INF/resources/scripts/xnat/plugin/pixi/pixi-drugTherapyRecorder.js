@@ -24,11 +24,11 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                   "Record and update drug therapies administered to small animal subjects",
                   "<div class='instructions action create whole'><ol>\n" +
                       "  <li>Select the project from the list of available projects in XNAT.</li>\n" +
-                      "  <li>Select the subject(s) to record drug therapies for.</li>\n" +
+                      "  <li>Select the subject(s) to record drug therapies for from the list of available subjects.</li>\n" +
                       "  <li>In the designated columns, record the drug name, dose, dose units, route of administration and the site of administration. Optionally, record the drug lot number.</li>\n" +
                       "  <li>In the appropriate columns, record the subject's weight at the time of administration, the date of administration and the technician who is administering the drug.</li>\n" +
                       "  <li>In the notes column, add any additional information or observations regarding the subject or the administration.</li>\n" +
-                      "  <li>Repeat steps 2-5 for each subject you wish to record a drug therapy for.</li>\n" +
+                      "  <li>Repeat steps 3-5 for each subject you wish to record a drug therapy for.</li>\n" +
                       "  <li>Review all the entries and ensure that they are accurate and consistent.</li>\n" +
                       "  <li>Save the drug therapies by clicking the \"Submit\" button.</li>\n" +
                       "  <li>Repeat the process at regular intervals or as needed for longitudinal studies.</li>\n" +

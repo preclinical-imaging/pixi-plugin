@@ -26,11 +26,11 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                   "Record and update patient-derived tumor tissue engraftments for small animal subjects within a project.",
                   "<div class='instructions action create whole'><ol>\n" +
                       "  <li>Select the project from the list of available projects in XNAT.</li>\n" +
-                      "  <li>Select the subject(s) to record engraftments for.</li>\n" +
+                      "  <li>Select the subject(s) to record engraftments for from the list of available subjects.</li>\n" +
                       "  <li>In the designated columns, record the date, site, type of the engraftment, as well as the number of cells engrafted.</li>\n" +
                       "  <li>In the appropriate columns, optionally record the PDX passage and PDX passage method.</li>\n" +
                       "  <li>In the notes column, add any additional information or observations regarding the subject.</li>\n" +
-                      "  <li>Repeat steps 2-5 for each subject you wish to record a tumor engraftment for. You may record multiple engraftments for a subject.</li>\n" +
+                      "  <li>Repeat steps 3-5 for each subject you wish to record a tumor engraftment for. You may record multiple engraftments for a subject.</li>\n" +
                       "  <li>Review all the entries and ensure that they are accurate and consistent.</li>\n" +
                       "  <li>Save the entries by clicking the \"Submit\" button.</li>\n" +
                       "</ol></div>",
@@ -270,7 +270,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                       "  <li>In the subject selection box, choose the subject(s) for which you want to record cell line injections for.</li>\n" +
                       "  <li>In the designated columns, record the date, site, type of injections, as well as the number of cells injected.</li>\n" +
                       "  <li>In the notes column, add any additional information or observations regarding the subject.</li>\n" +
-                      "  <li>Repeat steps 2-4 for each subject you wish to record a cell line injection for. You may record multiple injections for a subject.</li>\n" +
+                      "  <li>Repeat steps 3-4 for each subject you wish to record a cell line injection for. You may record multiple injections for a subject.</li>\n" +
                       "  <li>Review all the entries and ensure that they are accurate and consistent.</li>\n" +
                       "  <li>Save the entries by clicking the \"Submit\" button.</li>\n" +
                       "</ol></div>",

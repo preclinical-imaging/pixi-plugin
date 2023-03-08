@@ -27,10 +27,11 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                   "Create and update small animal subjects for a project",
                   "<div class='instructions action create whole'><ol>\n" +
                       "  <li>Select the project from the list of available projects in XNAT that you want to add the subject(s) to.</li>\n" +
+                      "  <li>Enter the number of subjects you wish to create in the \"Number of Subjects\" field.</li>\n" +
                       "  <li>In the Subject ID column, create a unique identifier for the subject. This should be a single word or acronym, it should not contain spaces or special characters. And it should be unique for the selected project.</li>\n" +
                       "  <li>In the designated columns, record the subject's research group, species, sex, date of birth and litter ID if applicable.</li>\n" +
                       "  <li>In the appropriate columns, record the subject's strain, vendor, stock number, humanization type, and any genetic modifications if applicable.</li>\n" +
-                      "  <li>Repeat steps 2-4 for each subject you wish to record a drug therapy for.</li>\n" +
+                      "  <li>Repeat steps 3-5 for each subject you wish to create.</li>\n" +
                       "  <li>Review all the entries and ensure that they are accurate and consistent.</li>\n" +
                       "  <li>Create the subjects by clicking the \"Submit\" button.</li>\n" +
                       "</ol></div>",

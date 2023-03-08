@@ -24,10 +24,10 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                   "Record and update subject weight measurements without the need for an imaging session",
                   "<div class='instructions action create whole'><ol>\n" +
                       "  <li>Select the project from the list of available projects in XNAT.</li>\n" +
-                      "  <li>Select the subject(s) to record weight measurements for.</li>\n" +
+                      "  <li>Select the subject(s) to record weight measurements for from the list of available subjects.</li>\n" +
                       "  <li>Record the subject's weight, the date of the measurement, and the technician who performed the measurement in the designated columns.</li>\n" +
                       "  <li>Any additional information or observations regarding the subject belongs in the notes column.</li>\n" +
-                      "  <li>Repeat steps 2-4 for each subject you wish to record weights for.</li>\n" +
+                      "  <li>Repeat steps 3-4 for each subject you wish to record weights for.</li>\n" +
                       "  <li>Verify that all entries are accurate and consistent before submitting by clicking the \"Submit\" button.</li>\n" +
                       "</ol></div>",
                   "<div class='instructions action update whole' style='display: none'><ol>\n" +
