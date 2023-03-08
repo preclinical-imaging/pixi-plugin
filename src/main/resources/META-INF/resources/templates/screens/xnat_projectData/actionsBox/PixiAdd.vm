@@ -14,12 +14,12 @@
 
 #if($userHelper.canEdit("xnat:subjectData/project", $project.getId()))
 <li class="yuimenuitem">
-    <a class="yuimenuitemlabel" href="#insertbox">PIXI</a>
+    <a class="yuimenuitemlabel" href="#insertbox">Record Preclinical Data</a>
     <div id="insertbox" class="yuimenu">
         <div class="bd">
-            <ul class="first-of-type" style="width: 350px;">
+            <ul class="first-of-type" style="width: 400px;">
                 <li class="yuimenuitem">
-                    <a class="yuimenuitemlabel" href="$link.setPage("Pixi_SubjectDataManager.vm").addPathInfo('project',$project.getId())">Record Small Animal Subjects</a>
+                    <a class="yuimenuitemlabel" href="$link.setPage("Pixi_SubjectDataManager.vm").addPathInfo('project',$project.getId())">Record Subject Data</a>
                 </li>
                 <li class="yuimenuitem">
                     <a class="yuimenuitemlabel" href="$link.setPage("Pixi_CaliperMeasurementRecorder.vm").addPathInfo('project',$project.getId())">Record Caliper Measurements</a>
