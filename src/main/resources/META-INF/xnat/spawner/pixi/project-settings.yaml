@@ -36,7 +36,68 @@ demographicDataImplProj:
       label: "pixi:animalDemographicData"
       value: "pixi:animalDemographicData"
 
+imageAcquisitionContextFastingProjPanel:
+  kind: panel
+  id: imageAcquisitionContextFastingProjPanel
+  name: imageAcquisitionContextFastingProjPanel
+  label: Fasting Templates
+  contents:
+    descriptions:
+      tag: div.message
+      element:
+        style: "margin-bottom: 20px;"
+      contents:
+        "Fasting templates are used to populate the fasting fields in the hotel scan record form. These are project specific and will not be available to other projects."
+    imageAcquisitionContextFastingProjTable:
+      tag: "div#image-acquisition-context-fasting-proj-manager"
+    imageAcquisitionContextFastingProjScript:
+      tag: script|src="~/scripts/xnat/plugin/pixi/pixi-imageAcqCtx.js"
+    renderImageAcquisitionContextFastingProjTable:
+      tag: script
+      content: >
+        XNAT.plugin.pixi.imageAcqCtx.fasting.manager('image-acquisition-context-fasting-proj-manager');
 
+imageAcquisitionContextAnesthesiaProjPanel:
+  kind: panel
+  id: imageAcquisitionContextAnesthesiaProjPanel
+  name: imageAcquisitionContextAnesthesiaProjPanel
+  label: Anesthesia Templates
+  contents:
+    descriptions:
+      tag: div.message
+      element:
+        style: "margin-bottom: 20px;"
+      contents:
+        "Anesthesia templates are used to populate the anesthesia fields in the hotel scan record form. These are project specific and will not be available to other projects."
+    imageAcquisitionContextAnesthesiaProjTable:
+      tag: "div#image-acquisition-context-anesthesia-proj-manager"
+    imageAcquisitionContextAnesthesiaProjScript:
+      tag: script|src="~/scripts/xnat/plugin/pixi/pixi-imageAcqCtx.js"
+    renderImageAcquisitionContextAnesthesiaProjTable:
+      tag: script
+      content: >
+        XNAT.plugin.pixi.imageAcqCtx.anesthesia.manager('image-acquisition-context-anesthesia-proj-manager');
+
+imageAcquisitionContextHeatingConditionsProjPanel:
+  kind: panel
+  id: imageAcquisitionContextHeatingConditionsProjPanel
+  name: imageAcquisitionContextHeatingConditionsProjPanel
+  label: Heating Conditions Templates
+  contents:
+    descriptions:
+      tag: div.message
+      element:
+        style: "margin-bottom: 20px;"
+      contents:
+        "Heating conditions templates are used to populate the heating conditions fields in the hotel scan record form. These are project specific and will not be available to other projects."
+    imageAcquisitionContextHeatingConditionsProjTable:
+      tag: "div#image-acquisition-context-heating-conditions-proj-manager"
+    imageAcquisitionContextHeatingConditionsProjScript:
+      tag: script|src="~/scripts/xnat/plugin/pixi/pixi-imageAcqCtx.js"
+    renderImageAcquisitionContextHeatingConditionsProjTable:
+      tag: script
+      content: >
+        XNAT.plugin.pixi.imageAcqCtx.heatingConditions.manager('image-acquisition-context-heating-conditions-proj-manager');
 
 #######################################################
 ####  Root Project Settings Spawner Config Object  ####
@@ -59,3 +120,13 @@ projectSettings:
       active: true
       contents:
         ${subjectDisplayPreferencesProjForm}
+    projectImageAcquisitionContextSettingsTab:
+      kind: tab
+      name: projectImageAcquisitionContextSettingsTab
+      label: Image Acquisition Context
+      group: pixiProjectTabGroup
+      active: true
+      contents:
+          ${imageAcquisitionContextFastingProjPanel}
+          ${imageAcquisitionContextAnesthesiaProjPanel}
+          ${imageAcquisitionContextHeatingConditionsProjPanel}

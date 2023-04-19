@@ -1,0 +1,295 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+$page.setTitle("XDAT")
+$page.setLinkColor($ui.alink)
+$page.setVlinkColor($ui.vlink)
+
+#set($months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"])
+#set($days = [ 1..31 ])
+#set($years = [ $!turbineUtils.getYear()..1900])
+#if ($data.message)
+<font color="red" size="3">$data.message</font>
+#end
+<p>
+<form ID="form1" name="form1" method="post" action="$link.setAction("ModifyPixiItem")">
+<input type="hidden" name="project" value="$!{project}" >
+#if($vr)
+	<font color="red">Invalid parameters:<BR>$vr.toHTML()</font>
+<HR>
+#end
+
+	#set($heatingMethods = [
+		"Air heating pad",
+		"Electric blanket",
+		"Electric heating pad",
+		"Forced air heater",
+		"Forced air warming blanket",
+		"Heated imaging device",
+		"Heated patient support",
+		"Heated water blanket",
+		"Heat lamp",
+		"Non-electric heating pad",
+		"Pre-heated pad",
+		"Unheated",
+		"Warmer device",
+		"Warming blanket"
+	])
+
+	#set($temperatureSensorDeviceComponents = [
+		"Rectal temperature",
+		"Thermography",
+		"Carrier temperature sensor"
+	])
+
+	#set($anesthesias = [
+		"Alphachloralose",
+		"Alphadolone",
+		"Alphaxalone",
+		"Azaperone",
+		"Butabarbital",
+		"Chloral hydrate",
+		"Diazepam",
+		"Droperidol",
+		"Etomidate",
+		"Fluanisone",
+		"Ketamine",
+		"Methohexital",
+		"Metomidate",
+		"Midazolam",
+		"Pentobarbital",
+		"Propofol",
+		"Thiamylal",
+		"Thiopental",
+		"Tiletamine",
+		"Tribromoethanol",
+		"Urethane (ethyl carbamate)",
+		"Xylazine",
+		"Zolazepam",
+
+		"Carbon dioxide",
+		"Chloroform",
+		"Desflurane",
+		"Diethyl ether",
+		"Enflurane",
+		"Halothane",
+		"Isoflurane",
+		"Methoxyflurane",
+		"Nitrous oxide",
+		"Sevoflurane",
+
+		"Acepromazine",
+		"Chlorpromazine",
+
+		"Succinylcholine",
+		"Pancuronium",
+
+		"Bupivacaine",
+		"Lidocaine + Prilocaine",
+		"Lidocaine"
+	])
+
+	#set($routes = [
+		"Intraperitoneal route",
+		"By inhalation",
+		"Intravenous route",
+		"Per rectum",
+		"Intramuscular route"
+	])
+
+	<datalist id="heatingMethods">
+		#foreach($val in $heatingMethods)
+		<option value="$val">
+		#end
+	</datalist>
+
+	<datalist id="temperatureSensorDeviceComponents">
+		#foreach($val in $temperatureSensorDeviceComponents)
+		<option value="$val">
+		#end
+	</datalist>
+
+	<datalist id="anesthesias">
+		#foreach($val in $anesthesias)
+		<option value="$val">
+		#end
+	</datalist>
+
+	<datalist id="routes">
+		#foreach($val in $routes)
+		<option value="$val">
+		#end
+	</datalist>
+
+	<style type="text/css">
+		input#pixi\:imageAcquisitionContextAssessorData\/label{
+			width: 14rem;
+		}
+
+		.form-control {
+			display: block;
+			width: 100%;
+			font-size: 14px;
+			box-sizing: border-box;
+		}
+	</style>
+
+<TABLE width="100%">
+	<TR>
+		<TD>
+			<table width="100%">
+				<TR>
+					<TD align="left" valign="middle">
+						<DIV class="edit_title">Image Acquisition Context Details</DIV>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<TABLE width="100%">
+				<TR>
+					<TD valign="top">
+						<TABLE>
+							<TR><TD colspan='2'>
+
+								#parse("/screens/xnat_edit_experimentData.vm")
+								</TD></TR>
+							<tr>
+								<TD colspan="2">#parse("/screens/EditProjectSpecificFields.vm")</TD>
+							</tr>
+							#xdatHiddenBox("pixi:imageAcquisitionContextAssessorData/imageSession_ID" $item "")
+							<!-- Fasting -->
+							<TR><TH align="left" style="padding: 0">Fasting</TH></TR>
+							<TR>
+								<TD>Fasting Status</TD>
+								<TD>
+									<input type="radio" name="pixi:imageAcquisitionContextAssessorData/imageAcquisitionContext/fasting/fastingStatus" value="1" #if($item.getProperty("pixi:imageAcquisitionContextAssessorData/imageAcquisitionContext/fasting/fastingStatus") == "1") checked #end>Fasted
+								</TD>
+							</TR>
+							<TR>
+								<TD></TD>
+								<TD><input type="radio" name="pixi:imageAcquisitionContextAssessorData/imageAcquisitionContext/fasting/fastingStatus" value="0" #if($item.getProperty("pixi:imageAcquisitionContextAssessorData/imageAcquisitionContext/fasting/fastingStatus") == "0") checked #end>Not Fasted</TD>
+							</TR>
+							<TR>
+								<TD></TD>
+								<TD><input type="radio" name="pixi:imageAcquisitionContextAssessorData/imageAcquisitionContext/fasting/fastingStatus" value="" #if(! $item.getProperty("pixi:imageAcquisitionContextAssessorData/imageAcquisitionContext/fasting/fastingStatus")) checked #end>N/A</TD>
+							</TR>
+							<TR id="fastingDurationRow"><TD>Fasting Duration</TD><TD>#xdatStringBoxOnChange("pixi:imageAcquisitionContextAssessorData/imageAcquisitionContext/fasting/fastingDuration" $item "" "" $vr "form-control")</TD><TD>hours</TD></TR>
+							#xdatHiddenBox("pixi:imageAcquisitionContextAssessorData/imageAcquisitionContext/fasting/pixi_fasting_id" $item "")
+							<TR><TD style="height: 1rem"></TD><TD></TD></TR>
+							<!-- Heating Conditions -->
+							#set($heatingConditions = "pixi:imageAcquisitionContextAssessorData/imageAcquisitionContext/heatingConditions[0]/heatingConditions")
+							<TR><TH align="left" style="padding: 0">Heating Conditions</TH></TR>
+							<TR style="display: none;">
+								<TD>Procedure Phase</TD>
+								<TD>
+									<select class="form-control" name="$heatingConditions/procedurePhase" value="$item.getProperty("$heatingConditions/procedurePhase")">
+										<option value="Intraoperative" #if($item.getProperty("$heatingConditions/procedurePhase") == "Intraoperative") selected #end>Intraoperative</option>
+										<option value="Preoperative" #if($item.getProperty("$heatingConditions/procedurePhase") == "Preoperative") selected #end>Preoperative</option>
+										<option value="Postoperative" #if($item.getProperty("$heatingConditions/procedurePhase") == "Postoperative") selected #end>Postoperative</option>
+										<option value="" #if($item.getProperty("$heatingConditions/procedurePhase") == "") selected #end></option>
+									</select>
+								</TD>
+							</TR>
+							<TR>
+								<TD>Heating Method</TD>
+								<TD>
+									<input list="heatingMethods"
+										   class="form-control"
+										   id="$heatingConditions/heatingMethod"
+										   name="$heatingConditions/heatingMethod"
+										   value="$!item.getProperty("$heatingConditions/heatingMethod")">
+								</TD>
+							</TR>
+							<TR>
+								<TD>Feedback Temperature Regulation</TD>
+								<TD>
+									<input type="radio" name="$heatingConditions/feedbackTemperatureRegulation" value="1" #if($item.getProperty("$heatingConditions/feedbackTemperatureRegulation") == "1") checked #end>Yes
+								</TD>
+							</TR>
+							<TR>
+								<TD></TD>
+								<TD><input type="radio" name="$heatingConditions/feedbackTemperatureRegulation" value="0" #if($item.getProperty("$heatingConditions/feedbackTemperatureRegulation") == "0") checked #end>No</TD>
+							</TR>
+							<TR>
+								<TD></TD>
+								<TD><input type="radio" name="$heatingConditions/feedbackTemperatureRegulation" value="" #if(! $item.getProperty("$heatingConditions/feedbackTemperatureRegulation")) checked #end>N/A</TD>
+							</TR>
+							<TR>
+								<TD>Temperature Sensor Device Component</TD>
+								<TD>
+									<input list="temperatureSensorDeviceComponents"
+										   class="form-control"
+										   id="$heatingConditions/temperatureSensorDeviceComponent"
+										   name="$heatingConditions/temperatureSensorDeviceComponent"
+										   value="$!item.getProperty("$heatingConditions/temperatureSensorDeviceComponent")">
+								</TD>
+							</TR>
+							<TR>
+								<TD>Setpoint Temperature (&#8451;)</TD>
+								<TD>#xdatStringBoxOnChange("$heatingConditions/setpointTemperature" $item "" "" $vr "form-control")</TD>
+							</TR>
+							<TR><TD style="height: 2rem"></TD><TD></TD></TR>
+							<!-- Anesthesia -->
+							#set($anesthesias = "pixi:imageAcquisitionContextAssessorData/imageAcquisitionContext/anesthesias[0]/anesthesia")
+							<TR><TH align="left" style="padding: 0">Anesthesia</TH></TR>
+							<TR>
+								<TD>Anesthesia Used</TD>
+								<TD>
+									<input list="anesthesias"
+										   class="form-control"
+										   id="$anesthesias/anesthesia"
+										   name="$anesthesias/anesthesia"
+										   value="$!item.getProperty("$anesthesias/anesthesia")">
+								</TD>
+							</TR>
+							<TR>
+								<TD>Route of Administration</TD>
+								<TD>
+									<input list="routes"
+										   class="form-control"
+										   id="$anesthesias/routeOfAdministration"
+										   name="$anesthesias/routeOfAdministration"
+										   value="$!item.getProperty("$anesthesias/routeOfAdministration")">
+								</TD>
+							</TR>
+							<TR><TD style="height: 2rem"></TD><TD></TD></TR>
+							<!-- Notes -->
+							<TR>#formLabel("Notes")</TR>
+							<TR><TD colspan="2">#xdatTextArea("pixi:imageAcquisitionContextAssessorData/note" $item "" $vr 3 56)</TD></TR>
+						</TABLE>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+		#xdatEditProps($item $edit_screen)
+		<TR><TD COLSPAN=2 ALIGN=left><input type="button" ONCLICK="validateForm();"  name="eventSubmit_doInsert" value="Submit"/></TD></TR>
+		</TD>
+	</TR>
+</TABLE>
+</form>
+
+<script type="text/javascript">
+
+	let toggleFastingDuration = () => {
+		if (document.querySelector('input[name="pixi:imageAcquisitionContextAssessorData/imageAcquisitionContext/fasting/fastingStatus"]:checked').value === '1') {
+			document.getElementById('fastingDurationRow').style.visibility = 'visible';
+		} else {
+			document.getElementById('fastingDurationRow').style.visibility = 'hidden';
+			document.querySelector('input[name="pixi:imageAcquisitionContextAssessorData/imageAcquisitionContext/fasting/fastingDuration"]').value = '';
+		}
+	};
+
+	toggleFastingDuration();
+	document.querySelectorAll('input[name="pixi:imageAcquisitionContextAssessorData/imageAcquisitionContext/fasting/fastingStatus"]')
+			.forEach(e => e.addEventListener('change', toggleFastingDuration))
+
+
+	function validateForm() {
+		validateExperimentForm();
+		return false;
+	}
+</script>

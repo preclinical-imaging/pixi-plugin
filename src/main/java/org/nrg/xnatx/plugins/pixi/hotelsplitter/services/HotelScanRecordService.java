@@ -11,4 +11,5 @@ public interface HotelScanRecordService {
     void updateHotelSubject(UserI user, String projectId, String hotelScanRecordLabel, String subjectId, String splitSessionLabel) throws NotFoundException;
     String getStatus(UserI user, String projectId, String hotelScanRecordLabel) throws NotFoundException;
     void updateStatus(UserI user, String projectId, String hotelScanRecordLabel, String status) throws NotFoundException;
+    void splitImageAcquisitionContext(UserI user, String projectId, String hotelScanRecordLabel) throws NotFoundException;
 }

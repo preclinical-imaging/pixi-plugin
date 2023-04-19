@@ -102,6 +102,16 @@ public class PixiHotelScanRecordAPI extends AbstractExperimentXapiRestController
         hotelScanRecordService.updateStatus(getSessionUser(), projectId, hotelScanRecordLabel, status);
     }
 
+    @ApiOperation(value = "Split Image Acquisition Contexts")
+    @ApiResponses({@ApiResponse(code = 200, message = "Split Image Acquisition Contexts successfully."),
+                   @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
+                   @ApiResponse(code = 500, message = "Unexpected error")})
+    @XapiRequestMapping(value = "/{hotelScanRecordLabel}/project/{projectId}/split-image-acq-ctx", method = RequestMethod.POST, restrictTo = AccessLevel.Edit)
+    public void splitImageAcqCtx(@PathVariable @Project final String projectId,
+                                 @PathVariable final String hotelScanRecordLabel) throws NotFoundException {
+        hotelScanRecordService.splitImageAcquisitionContext(getSessionUser(), projectId, hotelScanRecordLabel);
+    }
+
     protected HotelSubjectDTO toDTO(final PixiHotelsubjectI hotelSubject, final PixiHotelpositionI hotelPosition) {
         Optional<String> subjectID = Optional.ofNullable(hotelSubject.getSubjectId());
         String subjectLabel = "";

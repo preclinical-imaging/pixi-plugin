@@ -24,7 +24,130 @@ console.log('pixi-editScanRecord.js');
 
         const createHotelUnit = function (i, position) {
             // i = the unit index
-
+            
+            const fastingStatusEl = XNAT.ui.panel.select.single({
+                className: 'stacked',
+                id: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/fasting/fastingStatus',
+                name: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/fasting/fastingStatus',
+                label: 'Fasting Status',
+                description: 'Specify if the subject was fasted or not fasted',
+                options: {
+                    "": '(SELECT)',
+                    "1":'Fasted',
+                    "0":'Not Fasted',
+                },
+            });
+            
+            let fastingDurationEl = XNAT.ui.panel.input({
+                className: 'stacked',
+                name: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/fasting/fastingDuration',
+                label: 'Fasting duration (hours)',
+                description: 'Specify fasting duration in hours'
+            });
+            
+            fastingDurationEl.querySelector('input').disabled = true;
+            
+            const toggleFastingDuration = () => {
+                const fastingStatus = fastingStatusEl.querySelector('select').value;
+                if (fastingStatus === '1') {
+                    document.querySelector('input[name="pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/fasting/fastingDuration"]').disabled = false;
+                } else {
+                    document.querySelector('input[name="pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/fasting/fastingDuration"]').disabled = true;
+                    document.querySelector('input[name="pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/fasting/fastingDuration"]').value = '';
+                }
+            }
+    
+            fastingStatusEl.addEventListener('change', toggleFastingDuration);
+            
+            const heatingConditionsProcedurePhaseEl = XNAT.ui.panel.select.single({
+                className: 'stacked',
+                id: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/heatingConditions[0]/heatingConditions/procedurePhase',
+                name: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/heatingConditions[0]/heatingConditions/procedurePhase',
+                label: 'Heating Conditions Procedure Phase',
+                description: 'Specify the procedure phase for the applied heating conditions',
+                options: {
+                    'Intraoperative': 'Intraoperative',
+                    'Preoperative': 'Preoperative',
+                    'Postoperative': 'Postoperative'
+                }
+            });
+            
+            heatingConditionsProcedurePhaseEl.style.display = 'none';
+            
+            const heatingMethodEl = spawn('div.panel-element.stacked', [
+                spawn('label.element-label|for=\'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/heatingConditions[0]/heatingConditions/heatingMethod\'', 'Heating Method'),
+                spawn('div.element-wrapper', [
+                    spawn('input|list=heatingMethods', {
+                        id: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/heatingConditions[0]/heatingConditions/heatingMethod',
+                        name: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/heatingConditions[0]/heatingConditions/heatingMethod',
+                    }),
+                    spawn('div.description', 'Specify the heating method used on the subject')
+                ])
+            ])
+            
+            const feedbackTemperatureRegulationEl = XNAT.ui.panel.select.single({
+                className: 'stacked',
+                id: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/heatingConditions[0]/heatingConditions/feedbackTemperatureRegulation',
+                name: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/heatingConditions[0]/heatingConditions/feedbackTemperatureRegulation',
+                label: 'Feedback Temperature Regulation',
+                description: 'Specify whether temperature is regulated by feedback from a temperature sensor used to control an active heating or cooling device',
+                options: {
+                    "": '(SELECT)',
+                    "1":'Yes',
+                    "0":'No',
+                },
+            });
+            
+            const temperatureSensorDeviceComponent = spawn('div.panel-element.stacked', [
+                spawn('label.element-label|for=\'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/heatingConditions[0]/heatingConditions/temperatureSensorDeviceComponent\'', 'Temperature Sensor Device Component'),
+                spawn('div.element-wrapper', [
+                    spawn('input|list=temperatureSensorDeviceComponents', {
+                        id: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/heatingConditions[0]/heatingConditions/temperatureSensorDeviceComponent',
+                        name: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/heatingConditions[0]/heatingConditions/temperatureSensorDeviceComponent',
+                    }),
+                    spawn('div.description', 'Specify the temperature sensor device component used')
+                ])
+            ])
+            
+            const setpointTemperatureEl = XNAT.ui.panel.input({
+                className: 'stacked',
+                id: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/heatingConditions[0]/heatingConditions/setpointTemperature',
+                name: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/heatingConditions[0]/heatingConditions/setpointTemperature',
+                label: 'Setpoint Temperature (&#8451;)',
+                description: 'Sensor temperature setpoint, in degrees Celsius'
+            });
+            
+            const anesthesiasEl = spawn('div.panel-element.stacked', [
+                spawn('label.element-label|for=\'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/anesthesias[0]/anesthesia/anesthesia\'', 'Anesthesia Used'),
+                spawn('div.element-wrapper', [
+                    spawn('input|list=anesthesias', {
+                        id : 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/anesthesias[0]/anesthesia/anesthesia',
+                        name: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/anesthesias[0]/anesthesia/anesthesia',
+                    }),
+                    spawn('div.description', 'Specify the anesthesia used on the subject')
+                ])
+            ]);
+            
+            const routeOfAdministrationEl = spawn('div.panel-element.stacked', [
+                spawn('label.element-label|for=\'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/anesthesias[0]/anesthesia/routeOfAdministration\'', 'Route of Administration'),
+                spawn('div.element-wrapper', [
+                    spawn('input|list=routes', {
+                        id: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/anesthesias[0]/anesthesia/routeOfAdministration',
+                        name: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/imageAcquisitionContext/anesthesias[0]/anesthesia/routeOfAdministration',
+                    }),
+                    spawn('div.description', 'Specify the route of administration used for the anesthesia')
+                ])
+            ]);
+            
+            const splitSessionLabelEl = XNAT.ui.panel.input({
+                className: 'stacked',
+                name: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/split_session_label',
+                label: 'Split Session Label',
+                description: 'Specify the split image session label for this subject'
+            });
+            
+            splitSessionLabelEl.style.display = 'none';
+            
             return spawn('div.column', [
                 spawn('div.panel.panel-default.hotel-unit', [
                     spawn('div.panel-body', [
@@ -88,6 +211,20 @@ console.log('pixi-editScanRecord.js');
                             label: 'Activity (mCi)',
                             description: 'Enter units in millicuries'
                         }),
+                        spawn('hr'),
+                        fastingStatusEl,
+                        fastingDurationEl,
+                        spawn('hr'),
+                        heatingConditionsProcedurePhaseEl,
+                        heatingMethodEl,
+                        feedbackTemperatureRegulationEl,
+                        temperatureSensorDeviceComponent,
+                        setpointTemperatureEl,
+                        spawn('hr'),
+                        anesthesiasEl,
+                        routeOfAdministrationEl,
+                        spawn('hr'),
+                        splitSessionLabelEl,
                         XNAT.ui.panel.textarea({
                             className: 'stacked',
                             name: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/notes',
@@ -359,7 +496,7 @@ console.log('pixi-editScanRecord.js');
                     if (!newExperiment){
                         // replace the placeholder session label text with proper label name
                         var selectedSessionId = document.getElementById("pixi:hotelScanRecord/session_label").value;
-                        var selectedSession = sessions.filter((session) => {return session['session_ID'] === selectedSessionId})[0];
+                        var selectedSession = sessions.filter((session) => {return session['label'] === selectedSessionId})[0];
                         $('.selected-session-label').html(selectedSession.label);
                     }
 

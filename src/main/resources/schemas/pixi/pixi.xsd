@@ -14,6 +14,13 @@
     <xs:element name="DrugTherapy" type="pixi:drugTherapyData"/>
     <xs:element name="CaliperMeasurement" type="pixi:caliperMeasurementData"/>
     <xs:element name="AnimalHusbandry" type="pixi:animalHusbandryData"/>
+
+    <xs:element name="ImageAcquisitionContext" type="pixi:imageAcquisitionContextData"/>
+    <xs:element name="ImageAcquisitionContextAssessor" type="pixi:imageAcquisitionContextAssessorData"/>
+    <xs:element name="Fasting" type="pixi:fastingData"/>
+    <xs:element name="Anesthesia" type="pixi:anesthesiaData"/>
+    <xs:element name="HeatingConditions" type="pixi:heatingConditionsData"/>
+
     <xs:element name="Hotel" type="pixi:hotel"/>
     <xs:element name="HotelPosition" type="pixi:hotelPosition"/>
     <xs:element name="HotelSubject" type="pixi:hotelSubject"/>
@@ -359,6 +366,108 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="imageAcquisitionContextAssessorData">
+        <xs:annotation>
+            <xs:documentation>Description of the conditions present during and related to data acquisition for a single imaging procedure.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="xnat:imageAssessorData">
+                <xs:sequence>
+                    <xs:element name="imageAcquisitionContext" type="pixi:imageAcquisitionContextData" minOccurs="0"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="imageAcquisitionContextData">
+        <xs:annotation>
+            <xs:documentation>Description of the conditions present during and related to data acquisition for a single imaging procedure.</xs:documentation>
+        </xs:annotation>
+            <xs:sequence>
+                <xs:element name="fasting" type="pixi:fastingData" minOccurs="0"/>
+                <xs:element name="heatingConditions" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="heatingConditions" type="pixi:heatingConditionsData" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="anesthesias" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="anesthesia" type="pixi:anesthesiaData" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="fastingData">
+        <xs:annotation>
+            <xs:documentation>Information about the fasting status of the subject during the procedure.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="fastingStatus" type="xs:boolean" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Whether the subject was fasting during the procedure.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="fastingDuration" type="xs:decimal" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Duration of the fasting period, in hours.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="heatingConditionsData">
+        <xs:annotation>
+            <xs:documentation>Information about the heating conditions applied to the subject during the procedure.</xs:documentation>
+        </xs:annotation>
+            <xs:sequence>
+                <xs:element name="procedurePhase" type="xs:string" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Phase of the procedure during which the heating conditions were applied (e.g. 'preoperative', 'intraoperative', 'postoperative').</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="heatingMethod" type="xs:string" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Method of heating used (e.g. 'electric blanket', 'heated imaging device', 'unheated').</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="feedbackTemperatureRegulation" type="xs:boolean" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Indicates whether temperature is regulated by feedback from a temperature sensor used to control an active heating or cooling device.</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="temperatureSensorDeviceComponent" type="xs:string" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Device used to measure temperature (e.g. 'rectal temperature', 'thermography', 'carrier temperature sensor').</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="setpointTemperature" type="xs:decimal" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Sensor temperature setpoint, in degrees Celsius.</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="anesthesiaData">
+        <xs:sequence>
+            <xs:element name="anesthesia" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>The anesthesia used during the procedure.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="routeOfAdministration" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>The route of administration of the anesthesia.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
     <xs:complexType name="bliSessionData">
         <xs:annotation>
             <xs:documentation>An event in which BLI scans are obtained on a subject</xs:documentation>
@@ -471,7 +580,6 @@
     </xs:complexType>
     <xs:complexType name="hotelSubject">
         <xs:sequence>
-
             <xs:element name="position" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Subject position in hotel</xs:documentation>
@@ -505,6 +613,11 @@
             <xs:element name="split_session_label" type="xs:string" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation>Session label of the single subject image session</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="imageAcquisitionContext" type="pixi:imageAcquisitionContextData" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>The image acquisition context for this subject.</xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>

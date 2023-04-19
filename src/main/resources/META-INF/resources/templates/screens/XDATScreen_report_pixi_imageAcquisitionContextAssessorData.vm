@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+$page.setTitle("Image Acquisition Context Details")
+$page.setLinkColor($ui.alink)
+$page.setVlinkColor($ui.vlink)
+#if ($turbineUtils.GetPassedParameter("popup", $data))
+	#set ($popup = $turbineUtils.GetPassedParameter("popup", data) )
+	#set ($popup = "false")
+#end
+<TABLE width="100%">
+	<TR>
+		<TD>
+			<table width="100%">
+				<TR>
+					<TD align="left" valign="middle">
+						<font face="$ui.sansSerifFonts" size="3"><b>Image Acquisition Context Details</b></font>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<TABLE width="100%">
+				<TR>
+					<TD valign="top">
+						<TABLE>
+							<TR><TD>Project</TD><TD>$!item.getStringProperty("pixi:imageAcquisitionContextAssessorData/project")</TD></TR>
+							<TR><TD>ID</TD><TD>$!item.getStringProperty("pixi:imageAcquisitionContextAssessorData/ID")</TD></TR>
+							<TR><TD>Label</TD><TD>$!item.getStringProperty("pixi:imageAcquisitionContextAssessorData/label")</TD></TR>
+
+							<TR><TD style="height: 1rem"></TD><TD></TD></TR>
+
+							<!-- Fasting -->
+							<TR><TH align="left" style="padding: 0">Fasting</TH></TR>
+							<TR>
+								<TD>Fasting Status</TD>
+								<TD>
+									#set($fastingStatus = $item.getBooleanProperty("pixi:imageAcquisitionContextAssessorData/imageAcquisitionContext/fasting/fastingStatus"))
+									#if($fastingStatus == true)
+										Fasted
+									#elseif($fastingStatus == false)
+										Not Fasted
+									#else
+										Unknown
+									#end
+								</TD>
+							</TR>
+							<TR>
+								#if($fastingStatus == true)
+									<TD>Fasting Duration</TD>
+									<TD>$!item.getProperty("pixi:imageAcquisitionContextAssessorData/imageAcquisitionContext/fasting/fastingDuration") #if($item.getProperty("pixi:imageAcquisitionContextAssessorData/imageAcquisitionContext/fasting/fastingDuration"))hours#end</TD>
+								#end
+							</TR>
+							<TR><TD style="height: 1rem"></TD><TD></TD></TR>
+
+							<!-- Heating Conditions -->
+							#set($heatingConditions = "pixi:imageAcquisitionContextAssessorData/imageAcquisitionContext/heatingConditions[0]/heatingConditions")
+							<TR><TH align="left" style="padding: 0">Heating Conditions</TH></TR>
+							<TR style="display: none">
+								<TD>Procedure Phase</TD>
+								<TD>$!item.getProperty("$heatingConditions/procedurePhase")</TD>
+							</TR>
+							<TR>
+								<TD>Heating Method</TD>
+								<TD>$!item.getProperty("$heatingConditions/heatingMethod")</TD>
+							</TR>
+							<TR>
+								<TD>Feedback Temperature Regulation</TD>
+								<TD>
+									#set($feedbackTemperatureRegulation = $item.getBooleanProperty("$heatingConditions/feedbackTemperatureRegulation"))
+									#if($feedbackTemperatureRegulation == true)
+										Yes
+									#elseif($feedbackTemperatureRegulation == false)
+										No
+									#else
+										N/A
+									#end
+								</TD>
+							</TR>
+							<TR>
+								<TD>Temperature Sensor Device Component</TD>
+								<TD>$!item.getProperty("$heatingConditions/temperatureSensorDeviceComponent")</TD>
+							</TR>
+							<TR>
+								<TD>Setpoint Temperature</TD>
+								<TD>$!item.getProperty("$heatingConditions/setpointTemperature") #if($item.getProperty("$heatingConditions/setpointTemperature"))&#8451;#end</TD>
+							</TR>
+							<TR><TD style="height: 1rem"></TD><TD></TD></TR>
+
+							<!-- Anesthesia -->
+							#set($anesthesias = "pixi:imageAcquisitionContextAssessorData/imageAcquisitionContext/anesthesias[0]/anesthesia")
+							<TR><TH align="left" style="padding: 0">Anesthesia</TH></TR>
+							<TR>
+								<TD>Anesthesia Used</TD>
+								<TD>$!item.getProperty("$anesthesias/anesthesia")</TD>
+							</TR>
+							<TR>
+								<TD>Route of Administration</TD>
+								<TD>$!item.getProperty("$anesthesias/routeOfAdministration")</TD>
+							</TR>
+							<TR><TD style="height: 1rem"></TD><TD></TD></TR>
+
+							<!-- Notes -->
+							<TR><TH align="left" style="padding: 0">Notes</TH></TR>
+							<TR><TD>$!item.getStringProperty("pixi:imageAcquisitionContextAssessorData/note")</TD></TR>
+
+						</TABLE>
+					</TD>
+					<TD valign="top" align="right">
+						#parse($turbineUtils.getTemplateName("actions",$om.getXSIType(),$project))
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+</TABLE>

@@ -37,6 +37,108 @@
     ["PFDL","Posterior First-Decubitus Left"]
     ])
 
+#set($heatingMethods = [
+    "Air heating pad",
+    "Electric blanket",
+    "Electric heating pad",
+    "Forced air heater",
+    "Forced air warming blanket",
+    "Heated imaging device",
+    "Heated patient support",
+    "Heated water blanket",
+    "Heat lamp",
+    "Non-electric heating pad",
+    "Pre-heated pad",
+    "Unheated",
+    "Warmer device",
+    "Warming blanket"
+])
+
+#set($temperatureSensorDeviceComponents = [
+    "Rectal temperature",
+    "Thermography",
+    "Carrier temperature sensor"
+])
+
+#set($anesthesias = [
+    "Alphachloralose",
+    "Alphadolone",
+    "Alphaxalone",
+    "Azaperone",
+    "Butabarbital",
+    "Chloral hydrate",
+    "Diazepam",
+    "Droperidol",
+    "Etomidate",
+    "Fluanisone",
+    "Ketamine",
+    "Methohexital",
+    "Metomidate",
+    "Midazolam",
+    "Pentobarbital",
+    "Propofol",
+    "Thiamylal",
+    "Thiopental",
+    "Tiletamine",
+    "Tribromoethanol",
+    "Urethane (ethyl carbamate)",
+    "Xylazine",
+    "Zolazepam",
+
+    "Carbon dioxide",
+    "Chloroform",
+    "Desflurane",
+    "Diethyl ether",
+    "Enflurane",
+    "Halothane",
+    "Isoflurane",
+    "Methoxyflurane",
+    "Nitrous oxide",
+    "Sevoflurane",
+
+    "Acepromazine",
+    "Chlorpromazine",
+
+    "Succinylcholine",
+    "Pancuronium",
+
+    "Bupivacaine",
+    "Lidocaine + Prilocaine",
+    "Lidocaine"
+])
+
+#set($routes = [
+    "Intraperitoneal route",
+    "By inhalation",
+    "Intravenous route",
+    "Per rectum",
+    "Intramuscular route"
+])
+
+<datalist id="heatingMethods">
+    #foreach($val in $heatingMethods)
+    <option value="$val">
+    #end
+</datalist>
+
+<datalist id="temperatureSensorDeviceComponents">
+    #foreach($val in $temperatureSensorDeviceComponents)
+    <option value="$val">
+    #end
+</datalist>
+
+<datalist id="anesthesias">
+    #foreach($val in $anesthesias)
+    <option value="$val">
+    #end
+</datalist>
+
+<datalist id="routes">
+    #foreach($val in $routes)
+    <option value="$val">
+    #end
+</datalist>
+
 #macro (pixiTimeBox $name $item $defaultValue $vr)
 <!-- macro: pixiTimeBox -->
     #if ($vr)
@@ -264,6 +366,33 @@
         #xdatHiddenBox("pixi:hotelScanRecord/hotel" $item "")
     #end
 
+    <style>
+        .template-selector {
+            margin: 0 10px 0 0;
+        }
+    </style>
+
+    <h4>Apply Fasting / Heating / Anesthesia Templates (Optional)</h4>
+
+    <label for="fasting-template-selector">Fasting</label>
+    <select class="template-selector" id="fasting-template-selector">
+        <option>Select Template</option>
+    </select>
+
+    <label for="heating-template-selector">Heating</label>
+    <select class="template-selector" id="heating-template-selector">
+        <option>Select Template</option>
+    </select>
+
+    <label for="anesthesia-template-selector">Anesthesia</label>
+    <select class="template-selector" id="anesthesia-template-selector">
+        <option>Select Template</option>
+    </select>
+
+    <button class="btn btn-sm" type="button" id="apply-templates">Apply</button>
+
+    <p>Note: These templates will only be applied to non-empty hotel positions.</p>
+
     <div id="hotel-units" class="column-container col-2">
         #if($om.getId())
 
@@ -329,6 +458,128 @@
 
                         </div>
 
+                        <hr>
+
+                        <!-- Fasting -->
+                        <div class="panel-element stacked">
+                            <label class="element-label" for="pixi:hotelScanRecord/hotel_subjects/subject[$i]/imageAcquisitionContext/fasting/fastingStatus">
+                                Fasting Status
+                            </label>
+                            <div class="element-wrapper">
+                                <select name="pixi:hotelScanRecord/hotel_subjects/subject[$i]/imageAcquisitionContext/fasting/fastingStatus" id="pixi:hotelScanRecord/hotel_subjects/subject[$i]/imageAcquisitionContext/fasting/fastingStatus">
+                                    <option value="">(SELECT)</option>
+                                    <option value="1" #if($item.getProperty("pixi:hotelScanRecord/hotel_subjects/subject[$i]/imageAcquisitionContext/fasting/fastingStatus") == "1") selected #end>Fasted</option>
+                                    <option value="0" #if($item.getProperty("pixi:hotelScanRecord/hotel_subjects/subject[$i]/imageAcquisitionContext/fasting/fastingStatus") == "0") selected #end>Not Fasted</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="panel-element stacked">
+                            <label class="element-label" for="pixi:hotelScanRecord/hotel_subjects/subject[$i]/imageAcquisitionContext/fasting/fastingDuration">
+                                Fasting Duration (hours)
+                            </label>
+                            <div class="element-wrapper">
+                                #xdatTextBox("pixi:hotelScanRecord/hotel_subjects/subject[$i]/imageAcquisitionContext/fasting/fastingDuration" $item "" $vr)
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Heating Conditions -->
+                        #set($heatingConditions = "pixi:hotelScanRecord/hotel_subjects/subject[" + $i + "]/imageAcquisitionContext/heatingConditions[0]/heatingConditions")
+
+                        <div class="panel-element stacked" style="display: none">
+                            <label class="element-label" for="pixi:hotelScanRecord/hotel_subjects/subject[$i]/imageAcquisitionContext/heatingConditions[0]/heatingConditions">
+                                Heating Conditions Procedure Phase
+                            </label>
+                            <div class="element-wrapper">
+                                <select name="$heatingConditions/procedurePhase" value="$item.getProperty("$heatingConditions/procedurePhase")">
+                                    <option value="Intraoperative" #if($item.getProperty("$heatingConditions/procedurePhase") == "Intraoperative") selected #end>Intraoperative</option>
+                                    <option value="Preoperative" #if($item.getProperty("$heatingConditions/procedurePhase") == "Preoperative") selected #end>Preoperative</option>
+                                    <option value="Postoperative" #if($item.getProperty("$heatingConditions/procedurePhase") == "Postoperative") selected #end>Postoperative</option>
+                                    <option value="" #if($item.getProperty("$heatingConditions/procedurePhase") == "") selected #end></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="panel-element stacked">
+                            <label class="element-label" for="$heatingConditions/heatingMethod">
+                                Heating Method
+                            </label>
+                            <div class="element-wrapper">
+                                <input list="heatingMethods"
+                                       class="form-control"
+                                       id="$heatingConditions/heatingMethod"
+                                       name="$heatingConditions/heatingMethod"
+                                       value="$!item.getProperty("$heatingConditions/heatingMethod")">
+                            </div>
+                        </div>
+
+                        <div class="panel-element stacked">
+                            <label class="element-label" for="$heatingConditions/feedbackTemperatureRegulation">
+                                Feedback Temperature Regulation
+                            </label>
+                            <div class="element-wrapper">
+                                <select name="$heatingConditions/feedbackTemperatureRegulation" id="$heatingConditions/feedbackTemperatureRegulation">
+                                    <option value="">(SELECT)</option>
+                                    <option value="1" #if($item.getProperty("$heatingConditions/feedbackTemperatureRegulation") == "1") selected #end>Yes</option>
+                                    <option value="0" #if($item.getProperty("$heatingConditions/feedbackTemperatureRegulation") == "0") selected #end>No</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="panel-element stacked">
+                            <label class="element-label" for="$heatingConditions/temperatureSensorDeviceComponent">
+                                Temperature Sensor Device Component
+                            </label>
+                            <div class="element-wrapper">
+                                <input list="temperatureSensorDeviceComponents"
+                                       id="$heatingConditions/temperatureSensorDeviceComponent"
+                                       name="$heatingConditions/temperatureSensorDeviceComponent"
+                                       value="$!item.getProperty("$heatingConditions/temperatureSensorDeviceComponent")">
+                            </div>
+                        </div>
+
+                        <div class="panel-element stacked">
+                            <label class="element-label" for="$heatingConditions/setpointTemperature">
+                                Setpoint Temperature (&#8451;)
+                            </label>
+                            <div class="element-wrapper">
+                                #xdatTextBox("$heatingConditions/setpointTemperature" $item "" $vr)
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Anesthesia -->
+                        #set($anesthesias = "pixi:hotelScanRecord/hotel_subjects/subject[" + $i + "]/imageAcquisitionContext/anesthesias[0]/anesthesia")
+
+                        <div class="panel-element stacked">
+                            <label class="element-label" for="$anesthesias/anesthesia">
+                                Anesthesia Used
+                            </label>
+                            <div class="element-wrapper">
+                                <input list="anesthesias"
+                                       id="$anesthesias/anesthesia"
+                                       name="$anesthesias/anesthesia"
+                                       value="$!item.getProperty("$anesthesias/anesthesia")">
+                            </div>
+                        </div>
+
+                        <div class="panel-element stacked">
+                            <label class="element-label" for="$anesthesias/routeOfAdministration">
+                                Route of Administration
+                            </label>
+                            <div class="element-wrapper">
+                                <input list="routes"
+                                       id="$anesthesias/routeOfAdministration"
+                                       name="$anesthesias/routeOfAdministration"
+                                       value="$!item.getProperty("$anesthesias/routeOfAdministration")">
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Notes -->
                         <div class="panel-element stacked">
                             <label class="element-label" for="pixi:hotelScanRecord/hotel_subjects/subject[$i]/notes">
                                 Notes
@@ -338,6 +589,16 @@
                                               id="pixi:hotelScanRecord/hotel_subjects/subject[$i]/notes"
                                               name="pixi:hotelScanRecord/hotel_subjects/subject[$i]/notes"
                                     >$!item.getProperty("pixi:hotelScanRecord/hotel_subjects/subject[$i]/notes")</textarea>
+                            </div>
+                        </div>
+
+                        <!-- Split Session Label -->
+                        <div class="panel-element stacked" style="display: none">
+                            <label class="element-label" for="pixi:hotelScanRecord/hotel_subjects/subject[$i]/split_session_label">
+                                Split Session Label
+                            </label>
+                            <div class="element-wrapper">
+                                #xdatTextBox("pixi:hotelScanRecord/hotel_subjects/subject[$i]/split_session_label" $item "" $vr)
                             </div>
                         </div>
                     </div>
@@ -388,6 +649,192 @@
     XNAT.plugin.pixi.setLabel("$presetSessionLabel")
 </script>
 #end
+
+<script>
+    const numSubjects = $subjects.size();
+
+    const toggleFastingStatus = (i) => {
+        const fastingStatus = document.querySelector(`input[name="pixi:hotelScanRecord/hotel_subjects/subject[${i}]/imageAcquisitionContext/fasting/fastingStatus"]:checked`).value;
+        const fastingDuration = document.querySelector(`input[name="pixi:hotelScanRecord/hotel_subjects/subject[${i}]/imageAcquisitionContext/fasting/fastingDuration"]`);
+        if (fastingStatus === "1") {
+            fastingDuration.disabled = false;
+        } else {
+            fastingDuration.disabled = true;
+            fastingDuration.value = "";
+        }
+    }
+
+    // Add event listeners to all fasting status radio buttons
+    // Not sure how many hotel subjects there will be, so we'll just loop through 10
+    for (let i = 0; i < 10; i++) {
+        document.querySelectorAll(`input[name="pixi:hotelScanRecord/hotel_subjects/subject[${i}]/imageAcquisitionContext/fasting/fastingStatus"]`).forEach((el) => {
+            toggleFastingStatus(i);
+            el.addEventListener("change", () => toggleFastingStatus(i))
+        });
+    }
+</script>
+
+<script src="$content.getURI("scripts/xnat/plugin/pixi/pixi-imageAcqCtx.js")"></script>
+<script>
+
+    const fastingTemplateSelector = document.querySelector("#fasting-template-selector");
+    const anesthesiaTemplateSelector = document.querySelector("#anesthesia-template-selector");
+    const heatingConditionsSelector = document.querySelector("#heating-template-selector");
+
+    const scope = XNAT.data.context.project ? 'Project' : 'Site';
+    const entityId = XNAT.data.context.project || null;
+
+    XNAT.plugin.pixi.imageAcqCtx.fasting.get(scope, entityId).then((config) => {
+        config['fastingTemplates'].forEach(template => {
+            fastingTemplateSelector[fastingTemplateSelector.options.length] = new Option(template['name'], template['name'], false, template['defaultTemplate']);
+        })
+    });
+
+    XNAT.plugin.pixi.imageAcqCtx.anesthesia.get(scope, entityId).then((config) => {
+        config['anesthesiaTemplates'].forEach(template => {
+            anesthesiaTemplateSelector[anesthesiaTemplateSelector.options.length] = new Option(template['name'], template['name'], false, template['defaultTemplate']);
+        })
+    });
+
+    XNAT.plugin.pixi.imageAcqCtx.heatingConditions.get(scope, entityId).then((config) => {
+        config['templates'].forEach(template => {
+            heatingConditionsSelector[heatingConditionsSelector.options.length] = new Option(template['name'], template['name'], false, template['defaultTemplate']);
+        })
+    });
+
+    const getHotelPosition = (el) => {
+        const match = el.name.match(/subject\[(\d+)\]/);
+        if (match) {
+            return match[1];
+        }
+        return null;
+    }
+
+    const handleFastingTemplateChange = () => {
+        const fastingTemplate = fastingTemplateSelector.value;
+        if (fastingTemplate.length > 0) {
+            XNAT.plugin.pixi.imageAcqCtx.fasting.get(scope, entityId).then((fastingConfig) => {
+                const fastingTemplate = fastingConfig['fastingTemplates'].find(fastingTemplate => fastingTemplate['name'] === fastingTemplateSelector.value);
+
+                // populate empty hotel positions
+                const nonemptyHotelPositions = [];
+                document.querySelectorAll('select[name*=subject_id]').forEach((el) => {
+                    if (el.value !== '') {
+                        nonemptyHotelPositions.push(getHotelPosition(el));
+                    }
+                });
+
+                document.querySelectorAll(`select[id*=fastingStatus]`).forEach((el) => {
+                    if (nonemptyHotelPositions.includes(getHotelPosition(el))) {
+                        if (fastingTemplate['fasting']['fastingStatus']) {
+                            el.value = 1;
+                        } else if (!fastingTemplate['fasting']['fastingStatus']) {
+                            el.value = 0;
+                        } else {
+                            el.value = "";
+                        }
+                    }
+                });
+
+                document.querySelectorAll(`input[id*=fasting-duration],input[id*=fastingDuration]`).forEach((el) => {
+                    if (nonemptyHotelPositions.includes(getHotelPosition(el))) {
+                        if (fastingTemplate['fasting']['fastingStatus']) {
+                            el.disabled = false;
+                            el.value = fastingTemplate['fasting']['fastingDuration'];
+                        } else {
+                            el.disabled = true;
+                            el.value = "";
+                        }
+                    }
+                });
+            });
+        }
+    }
+
+    const handleAnesthesiaTemplateChange = () => {
+        const anesthesiaTemplate = anesthesiaTemplateSelector.value;
+        if (anesthesiaTemplate.length > 0) {
+            XNAT.plugin.pixi.imageAcqCtx.anesthesia.get(scope, entityId).then((anesthesiaConfig) => {
+                const anesthesiaTemplate = anesthesiaConfig['anesthesiaTemplates'].find(anesthesiaTemplate => anesthesiaTemplate['name'] === anesthesiaTemplateSelector.value);
+
+                // populate empty hotel positions
+                const nonemptyHotelPositions = [];
+                document.querySelectorAll('select[name*=subject_id]').forEach((el) => {
+                    if (el.value !== '') {
+                        nonemptyHotelPositions.push(getHotelPosition(el));
+                    }
+                });
+
+                document.querySelectorAll(`input[id$=anesthesia]`).forEach((el) => {
+                    if (nonemptyHotelPositions.includes(getHotelPosition(el))) {
+                        el.value = anesthesiaTemplate['anesthesia']['anesthesia'];
+                    }
+                });
+                document.querySelectorAll(`input[id*=routeOfAdministration]`).forEach((el) => {
+                    if (nonemptyHotelPositions.includes(getHotelPosition(el))) {
+                        el.value = anesthesiaTemplate['anesthesia']['routeOfAdministration'];
+                    }
+                });
+            });
+        }
+    }
+
+    const handleHeatingConditionsTemplateChange = () => {
+        const heatingConditionsTemplate = heatingConditionsSelector.value;
+        if (heatingConditionsTemplate.length > 0) {
+            XNAT.plugin.pixi.imageAcqCtx.heatingConditions.get(scope, entityId).then((heatingConditionsConfig) => {
+                const heatingConditionsTemplate = heatingConditionsConfig['templates'].find(heatingConditionsTemplate => heatingConditionsTemplate['name'] === heatingConditionsSelector.value);
+
+                // populate empty hotel positions
+                const nonemptyHotelPositions = [];
+                document.querySelectorAll('select[name*=subject_id]').forEach((el) => {
+                    if (el.value !== '') {
+                        nonemptyHotelPositions.push(getHotelPosition(el));
+                    }
+                });
+
+                document.querySelectorAll(`select[name*=procedurePhase]`).forEach((el) => {
+                    if (nonemptyHotelPositions.includes(getHotelPosition(el))) {
+                        el.value = heatingConditionsTemplate['heatingConditions']['procedurePhase'];
+                    }
+                });
+                document.querySelectorAll(`input[id*=heatingMethod]`).forEach((el) => {
+                    if (nonemptyHotelPositions.includes(getHotelPosition(el))) {
+                        el.value = heatingConditionsTemplate['heatingConditions']['heatingMethod'];
+                    }
+                });
+                document.querySelectorAll(`select[id*=feedbackTemperatureRegulation]`).forEach((el) => {
+                    if (nonemptyHotelPositions.includes(getHotelPosition(el))) {
+                        el.value =
+                                heatingConditionsTemplate['heatingConditions']['feedbackTemperatureRegulation'] === true ? '1' :
+                                        heatingConditionsTemplate['heatingConditions']['feedbackTemperatureRegulation'] === false ? '0' :
+                                                '';
+                    }
+                });
+                document.querySelectorAll(`input[id*=temperatureSensorDeviceComponent]`).forEach((el) => {
+                    if (nonemptyHotelPositions.includes(getHotelPosition(el))) {
+                        el.value = heatingConditionsTemplate['heatingConditions']['temperatureSensorDeviceComponent'];
+                    }
+                });
+                document.querySelectorAll(`input[id*=setpointTemperature]`).forEach((el) => {
+                    if (nonemptyHotelPositions.includes(getHotelPosition(el))) {
+                        el.value = heatingConditionsTemplate['heatingConditions']['setpointTemperature'] ? heatingConditionsTemplate['heatingConditions']['setpointTemperature'] : '';
+                    }
+                });
+            });
+        }
+    }
+
+    const applyTemplates = () => {
+        handleFastingTemplateChange();
+        handleAnesthesiaTemplateChange();
+        handleHeatingConditionsTemplateChange();
+    }
+
+    const applyButton = document.getElementById('apply-templates');
+    applyButton.addEventListener('click', applyTemplates);
+
+</script>
 
 <script type="text/javascript">
 	function validateForm()

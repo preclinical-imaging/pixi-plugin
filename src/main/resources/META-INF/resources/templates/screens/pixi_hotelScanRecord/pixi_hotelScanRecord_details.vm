@@ -159,11 +159,73 @@
                             <td>$!subject.getProperty("activity")</td>
                         </tr>
                         <tr>
+                            <td colspan="2"><hr style="margin: 0"></td>
+                        </tr>
+                        <tr>
+                            <th>Fasting Status</th>
+                            <td>
+                                #if($!subject.getBooleanProperty("imageAcquisitionContext/fasting/fastingStatus") == true)
+                                    Fasting
+                                #elseif($!subject.getBooleanProperty("imageAcquisitionContext/fasting/fastingStatus") == false)
+                                    Not Fasting
+                                #end
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Fasting Duration</th>
+                            <td>$!subject.getProperty("imageAcquisitionContext/fasting/fastingDuration") #if($!subject.getProperty("imageAcquisitionContext/fasting/fastingDuration"))hours#end</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><hr style="margin: 0"></td>
+                        </tr>
+                        #set($heatingConditions = "imageAcquisitionContext/heatingConditions[0]/heatingConditions")
+                        <tr style="display: none">
+                            <th>Heating Conditions Procedure Phase</th>
+                            <TD>$!subject.getProperty("$heatingConditions/procedurePhase")</TD>
+                        </tr>
+                        <tr>
+                            <th>Heating Method</th>
+                            <TD>$!subject.getProperty("$heatingConditions/heatingMethod")</TD>
+                        </tr>
+                        <tr>
+                            <th>Feedback Temperature Regulation</th>
+                            <td>
+                                #if($subject.getBooleanProperty("$heatingConditions/feedbackTemperatureRegulation") == true)
+                                    Yes
+                                #elseif($subject.getBooleanProperty("$heatingConditions/feedbackTemperatureRegulation") == false)
+                                    No
+                                #end
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Temperature Sensor Device Component</th>
+                            <td>$!subject.getProperty("$heatingConditions/temperatureSensorDeviceComponent")</td>
+                        </tr>
+                        <tr>
+                            <th>Setpoint Temperature</th>
+                            <td>$!subject.getProperty("$heatingConditions/setpointTemperature") #if($!subject.getProperty("$heatingConditions/setpointTemperature"))&#8451;#end</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><hr style="margin: 0"></td>
+                        </tr>
+                        #set($anesthesias = "imageAcquisitionContext/anesthesias[0]/anesthesia")
+                        <tr>
+                            <th>Anesthesia Used</th>
+                            <TD>$!subject.getProperty("$anesthesias/anesthesia")</TD>
+                        </tr>
+                        <tr>
+                            <th>Route of Administration</th>
+                            <td>$!subject.getProperty("$anesthesias/routeOfAdministration")</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><hr style="margin: 0"></td>
+                        </tr>
+                        <tr>
                             <th>Notes</th>
                             <td>$!subject.getProperty("notes")</td>
                         </tr>
                         #set($splitSessionLabel = $!subject.getProperty("split_session_label"))
-                        #if ($splitSessionLabel)
+                        #if ($!subject.getProperty("split_session_label"))
                             <tr>
                                 <th class="left">Split Image Session</th>
                                 <td><a href="$content.getURI("/data/projects/${project}/experiments/${splitSessionLabel}?format=html")" class="insert-session-label">$splitSessionLabel</td>

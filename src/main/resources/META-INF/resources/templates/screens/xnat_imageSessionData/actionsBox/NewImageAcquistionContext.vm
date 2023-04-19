@@ -1,0 +1,9 @@
+<!-- BEGIN pixi-plugin templates/screens/xnat_imageSessionData/NewImageAcquisitionContext.vm -->
+
+#if($data.getSession().getAttribute("userHelper").canEdit("xnat:experimentData/project", $om.getProject()))
+    <li class="yuimenuitem" id="add-iac">
+        <a class="yuimenuitemlabel" href="$link.setPage("XDATScreen_edit_pixi_imageAcquisitionContextAssessorData.vm").addPathInfo('project',$om.getProject()).addPathInfo('subject',$om.getSubjectId()).addPathInfo('experiment',$om.getId())">Record Image Acq Context</a>
+    </li>
+#end
+
+<!-- END pixi-plugin templates/screens/xnat_imageSessionData/NewImageAcquisitionContext.vm -->

@@ -59,6 +59,10 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.DEFAULT_DIGITS;
                                          singular = "Animal Husbandry",
                                          plural = "Animal Husbandry",
                                          code = "AH"),
+                             @XnatDataModel(value = PixiImageacquisitioncontextassessordata.SCHEMA_ELEMENT_NAME,
+                                         singular = "Image Acquisition Context",
+                                         plural = "Image Acquisition Contexts",
+                                         code = "IAC"),
 //                          @XnatDataModel(value = PixiBlisessiondata.SCHEMA_ELEMENT_NAME,
 //                                         singular = "BLI Session",
 //                                         plural = "BLI Sessions",
@@ -78,7 +82,9 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.DEFAULT_DIGITS;
                 "org.nrg.xnatx.plugins.pixi.hotelsplitter.eventservice.actions",
                 "org.nrg.xnatx.plugins.pixi.preferences",
                 "org.nrg.xnatx.plugins.pixi.bli.helpers",
-                "org.nrg.xnatx.plugins.pixi.bli.helpers.impl"
+                "org.nrg.xnatx.plugins.pixi.bli.helpers.impl",
+                "org.nrg.xnatx.plugins.pixi.imageAcqCtx.rest",
+                "org.nrg.xnatx.plugins.pixi.imageAcqCtx.services.impl",
 })
 @Slf4j
 public class PIXIPlugin {
