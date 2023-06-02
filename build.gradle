@@ -133,18 +133,3 @@ jar {
         }
     }
 }
-
-// This task is used to copy the JAR file to a specified location. It's used primarily for development.
-// To use it, run the following command:
-// ./gradlew clean jar deploy-to -PfilePath=/path/to/your/xnat/plugins
-tasks.register("deploy-to", Copy) {
-    dependsOn jar
-    def filePath = project.findProperty('filePath')
-    if (filePath) {
-        from jar
-        into filePath
-        println "Copying JAR file to: $filePath"
-    } else {
-        throw new GradleException("You must specify a file path to copy the JAR file to.")
-    }
-}
