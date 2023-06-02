@@ -5,4 +5,128 @@
 <script src="$content.getURI("/scripts/xnat/plugin/pixi/pixi-demographicDataPreference.js")"></script>
 <script src="$content.getURI("/scripts/xnat/plugin/pixi/pixi-quick-search.js")"></script>
 
+<script>
+
+    // Updates the readable counts description on the home page
+    // The Xnat readable counts are site wide, and the Pixi readable counts are user specific.
+    // The Xnat readable counts are hidden by default, and the Pixi readable counts are shown by default.
+    let readableCountManager = async () => {
+        // There is no way to get the Xnat readable counts without parsing the html. There is no id or class on the div.
+        let layout_content = document.getElementById('layout_content');
+
+        if (layout_content) {
+            let divs = layout_content.getElementsByTagName('div');
+            for (let i = 0; i < divs.length; i++) {
+                if (divs[i].innerText.includes('currently contains')) {
+                    // add class to div
+                    divs[i].classList.add('site_wide_readable_count');
+                    divs[i].style.display = 'none';
+                    // create new empty pixi readable count div
+                    let pixi_readable_count = spawn('div#user_readable_count');
+                    // insert pixi readable count div after xnat readable count div
+                    divs[i].parentNode.insertBefore(pixi_readable_count, divs[i].nextSibling);
+                    break; // stop looping through divs after finding the div with the xnat readable counts
+                }
+
+                if (i === divs.length - 1) {
+                    console.error('Could not find div with site wide readable counts');
+                    throw new Error('Could not find div with site wide readable counts');
+                }
+            }
+        }
+
+        let showSiteWideReadableCounts = () => {
+            document.querySelector('.site_wide_readable_count').style.display = 'block';
+        }
+
+        let hideSiteWideReadableCounts = () => {
+            document.querySelector('.site_wide_readable_count').style.display = 'none';
+        }
+
+        let showUserReadableCounts = () => {
+            document.querySelector('#user_readable_count').style.display = 'block';
+        }
+
+        let hideUserReadableCounts = () => {
+            document.querySelector('#user_readable_count').style.display = 'none';
+        }
+
+        let getReadableCounts = async () => {
+            let url = XNAT.url.restUrl('/xapi/readable-counts');
+
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {'Content-Type': 'application/json'}
+            })
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            return response.json();
+        }
+
+        let writeUserReadableCounts = async () => {
+            getReadableCounts().then((readableCounts) => {
+                let projectCount =      readableCounts['xnat:projectData']      ? readableCounts['xnat:projectData'] : 0;
+                let subjectCount =      readableCounts['xnat:subjectData']      ? readableCounts['xnat:subjectData'] : 0;
+                let imageSessionCount = readableCounts['xnat:imageSessionData'] ? readableCounts['xnat:imageSessionData'] : 0;
+
+                let projectCountStr =      projectCount === 1      ? `${projectCount} project` : `${projectCount} projects`;
+                let subjectCountStr =      subjectCount === 1      ? `${subjectCount} subject` : `${subjectCount} subjects`;
+                let imageSessionCountStr = imageSessionCount === 1 ? `${imageSessionCount} image session` : `${imageSessionCount} image sessions`;
+
+                let pixi_readable_count = document.querySelector('#user_readable_count');
+                pixi_readable_count.innerText = `You have access to ${projectCountStr} within ${XNAT.app.siteId}, encompassing ${subjectCountStr} and ${imageSessionCountStr}.`;
+            })
+        }
+
+        let refresh = () => {
+            writeUserReadableCounts()
+                    .then(() => {
+                        XNAT.plugin.pixi.getPreference('uiShowUserReadableCounts')
+                            .then(preference => preference['uiShowUserReadableCounts'])
+                            .then(uiShowUserReadableCounts => {
+                                if (uiShowUserReadableCounts) {
+                                    showUserReadableCounts();
+                                } else {
+                                    hideUserReadableCounts();
+                                }
+                            })
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        hideUserReadableCounts();
+                    });
+
+            XNAT.plugin.pixi.getPreference('uiHideSiteWideCounts')
+                .then(preference => preference['uiHideSiteWideCounts'])
+                .then(uiHideSiteWideCounts => {
+                    if (uiHideSiteWideCounts) {
+                        hideSiteWideReadableCounts();
+                    } else {
+                        showSiteWideReadableCounts();
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    showSiteWideReadableCounts();
+                });
+        }
+
+        return {
+            showSiteWideReadableCounts,
+            hideSiteWideReadableCounts,
+            showUserReadableCounts,
+            hideUserReadableCounts,
+            writeUserReadableCounts,
+            refresh
+        }
+    }
+
+    readableCountManager().then(rcm => {
+        rcm.refresh();
+    });
+</script>
+
 <!-- END quick_search/plugins/post/QuickSearchPixiSubject.vm -->

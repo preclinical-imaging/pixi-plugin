@@ -85,6 +85,7 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.DEFAULT_DIGITS;
                 "org.nrg.xnatx.plugins.pixi.bli.helpers.impl",
                 "org.nrg.xnatx.plugins.pixi.imageAcqCtx.rest",
                 "org.nrg.xnatx.plugins.pixi.imageAcqCtx.services.impl",
+                "org.nrg.xnatx.plugins.pixi.rest",
 })
 @Slf4j
 public class PIXIPlugin {

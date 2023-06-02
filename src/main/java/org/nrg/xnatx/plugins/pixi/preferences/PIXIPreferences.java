@@ -32,6 +32,8 @@ public class PIXIPreferences extends AbstractPreferenceBean {
     public static final String SPECIES_PREFERENCE_ID =  "species";
     public static final String VENDOR_PREFERENCE_ID =  "vendors";
     public static final String UI_SHOW_HUMAN_SEARCH_FIELDS_PREFERENCE_ID =  "uiShowHumanSearchFields";
+    public static final String UI_SHOW_USER_READABLE_COUNTS_PREFERENCE_ID =  "uiShowUserReadableCounts";
+    public static final String UI_HIDE_SITE_WIDE_COUNTS_PREFERENCE_ID =  "uiHideSiteWideCounts";
 
     private static final List<String> demographicDataImpls = new ArrayList<>();
     static {
@@ -136,6 +138,32 @@ public class PIXIPreferences extends AbstractPreferenceBean {
             setBooleanValue(uiShowHumanSearchFields, UI_SHOW_HUMAN_SEARCH_FIELDS_PREFERENCE_ID);
         } catch (InvalidPreferenceName e) {
             log.error("Invalid preference name 'uiShowHumanSearchFields': something is very wrong here.", e);
+        }
+    }
+
+    @NrgPreference(defaultValue = "true")
+    public Boolean getUiShowUserReadableCounts() {
+        return getBooleanValue(UI_SHOW_USER_READABLE_COUNTS_PREFERENCE_ID);
+    }
+
+    public void setUiShowUserReadableCounts(final Boolean uiShowUserReadableCounts) {
+        try {
+            setBooleanValue(uiShowUserReadableCounts, UI_SHOW_USER_READABLE_COUNTS_PREFERENCE_ID);
+        } catch (InvalidPreferenceName e) {
+            log.error("Invalid preference name 'uiShowUserReadableCounts': something is very wrong here.", e);
+        }
+    }
+
+    @NrgPreference(defaultValue = "true")
+    public Boolean getUiHideSiteWideCounts() {
+        return getBooleanValue(UI_HIDE_SITE_WIDE_COUNTS_PREFERENCE_ID);
+    }
+
+    public void setUiHideSiteWideCounts(final Boolean uiHideSiteWideCounts) {
+        try {
+            setBooleanValue(uiHideSiteWideCounts, UI_HIDE_SITE_WIDE_COUNTS_PREFERENCE_ID);
+        } catch (InvalidPreferenceName e) {
+            log.error("Invalid preference name 'uiHideSiteWideCounts': something is very wrong here.", e);
         }
     }
 

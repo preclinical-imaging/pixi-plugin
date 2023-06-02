@@ -68,6 +68,8 @@ public class PIXIPreferencesAPI extends AbstractXapiRestController {
         preferences.put(PIXIPreferences.VENDOR_PREFERENCE_ID  , pixiPreferences.getVendors());
         preferences.put(PIXIPreferences.DEMOGRAPHIC_DATA_IMPL_PREFERENCE_ID  , pixiPreferences.getDemographicDataImpl());
         preferences.put(PIXIPreferences.UI_SHOW_HUMAN_SEARCH_FIELDS_PREFERENCE_ID  , pixiPreferences.getUiShowHumanSearchFields());
+        preferences.put(PIXIPreferences.UI_SHOW_USER_READABLE_COUNTS_PREFERENCE_ID, pixiPreferences.getUiShowUserReadableCounts());
+        preferences.put(PIXIPreferences.UI_HIDE_SITE_WIDE_COUNTS_PREFERENCE_ID, pixiPreferences.getUiHideSiteWideCounts());
 
         return preferences;
     }
@@ -131,6 +133,14 @@ public class PIXIPreferencesAPI extends AbstractXapiRestController {
             }
             case (PIXIPreferences.UI_SHOW_HUMAN_SEARCH_FIELDS_PREFERENCE_ID): {
                 value = pixiPreferences.getUiShowHumanSearchFields();
+                break;
+            }
+            case (PIXIPreferences.UI_SHOW_USER_READABLE_COUNTS_PREFERENCE_ID): {
+                value = pixiPreferences.getUiShowUserReadableCounts();
+                break;
+            }
+            case (PIXIPreferences.UI_HIDE_SITE_WIDE_COUNTS_PREFERENCE_ID): {
+                value = pixiPreferences.getUiHideSiteWideCounts();
                 break;
             }
             default:
