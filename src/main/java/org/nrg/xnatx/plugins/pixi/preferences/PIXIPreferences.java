@@ -141,7 +141,7 @@ public class PIXIPreferences extends AbstractPreferenceBean {
         }
     }
 
-    @NrgPreference(defaultValue = "true")
+    @NrgPreference(defaultValue = "false")
     public Boolean getUiShowUserReadableCounts() {
         return getBooleanValue(UI_SHOW_USER_READABLE_COUNTS_PREFERENCE_ID);
     }
