@@ -133,3 +133,10 @@ jar {
         }
     }
 }
+
+tasks.register('deploy-jar', Copy) {
+    description = "Copies the JAR file to a specified location. Requires the 'filePath' property to be set. Example: ./gradlew clean jar deploy-jar -PfilePath=/path/to/destination"
+    from jar
+    into project.findProperty('filePath')
+}
+
