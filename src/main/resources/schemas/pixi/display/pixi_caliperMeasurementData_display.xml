@@ -77,7 +77,7 @@
     <DisplayField id="PROJECT" header="Project" visible="true" searchable="true" data-type="string">
         <DisplayFieldElement name="Field1" schema-element="pixi:caliperMeasurementData.project"/>
     </DisplayField>
-    <DisplayField id="PIXI_CALIPERMEASUREMENTDATA_PROJECT_IDENTIFIER" header="PIXI_CALIPERMEASUREMENTDATA ID"
+    <DisplayField id="PIXI_CALIPERMEASUREMENTDATA_PROJECT_IDENTIFIER" header="Caliper Measurement ID"
                   visible="true" searchable="false" data-type="string" xsi:type="SubQueryField">
         <Content type="sql">pixi_calipermeasurementdata_project_id</Content>
         <HTML-Link>

@@ -58,7 +58,7 @@
         <DisplayFieldElement name="Field1" schema-element="pixi:imageAcquisitionContextAssessorData.project"/>
     </DisplayField>
     <DisplayField id="PIXI_IMAGEACQUISITIONCONTEXTASSESSORDATA_PROJECT_IDENTIFIER"
-                  header="PIXI_IMAGEACQUISITIONCONTEXTASSESSORDATA ID" visible="true" searchable="false"
+                  header="Image Acquisition Context ID" visible="true" searchable="false"
                   data-type="string" xsi:type="SubQueryField">
         <Content type="sql">pixi_imageacquisitioncontextassessordata_project_id</Content>
         <HTML-Link>

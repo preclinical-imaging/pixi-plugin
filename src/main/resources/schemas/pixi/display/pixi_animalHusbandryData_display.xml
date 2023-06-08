@@ -77,7 +77,7 @@
     <DisplayField id="PROJECT" header="Project" visible="true" searchable="true" data-type="string">
         <DisplayFieldElement name="Field1" schema-element="pixi:animalHusbandryData.project"/>
     </DisplayField>
-    <DisplayField id="PIXI_ANIMALHUSBANDRYDATA_PROJECT_IDENTIFIER" header="PIXI_ANIMALHUSBANDRYDATA ID" visible="true"
+    <DisplayField id="PIXI_ANIMALHUSBANDRYDATA_PROJECT_IDENTIFIER" header="Animal Husbandry ID" visible="true"
                   searchable="false" data-type="string" xsi:type="SubQueryField">
         <Content type="sql">pixi_animalhusbandrydata_project_id</Content>
         <HTML-Link>

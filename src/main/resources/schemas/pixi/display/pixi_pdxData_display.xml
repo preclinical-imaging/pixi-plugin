@@ -72,7 +72,7 @@
     <DisplayField id="PROJECT" header="Project" visible="true" searchable="true" data-type="string">
         <DisplayFieldElement name="Field1" schema-element="pixi:pdxData.project"/>
     </DisplayField>
-    <DisplayField id="PIXI_PDXDATA_PROJECT_IDENTIFIER" header="PIXI_PDXDATA ID" visible="true" searchable="false"
+    <DisplayField id="PIXI_PDXDATA_PROJECT_IDENTIFIER" header="PDX Data ID" visible="true" searchable="false"
                   data-type="string" xsi:type="SubQueryField">
         <Content type="sql">pixi_pdxdata_project_id</Content>
         <HTML-Link>

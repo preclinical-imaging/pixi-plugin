@@ -73,7 +73,7 @@
     <DisplayField id="PROJECT" header="Project" visible="true" searchable="true" data-type="string">
         <DisplayFieldElement name="Field1" schema-element="pixi:cellLineData.project"/>
     </DisplayField>
-    <DisplayField id="PIXI_CELLLINEDATA_PROJECT_IDENTIFIER" header="PIXI_CELLLINEDATA ID" visible="true"
+    <DisplayField id="PIXI_CELLLINEDATA_PROJECT_IDENTIFIER" header="Cell Line Data ID" visible="true"
                   searchable="false" data-type="string" xsi:type="SubQueryField">
         <Content type="sql">pixi_celllinedata_project_id</Content>
         <HTML-Link>
