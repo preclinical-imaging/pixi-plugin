@@ -12,32 +12,32 @@
 
     <ul>
         <li>
-            <a class="caliper-measurement">Record Caliper Measurements</a>
-            <p>Record and update tumor caliper measurements for small animal subjects.</p>
+            <a class="hotel-scan">Record Hotel Scan</a>
+            <p>Record a small animal imaging hotel scan.</p>
         </li>
         <li>
-            <a class="drug-therapy">Record Drug Therapies</a>
-            <p>Record and update drug therapies administered to small animal subjects.</p>
+            <a class="caliper-measurement">Record Caliper Measurements</a>
+            <p>Record and update tumor caliper measurements for small animal subjects.</p>
         </li>
         <li>
             <a class="subject-weight">Record Subject Weights</a>
             <p>Record and update subject weight measurements without the need for an imaging session<./p>
         </li>
         <li>
-            <a class="hotel-scan">Record New Hotel Scan</a>
-            <p>Record a small animal imaging hotel scan.</p>
-        </li>
-        <li>
             <a class="pdx">Record Patient-derived Tumor Engraftments</a>
             <p>Record and update patient-derived tumor tissue engraftments for small animal subjects.</p>
         </li>
         <li>
-            <a class="cell-line">Record Cell Line Injection</a>
+            <a class="cell-line">Record Cell Line Injections</a>
             <p>Record and update cell line injections for small animal subjects.</p>
         </li>
         <li>
-            <a class="animal-husbandry">Record Animal Husbandry Data</a>
-            <p>Record and update animal husbandry data for small animal subjects.</p>
+            <a class="drug-therapy">Record Drug Therapies</a>
+            <p>Record and update drug therapies administered to small animal subjects.</p>
+        </li>
+        <li>
+            <a class="animal-husbandry">Record Animal Husbandry Information</a>
+            <p>Record and update animal husbandry information for small animal subjects.</p>
         </li>
     </ul>
 

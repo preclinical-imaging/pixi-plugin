@@ -22,19 +22,25 @@
                     <a class="yuimenuitemlabel" href="$link.setPage("Pixi_SubjectDataManager.vm").addPathInfo('project',$project.getId())">Record Subject Data</a>
                 </li>
                 <li class="yuimenuitem">
-                    <a class="yuimenuitemlabel" href="$link.setPage("Pixi_CaliperMeasurementRecorder.vm").addPathInfo('project',$project.getId())">Record Caliper Measurements</a>
+                    <a class="yuimenuitemlabel" href="$link.setPage("XDATScreen_edit_pixi_hotelScanRecord.vm").addPathInfo('project',$project.getId())">Record Hotel Scan</a>
                 </li>
                 <li class="yuimenuitem">
-                    <a class="yuimenuitemlabel" href="$link.setPage("Pixi_DrugTherapyRecorder.vm").addPathInfo('project',$project.getId())">Record Drug Therapies</a>
+                    <a class="yuimenuitemlabel" href="$link.setPage("Pixi_CaliperMeasurementRecorder.vm").addPathInfo('project',$project.getId())">Record Caliper Measurements</a>
                 </li>
                 <li class="yuimenuitem">
                     <a class="yuimenuitemlabel" href="$link.setPage("Pixi_SubjectWeightRecorder.vm").addPathInfo('project',$project.getId())">Record Subject Weights</a>
                 </li>
                 <li class="yuimenuitem">
-                    <a class="yuimenuitemlabel" href="$link.setPage("XDATScreen_edit_pixi_hotelScanRecord.vm").addPathInfo('project',$project.getId())">Record New Hotel Scan</a>
+                    <a class="yuimenuitemlabel" href="$link.setPage("Pixi_PdxExperimentManager.vm").addPathInfo('project',$project.getId())">Record PDX Engraftments</a>
                 </li>
                 <li class="yuimenuitem">
-                    <a class="yuimenuitemlabel" href="$link.setPage("Pixi_AnimalHusbandryRecorder.vm").addPathInfo('project',$project.getId())">Record Animal Husbandry Data</a>
+                    <a class="yuimenuitemlabel" href="$link.setPage("Pixi_CellLineExperimentManager.vm").addPathInfo('project',$project.getId())">Record Cell Line Injections</a>
+                </li>
+                <li class="yuimenuitem">
+                    <a class="yuimenuitemlabel" href="$link.setPage("Pixi_DrugTherapyRecorder.vm").addPathInfo('project',$project.getId())">Record Drug Therapies</a>
+                </li>
+                <li class="yuimenuitem">
+                    <a class="yuimenuitemlabel" href="$link.setPage("Pixi_AnimalHusbandryRecorder.vm").addPathInfo('project',$project.getId())">Record Animal Husbandry Info</a>
                 </li>
             </ul>
         </div>
