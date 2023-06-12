@@ -3,9 +3,9 @@ XNAT.plugin = getObject(XNAT.plugin || {});
 XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
 
 const quickSearchSubjectTab$ = document.getElementById("quick-search-subject");
-const quickSearchMrTab$      = document.getElementById("quick-search-mr");
-const quickSearchPetTab$     = document.getElementById("quick-search-pet");
-const quickSearchCtTab$      = document.getElementById("quick-search-ct");
+const quickSearchMrTab$      = document.getElementById("quick-search-mrSessionData");
+const quickSearchPetTab$     = document.getElementById("quick-search-petSessionData");
+const quickSearchCtTab$      = document.getElementById("quick-search-ctSessionData");
 
 const config = { attributes: true, false: true, subtree: false };
 
