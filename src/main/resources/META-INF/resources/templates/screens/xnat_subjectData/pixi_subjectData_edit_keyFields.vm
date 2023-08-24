@@ -58,11 +58,6 @@
         });
     }
 
-    function handleProjectChange() {
-        console.debug("Handling project change...")
-        displayProjectPreferredDemographicForm();
-    }
-
     window.addEventListener('load', () => {
         // If subject demographic type is already set then display the appropriate form
         if (subjectDemographicXsiType === xnatDemographics) {
@@ -76,9 +71,11 @@
             // Add event listener for handling new subject creation.
             const projectSelectElement = document.getElementById(projectElId);
             if(typeof projectSelectElement !== 'undefined' && projectSelectElement !== null && projectSelectElement.tagName === 'SELECT') {
-                $(document.getElementById(projectElId)).chosen().change(handleProjectChange);
+                console.debug("Demographics selector event listener added.");
+                $(document.getElementById(projectElId)).chosen().change(displayProjectPreferredDemographicForm);
+            } else {
+                console.debug("Unable to add demographics selector event listener.");
             }
-            console.debug("Demographics selector event listener added.");
         }
     });
 </script>
