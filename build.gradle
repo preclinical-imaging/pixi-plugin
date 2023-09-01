@@ -9,7 +9,7 @@ plugins {
 }
 
 group "org.nrg.xnatx.plugins"
-version "1.0.0"
+version "1.1.0-SNAPSHOT"
 description "PIXI Plugin for XNAT."
 
 repositories {
