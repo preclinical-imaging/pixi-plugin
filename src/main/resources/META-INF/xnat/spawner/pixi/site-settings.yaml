@@ -24,7 +24,7 @@ subjectDisplayPreferencesForm:
 demographicDataImpl:
   kind: panel.select.single
   name: demographicDataImpl
-  label: Demographic Data Type
+  label: New Subject Demographic Data Type
   description: >
     Select a preferred demographic data type to be used when creating new subjects. Projects can also select there own
     preference.
@@ -39,9 +39,9 @@ demographicDataImpl:
 uiShowHumanSearchFields:
   kind: panel.input.switchbox
   name: uiShowHumanSearchFields
-  label: Display Huamn Search Fields
+  label: Display Clinical Subject Search Fields
   description: >
-    Display human search fields on the home page and in the advanced search.
+    Display clinical subject search fields on the home page and in the advanced search.
 
 ###
 ### Species Preferences

@@ -26,8 +26,8 @@ demographicDataImplProj:
   kind: panel.select.single
   id: demographicDataImpl
   name: demographicDataImpl
-  label: Demographic Data Type Preference
-  description: Select a preferred demographic data type to be used when creating new subjects.
+  label: New Subject Demographic Data Type
+  description: Select a preferred demographic data type to be used when creating new subjects. Otherwise the site preference will be used.
   options:
     xnat:
       label: "xnat:demographicData"
