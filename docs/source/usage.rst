@@ -37,13 +37,13 @@ PIXI and core XNAT support three mechanisms for creating research subjects in th
 We will discuss the first method on this page.
 Select New -> Subjects from the main menu.
 
-.. image:: ./pixi_create_subjects.png
+.. image:: ./images/pixi_create_subjects.png
  :align: center
 
 You can then select "Create a Single Subject" for the traditional web form or "Create Multiple Subjects" for batch entry.
 Select "Create Multiple Subjects" to direct PIXI to the Subject Data Manager page.
 
-.. image:: ./pixi_subject_data_manager.png
+.. image:: ./images/pixi_subject_data_manager.png
  :align: center
 
 In this context, you can batch enter multiple research subjects using a spreadsheet model.
@@ -58,7 +58,7 @@ Copy and paste into the other cells, but enter the Subject ID information separa
 
 This same page will allow you to update multiple subjects in batch mode. See the screen capture below.
 
-.. image:: ./pixi_update_multiple_subjects.png
+.. image:: ./images/pixi_update_multiple_subjects.png
  :align: center
 
 1. Select "Update existing subjects"
@@ -120,13 +120,13 @@ the scanner or if the images are submitted to XNAT using the compressed uploader
 3. Select the "Hotel" subject in your project. PIXI will display a page similar to the one below.
 The information highlighted by the red arrow refers to the subject record and when that record was created in PIXI.
 
-.. image:: ./pixi_hotel_subject.png
+.. image:: ./images/pixi_hotel_subject.png
  :align: center
 
 4. Select the session that was acquired for multiple subjects.
 PIXI will display the Session Page with the normal Actions box.
 
-.. image:: ./pixi_session_page.png
+.. image:: ./images/pixi_session_page.png
  :align: center
 
 5. From the Session Page, select "Record New Hotel Scan" in the Actions box.
@@ -134,7 +134,7 @@ PIXI displays a page that will accept the hotel configuration (2 subjects, 3 sub
 and some optional parameters.
 Note: *There is an administration page to allow you to enter other hotel configurations.*
 
-.. image:: ./pixi_create_hotel_scan_record.png
+.. image:: ./images/pixi_create_hotel_scan_record.png
  :align: center
 
 6. When you select the hotel configuration, PIXI will adjust the page and provide data entry areas for each subject.
@@ -142,13 +142,24 @@ The image below shows a partial view of the parameters that can be entered for e
 The fields for Subject ID are implemented as drop-down menus.
 Note: *If no items appear or you do not see the Subject ID for your subject, you will need to create that subject record and return to this page.*
 
-.. image:: ./pixi_detailed_hotel_scan_record.png
+.. image:: ./images/pixi_detailed_hotel_scan_record.png
  :align: center
 
 7. PIXI displays this record that is maintained in the database. You can edit values from this screen.
 Return to the Session Page for this (hotel session).
 PIXI shows you that a Hotel Scan Record now exists for this session
 and provides a Container to run the code to split the Hotel Session and create separate sessions for the subjects selected.
+In the Actions box on the Session Page, select Run Containers -> Hotel Session Splitter.
+
+.. image:: ./images/pixi_select_hotel_splitter_container.png
+ :align: center
+
+8. PIXI will present a dialog box to allow you to adjust pixel offsets for the images
+and a button to run the container that will perform this task.
+When you select "Run Container", that job is launched using the Container infrastructure you have deployed.
+
+.. image:: ./images/pixi_run_hotel_splitter_container.png
+ :align: center
 
 
 Searches

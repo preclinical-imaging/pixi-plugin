@@ -9,7 +9,7 @@ From any view, select Administer -> Plugin Settings in the menu bar.
 Plugins will be listed vertically on the left side of the display.
 Please see instructions below for various configuration settings.
 
-.. image:: ./plugin_settings.png
+.. image:: ./images/plugin_settings.png
  :align: center
 
 --------------------------
@@ -26,7 +26,7 @@ Subject settings include:
 
 Select Subject settings under PIXI in the Plugin Setting column of the display.
 
-.. image:: ./pixi_subject_settings.png
+.. image:: ./images/pixi_subject_settings.png
  :align: center
 
 *Subject Display:*
@@ -65,7 +65,7 @@ Select *PDXs and Cell Lines* under Plugin Settings (PIXI) in the left flap.
 You can create, update or delete a PDX enter or a Cell Line entry when the administration page is rendered.
 You can provide a web link for both types of entities to refer to documentation provided by the PDX or Cell Line provider.
 
-.. image:: ./pdx_cell-line_administration.png
+.. image:: ./images/pdx_cell-line_administration.png
  :align: center
 
 
