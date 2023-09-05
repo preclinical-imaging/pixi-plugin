@@ -109,13 +109,16 @@ The PIXI platform supports the standard practice of scanning multiple small anim
 We anticipate that scanner vendors have yet to implement the parts of the DICOM Standard that support hotel scans,
 and PIXI includes software to split the composite images into separate images that are then organized under an
 individual subject.
-The workflow is mostly managed through the XNAT web user interface, but there is one step to be completed at
+The workflow is mostly managed through the XNAT web user interface, but there are some configuration steps that must be
+completed. See the Administration / Hotel splitter configuration page for details. There is one step to be completed at
 the scanner or if the images are submitted to XNAT using the compressed uploader or XNAT Desktop Client.
 
 1. Assign distinct labels to the individual subjects to distinguish them. This can be done before or after the imaging session.
 2. Use the fixed string "Hotel" as the subject label when uploading DICOM images to XNAT.
- - The string "Hotel" can be entered at the scanner console in the field that maps to *XXXX*
+ - The string "Hotel" can be entered at the scanner console in the field that maps to *XXXX*. Note that this is not
+   needed if you've created a DICOM SCP receiver for Hotel images. But you must send the images to this hotel SCP receiver.
  - The string "Hotel" can be added to the images at a later time before the images are uploaded using the XNAT compressed uploader.
+   Or the hotel subject can be selected for images already uploaded to XNAT's prearchive.
  - The string "Hotel" can be entered as the Subject ID value when the images are uploaded using the XNAT Desktop Client
 3. Select the "Hotel" subject in your project. PIXI will display a page similar to the one below.
 The information highlighted by the red arrow refers to the subject record and when that record was created in PIXI.
@@ -141,6 +144,8 @@ Note: *There is an administration page to allow you to enter other hotel configu
 The image below shows a partial view of the parameters that can be entered for each subject in the hotel.
 The fields for Subject ID are implemented as drop-down menus.
 Note: *If no items appear or you do not see the Subject ID for your subject, you will need to create that subject record and return to this page.*
+Fasting, anesthesia, and heating conditions can be entered manually or by selecting a pre-defined template from the drop-down menu
+(see the project settings for setting up these templates).
 
 .. image:: ./images/pixi_detailed_hotel_scan_record.png
  :align: center
@@ -160,10 +165,6 @@ When you select "Run Container", that job is launched using the Container infras
 
 .. image:: ./images/pixi_run_hotel_splitter_container.png
  :align: center
-
-
-Searches
---------
 
 
 .. _XNAT platform: https://www.xnat.org

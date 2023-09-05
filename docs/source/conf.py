@@ -2,7 +2,7 @@
 
 # -- Project information
 
-project = 'PIXI:'
+project = 'PIXI'
 copyright = '2023, Washington University in St. Louis'
 author = 'Kooresh Shoghi'
 

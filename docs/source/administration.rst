@@ -73,16 +73,158 @@ You can provide a web link for both types of entities to refer to documentation 
 Hotel splitter configuration
 --------------------------
 
-------------------------------------
-Experiments for Small Animal Imaging
-------------------------------------
+The hotel image splitter is a feature of the PIXI plugin that allows you to split multi-subject DICOM images into
+single-subject DICOM images. To use the hotel image splitter, you will need to have XNAT's `Container Service <https://wiki.xnat.org/container-service/>`_
+and be familiar with how to manage commands and images. You may also need to review XNAT's `Event Service <https://wiki.xnat.org/documentation/how-to-use-xnat/using-the-xnat-event-service>`_
+documentation, as automating image splitting process relies on this service.
+
+*'Hotel' Subject Label*
+
+The "hotel" images for a project are stored in a special placeholder "hotel" subject, which can be created automatically
+for new projects using an Event Service action, or created manually for existing or new projects. All hotel image
+sessions for a project should be uploaded to a project's hotel subject. Note that if a project does not do hotel
+imagining, you do not need to create a hotel subject for that project or if one exists, you can delete it.
+
+**Automatically create hotel subject**
+
+To automatically create a hotel subject for a project, you will need to create an Event Service action that will be
+triggered when a new project is created. The action should be configured as follows:
+
+1. Go to the Event Setup tab of the XNAT Event Service by selecting Administer --> Event Service from the top navigation bar.
+2. Locate the default event subscription "Auto Create Hotel Subject" with action "PIXI Create Hotel Subject Action".
+   The PIXI plugin should have created this automatically. If it is missing, you can add it by creating a new subscription.
+3. Ensure that the "Project - Created" event is selected, and that the "Apply to All Projects" checkbox is checked.
+4. Optionally, choose whether to perform the action as the subscription owner or the user who initiated the event.
+5. Set the status of the event subscription to "Enabled".
+6. Click "OK" to save the changes.
+
+With this event subscription enabled, the 'hotel' subject will be created automatically for new projects. If you need to
+create the 'hotel' subject manually for an existing project, you can do so by following the manual steps described below.
+
+.. image:: ./images/pixi_hotel_subject_event_service_administration.png
+ :align: center
+ :width: 800px
+
+.. image:: ./images/pixi_hotel_subject_event_service_subscription.png
+ :align: center
+ :width: 300px
+
+**Manually create hotel subject**
+
+1. From the top navigation bar, select New --> Subjects --> Create a Single Subject.
+2. Select the project to which you want to add the 'hotel' subject.
+3. In the Subject ID field, enter "Hotel".
+4. Click "Submit" to create the subject.
+
+*Configuring a DICOM SCP Receiver for hotel image sessions*
+
+If you do not upload images to XNAT using the DICOM SCP receiver functionality you can skip this step. If you are
+unfamiliar with XNAT's DICOM receiver functionality please review the
+`Connecting XNAT to DICOM Scanners and PACS <https://wiki.xnat.org/display/XNAT18/Connecting+XNAT+to+DICOM+Scanners+and+PACS>`_
+and `How XNAT Scans DICOM to Map to Project/Subject/Session <https://wiki.xnat.org/documentation/how-to-use-xnat/image-session-upload-methods-in-xnat/how-xnat-scans-dicom-to-map-to-project-subject-session>`_
+documentation before preceding.
+
+For hotel image sessions to route to the hotel subject via a DICOM SCP receiver we'll configure an SCP receiver to
+always select the hotel subject regardless of the subject ID in the DICOM header. This receiver should only be used for
+hotel image sessions.
+
+1. From the top navigation bar, select Administer --> Site Administration.
+2. Under "Advanced XNAT Settings" select "DICOM SCP Receivers".
+3. Check that the "PIXI_HOTEL" Application Entity (AE) has been created and enabled. This should have been created
+   automatically by the PIXI plugin. If it is missing, create a new DICOM SCP Receiver.
+4. Include the word "Hotel" in the AE title to help identify this SCP receiver as being used specifically for hotel session.
+5. Set the port to 8104. Note that this is the standard port that XNAT uses for DICOM SCP receivers, if your site is using
+   a different port, you will need to use that port instead.
+6. Enable receiver-specific routing expressions.
+7. Set the Subject Routing Expression to the following:
+
+    .. code-block:: text
+        (0010,0010):^(.*)$:1 t:^(.*)$ r:Hotel
+        (0010,0020):^(.*)$:1 t:^(.*)$ r:Hotel
+
+8. The Project Routing Expression will be site and project dependent. Here's an example of a routing expression similar
+   to the core XNAT routing expressions:
+
+   .. code-block:: text
+        (0010,4000):Project:(\w+)\s*Session:(\w+):1
+        (0032,4000):Project:(\w+)\s*Session:(\w+):1
+        (0010,21B0):Project:(\w+)\s*Session:(\w+):1
+        (0008,1030):(.*)
+        (0008,0050):(.*)
+
+9. The Session Routing Expression will also be site and project dependent. Here's an example of a routing expression
+   similar to the core XNAT routing expressions:
+
+   .. code-block:: text
+        (0010,4000):Project:(\w+)\s*Session:(\w+):2
+        (0032,4000):Project:(\w+)\s*Session:(\w+):2
+        (0010,21B0):Project:(\w+)\s*Session:(\w+):2
+        (0010,0020):(.*)
+
+10. Click "Save" to create the DICOM SCP Receiver.
+
+.. image:: ./images/pixi_manage_dicom_scp_receivers.png
+ :align: center
+ :width: 750px
+
+.. image:: ./images/pixi_hotel_dicom_scp_receiver.png
+ :align: center
+ :width: 600px
+
+*Setup the Hotel Splitter Docker Image*
+
+Before proceeding you'll need to have XNAT's Container Service running. We will be
+`Adding a Command <https://wiki.xnat.org/container-service/adding-a-command-215253401.html>`_ to container service.
+
+1. Navigate to Administer --> Plugin Settings.
+2. Under "Container Service" select the "Images & Commands" tab.
+3. Click "New Image".
+4. For the image name enter "xnat/pixi_pydicom_split".
+5. For the version enter ":latest". For specific version tags checkout out
+   `Docker Hub <https://hub.docker.com/r/xnat/pixi_pydicom_split/tags>`_.
+6. Click "Pull Image".
+7. Navigate to the "Command Configurations" tab.
+8. Enable the two xnat/pixi_pydicom_split commands.
+
+The two container commands also need to be enabled at the project level by a project owner or a site admin.
+
+1. Navigate to a project and click the "Project Settings" link in the Actions box.
+2. Click the "Configure Commands" tab.
+3. Click the "Enable" toggle on the two xnat/pixi_pydicom_split commands.
+
+*Setting up Hotels*
+
+The 'hotel' splitting is based on the `DICOM Subject Relative Position in Image <https://dicom.nema.org/medical/dicom/current/output/html/part03.html#sect_C.7.1.4.1.1.1>`_
+tag. PIXI includes hotel configurations for 2, 3 and 4 subjects. If you need to add a hotel with a different
+configuration you can do so by following the steps below.
+
+1. Navigate to Administer --> Plugin Settings.
+2. Under "PIXI" select the "Hotel Splitter" tab.
+3. Click "New Hotel".
+4. Enter a name for the hotel.
+5. Enter the X and Y relative position for each subject in the hotel. Add a description for each position (e.g. "Top Left").
+   Note that Z is always set to 1, splitting is currently only done in the X and Y dimensions.
+6. Click "Save".
 
 --------------
 Project Settings
 --------------
 
---------
-Searches
---------
+*Subject Settings*
 
+**Subject Display Preferences**
+The subject display preferences can be set at the project level to override the site-wide preferences. This allows
+you to have some projects that use clinical subject display preferences and others that use animal subject display. To
+set the subject display preferences for a project, navigate to the project and click the "Project Settings" link in the
+Actions box. Select the "Subject Settings" tab and select the desired subject display preferences (xnat:demographicData
+or pixi:animalDemographicData) from the "Subject Display Preferences" dropdown. Click "Save" to save the changes.
+
+*Image Acquisition Contexts*
+The image acquisition context preferences are set at the project level and are used to help populate commonly repeated
+fields for fasting, anesthesia, and heating conditions in the hotel scan record form.
+
+To create a fasting, anesthesia, or heating conditions template for a project, navigate to the project and click the
+"Project Settings" link in the Actions box. Select the "Subject Settings" tab and click the "Add" button for each
+context type. Add a name for the template, and then add the values that will be populated in the hotel scan record form.
+Click "Save" to save the changes.
 
