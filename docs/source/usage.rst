@@ -1,5 +1,5 @@
 User Instructions
-=====
+=================
 
 Using XNAT
 ------------
@@ -26,7 +26,7 @@ Small Animal Subject Model
 --------------------------
 
 PIXI includes a new data type to support attributes for small animal imaging that are not present in the human model in core XNAT.
-Details of this and other data types are found in `PIXI Data Model <pixi_data_model.html>`_
+Details of this and other data types are found in `Data Models <pixi_data_model.html>`_.
 
 PIXI and core XNAT support three mechanisms for creating research subjects in the database:
 
@@ -78,13 +78,11 @@ XNAT and PIXI support a wide range of *experiments* that are in the data model j
    Similar to subject, an experiment cannot exist outside the context of a project.
    It is owned by the project which first added it.
    It can additionally be shared into other projects.
-::
-
 
 Imaging sessions like CT, MR and PET are XNAT *experiments* and are strongly typed items that are managed in the XNAT database.
 PIXI adds *experiment* types to XNAT and manages those as first class items in the XNAT database.
 The table belows lists the experiment types that are added by the PIXI plugin.
-The models for these data types are found in `PIXI Data Model <pixi_data_model.html>`_
+The models for these data types are found in `Data Models <pixi_data_model.html>`_.
 
 +---------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
 |  Type                     | Comments                                                                                                                                           |
@@ -115,11 +113,13 @@ the scanner or if the images are submitted to XNAT using the compressed uploader
 
 1. Assign distinct labels to the individual subjects to distinguish them. This can be done before or after the imaging session.
 2. Use the fixed string "Hotel" as the subject label when uploading DICOM images to XNAT.
+
  - The string "Hotel" can be entered at the scanner console in the field that maps to *XXXX*. Note that this is not
    needed if you've created a DICOM SCP receiver for Hotel images. But you must send the images to this hotel SCP receiver.
  - The string "Hotel" can be added to the images at a later time before the images are uploaded using the XNAT compressed uploader.
    Or the hotel subject can be selected for images already uploaded to XNAT's prearchive.
  - The string "Hotel" can be entered as the Subject ID value when the images are uploaded using the XNAT Desktop Client
+
 3. Select the "Hotel" subject in your project. PIXI will display a page similar to the one below.
 The information highlighted by the red arrow refers to the subject record and when that record was created in PIXI.
 

@@ -69,9 +69,9 @@ You can provide a web link for both types of entities to refer to documentation 
  :align: center
 
 
---------------------------
+----------------------------
 Hotel splitter configuration
---------------------------
+----------------------------
 
 The hotel image splitter is a feature of the PIXI plugin that allows you to split multi-subject DICOM images into
 single-subject DICOM images. To use the hotel image splitter, you will need to have XNAT's `Container Service <https://wiki.xnat.org/container-service/>`_
@@ -139,6 +139,7 @@ hotel image sessions.
 7. Set the Subject Routing Expression to the following:
 
     .. code-block:: text
+
         (0010,0010):^(.*)$:1 t:^(.*)$ r:Hotel
         (0010,0020):^(.*)$:1 t:^(.*)$ r:Hotel
 
@@ -146,6 +147,7 @@ hotel image sessions.
    to the core XNAT routing expressions:
 
    .. code-block:: text
+
         (0010,4000):Project:(\w+)\s*Session:(\w+):1
         (0032,4000):Project:(\w+)\s*Session:(\w+):1
         (0010,21B0):Project:(\w+)\s*Session:(\w+):1
@@ -156,6 +158,7 @@ hotel image sessions.
    similar to the core XNAT routing expressions:
 
    .. code-block:: text
+
         (0010,4000):Project:(\w+)\s*Session:(\w+):2
         (0032,4000):Project:(\w+)\s*Session:(\w+):2
         (0010,21B0):Project:(\w+)\s*Session:(\w+):2
@@ -206,9 +209,9 @@ configuration you can do so by following the steps below.
    Note that Z is always set to 1, splitting is currently only done in the X and Y dimensions.
 6. Click "Save".
 
---------------
+----------------
 Project Settings
---------------
+----------------
 
 *Subject Settings*
 

@@ -1,11 +1,15 @@
-PIXI Data Model
-================
+Data Models
+===========
 
-Small Animal Subject Model Details
+PIXI adds data types to XNAT that are specific to preclinical imaging research. The data models for these are described below.
+There is a new demographic data type for small animal subjects and a few new experiments that are specific to
+preclinical imaging research. See the `Usage <usage.html>`_ page for more information on how to use each of these data types.
+
+Small Animal Subjects
 ----------------------------------
 The table below shows demographic information managed by PIXI.
-Rows marked in the column XNAT Core indicate demographic items that apply to both human subjects and small animals.
-Rows marked with PIXI indicate items that are unique to the PIXI environment.
+Rows marked in the column XNAT Core indicate demographic items that apply only to clinical subjects.
+Rows marked with PIXI indicate items that are unique to small animal subjects.
 
 +-----------------------------------------+----------------+-----------+------+
 |  Field                                  | Type           | Core XNAT | PIXI |
@@ -63,16 +67,15 @@ Rows marked with PIXI indicate items that are unique to the PIXI environment.
 | Strain Immune System Humanization Type  | String         |           |  X   |
 +-----------------------------------------+----------------+-----------+------+
 
-Experiment Data
+Experiments
 ---------------------
 
 The XNAT Experiment Data type documents *a specific individual event in which primary data is obtained*.
 XNAT maintains these just below the subject level, so a subject will have 0..N experiments.
 Experiments can be CT, MR or PET imaging sessions, but are not limited to imaging data.
 The baseline Experiment Data elements are listed in the table below.
-The PIXI data types starting with *Caliper Measurements* include these baseline elements and
-add the elements that are ascribed to the PIXI data type.
-Some elements used to link an Experiment to other data such as the XNAT Project or Visit are omitted for brevity.
+The PIXI experiment data types include these baseline elements and add the elements that are ascribed to the PIXI
+data type. Some elements used to link an Experiment to other data such as the XNAT Project or Visit are omitted for brevity.
 
 +-------------------------------------------+----------------+
 |  Field                                    | Type           |
@@ -104,6 +107,7 @@ Some elements used to link an Experiment to other data such as the XNAT Project 
 | Label                                     | String         |
 +-------------------------------------------+----------------+
 
+---------------------
 Caliper Measurements
 ---------------------
 
@@ -125,7 +129,7 @@ Caliper Measurements
 | Weight Unit                             | Date           |
 +-----------------------------------------+----------------+
 
-
+---------------------
 Drug Therapy
 ---------------------
 
@@ -153,7 +157,7 @@ Drug Therapy
 | Weight Unit                             | Enumerated     |
 +-----------------------------------------+----------------+
 
-
+---------------------
 Weight
 ---------------------
 
@@ -169,45 +173,7 @@ Weight
 | Technician                              | String         |
 +-----------------------------------------+----------------+
 
-Cell Line
 ---------------------
-
-*An event in which a cell line is injected into a small animal subject to create an animal model that can be used for preclinical research.*
-
-+-------------------------------------------+----------------+
-|  Field                                    | Type           |
-+===========================================+================+
-| Source ID (Owned by the source, not XNAT) | String         |
-+-------------------------------------------+----------------+
-| Injection Site                            | String         |
-+-------------------------------------------+----------------+
-| Injection Type                            | String         |
-+-------------------------------------------+----------------+
-| Number of Cells Injected                  | Positive Int   |
-+-------------------------------------------+----------------+
-
-
-Patient Derived Xenograft
----------------------
-
-*An event in which human tumor tissue is engrafted into a small animal subject to create an animal model that can be used for preclinical research.*
-
-+-------------------------------------------+----------------+
-|  Field                                    | Type           |
-+===========================================+================+
-| Source ID (Owned by the source, not XNAT) | String         |
-+-------------------------------------------+----------------+
-| Injection Site                            | String         |
-+-------------------------------------------+----------------+
-| Injection Type                            | String         |
-+-------------------------------------------+----------------+
-| Number of Cells Injected                  | Positive Int   |
-+-------------------------------------------+----------------+
-| Passage                                   | String         |
-+-------------------------------------------+----------------+
-| Passage Method                            | String         |
-+-------------------------------------------+----------------+
-
 Animal Husbandry
 ---------------------
 
@@ -238,3 +204,44 @@ Animal Husbandry
 +-------------------------------------------+----------------+
 | Housing Humidity                          | Decimal        |
 +-------------------------------------------+----------------+
+
+---------------------
+Cell Line
+---------------------
+
+*An event in which a cell line is injected into a small animal subject to create an animal model that can be used for preclinical research.*
+
++-------------------------------------------+----------------+
+|  Field                                    | Type           |
++===========================================+================+
+| Source ID (Owned by the source, not XNAT) | String         |
++-------------------------------------------+----------------+
+| Injection Site                            | String         |
++-------------------------------------------+----------------+
+| Injection Type                            | String         |
++-------------------------------------------+----------------+
+| Number of Cells Injected                  | Positive Int   |
++-------------------------------------------+----------------+
+
+-------------------------
+Patient Derived Xenograft
+-------------------------
+
+*An event in which human tumor tissue is engrafted into a small animal subject to create an animal model that can be used for preclinical research.*
+
++-------------------------------------------+----------------+
+|  Field                                    | Type           |
++===========================================+================+
+| Source ID (Owned by the source, not XNAT) | String         |
++-------------------------------------------+----------------+
+| Injection Site                            | String         |
++-------------------------------------------+----------------+
+| Injection Type                            | String         |
++-------------------------------------------+----------------+
+| Number of Cells Injected                  | Positive Int   |
++-------------------------------------------+----------------+
+| Passage                                   | String         |
++-------------------------------------------+----------------+
+| Passage Method                            | String         |
++-------------------------------------------+----------------+
+

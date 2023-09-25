@@ -1,5 +1,5 @@
 Preclinical Imaging XNAT-Enabled Informatics: PIXI
-===================================
+==================================================
 
 
 .. image:: ./images/pixi-logo-tagline.png
@@ -17,3 +17,4 @@ Contents
    installation
    administration
    usage
+   pixi_data_model
