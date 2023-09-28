@@ -75,7 +75,7 @@ Hotel splitter configuration
 
 The hotel image splitter is a feature of the PIXI plugin that allows you to split multi-subject DICOM images into
 single-subject DICOM images. To use the hotel image splitter, you will need to have XNAT's `Container Service <https://wiki.xnat.org/container-service/>`_
-and be familiar with how to manage commands and images. You may also need to review XNAT's `Event Service <https://wiki.xnat.org/documentation/how-to-use-xnat/using-the-xnat-event-service>`_
+and be familiar with how to manage commands and images. You may also need to review XNAT's `Event Service <https://wiki.xnat.org/documentation/using-the-xnat-event-service>`_
 documentation, as automating image splitting process relies on this service.
 
 *'Hotel' Subject Label*
@@ -120,8 +120,8 @@ create the 'hotel' subject manually for an existing project, you can do so by fo
 
 If you do not upload images to XNAT using the DICOM SCP receiver functionality you can skip this step. If you are
 unfamiliar with XNAT's DICOM receiver functionality please review the
-`Connecting XNAT to DICOM Scanners and PACS <https://wiki.xnat.org/display/XNAT18/Connecting+XNAT+to+DICOM+Scanners+and+PACS>`_
-and `How XNAT Scans DICOM to Map to Project/Subject/Session <https://wiki.xnat.org/documentation/how-to-use-xnat/image-session-upload-methods-in-xnat/how-xnat-scans-dicom-to-map-to-project-subject-session>`_
+`Connecting XNAT to DICOM Scanners and PACS <https://wiki.xnat.org/documentation/connecting-xnat-to-dicom-scanners-and-pacs>`_
+and `How XNAT Scans DICOM to Map to Project/Subject/Session <https://wiki.xnat.org/documentation/how-xnat-scans-dicom-to-map-to-project-subject-ses>`_
 documentation before preceding.
 
 For hotel image sessions to route to the hotel subject via a DICOM SCP receiver we'll configure an SCP receiver to
@@ -177,7 +177,7 @@ hotel image sessions.
 *Setup the Hotel Splitter Docker Image*
 
 Before proceeding you'll need to have XNAT's Container Service running. We will be
-`Adding a Command <https://wiki.xnat.org/container-service/adding-a-command-215253401.html>`_ to container service.
+`Adding a Command <https://wiki.xnat.org/container-service/adding-a-command>`_ to container service.
 
 1. Navigate to Administer --> Plugin Settings.
 2. Under "Container Service" select the "Images & Commands" tab.

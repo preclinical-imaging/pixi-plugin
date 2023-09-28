@@ -1,9 +1,9 @@
 Installation
 ============
 
-----------------
-Identify Plugins
-----------------
+------------------------
+PIXI and Related Plugins
+------------------------
 XNAT provides a rich set of features that are extended for preclinical imaging by the PIXI plugin as well as other plugins.
 An XNAT plugin is a jar file that will be placed in a plugins folder as part of the deployment process. You will need to
 install the `PIXI plugin`_ as part of XNAT installation.
@@ -43,5 +43,5 @@ When you select an installation procedure and work through the steps, please rem
 .. _JupyterHub Integration: https://wiki.xnat.org/jupyter-integration
 
 .. _XNAT Docker Compose: https://github.com/NrgXnat/xnat-docker-compose
-.. _XNAT In Vagrant Virtual Environment: https://wiki.xnat.org/documentation/getting-started-with-xnat/running-xnat-in-a-vagrant-virtual-machine
-.. _XNAT Installation: https://wiki.xnat.org/documentation/getting-started-with-xnat/xnat-installation-guide
+.. _XNAT In Vagrant Virtual Environment: https://wiki.xnat.org/documentation/running-xnat-in-a-vagrant-virtual-machine
+.. _XNAT Installation: https://wiki.xnat.org/documentation/xnat-installation-guide

@@ -71,7 +71,7 @@ Experiments for Small Animal Imaging
 ------------------------------------
 
 XNAT and PIXI support a wide range of *experiments* that are in the data model just below subject.
-`The XNAT wiki describes an experiment as follows <https://wiki.xnat.org/documentation/how-to-use-xnat/understanding-the-xnat-data-model>`_:
+`The XNAT wiki describes an experiment as follows <https://wiki.xnat.org/documentation/understanding-the-xnat-data-model>`_:
 
    An experiment is an event by which data is acquired.
    This data can be imaging data, or non-imaging data.
