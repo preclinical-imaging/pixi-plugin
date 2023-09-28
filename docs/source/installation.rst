@@ -28,7 +28,7 @@ When you select an installation procedure and work through the steps, please rem
 +=============================================+=================+========================================+
 | Student / Personal Data Management          | Docker Desktop  | `XNAT Docker Compose`_                 |
 +---------------------------------------------+-----------------+----------------------------------------+
-| Local Deployment / Developer                | Vagrant         | `XNAT Docker Compose`_                 |
+| Local Deployment / Developer                | Docker Desktop  | `XNAT Docker Compose`_                 |
 +---------------------------------------------+-----------------+----------------------------------------+
 | Lab Installation / No Digital Certificates  |Tomcat / Postgres| `XNAT Installation`_                   |
 +---------------------------------------------+-----------------+----------------------------------------+
@@ -36,7 +36,7 @@ When you select an installation procedure and work through the steps, please rem
 +---------------------------------------------+-----------------+----------------------------------------+
 
 .. _XNAT Downloads page: https://www.xnat.org/download/
-.. _PIXI plugin: https://www.pixi.org/
+.. _PIXI plugin: https://github.com/preclinical-imaging/pixi-plugin/releases
 .. _XNAT OHIF Viewer: https://wiki.xnat.org/xnat-ohif-viewer
 .. _Container Service: https://wiki.xnat.org/container-service/
 .. _Batch Launch: https://wiki.xnat.org/xnat-tools/batch-launch-plugin
