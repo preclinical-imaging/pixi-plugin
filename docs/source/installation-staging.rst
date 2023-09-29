@@ -1,34 +1,56 @@
 Installation
 ============
 
-1. Understand XNAT Plugin Model
-2. Select and Download XNAT Plugins
-3. Determine Installation Environment
-4. :ref:`Install XNT + Plugins`
+1. `Understand XNAT Plugin Model`_
+2. `Select and Download XNAT Plugins`_
+3. `Determine Installation Environment`_
+4. `Install XNAT + Plugins`_
 
 
 
 ------------------------
 Understand XNAT Plugin Model
 ------------------------
+XNAT provides a rich set of features that are described in `About XNAT`_.
+XNAT supports `plugins`_ that extend features and functions in core XNAT.
 
+::
+
+  A plugin is a compiled, self-contained package separate from your XNAT server but installed into the XNAT plugins folder.
+  Once installed, the plugin runs in the same process space with XNAT as a fully integrated extension to the core XNAT server.
+
+::
+
+Plugins are written and contributed by the core XNAT team, the PIXI development team and
+by individual sites with specific needs that are not found in core XNAT.
 
 ------------------------
-PIXI and Related Plugins
+Select and Download XNAT Plugins
 ------------------------
-XNAT provides a rich set of features that are extended for preclinical imaging by the PIXI plugin as well as other plugins.
-An XNAT plugin is a jar file that will be placed in a plugins folder as part of the deployment process. You will need to
-install the `PIXI plugin`_ as part of XNAT installation.
-Core XNAT plugins are found on the `XNAT Downloads page`_.
-In addition to the PIXI plugin, you will find these plugins useful:
 
-- `XNAT OHIF Viewer`_: The XNAT OHIF Viewer allows users to view, create and edit ROI collections and annotations on XNAT image sessions. This viewer was developed by the Institute for Cancer Research, London and is based on the Javascript-based OHIF Viewer.
-- `Container Service`_: The Container Service plugin allows you to execute external processing tools as lightweight containers, mounting and reading XNAT data, then posting outputs back to your XNAT project. This plugin is needed by PIXI for splitting hotel image sessions into individual image sessions.
-- `Batch Launch`_: The Batch Launch plugin is a companion to the Container Service and allows you to launch containers or pipelines in batches based on project listings or search listings of XNAT data.
-- `JupyterHub Integration`_: The JupyterHub Integration plugin allows your XNAT to connect to a running JupyterHub server and creates integration points for launching and saving Jupyter Notebooks.
+Plugins are Java jar files that are added to the operating environment during the installation process.
+You can select and download the jar files as part of preparation for installation.
+
+The table below lists common plugins for running the PIXI software.
+You will find yet other plugins on the `XNAT Downloads page`_.
+
++-----------------------------+------------------------------------+----------------------------------------+
+| Documentation               | Comments                           | Current Plugin Jar                     |
++=============================+====================================+========================================+
+| `PIXI`_                     | Essential                          | `PIXI plugin`_                         |
++-----------------------------+------------------------------------+----------------------------------------+
+| `XNAT OHIF Viewer`_         | Highly Recommended                 | `XNAT Downloads page`_                 |
++-----------------------------+------------------------------------+----------------------------------------+
+| `Container Service`_        | Highly Recommended                 | `XNAT Downloads page`_                 |
++-----------------------------+------------------------------------+----------------------------------------+
+| `Batch Launch`_             | Extends Container Service          | `XNAT Downloads page`_                 |
++-----------------------------+------------------------------------+----------------------------------------+
+| `JupyterHub Integration`_   | XNAT/Python Integrated Environment | `XNAT Downloads page`_                 |
++-----------------------------+------------------------------------+----------------------------------------+
+
 
 ---------------
-XNAT Deployment
+Determine Installation Environment
 ---------------
 XNAT can be deployed to support different environments ranging from a single user running on a laptop to a larger, enterprise-level system.
 Please review descriptions below and choose the deployment environment that best suits your needs.
@@ -49,11 +71,13 @@ When you select an installation procedure and work through the steps, please rem
 
 
 ------------------------
-Install XNT + Plugins
+Install XNAT + Plugins
 ------------------------
 
-
+.. _About XNAT: https://www.xnat.org/about
+.. _plugins: https://wiki.xnat.org/documentation/developing-xnat-plugins
 .. _XNAT Downloads page: https://www.xnat.org/download/
+.. _PIXI: https://github.com/preclinical-imaging/pixi-plugin/releases
 .. _PIXI plugin: https://github.com/preclinical-imaging/pixi-plugin/releases
 .. _XNAT OHIF Viewer: https://wiki.xnat.org/xnat-ohif-viewer
 .. _Container Service: https://wiki.xnat.org/container-service/
