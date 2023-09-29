@@ -51,22 +51,22 @@ You will find yet other plugins on the `XNAT Downloads page`_.
 Determine Installation Environment
 ---------------
 XNAT can be deployed to support different environments ranging from a single user running on a laptop to a larger, enterprise-level system.
-Please review descriptions below and choose the deployment environment that best suits your needs.
-The broad categories provide suggestions about the intended owner and administrator of the system.
-When you select an installation procedure and work through the steps, please remember it will be useful to have the plugin jar files before you start.
+This section provides overviews of the small and large environments.
 
-+---------------------------------------------+-----------------+----------------------------------------+
-| Broad Category                              | Comments        | Installation Instructions              |
-+=============================================+=================+========================================+
-| Student / Personal Data Management          | Docker Desktop  | `XNAT Docker Compose`_                 |
-+---------------------------------------------+-----------------+----------------------------------------+
-| Local Deployment / Developer                | Docker Desktop  | `XNAT Docker Compose`_                 |
-+---------------------------------------------+-----------------+----------------------------------------+
-| Lab Installation / No Digital Certificates  |Tomcat / Postgres| `XNAT Installation`_                   |
-+---------------------------------------------+-----------------+----------------------------------------+
-| Enterprise Level / Comprehensive IT Support | Reverse Proxy   | `XNAT Installation`_                   |
-+---------------------------------------------+-----------------+----------------------------------------+
+- The Dockerized version of XNAT can run on both Docker Desktop and the professional versions of Docker.
+  XNAT provides a `Docker Compose <https://docs.docker.com/compose>`_ file that defines the environment for running the application.
+  This is an appropriate environment for individuals to run on their laptop or desktop for evaluation and can also
+  serve as the basis for a larger deployment.
 
+- Users with IT support who want a system that is available to a larger audience will want to understand
+  the `XNAT Administration <https://wiki.xnat.org/documentation/xnat-administration>`_ documentation.
+  This describes an environment where the XNAT software is running as a system service in a Linux environment and is available 24x7.
+  Instructions are included for managing user authentication using an LDAP server (Windows Active Directory)
+  and/or running XNAT behind a firewall with HTTPS-protected connections.
+
+We recommend starting with the Dockerized version.
+You will have a functioning PIXI system within a few minutes and can learn the administrative functions
+and the application itself before investing more time with a production installation.
 
 ------------------------
 Install XNAT + Plugins
