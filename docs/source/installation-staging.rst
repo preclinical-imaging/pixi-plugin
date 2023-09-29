@@ -8,18 +8,16 @@ Installation
 
 
 
-------------------------
+----------------------------
 Understand XNAT Plugin Model
-------------------------
-XNAT provides a rich set of features that are described in `About XNAT`_.
-XNAT supports `plugins`_ that extend features and functions in core XNAT.
+----------------------------
+XNAT provides a `rich set of features and functions <https://www.xnat.org/about>`_ for managing imaging data.
+It is designed to be extensible and customizable and supports `plugins`_ that extend features and functions in core
+XNAT:
 
-::
-
-  A plugin is a compiled, self-contained package separate from your XNAT server but installed into the XNAT plugins folder.
-  Once installed, the plugin runs in the same process space with XNAT as a fully integrated extension to the core XNAT server.
-
-::
+  A plugin is a compiled, self-contained package separate from your XNAT server but installed
+  into the XNAT plugins folder. Once installed, the plugin runs in the same process space with
+  XNAT as a fully integrated extension to the core XNAT server.
 
 Plugins are written and contributed by the core XNAT team, the PIXI development team and
 by individual sites with specific needs that are not found in core XNAT.
