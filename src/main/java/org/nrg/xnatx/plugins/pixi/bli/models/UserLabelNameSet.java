@@ -3,6 +3,8 @@ package org.nrg.xnatx.plugins.pixi.bli.models;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Field;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -29,5 +31,25 @@ public class UserLabelNameSet {
     private String treatment;
     private String lucInjectionTime; // No sample data with dates, cannot parse without format. Leaving as a string.
     private String iacucNumber;
+
+    /**
+     * Reflectively get the string value of a field.
+     * @param field The field to get the value of.
+     * @return The string value of the field, or null if the field is null.
+     */
+    public String get(String field) {
+        if (field == null) {
+            return null;
+        }
+
+        try {
+            Field f = getClass().getDeclaredField(field);
+            f.setAccessible(true);
+            Object value = f.get(this);
+            return value != null ? value.toString() : null;
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            return null;
+        }
+    }
 
 }

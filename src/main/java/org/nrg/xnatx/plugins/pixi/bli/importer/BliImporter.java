@@ -24,6 +24,7 @@ import org.nrg.xnat.services.messaging.prearchive.PrearchiveOperationRequest;
 import org.nrg.xnat.turbine.utils.ArcSpecManager;
 import org.nrg.xnatx.plugins.pixi.bli.helpers.AnalyzedClickInfoHelper;
 import org.nrg.xnatx.plugins.pixi.bli.models.AnalyzedClickInfo;
+import org.nrg.xnatx.plugins.pixi.bli.preferences.BliImporterPreferences;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,6 +59,7 @@ public class BliImporter extends ImporterHandlerA {
     private final Set<Path> timestampDirectories;
     private final Set<SessionData> sessions;
     private AnalyzedClickInfoHelper analyzedClickInfoHelper;
+    private BliImporterPreferences bliImporterPreferences;
     private static final String UNKNOWN_SESSION_LABEL = "bli_zip_upload";
 
     public BliImporter(final Object listenerControl,
@@ -74,6 +76,7 @@ public class BliImporter extends ImporterHandlerA {
         this.timestampDirectories = Sets.newLinkedHashSet();
         this.sessions = Sets.newLinkedHashSet();
         this.analyzedClickInfoHelper = XDAT.getContextService().getBean(AnalyzedClickInfoHelper.class);
+        this.bliImporterPreferences = XDAT.getContextService().getBean(BliImporterPreferences.class);
     }
 
     @Override
@@ -211,11 +214,19 @@ public class BliImporter extends ImporterHandlerA {
         if (analyzedClickInfo.isPresent()) {
 
             if (!sessionLabel.isPresent()) {
-                sessionLabel = Optional.ofNullable(replaceWhitespace(analyzedClickInfo.get().getUserLabelNameSet().getExperiment()));
+                sessionLabel = Optional.ofNullable(
+                        replaceWhitespace(
+                                analyzedClickInfo.get()
+                                        .getUserLabelNameSet()
+                                        .get(bliImporterPreferences.getExperimentLabelField())
+                        )
+                );
             }
 
             if (!subjectId.isPresent()) {
-                String animalNumber = analyzedClickInfo.get().getUserLabelNameSet().getAnimalNumber();
+                String animalNumber = analyzedClickInfo.get()
+                        .getUserLabelNameSet()
+                        .get(bliImporterPreferences.getSubjectLabelField());
 
                 if (animalNumber != null) {
                     if (animalNumber.contains(",")) {
@@ -228,7 +239,13 @@ public class BliImporter extends ImporterHandlerA {
             }
 
             scanDate = Optional.of(analyzedClickInfo.get().getLuminescentImage().getAcquisitionDateTime());
-            scanLabel = Optional.ofNullable(replaceWhitespace(analyzedClickInfo.get().getUserLabelNameSet().getView()));
+            scanLabel = Optional.ofNullable(
+                    replaceWhitespace(
+                            analyzedClickInfo.get()
+                                    .getUserLabelNameSet()
+                                    .get(bliImporterPreferences.getScanLabelField())
+                    )
+            );
             uid = Optional.ofNullable(replaceWhitespace(analyzedClickInfo.get().getClickNumber().getClickNumber()));
 
             // Populate session
@@ -416,8 +433,12 @@ public class BliImporter extends ImporterHandlerA {
         }
     }
 
-    public void setAnalyzedClickInfoHelper(final AnalyzedClickInfoHelper analyzedClickInfoHelper) {
+    protected void setAnalyzedClickInfoHelper(final AnalyzedClickInfoHelper analyzedClickInfoHelper) {
         this.analyzedClickInfoHelper = analyzedClickInfoHelper;
+    }
+
+    protected void setBliImporterPreferences(final BliImporterPreferences bliImporterPreferences) {
+        this.bliImporterPreferences = bliImporterPreferences;
     }
 
 }

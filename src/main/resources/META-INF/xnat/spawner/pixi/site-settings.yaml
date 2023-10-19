@@ -135,6 +135,133 @@ hotelPanel:
       content: >
         XNAT.plugin.pixi.hotelPreferenceManager.init('#hotel-preferences-manager');
 
+###
+### BLI Importer
+###
+
+bliImporterForm:
+  kind: panel.form
+  id: bliImporterForm
+  name: bliImporterForm
+  label: BLI Importer Preferences
+  method: POST
+  contentType: json
+  url: /xapi/pixi/bli-importer-preferences
+  contents:
+    ${subjectLabelField}
+    ${experimentLabelField}
+    ${scanLabelField}
+
+subjectLabelField:
+  kind: panel.select.single
+  name: subjectLabelField
+  label: Subject Label Field
+  description: >
+    Select which field is used to label subjects when importing BLI data.
+  options:
+    group:
+      label: "group"
+      value: "group"
+    experiment:
+      label: "experiment"
+      value: "experiment"
+    comment1:
+      label: "comment1"
+      value: "comment1"
+    comment2:
+      label: "comment2"
+      value: "comment2"
+    animalNumber:
+      label: "animalNumber"
+      value: "animalNumber"
+    animalModel:
+      label: "animalModel"
+      value: "animalModel"
+    view:
+      label: "view"
+      value: "view"
+
+experimentLabelField:
+  kind: panel.select.single
+  name: experimentLabelField
+  label: Experiment Label Field
+  description: >
+    Select which field is used to label experiments when importing BLI data.
+  options:
+    group:
+      label: "group"
+      value: "group"
+    experiment:
+      label: "experiment"
+      value: "experiment"
+    comment1:
+      label: "comment1"
+      value: "comment1"
+    comment2:
+      label: "comment2"
+      value: "comment2"
+    animalNumber:
+      label: "animalNumber"
+      value: "animalNumber"
+    animalModel:
+      label: "animalModel"
+      value: "animalModel"
+    view:
+      label: "view"
+      value: "view"
+
+scanLabelField:
+  kind: panel.select.single
+  name: scanLabelField
+  label: Scan Label Field
+  description: >
+    Select which field is used to label scans when importing BLI data.
+  options:
+    group:
+      label: "group"
+      value: "group"
+    experiment:
+      label: "experiment"
+      value: "experiment"
+    comment1:
+      label: "comment1"
+      value: "comment1"
+    comment2:
+      label: "comment2"
+      value: "comment2"
+    animalNumber:
+      label: "animalNumber"
+      value: "animalNumber"
+    animalModel:
+      label: "animalModel"
+      value: "animalModel"
+    view:
+      label: "view"
+      value: "view"
+
+analyzeClickInfoFields:
+  group:
+    label: "group"
+    value: "group"
+  experiment:
+    label: "experiment"
+    value: "experiment"
+  comment1:
+    label: "comment1"
+    value: "comment1"
+  comment2:
+    label: "comment2"
+    value: "comment2"
+  animalNumber:
+    label: "animalNumber"
+    value: "animalNumber"
+  animalModel:
+    label: "animalModel"
+    value: "animalModel"
+  view:
+    label: "view"
+    value: "view"
+
 #################################################
 ####  Root Site Admin Spawner Config Object  ####
 #################################################
@@ -176,3 +303,11 @@ siteSettings:
       active: true
       contents:
         ${hotelPanel}
+    bliImporterSettingsTab:
+      kind: tab
+      name: bliImporterSettingsTab
+      label: BLI Importer
+      group: pixiTabGroup
+      active: true
+      contents:
+        ${bliImporterForm}
