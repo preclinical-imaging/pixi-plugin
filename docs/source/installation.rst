@@ -84,7 +84,7 @@ when you install Docker.
 
   .. code-block:: bash
     
-    git clone https://github.com/NrgXnat/xnat-docker-compose.git
+    git clone https://github.com/NrgXnat/xnat-docker-compose
     cd xnat-docker-compose
 
 2. Put any XNAT plugin jars you want to use in the ``xnat/plugins`` folder. Note you do not need to download the XNAT war file. It will be included as part of the Docker container.
