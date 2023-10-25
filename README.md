@@ -1,6 +1,6 @@
 # PIXI XNAT Plugin
 
-This is the repository for the PIXI XNAT plugin. PIXI is designed to helm manage and analyze preclinical imaging data.
+This is the repository for the PIXI XNAT plugin. PIXI is designed to help manage and analyze preclinical imaging data.
 
 For detailed information, installation instructions, and usage guidelines, please visit [pixi.org](https://pixi.org).
 
