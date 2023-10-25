@@ -124,7 +124,7 @@
 
 #set($hotelSubjects = $!item.getChildItems("hotel_subjects/subject").size())
 
-<div class="report-section column-container col-${hotelSubjects}">
+<div class="report-section column-container col-2">
 ###foreach($i in [0..3])
 ##    #set($positionName = $hotel.positions_position.get($i).name)
 
