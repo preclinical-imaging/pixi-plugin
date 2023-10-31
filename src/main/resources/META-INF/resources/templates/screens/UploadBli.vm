@@ -14,6 +14,14 @@
             </select>
         </section>
 
+        <label for="profile" class="profile-label">Select Profile</label>
+
+        <section class="profile-inputs">
+            <select id="profile" name="profile" form="upload-form" required>
+                <option value="" disabled selected>Select Profile</option>
+            </select>
+        </section>
+
         <label class="file-label" for="file">File</label>
 
         <section class="file-inputs">
@@ -28,12 +36,15 @@
     .project-label { grid-area: project-label; }
     .project-inputs { grid-area: project-inputs; }
 
+    .profile-label { grid-area: profile-label; }
+    .profile-inputs { grid-area: profile-inputs; }
+
     .file-label { grid-area: file-label; }
     .file-inputs { grid-area: file-inputs; }
 
     .submit { grid-area: submit; }
 
-    .project-label, .file-label {
+    #upload-form label {
         font-weight: bold;
     }
 
@@ -44,30 +55,26 @@
         row-gap: 1em;
         grid-template-areas:
             'project-label project-inputs project-inputs'
+            'profile-label profile-inputs profile-inputs'
             'file-label file-inputs file-inputs'
             '. submit .'
     }
 </style>
 
 <script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-projects.js')"></script>
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-bli-importer.js')"></script>
 
 <script type="text/javascript">
 
     // Form Elements
     let formEl            = document.getElementById("upload-form");
     let projectEl         = document.getElementById("project");
+    let profileEl         = document.getElementById("profile");
     let prearchiveCode0El = document.getElementById("prearchive-code-0");
     let prearchiveCode1El = document.getElementById("prearchive-code-1");
     let fileEl            = document.getElementById("file");
 
-    // Load projects then render project select box
-    let projects;
-    XNAT.plugin.pixi.projects.getAll().then(resultSet => resultSet['ResultSet']['Result'])
-                                      .then(prjs => {
-                                          projects = prjs;
-                                          renderProjectSelectBox(projectEl, prjs);
-                                      });
-
+    // Form rendering
     let renderProjectSelectBox = function(selectBox, projects) {
         console.debug('renderProjectSelectBox()')
 
@@ -84,9 +91,33 @@
         })
     }
 
-    function evaluateProject(ele) {
+    let renderProfilesSelectBox = (selectBox, profiles) => {
+        console.debug('renderProfilesSelectBox()')
 
+        // Clear select box
+        selectBox.options.length = 0;
+
+        // Placeholder
+        selectBox.options[0] = new Option("Select Profile", "");
+        selectBox.options[0].disabled = true;
+        selectBox.options[0].selected = true;
+
+        profiles.forEach(profile => {
+            selectBox.options[selectBox.length] = new Option(profile['name'], profile['name'])
+        })
     }
+
+    // Load projects and profiles then render select boxes
+    let projects;
+    XNAT.plugin.pixi.projects.getAll().then(resultSet => resultSet['ResultSet']['Result'])
+                                      .then(prjs => {
+                                          projects = prjs;
+                                          renderProjectSelectBox(projectEl, prjs);
+                                      });
+
+
+    XNAT.plugin.pixi.bli.importer.profiles.getAll()
+                                          .then(profiles => renderProfilesSelectBox(profileEl, profiles));
 
     async function submitForm() {
         console.debug('submitForm()')
@@ -107,6 +138,7 @@
         }
 
         let projectId = projectEl.value;
+        let profile = profileEl.value;
         let uploadId = new Date().toISOString()
                                  .replaceAll('-', '_')
                                  .replaceAll(':', '_')
@@ -153,7 +185,8 @@
         let importServiceUrl = XNAT.url.csrfUrl('/data/services/import');
         importServiceUrl = XNAT.url.addQueryString(importServiceUrl, ['import-handler=BLI',
                                                                       `PROJECT_ID=${projectId}`,
-                                                                      `src=${encodedCachePath}`]);
+                                                                      `src=${encodedCachePath}`,
+                                                                      `config=${profile}`]);
 
         // Extract the zip file from the users cache
         console.debug(`Extracting ${file.name}`);

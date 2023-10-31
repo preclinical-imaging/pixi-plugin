@@ -136,131 +136,33 @@ hotelPanel:
         XNAT.plugin.pixi.hotelPreferenceManager.init('#hotel-preferences-manager');
 
 ###
-### BLI Importer
+### BLI
 ###
 
-bliImporterForm:
-  kind: panel.form
-  id: bliImporterForm
-  name: bliImporterForm
-  label: BLI Importer Preferences
-  method: POST
-  contentType: json
-  url: /xapi/pixi/bli-importer-preferences
+bliImporterProfiles:
+  kind: panel
+  name: bliImporterProfiles
+  label: BLI Importer Profiles
   contents:
-    ${subjectLabelField}
-    ${experimentLabelField}
-    ${scanLabelField}
-
-subjectLabelField:
-  kind: panel.select.single
-  name: subjectLabelField
-  label: Subject Label Field
-  description: >
-    Select which field is used to label subjects when importing BLI data.
-  options:
-    group:
-      label: "group"
-      value: "group"
-    experiment:
-      label: "experiment"
-      value: "experiment"
-    comment1:
-      label: "comment1"
-      value: "comment1"
-    comment2:
-      label: "comment2"
-      value: "comment2"
-    animalNumber:
-      label: "animalNumber"
-      value: "animalNumber"
-    animalModel:
-      label: "animalModel"
-      value: "animalModel"
-    view:
-      label: "view"
-      value: "view"
-
-experimentLabelField:
-  kind: panel.select.single
-  name: experimentLabelField
-  label: Experiment Label Field
-  description: >
-    Select which field is used to label experiments when importing BLI data.
-  options:
-    group:
-      label: "group"
-      value: "group"
-    experiment:
-      label: "experiment"
-      value: "experiment"
-    comment1:
-      label: "comment1"
-      value: "comment1"
-    comment2:
-      label: "comment2"
-      value: "comment2"
-    animalNumber:
-      label: "animalNumber"
-      value: "animalNumber"
-    animalModel:
-      label: "animalModel"
-      value: "animalModel"
-    view:
-      label: "view"
-      value: "view"
-
-scanLabelField:
-  kind: panel.select.single
-  name: scanLabelField
-  label: Scan Label Field
-  description: >
-    Select which field is used to label scans when importing BLI data.
-  options:
-    group:
-      label: "group"
-      value: "group"
-    experiment:
-      label: "experiment"
-      value: "experiment"
-    comment1:
-      label: "comment1"
-      value: "comment1"
-    comment2:
-      label: "comment2"
-      value: "comment2"
-    animalNumber:
-      label: "animalNumber"
-      value: "animalNumber"
-    animalModel:
-      label: "animalModel"
-      value: "animalModel"
-    view:
-      label: "view"
-      value: "view"
-
-analyzeClickInfoFields:
-  group:
-    label: "group"
-    value: "group"
-  experiment:
-    label: "experiment"
-    value: "experiment"
-  comment1:
-    label: "comment1"
-    value: "comment1"
-  comment2:
-    label: "comment2"
-    value: "comment2"
-  animalNumber:
-    label: "animalNumber"
-    value: "animalNumber"
-  animalModel:
-    label: "animalModel"
-    value: "animalModel"
-  view:
-    label: "view"
-    value: "view"
+    bliImporterDescription:
+      tag: div.message
+      element:
+        style: "margin-bottom: 20px;"
+      contents:
+        "The PerkinElmer IVIS optical BLI (Bioluminescence Imaging) scanners generate data in a proprietary format
+         specific to PerkinElmer's software. This includes the 'AnalyzedClickInfo.txt' file, which contains details about
+         the bioluminescence image scan. Our BLI importer parses this file and imports data into XNAT, matching 
+         it to XNAT subject, image session, and image scan fields. Using the provided form, you can create various
+         profiles for mapping AnalyzedClickInfo.txt fields to XNAT objects. Users can select their desired profile 
+         when uploading BLI data."
+    bliImporterForm:
+      tag: "div#bli-importer-preferences"
+    bliImporterJs:
+      tag: script|src="~/scripts/xnat/plugin/pixi/pixi-bli-importer.js"
+    renderBliImporterForm:
+      tag: script
+      content: >
+        XNAT.plugin.pixi.bli.importer.manager('bli-importer-preferences');
 
 #################################################
 ####  Root Site Admin Spawner Config Object  ####
@@ -310,4 +212,4 @@ siteSettings:
       group: pixiTabGroup
       active: true
       contents:
-        ${bliImporterForm}
+        ${bliImporterProfiles}

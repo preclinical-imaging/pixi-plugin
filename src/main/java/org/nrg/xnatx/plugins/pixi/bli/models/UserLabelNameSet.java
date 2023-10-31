@@ -48,6 +48,7 @@ public class UserLabelNameSet {
             Object value = f.get(this);
             return value != null ? value.toString() : null;
         } catch (NoSuchFieldException | IllegalAccessException e) {
+            log.error("Error getting field value", e);
             return null;
         }
     }

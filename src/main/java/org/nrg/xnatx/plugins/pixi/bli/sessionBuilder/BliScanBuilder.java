@@ -36,7 +36,6 @@ public class BliScanBuilder implements Callable<XnatImagescandataBean> {
         String id = scanDir.getFileName().toString();
 
         bliScan.setId(id);
-        bliScan.setType("BLI");
 
         AnalyzedClickInfo analyzedClickInfo = analyzedClickInfoHelper.readJson(scanDir.resolve("AnalyzedClickInfo.json"));
 
