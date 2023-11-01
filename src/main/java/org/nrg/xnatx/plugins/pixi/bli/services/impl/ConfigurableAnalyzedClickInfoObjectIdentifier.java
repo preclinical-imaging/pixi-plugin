@@ -1,10 +1,12 @@
 package org.nrg.xnatx.plugins.pixi.bli.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.nrg.xnatx.plugins.pixi.bli.models.AnalyzedClickInfo;
-import org.nrg.xnatx.plugins.pixi.bli.models.AnalyzedClickInfoObjectIdentifierConfig;
+import org.nrg.xnatx.plugins.pixi.bli.models.AnalyzedClickInfoObjectIdentifierMapping;
 import org.nrg.xnatx.plugins.pixi.bli.services.AnalyzedClickInfoObjectIdentifier;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -13,10 +15,10 @@ import java.util.regex.Pattern;
 @Slf4j
 public class ConfigurableAnalyzedClickInfoObjectIdentifier implements AnalyzedClickInfoObjectIdentifier {
 
-    private final AnalyzedClickInfoObjectIdentifierConfig config;
+    private final AnalyzedClickInfoObjectIdentifierMapping mapping;
 
-    public ConfigurableAnalyzedClickInfoObjectIdentifier(AnalyzedClickInfoObjectIdentifierConfig config) {
-        this.config = config;
+    public ConfigurableAnalyzedClickInfoObjectIdentifier(AnalyzedClickInfoObjectIdentifierMapping mapping) {
+        this.mapping = mapping;
     }
 
     /**
@@ -26,7 +28,7 @@ public class ConfigurableAnalyzedClickInfoObjectIdentifier implements AnalyzedCl
      */
     @Override
     public Optional<String> getProjectLabel(AnalyzedClickInfo analyzedClickInfo) {
-        return get(analyzedClickInfo, config.getProjectLabelField(), config.getProjectLabelRegex(), 1, null,null);
+        return get(analyzedClickInfo, mapping.getProjectLabelField(), mapping.getProjectLabelRegex(), 1, null,null);
     }
 
     /**
@@ -36,11 +38,11 @@ public class ConfigurableAnalyzedClickInfoObjectIdentifier implements AnalyzedCl
      */
     @Override
     public Optional<String> getSubjectLabel(AnalyzedClickInfo analyzedClickInfo) {
-        if (config.getHotelSession()) {
+        if (mapping.getHotelSession()) {
             return Optional.of("Hotel");
         }
 
-        return get(analyzedClickInfo, config.getSubjectLabelField(), config.getSubjectLabelRegex(), 1, null,null);
+        return get(analyzedClickInfo, mapping.getSubjectLabelField(), mapping.getSubjectLabelRegex(), 1, null,null);
     }
 
     /**
@@ -50,7 +52,7 @@ public class ConfigurableAnalyzedClickInfoObjectIdentifier implements AnalyzedCl
      */
     @Override
     public Optional<String> getSessionLabel(AnalyzedClickInfo analyzedClickInfo) {
-        return get(analyzedClickInfo, config.getSessionLabelField(), config.getSessionLabelRegex(), 1, null,null);
+        return get(analyzedClickInfo, mapping.getSessionLabelField(), mapping.getSessionLabelRegex(), 1, null,null);
     }
 
     /**
@@ -60,7 +62,7 @@ public class ConfigurableAnalyzedClickInfoObjectIdentifier implements AnalyzedCl
      */
     @Override
     public Optional<String> getScanLabel(AnalyzedClickInfo analyzedClickInfo) {
-        return get(analyzedClickInfo, config.getScanLabelField(), config.getScanLabelRegex(), 1, null,null);
+        return get(analyzedClickInfo, mapping.getScanLabelField(), mapping.getScanLabelRegex(), 1, null,null);
     }
 
     /**
@@ -73,15 +75,24 @@ public class ConfigurableAnalyzedClickInfoObjectIdentifier implements AnalyzedCl
      * @param replacementString The string to replace the extracted value with
      * @return The extracted value
      */
-    public Optional<String> get(AnalyzedClickInfo analyzedClickInfo,
-                                String field,
-                                String regexPattern,
+    public Optional<String> get(@Nonnull AnalyzedClickInfo analyzedClickInfo,
+                                @Nullable String field,
+                                @Nullable String regexPattern,
                                 @Nullable Integer group,
                                 @Nullable String targetRegex,
                                 @Nullable String replacementString) {
+        if (StringUtils.isBlank(field) || StringUtils.isBlank(regexPattern)) {
+            return Optional.empty();
+        }
 
         Pattern pattern = Pattern.compile(regexPattern);
-        Matcher matcher = pattern.matcher(analyzedClickInfo.getUserLabelNameSet().get(field));
+
+        Matcher matcher;
+        if (field.equalsIgnoreCase("ClickNumber")) {
+            matcher = pattern.matcher(analyzedClickInfo.getClickNumber().getClickNumber());
+        } else {
+            matcher = pattern.matcher(analyzedClickInfo.getUserLabelNameSet().get(field));
+        }
 
         if (matcher.find()) {
             String value = matcher.group(group != null ? group : 1);

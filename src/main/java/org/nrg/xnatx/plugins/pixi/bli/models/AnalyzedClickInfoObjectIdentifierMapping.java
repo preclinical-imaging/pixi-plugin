@@ -11,9 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @Slf4j
-@ApiModel(value = "BLI Importer Config", description = "BLI importer configuration options for a given importer")
+@ApiModel(value = "AnalyzeClickInfo Mapping", description = "Used to map AnalyzedClickInfo to XNAT objects")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AnalyzedClickInfoObjectIdentifierConfig {
+public class AnalyzedClickInfoObjectIdentifierMapping {
 
     private String name;
 

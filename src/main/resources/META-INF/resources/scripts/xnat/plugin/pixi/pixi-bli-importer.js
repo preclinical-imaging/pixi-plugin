@@ -16,11 +16,11 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
     }
 }(function () {
 
-    const profiles = {
+    const mappings = {
         get: async (name) => {
-            console.debug(`Getting importer profiles ${name}`)
+            console.debug(`Getting importer mappings ${name}`)
 
-            const url = XNAT.url.csrfUrl(`/xapi/pixi/bli/import/profiles/${name}`);
+            const url = XNAT.url.csrfUrl(`/xapi/pixi/bli/import/mappings/${name}`);
 
             const response = await fetch(url, {
                 method: 'GET',
@@ -33,13 +33,13 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
             if (response.ok) {
                 return response.json();
             } else {
-                throw new Error(`Failed to get importer profile ${name}`);
+                throw new Error(`Failed to get importer mapping ${name}`);
             }
         },
         getAll: async () => {
-            console.debug(`Getting all importer profiles`)
+            console.debug(`Getting all importer mappings`)
 
-            const url = XNAT.url.csrfUrl(`/xapi/pixi/bli/import/profiles`);
+            const url = XNAT.url.csrfUrl(`/xapi/pixi/bli/import/mappings`);
 
             const response = await fetch(url, {
                 method: 'GET',
@@ -52,36 +52,36 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
             if (response.ok) {
                 return response.json();
             } else {
-                throw new Error(`Failed to get importer profiles`);
+                throw new Error(`Failed to get importer mappings`);
             }
         },
-        createOrUpdate: async (profile) => {
-            console.debug(`Updating importer profile ${profile?.name}`)
+        createOrUpdate: async (mapping) => {
+            console.debug(`Updating importer mapping ${mapping?.name}`)
 
-            if (!profile.name) {
-                throw new Error(`Cannot update importer profile without a name`);
+            if (!mapping.name) {
+                throw new Error(`Cannot update importer mapping without a name`);
             }
 
-            const url = XNAT.url.csrfUrl(`/xapi/pixi/bli/import/profiles/${profile.name}`);
+            const url = XNAT.url.csrfUrl(`/xapi/pixi/bli/import/mappings/${mapping.name}`);
 
             const response = await fetch(url, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(profile)
+                body: JSON.stringify(mapping)
             });
 
             if (response.ok) {
                 return response.json();
             } else {
-                throw new Error(`Failed to update importer profile ${profile.name}`);
+                throw new Error(`Failed to update importer mapping ${mapping.name}`);
             }
         },
         delete: async (name) => {
-            console.debug(`Deleting importer profile ${name}`)
+            console.debug(`Deleting importer mapping ${name}`)
 
-            const url = XNAT.url.csrfUrl(`/xapi/pixi/bli/import/profiles/${name}`);
+            const url = XNAT.url.csrfUrl(`/xapi/pixi/bli/import/mappings/${name}`);
 
             const response = await fetch(url, {
                 method: 'DELETE',
@@ -91,7 +91,7 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
             });
 
             if (!response.ok) {
-                throw new Error(`Failed to delete importer profile ${name}`);
+                throw new Error(`Failed to delete importer mapping ${name}`);
             }
         },
     }
@@ -135,15 +135,15 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
         const refresh = async () => {
             console.debug('refreshing');
 
-            const profiles = await XNAT.plugin.pixi.bli.importer.profiles.getAll();
+            const mappings = await XNAT.plugin.pixi.bli.importer.mappings.getAll();
 
-            if (profiles.length === 0) {
+            if (mappings.length === 0) {
                 clear();
-                container.innerHTML = '<div class="panel-body"><div class="loading">No profiles found.</div></div>'
+                container.innerHTML = '<div class="panel-body left">No mappings found</div>';
                 return;
             }
 
-            return table(profiles);
+            return table(mappings);
         }
 
         const editor = async (item) => {
@@ -153,7 +153,7 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
             item = item || {};
 
             XNAT.dialog.open({
-                title: `${doWhat} Importer Profile`,
+                title: `${doWhat} BLI Importer Mapping`,
                 content: spawn('form#editor-form'),
                 maxBtn: true,
                 width: 600,
@@ -175,7 +175,7 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
                         label: 'Name',
                         id: 'name',
                         name: 'name',
-                        description: 'A unique name for this parser.',
+                        description: 'A unique name for this mapping. Users will select this name when importing BLI data.',
                         value: name
                     }).element;
 
@@ -189,15 +189,9 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
                             { value: 'comment2', label: 'Comment2', selected: selected === 'comment2' },
                             { value: 'timePoint', label: 'TimePoint', selected: selected === 'timePoint' },
                             { value: 'animalNumber', label: 'AnimalNumber', selected: selected === 'animalNumber' },
-                            { value: 'animalStrain', label: 'AnimalStrain', selected: selected === 'animalStrain' },
-                            { value: 'animalModel', label: 'AnimalModel', selected: selected === 'animalModel' },
                             { value: 'sex', label: 'Sex', selected: selected === 'sex' },
                             { value: 'view', label: 'View', selected: selected === 'view' },
-                            { value: 'cellLine', label: 'CellLine', selected: selected === 'cellLine' },
-                            { value: 'reporter', label: 'Reporter', selected: selected === 'reporter' },
-                            { value: 'treatment', label: 'Treatment', selected: selected === 'treatment' },
-                            { value: 'lucInjectionTime', label: 'LucInjectionTime', selected: selected === 'lucInjectionTime' },
-                            { value: 'iacucNumber', label: 'IACUCNumber', selected: selected === 'iacucNumber' }
+                            { value: 'clickNumber', label: 'ClickNumber', selected: selected === 'clickNumber' },
                         ]
                     };
 
@@ -374,7 +368,7 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
                                 return;
                             }
 
-                            const parser = {
+                            const mapping = {
                                 name: nameElement.value,
                                 subjectLabelField: subjectLabelFieldElement.value,
                                 subjectLabelRegex: subjectLabelRegexElement.value,
@@ -386,7 +380,7 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
                                 scanLabelRegex: scanLabelRegexElement.value
                             }
 
-                            profiles.createOrUpdate(parser).then(() => {
+                            mappings.createOrUpdate(mapping).then(() => {
                                 XNAT.ui.banner.top(2000, 'Saved', 'success');
                                 XNAT.dialog.closeAll();
                                 refresh();
@@ -407,7 +401,7 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
         const remove = async (name) => {
             console.debug('remove');
 
-            return profiles.delete(name).then(() => {
+            return mappings.delete(name).then(() => {
                 XNAT.ui.banner.top(2000, 'Deleted', 'success');
                 refresh();
             }).catch((error) => {
@@ -416,8 +410,8 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
             });
         }
 
-        const table = async (profiles) => {
-            const table = XNAT.table.dataTable(profiles, {
+        const table = async (mapping) => {
+            const table = XNAT.table.dataTable(mapping, {
                 header: true,
                 sortable: 'name',
                 columns: {
@@ -456,7 +450,7 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
     }
 
     XNAT.plugin.pixi.bli.importer = {
-        profiles: profiles,
+        mappings: mappings,
         manager: manager
     };
 

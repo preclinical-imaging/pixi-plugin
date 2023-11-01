@@ -4,7 +4,7 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Type;
 import org.nrg.framework.orm.hibernate.AbstractHibernateEntity;
-import org.nrg.xnatx.plugins.pixi.bli.models.AnalyzedClickInfoObjectIdentifierConfig;
+import org.nrg.xnatx.plugins.pixi.bli.models.AnalyzedClickInfoObjectIdentifierMapping;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,10 +19,10 @@ import javax.persistence.UniqueConstraint;
 @EqualsAndHashCode(callSuper = false)
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})})
 @Slf4j
-public class AnalyzedClickInfoObjectIdentifierConfigEntity extends AbstractHibernateEntity {
+public class AnalyzedClickInfoObjectIdentifierMappingEntity extends AbstractHibernateEntity {
 
     private String name;
-    private AnalyzedClickInfoObjectIdentifierConfig config;
+    private AnalyzedClickInfoObjectIdentifierMapping mapping;
 
     @Column(columnDefinition = "TEXT")
     public String getName() {
@@ -35,24 +35,24 @@ public class AnalyzedClickInfoObjectIdentifierConfigEntity extends AbstractHiber
 
     @Type(type = "jsonb")
     @Column(
-            name = "config",
+            name = "mapping",
             columnDefinition = "jsonb"
     )
-    public AnalyzedClickInfoObjectIdentifierConfig getConfig() {
-        return config;
+    public AnalyzedClickInfoObjectIdentifierMapping getMapping() {
+        return mapping;
     }
 
-    public void setConfig(AnalyzedClickInfoObjectIdentifierConfig aciObjIdConfig) {
-        this.config = aciObjIdConfig;
+    public void setMapping(AnalyzedClickInfoObjectIdentifierMapping mapping) {
+        this.mapping = mapping;
     }
 
-    public void update(final AnalyzedClickInfoObjectIdentifierConfig pojo) {
+    public void update(final AnalyzedClickInfoObjectIdentifierMapping pojo) {
         setName(pojo.getName());
-        setConfig(pojo);
+        setMapping(pojo);
     }
 
-    public static AnalyzedClickInfoObjectIdentifierConfigEntity fromPojo(AnalyzedClickInfoObjectIdentifierConfig pojo) {
-        final AnalyzedClickInfoObjectIdentifierConfigEntity entity = new AnalyzedClickInfoObjectIdentifierConfigEntity();
+    public static AnalyzedClickInfoObjectIdentifierMappingEntity fromPojo(AnalyzedClickInfoObjectIdentifierMapping pojo) {
+        final AnalyzedClickInfoObjectIdentifierMappingEntity entity = new AnalyzedClickInfoObjectIdentifierMappingEntity();
         entity.update(pojo);
         return entity;
     }

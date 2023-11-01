@@ -50,7 +50,7 @@ import static org.nrg.xnat.archive.Operation.Rebuild;
 @Slf4j
 public class BliImporter extends ImporterHandlerA {
     public static final String BLI_IMPORTER = "BLI";
-    public static final String ANALYZED_CLICK_INFO_OBJECT_IDENTIFIER_CONFIG_URI_PARAM = "config";
+    public static final String ANALYZED_CLICK_INFO_OBJECT_IDENTIFIER_MAPPING_URI_PARAM = "mapping";
 
     private final InputStream in;
     private final UserI user;
@@ -140,8 +140,8 @@ public class BliImporter extends ImporterHandlerA {
         final String directoryName = ze.getName();
         log.info("Importing directory: {}", directoryName);
 
-        final String analyzedClickInfoObjectIdentifierConfig = (String) params.getOrDefault(ANALYZED_CLICK_INFO_OBJECT_IDENTIFIER_CONFIG_URI_PARAM, "");
-        final AnalyzedClickInfoObjectIdentifier analyzedClickInfoObjectIdentifier = analyzedClickInfoObjectIdentifierFactory.create(analyzedClickInfoObjectIdentifierConfig);
+        final String mappingName = (String) params.getOrDefault(ANALYZED_CLICK_INFO_OBJECT_IDENTIFIER_MAPPING_URI_PARAM, "");
+        final AnalyzedClickInfoObjectIdentifier analyzedClickInfoObjectIdentifier = analyzedClickInfoObjectIdentifierFactory.create(mappingName);
 
         // Create prearchive timestamp
         final String timestamp = PrearcUtils.makeTimestamp();

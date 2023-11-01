@@ -86,6 +86,7 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.DEFAULT_DIGITS;
                 "org.nrg.xnatx.plugins.pixi.preferences",
                 "org.nrg.xnatx.plugins.pixi.bli.helpers",
                 "org.nrg.xnatx.plugins.pixi.bli.helpers.impl",
+                "org.nrg.xnatx.plugins.pixi.bli.initialize",
                 "org.nrg.xnatx.plugins.pixi.bli.repositories",
                 "org.nrg.xnatx.plugins.pixi.bli.services",
                 "org.nrg.xnatx.plugins.pixi.bli.services.impl",

@@ -139,10 +139,10 @@ hotelPanel:
 ### BLI
 ###
 
-bliImporterProfiles:
+bliImporterMappings:
   kind: panel
-  name: bliImporterProfiles
-  label: BLI Importer Profiles
+  name: bliImporterMappings
+  label: BLI Importer Mappings
   contents:
     bliImporterDescription:
       tag: div.message
@@ -153,7 +153,7 @@ bliImporterProfiles:
          specific to PerkinElmer's software. This includes the 'AnalyzedClickInfo.txt' file, which contains details about
          the bioluminescence image scan. Our BLI importer parses this file and imports data into XNAT, matching 
          it to XNAT subject, image session, and image scan fields. Using the provided form, you can create various
-         profiles for mapping AnalyzedClickInfo.txt fields to XNAT objects. Users can select their desired profile 
+         mappings for matching AnalyzedClickInfo.txt fields to XNAT objects. Users can select their desired mapping 
          when uploading BLI data."
     bliImporterForm:
       tag: "div#bli-importer-preferences"
@@ -212,4 +212,4 @@ siteSettings:
       group: pixiTabGroup
       active: true
       contents:
-        ${bliImporterProfiles}
+        ${bliImporterMappings}

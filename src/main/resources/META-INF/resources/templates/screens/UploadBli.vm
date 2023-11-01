@@ -9,16 +9,16 @@
         <label for="project" class="project-label">$displayManager.getSingularDisplayNameForProject()</label>
 
         <section class="project-inputs">
-            <select id="project" name="project" form="upload-form"  required>
-                <option value="" disabled selected>Select Project</option>
+            <select id="project" name="project" form="upload-form" required>
+                <option value="" disabled selected></option>
             </select>
         </section>
 
-        <label for="profile" class="profile-label">Select Profile</label>
+        <label for="mapping" class="mapping-label">Mapping</label>
 
-        <section class="profile-inputs">
-            <select id="profile" name="profile" form="upload-form" required>
-                <option value="" disabled selected>Select Profile</option>
+        <section class="mapping-inputs">
+            <select id="mapping" name="mapping" form="upload-form" required>
+                <option value="" disabled selected></option>
             </select>
         </section>
 
@@ -36,8 +36,8 @@
     .project-label { grid-area: project-label; }
     .project-inputs { grid-area: project-inputs; }
 
-    .profile-label { grid-area: profile-label; }
-    .profile-inputs { grid-area: profile-inputs; }
+    .mapping-label { grid-area: mapping-label; }
+    .mapping-inputs { grid-area: mapping-inputs; }
 
     .file-label { grid-area: file-label; }
     .file-inputs { grid-area: file-inputs; }
@@ -55,7 +55,7 @@
         row-gap: 1em;
         grid-template-areas:
             'project-label project-inputs project-inputs'
-            'profile-label profile-inputs profile-inputs'
+            'mapping-label mapping-inputs mapping-inputs'
             'file-label file-inputs file-inputs'
             '. submit .'
     }
@@ -69,7 +69,7 @@
     // Form Elements
     let formEl            = document.getElementById("upload-form");
     let projectEl         = document.getElementById("project");
-    let profileEl         = document.getElementById("profile");
+    let mappingEl         = document.getElementById("mapping");
     let prearchiveCode0El = document.getElementById("prearchive-code-0");
     let prearchiveCode1El = document.getElementById("prearchive-code-1");
     let fileEl            = document.getElementById("file");
@@ -91,23 +91,23 @@
         })
     }
 
-    let renderProfilesSelectBox = (selectBox, profiles) => {
-        console.debug('renderProfilesSelectBox()')
+    let renderMappingsSelectBox = (selectBox, mappings) => {
+        console.debug('renderMappingsSelectBox()')
 
         // Clear select box
         selectBox.options.length = 0;
 
         // Placeholder
-        selectBox.options[0] = new Option("Select Profile", "");
+        selectBox.options[0] = new Option("Select Mapping", "");
         selectBox.options[0].disabled = true;
         selectBox.options[0].selected = true;
 
-        profiles.forEach(profile => {
-            selectBox.options[selectBox.length] = new Option(profile['name'], profile['name'])
+        mappings.forEach(mapping => {
+            selectBox.options[selectBox.length] = new Option(mapping['name'], mapping['name'], false, mapping['name'] === 'Default')
         })
     }
 
-    // Load projects and profiles then render select boxes
+    // Load projects and mappings then render select boxes
     let projects;
     XNAT.plugin.pixi.projects.getAll().then(resultSet => resultSet['ResultSet']['Result'])
                                       .then(prjs => {
@@ -116,8 +116,8 @@
                                       });
 
 
-    XNAT.plugin.pixi.bli.importer.profiles.getAll()
-                                          .then(profiles => renderProfilesSelectBox(profileEl, profiles));
+    XNAT.plugin.pixi.bli.importer.mappings.getAll()
+                                          .then(mappings => renderMappingsSelectBox(mappingEl, mappings));
 
     async function submitForm() {
         console.debug('submitForm()')
@@ -138,7 +138,7 @@
         }
 
         let projectId = projectEl.value;
-        let profile = profileEl.value;
+        let mapping = mappingEl.value;
         let uploadId = new Date().toISOString()
                                  .replaceAll('-', '_')
                                  .replaceAll(':', '_')
@@ -186,7 +186,7 @@
         importServiceUrl = XNAT.url.addQueryString(importServiceUrl, ['import-handler=BLI',
                                                                       `PROJECT_ID=${projectId}`,
                                                                       `src=${encodedCachePath}`,
-                                                                      `config=${profile}`]);
+                                                                      `mapping=${mapping}`]);
 
         // Extract the zip file from the users cache
         console.debug(`Extracting ${file.name}`);

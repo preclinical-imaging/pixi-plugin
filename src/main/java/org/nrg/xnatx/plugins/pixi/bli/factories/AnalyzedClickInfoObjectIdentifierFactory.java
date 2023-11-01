@@ -4,6 +4,6 @@ import org.nrg.xnatx.plugins.pixi.bli.services.AnalyzedClickInfoObjectIdentifier
 
 public interface AnalyzedClickInfoObjectIdentifierFactory {
 
-    AnalyzedClickInfoObjectIdentifier create(String configName);
+    AnalyzedClickInfoObjectIdentifier create(String name);
 
 }
