@@ -34,6 +34,7 @@ public class PIXIPreferences extends AbstractPreferenceBean {
     public static final String UI_SHOW_HUMAN_SEARCH_FIELDS_PREFERENCE_ID =  "uiShowHumanSearchFields";
     public static final String UI_SHOW_USER_READABLE_COUNTS_PREFERENCE_ID =  "uiShowUserReadableCounts";
     public static final String UI_HIDE_SITE_WIDE_COUNTS_PREFERENCE_ID =  "uiHideSiteWideCounts";
+    public static final String DEFAULT_BLI_IMPORTER_MAPPING = "defaultBliImporterMapping";
 
     private static final List<String> demographicDataImpls = new ArrayList<>();
     static {
@@ -170,4 +171,18 @@ public class PIXIPreferences extends AbstractPreferenceBean {
     private boolean isNotValidDemographicDataImpl(final String demographicDataImpl) {
         return !demographicDataImpls.contains(demographicDataImpl);
     }
+
+    @NrgPreference(defaultValue = "")
+    public String getDefaultBliImporterMapping() {
+        return getValue(DEFAULT_BLI_IMPORTER_MAPPING);
+    }
+
+    public void setDefaultBliImporterMapping(final String defaultBliImporterMapping) {
+        try {
+            set(defaultBliImporterMapping, DEFAULT_BLI_IMPORTER_MAPPING);
+        } catch (InvalidPreferenceName e) {
+            log.error("Invalid preference name " + DEFAULT_BLI_IMPORTER_MAPPING + ": something is very wrong here.", e);
+        }
+    }
+
 }

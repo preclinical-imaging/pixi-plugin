@@ -7,6 +7,7 @@ import org.nrg.xnat.services.XnatAppInfo;
 import org.nrg.xnatx.plugins.pixi.bli.helpers.XFTManagerHelper;
 import org.nrg.xnatx.plugins.pixi.bli.models.AnalyzedClickInfoObjectIdentifierMapping;
 import org.nrg.xnatx.plugins.pixi.bli.services.AnalyzedClickInfoObjectIdentifierMappingService;
+import org.nrg.xnatx.plugins.pixi.preferences.PIXIPreferences;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,15 +18,18 @@ public class AnalyzedClickInfoObjectIdentifierMappingInitializer extends Abstrac
     private final XFTManagerHelper xftManagerHelper;
     private final XnatAppInfo appInfo;
     private final AnalyzedClickInfoObjectIdentifierMappingService mappingService;
+    private final PIXIPreferences pixiPreferences;
 
     @Autowired
     public AnalyzedClickInfoObjectIdentifierMappingInitializer(final XFTManagerHelper xftManagerHelper,
                                                                final XnatAppInfo appInfo,
-                                                               final AnalyzedClickInfoObjectIdentifierMappingService mappingService) {
+                                                               final AnalyzedClickInfoObjectIdentifierMappingService mappingService,
+                                                               final PIXIPreferences pixiPreferences) {
         super();
         this.xftManagerHelper = xftManagerHelper;
         this.appInfo = appInfo;
         this.mappingService = mappingService;
+        this.pixiPreferences = pixiPreferences;
     }
 
     @Override
@@ -37,13 +41,8 @@ public class AnalyzedClickInfoObjectIdentifierMappingInitializer extends Abstrac
     protected void callImpl() throws InitializingTaskException {
         log.info("Initializing default BLI importer mapping.");
 
-        if (!xftManagerHelper.isInitialized()) {
-            log.debug("XFT not initialized, deferring execution.");
-            throw new InitializingTaskException(InitializingTaskException.Level.RequiresInitialization);
-        }
-
-        if (!appInfo.isInitialized()) {
-            log.debug("XNAT not initialized, deferring execution.");
+        if (!xftManagerHelper.isInitialized() || !appInfo.isInitialized()) {
+            log.debug("XFTManagerHelper or XnatAppInfo is not initialized, skipping creation.");
             throw new InitializingTaskException(InitializingTaskException.Level.RequiresInitialization);
         }
 
@@ -61,10 +60,11 @@ public class AnalyzedClickInfoObjectIdentifierMappingInitializer extends Abstrac
                                                                                                        .sessionLabelField("experiment")
                                                                                                        .sessionLabelRegex("(.*)")
                                                                                                        .scanLabelField("view")
-                                                                                                       .subjectLabelRegex("(.*)")
+                                                                                                       .scanLabelRegex("(.*)")
                                                                                                        .build();
 
-            mappingService.createOrUpdate("Default", mapping);
+            mappingService.createOrUpdate(mapping.getName(), mapping);
+            pixiPreferences.setDefaultBliImporterMapping(mapping.getName());
             log.info("Created default BLI importer mapping.");
         }
     }

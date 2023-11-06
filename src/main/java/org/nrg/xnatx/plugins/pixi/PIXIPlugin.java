@@ -10,9 +10,11 @@ import org.nrg.xnat.restlet.actions.importer.ImporterHandlerPackages;
 import org.nrg.xnat.services.XnatAppInfo;
 import org.nrg.xnat.services.system.HostInfoService;
 import org.nrg.xnat.turbine.utils.IDGenerator;
+import org.nrg.xnatx.plugins.pixi.config.BliConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.nrg.xft.identifier.IDGeneratorFactory.DEFAULT_COLUMN;
@@ -62,7 +64,7 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.DEFAULT_DIGITS;
                                          singular = "Animal Husbandry",
                                          plural = "Animal Husbandry",
                                          code = "AH"),
-                             @XnatDataModel(value = PixiImageacquisitioncontextassessordata.SCHEMA_ELEMENT_NAME,
+                          @XnatDataModel(value = PixiImageacquisitioncontextassessordata.SCHEMA_ELEMENT_NAME,
                                          singular = "Image Acquisition Context",
                                          plural = "Image Acquisition Contexts",
                                          code = "IAC"),
@@ -73,7 +75,7 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.DEFAULT_DIGITS;
                           @XnatDataModel(value = PixiBliscandata.SCHEMA_ELEMENT_NAME,
                                          singular = "BLI Scan",
                                          plural = "BLI Scans",
-                                         code = "BLIScan")
+                                         code = "BLIScan"),
                           })
 @ComponentScan({"org.nrg.xnatx.plugins.pixi.xenografts.entities",
                 "org.nrg.xnatx.plugins.pixi.xenografts.repositories",
@@ -84,20 +86,11 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.DEFAULT_DIGITS;
                 "org.nrg.xnatx.plugins.pixi.hotelsplitter.initialize",
                 "org.nrg.xnatx.plugins.pixi.hotelsplitter.eventservice.actions",
                 "org.nrg.xnatx.plugins.pixi.preferences",
-                "org.nrg.xnatx.plugins.pixi.bli.helpers",
-                "org.nrg.xnatx.plugins.pixi.bli.helpers.impl",
-                "org.nrg.xnatx.plugins.pixi.bli.initialize",
-                "org.nrg.xnatx.plugins.pixi.bli.repositories",
-                "org.nrg.xnatx.plugins.pixi.bli.services",
-                "org.nrg.xnatx.plugins.pixi.bli.services.impl",
-                "org.nrg.xnatx.plugins.pixi.bli.entities",
-                "org.nrg.xnatx.plugins.pixi.bli.factories",
-                "org.nrg.xnatx.plugins.pixi.bli.factories.impl",
-                "org.nrg.xnatx.plugins.pixi.bli.rest",
                 "org.nrg.xnatx.plugins.pixi.imageAcqCtx.rest",
                 "org.nrg.xnatx.plugins.pixi.imageAcqCtx.services.impl",
                 "org.nrg.xnatx.plugins.pixi.rest",
 })
+@Import({BliConfig.class})
 @Slf4j
 public class PIXIPlugin {
 

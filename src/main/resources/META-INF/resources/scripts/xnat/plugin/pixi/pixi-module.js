@@ -9,6 +9,7 @@ console.log('pixi-module.js');
 var XNAT = getObject(XNAT || {});
 XNAT.plugin = getObject(XNAT.plugin || {});
 XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
+XNAT.plugin.pixi.preferences = getObject(XNAT.plugin.pixi.preferences || {});
 
 (function(factory) {
     if (typeof define === 'function' && define.amd) {
@@ -102,6 +103,54 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
             }
         });
     };
+
+    XNAT.plugin.pixi.preferences.get = async (preference) => {
+        console.debug(`XNAT.plugin.pixi.preferences.get('${preference}')`);
+
+        if (!preference) {
+            throw new Error('No preference specified');
+        }
+
+        const url = restUrl(`/xapi/pixi/preferences/${preference}`);
+
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error(`Failed to get preference '${preference}'`);
+        }
+    }
+
+    XNAT.plugin.pixi.preferences.set = async (preference, value) => {
+        console.debug(`XNAT.plugin.pixi.preferences.set('${preference}', '${value}')`);
+
+        if (!preference) {
+            throw new Error('No preference specified');
+        }
+
+        const url = restUrl(`/xapi/pixi/preferences`);
+
+        const data = {};
+        data[preference] = value;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to set preference '${preference}'`);
+        }
+    }
     
     XNAT.plugin.pixi.unescapeHtml = function(str) {
         return window.unescapeHtml(str);

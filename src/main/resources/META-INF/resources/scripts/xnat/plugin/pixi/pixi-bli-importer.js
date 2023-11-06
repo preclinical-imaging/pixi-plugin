@@ -55,14 +55,10 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
                 throw new Error(`Failed to get importer mappings`);
             }
         },
-        createOrUpdate: async (mapping) => {
-            console.debug(`Updating importer mapping ${mapping?.name}`)
+        createOrUpdate: async (name, mapping) => {
+            console.debug(`Updating importer mapping ${name}`)
 
-            if (!mapping.name) {
-                throw new Error(`Cannot update importer mapping without a name`);
-            }
-
-            const url = XNAT.url.csrfUrl(`/xapi/pixi/bli/import/mappings/${mapping.name}`);
+            const url = XNAT.url.csrfUrl(`/xapi/pixi/bli/import/mappings/${name}`);
 
             const response = await fetch(url, {
                 method: 'PUT',
@@ -75,7 +71,7 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
             if (response.ok) {
                 return response.json();
             } else {
-                throw new Error(`Failed to update importer mapping ${mapping.name}`);
+                throw new Error(`Failed to update importer mapping ${name}`);
             }
         },
         delete: async (name) => {
@@ -94,6 +90,13 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
                 throw new Error(`Failed to delete importer mapping ${name}`);
             }
         },
+        getDefault: async () => {
+            return XNAT.plugin.pixi.preferences.get('defaultBliImporterMapping')
+                                               .then(preference => preference['defaultBliImporterMapping']);
+        },
+        setDefault: async (name) => {
+            return XNAT.plugin.pixi.preferences.set('defaultBliImporterMapping', name);
+        }
     }
 
     const manager =  (containerId) => {
@@ -152,6 +155,8 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
             const doWhat = item ? 'Update' : 'Create';
             item = item || {};
 
+            let itemName = item?.name || '';
+
             XNAT.dialog.open({
                 title: `${doWhat} BLI Importer Mapping`,
                 content: spawn('form#editor-form'),
@@ -161,7 +166,8 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
                     const formContainer = document.getElementById('editor-form');
                     formContainer.classList.add('panel');
 
-                    let name = item?.name || '';
+                    let name = itemName;
+                    let isDefault = false;
                     let subjectLabelField = item?.subjectLabelField || '';
                     let subjectLabelRegex = item?.subjectLabelRegex || '';
                     let hotelSession = item?.hotelSession || false;
@@ -178,6 +184,21 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
                         description: 'A unique name for this mapping. Users will select this name when importing BLI data.',
                         value: name
                     }).element;
+
+                    const isDefaultElement =  XNAT.ui.panel.input.checkbox({
+                        label: 'Default',
+                        id: 'defaultMapping',
+                        name: 'defaultMapping',
+                        description: 'If true, this mapping will be selected by default when importing BLI data.',
+                        value: isDefault
+                    }).element;
+
+                    // Update the default mapping on opening the editor
+                    XNAT.plugin.pixi.bli.importer.mappings.getDefault().then((defaultMapping) => {
+                        if (defaultMapping === name) {
+                            isDefaultElement.querySelector('input').checked = true;
+                        }
+                    });
 
                     const userLabelNameSetOptions = (selected) => {
                         return [
@@ -270,6 +291,7 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
 
                     formContainer.appendChild(spawn('!', [
                         nameElement,
+                        isDefaultElement,
                         subjectLabelFieldElement,
                         subjectLabelRegexElement,
                         hotelSessionElement,
@@ -306,6 +328,7 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
                                 XNAT.validate(nameElement)
                                     .reset().chain()
                                     .required()
+                                    .is('notEmpty')
                                     .failure('Name is required')
                             );
 
@@ -320,6 +343,7 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
                                 XNAT.validate(subjectLabelRegexElement)
                                     .reset().chain()
                                     .required()
+                                    .is('notEmpty')
                                     .failure('Subject Label Regex is required')
                             );
 
@@ -334,6 +358,7 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
                                 XNAT.validate(sessionLabelRegexElement)
                                     .reset().chain()
                                     .required()
+                                    .is('notEmpty')
                                     .failure('Session Label Regex is required')
                             );
 
@@ -348,6 +373,7 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
                                 XNAT.validate(scanLabelRegexElement)
                                     .reset().chain()
                                     .required()
+                                    .is('notEmpty')
                                     .failure('Scan Label Regex is required')
                             );
 
@@ -368,26 +394,40 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
                                 return;
                             }
 
-                            const mapping = {
-                                name: nameElement.value,
-                                subjectLabelField: subjectLabelFieldElement.value,
-                                subjectLabelRegex: subjectLabelRegexElement.value,
-                                hotelSession: hotelSessionElement.checked,
-                                hotelSubjectSeparator: hotelSubjectSeparatorElement.value,
-                                sessionLabelField: sessionLabelFieldElement.value,
-                                sessionLabelRegex: sessionLabelRegexElement.value,
-                                scanLabelField: scanLabelFieldElement.value,
-                                scanLabelRegex: scanLabelRegexElement.value
-                            }
+                            (async () => {
 
-                            mappings.createOrUpdate(mapping).then(() => {
-                                XNAT.ui.banner.top(2000, 'Saved', 'success');
-                                XNAT.dialog.closeAll();
-                                refresh();
-                            }).catch((error) => {
-                                XNAT.ui.banner.top(2000, 'Failed to save', 'error');
-                                console.error(error);
-                            });
+                                const mapping = {
+                                    name: nameElement.value,
+                                    subjectLabelField: subjectLabelFieldElement.value,
+                                    subjectLabelRegex: subjectLabelRegexElement.value,
+                                    hotelSession: hotelSessionElement.checked,
+                                    hotelSubjectSeparator: hotelSubjectSeparatorElement.value,
+                                    sessionLabelField: sessionLabelFieldElement.value,
+                                    sessionLabelRegex: sessionLabelRegexElement.value,
+                                    scanLabelField: scanLabelFieldElement.value,
+                                    scanLabelRegex: scanLabelRegexElement.value,
+                                };
+
+                                try {
+                                    await mappings.createOrUpdate(itemName, mapping);
+
+                                    if (document.getElementById('defaultMapping').checked) {
+                                        await mappings.setDefault(mapping.name);
+                                    } else {
+                                        const defaultMapping = await mappings.getDefault();
+                                        if (defaultMapping === mapping.name) {
+                                            await mappings.setDefault('');
+                                        }
+                                    }
+
+                                    XNAT.ui.banner.top(2000, 'Saved', 'success');
+                                    XNAT.dialog.closeAll();
+                                    refresh();
+                                } catch (error) {
+                                    XNAT.ui.banner.top(2000, 'Failed to save', 'error');
+                                    console.error(error);
+                                }
+                            })();
                         }
                     },
                     {
@@ -410,14 +450,30 @@ XNAT.plugin.pixi.bli.importer = getObject(XNAT.plugin.pixi.bli.importer || {});
             });
         }
 
-        const table = async (mapping) => {
-            const table = XNAT.table.dataTable(mapping, {
+        const table = async (mappings) => {
+            const defaultMapping = await XNAT.plugin.pixi.bli.importer.mappings.getDefault();
+
+            // sort by mapping name
+            mappings.sort((a, b) => {
+                return a.name.toUpperCase() < b.name.toUpperCase() ? -1 : a.name.toUpperCase() > b.name.toUpperCase() ? 1 : 0;
+            });
+
+            const table = XNAT.table.dataTable(mappings, {
                 header: true,
                 sortable: 'name',
                 columns: {
                     name: {
                         label: 'Name',
                         th: { className: 'left' },
+                    },
+                    default: {
+                        label: 'Default',
+                        th: { style: { width: '50px' } },
+                        apply: function() {
+                            return spawn('div.center', [
+                                spawn('span', {}, this['name'] === defaultMapping ? '<i class="fa fa-check"></i>' : '')
+                            ]);
+                        }
                     },
                     actions: {
                         label: 'Actions',

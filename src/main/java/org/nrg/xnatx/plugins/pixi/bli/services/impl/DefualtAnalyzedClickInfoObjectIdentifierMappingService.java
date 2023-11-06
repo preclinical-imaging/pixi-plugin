@@ -37,7 +37,7 @@ public class DefualtAnalyzedClickInfoObjectIdentifierMappingService implements A
             mappingEntityService.create(entity);
         }
 
-        return mappingEntityService.findMapping(name)
+        return mappingEntityService.findMapping(mapping.getName()) // use the name from the mapping object in case it was updated
                                    .map(AnalyzedClickInfoObjectIdentifierMappingEntity::getMapping)
                                    .orElseThrow(() -> new RuntimeException("Failed to get importer mapping even though it was just created/updated"));
     }
