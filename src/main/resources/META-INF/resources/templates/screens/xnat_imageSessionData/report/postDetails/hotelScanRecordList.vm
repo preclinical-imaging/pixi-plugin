@@ -32,7 +32,11 @@
         success: function(data){
             // find scan records relative to this session
             data.ResultSet.Result.forEach((record) => {
-                if (record.label.indexOf('$om.getLabel()') >= 0) scanRecords.push(record)
+                let session_label = '$om.getLabel()'
+                // If _split_ is in the session label, we are dealing with a split hotel image session.
+                // Remove _split_ and everything after it to get the hotel session label.
+                if (session_label.indexOf('_split_') >= 0) session_label = session_label.split('_split_')[0]
+                if (record.label.indexOf(session_label) >= 0) scanRecords.push(record)
             });
 
             scanRecords.forEach((record) => {
