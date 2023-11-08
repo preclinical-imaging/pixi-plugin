@@ -8,12 +8,10 @@
         <p>File format requirements:</p>
 
         <ul>
-            <li>Each BLI image session must be in its own directory within the zip file. There can be multiple image sessions
-                in the zip file.</li>
-            <li>Each BLI image session directory must contain an AnalyzedClickInfo.txt file. This file will be read and used
-                to populate the XNAT metadata. The selected mapping will be used to map the fields in the AnalyzedClickInfo.txt
-                file to XNAT fields. See the PIXI plugin settings to create and edit mappings.</li>
-            </li>
+            <li>Must be a .zip file</li>
+            <li>Each image session must be in its own directory within the zip file.</li>
+            <li>Each directory must contain an AnalyzedClickInfo.txt file which contains the metadata for the session.</li>
+            <li>Imaging and non-imaging data files will be uploaded to the session.</li>
         </ul>
     </div>
 
@@ -41,8 +39,7 @@
 <style>
 
     .upload-container {
-        width: 500px;
-        margin: 0 auto;
+        width: 100%;
     }
 
     .form-instructions {
@@ -55,6 +52,7 @@
         row-gap: 1em;
         font-size: 14px;
         box-sizing: border-box;
+        width: 400px;
     }
 
     #upload-form label {
@@ -235,7 +233,10 @@
 
             XNAT.ui.dialog.open({
                 title: 'Upload/Extraction Successful',
-                content: `<div class="success">Upload/Extraction of ${file.name} successful. Visit the <a target="_blank" href="/app/template/XDATScreen_prearchives.vm">prearchive</a> to review.</div>`,
+                content: `<div class="success">Upload/Extraction of ${file.name} successful. Depending on the projects
+                prearchive settings, visit the <a target="_blank" href="/app/template/XDATScreen_prearchives.vm">prearchive</a>
+                to review the session(s) before archiving or visit the <a target="_blank" href="/data/projects/${projectId}">project</a>
+                to view archived session(s).</div>`,
                 buttons: [
                     {
                         label: 'OK',
