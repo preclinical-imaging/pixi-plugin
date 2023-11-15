@@ -10,9 +10,11 @@ import org.nrg.xnat.restlet.actions.importer.ImporterHandlerPackages;
 import org.nrg.xnat.services.XnatAppInfo;
 import org.nrg.xnat.services.system.HostInfoService;
 import org.nrg.xnat.turbine.utils.IDGenerator;
+import org.nrg.xnatx.plugins.pixi.bli.config.BliConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.nrg.xft.identifier.IDGeneratorFactory.DEFAULT_COLUMN;
@@ -21,8 +23,11 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.DEFAULT_DIGITS;
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @XnatPlugin(value = "PIXIPlugin", name = "PIXI Plugin",
             logConfigurationFile = "pixi-logback.xml",
-            entityPackages = {"org.nrg.xnatx.plugins.pixi.xenografts.entities",
-                              "org.nrg.xnatx.plugins.pixi.hotelsplitter.entities"},
+            entityPackages = {
+                                "org.nrg.xnatx.plugins.pixi.xenografts.entities",
+                                "org.nrg.xnatx.plugins.pixi.hotelsplitter.entities",
+                                "org.nrg.xnatx.plugins.pixi.bli.entities",
+            },
             dataModels = {@XnatDataModel(value = PixiAnimaldemographicdata.SCHEMA_ELEMENT_NAME,
                                          singular = "Animal Demographic Data",
                                          plural = "Animal Demographics",
@@ -59,18 +64,18 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.DEFAULT_DIGITS;
                                          singular = "Animal Husbandry",
                                          plural = "Animal Husbandry",
                                          code = "AH"),
-                             @XnatDataModel(value = PixiImageacquisitioncontextassessordata.SCHEMA_ELEMENT_NAME,
+                          @XnatDataModel(value = PixiImageacquisitioncontextassessordata.SCHEMA_ELEMENT_NAME,
                                          singular = "Image Acquisition Context",
                                          plural = "Image Acquisition Contexts",
                                          code = "IAC"),
-//                          @XnatDataModel(value = PixiBlisessiondata.SCHEMA_ELEMENT_NAME,
-//                                         singular = "BLI Session",
-//                                         plural = "BLI Sessions",
-//                                         code = "BLI"),
-//                          @XnatDataModel(value = PixiBliscandata.SCHEMA_ELEMENT_NAME,
-//                                         singular = "BLI Scan",
-//                                         plural = "BLI Scans",
-//                                         code = "BLIScan")
+                          @XnatDataModel(value = PixiBlisessiondata.SCHEMA_ELEMENT_NAME,
+                                         singular = "BLI Session",
+                                         plural = "BLI Sessions",
+                                         code = "BLI"),
+                          @XnatDataModel(value = PixiBliscandata.SCHEMA_ELEMENT_NAME,
+                                         singular = "BLI Scan",
+                                         plural = "BLI Scans",
+                                         code = "BLIScan"),
                           })
 @ComponentScan({"org.nrg.xnatx.plugins.pixi.xenografts.entities",
                 "org.nrg.xnatx.plugins.pixi.xenografts.repositories",
@@ -81,12 +86,11 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.DEFAULT_DIGITS;
                 "org.nrg.xnatx.plugins.pixi.hotelsplitter.initialize",
                 "org.nrg.xnatx.plugins.pixi.hotelsplitter.eventservice.actions",
                 "org.nrg.xnatx.plugins.pixi.preferences",
-                "org.nrg.xnatx.plugins.pixi.bli.helpers",
-                "org.nrg.xnatx.plugins.pixi.bli.helpers.impl",
                 "org.nrg.xnatx.plugins.pixi.imageAcqCtx.rest",
                 "org.nrg.xnatx.plugins.pixi.imageAcqCtx.services.impl",
                 "org.nrg.xnatx.plugins.pixi.rest",
 })
+@Import({BliConfig.class})
 @Slf4j
 public class PIXIPlugin {
 

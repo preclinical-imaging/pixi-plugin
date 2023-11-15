@@ -22,8 +22,10 @@ import org.nrg.xnat.restlet.actions.importer.ImporterHandlerA;
 import org.nrg.xnat.restlet.util.FileWriterWrapperI;
 import org.nrg.xnat.services.messaging.prearchive.PrearchiveOperationRequest;
 import org.nrg.xnat.turbine.utils.ArcSpecManager;
+import org.nrg.xnatx.plugins.pixi.bli.factories.AnalyzedClickInfoObjectIdentifierFactory;
 import org.nrg.xnatx.plugins.pixi.bli.helpers.AnalyzedClickInfoHelper;
 import org.nrg.xnatx.plugins.pixi.bli.models.AnalyzedClickInfo;
+import org.nrg.xnatx.plugins.pixi.bli.services.AnalyzedClickInfoObjectIdentifier;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,6 +50,7 @@ import static org.nrg.xnat.archive.Operation.Rebuild;
 @Slf4j
 public class BliImporter extends ImporterHandlerA {
     public static final String BLI_IMPORTER = "BLI";
+    public static final String ANALYZED_CLICK_INFO_OBJECT_IDENTIFIER_MAPPING_URI_PARAM = "mapping";
 
     private final InputStream in;
     private final UserI user;
@@ -59,6 +62,8 @@ public class BliImporter extends ImporterHandlerA {
     private final Set<SessionData> sessions;
     private AnalyzedClickInfoHelper analyzedClickInfoHelper;
     private static final String UNKNOWN_SESSION_LABEL = "bli_zip_upload";
+
+    private final AnalyzedClickInfoObjectIdentifierFactory analyzedClickInfoObjectIdentifierFactory;
 
     public BliImporter(final Object listenerControl,
                        final UserI user,
@@ -74,6 +79,7 @@ public class BliImporter extends ImporterHandlerA {
         this.timestampDirectories = Sets.newLinkedHashSet();
         this.sessions = Sets.newLinkedHashSet();
         this.analyzedClickInfoHelper = XDAT.getContextService().getBean(AnalyzedClickInfoHelper.class);
+        this.analyzedClickInfoObjectIdentifierFactory = XDAT.getContextService().getBean(AnalyzedClickInfoObjectIdentifierFactory.class);
     }
 
     @Override
@@ -133,6 +139,9 @@ public class BliImporter extends ImporterHandlerA {
     protected ZipEntry importDirectory(final String projectId, ZipEntry ze, ZipInputStream zin) throws IOException, ServerException, ClientException {
         final String directoryName = ze.getName();
         log.info("Importing directory: {}", directoryName);
+
+        final String mappingName = (String) params.getOrDefault(ANALYZED_CLICK_INFO_OBJECT_IDENTIFIER_MAPPING_URI_PARAM, "");
+        final AnalyzedClickInfoObjectIdentifier analyzedClickInfoObjectIdentifier = analyzedClickInfoObjectIdentifierFactory.create(mappingName);
 
         // Create prearchive timestamp
         final String timestamp = PrearcUtils.makeTimestamp();
@@ -211,24 +220,21 @@ public class BliImporter extends ImporterHandlerA {
         if (analyzedClickInfo.isPresent()) {
 
             if (!sessionLabel.isPresent()) {
-                sessionLabel = Optional.ofNullable(replaceWhitespace(analyzedClickInfo.get().getUserLabelNameSet().getExperiment()));
+                sessionLabel = analyzedClickInfoObjectIdentifier.getSessionLabel(analyzedClickInfo.get())
+                                                                .map(this::replaceWhitespace);
+
             }
 
             if (!subjectId.isPresent()) {
-                String animalNumber = analyzedClickInfo.get().getUserLabelNameSet().getAnimalNumber();
-
-                if (animalNumber != null) {
-                    if (animalNumber.contains(",")) {
-                        // Comma separated animal numbers will indicate a hotel session
-                        subjectId = Optional.of("Hotel");
-                    } else {
-                        subjectId = Optional.of(animalNumber);
-                    }
-                }
+                subjectId = analyzedClickInfoObjectIdentifier.getSubjectLabel(analyzedClickInfo.get())
+                                                             .map(this::replaceWhitespace);
             }
 
             scanDate = Optional.of(analyzedClickInfo.get().getLuminescentImage().getAcquisitionDateTime());
-            scanLabel = Optional.ofNullable(replaceWhitespace(analyzedClickInfo.get().getUserLabelNameSet().getView()));
+            scanLabel = analyzedClickInfoObjectIdentifier.getScanLabel(analyzedClickInfo.get())
+                                                         .map(this::replaceWhitespace
+            );
+
             uid = Optional.ofNullable(replaceWhitespace(analyzedClickInfo.get().getClickNumber().getClickNumber()));
 
             // Populate session
@@ -416,7 +422,7 @@ public class BliImporter extends ImporterHandlerA {
         }
     }
 
-    public void setAnalyzedClickInfoHelper(final AnalyzedClickInfoHelper analyzedClickInfoHelper) {
+    protected void setAnalyzedClickInfoHelper(final AnalyzedClickInfoHelper analyzedClickInfoHelper) {
         this.analyzedClickInfoHelper = analyzedClickInfoHelper;
     }
 

@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 @Slf4j
 public class BliScanBuilder implements Callable<XnatImagescandataBean> {
@@ -36,7 +37,6 @@ public class BliScanBuilder implements Callable<XnatImagescandataBean> {
         String id = scanDir.getFileName().toString();
 
         bliScan.setId(id);
-        bliScan.setType("BLI");
 
         AnalyzedClickInfo analyzedClickInfo = analyzedClickInfoHelper.readJson(scanDir.resolve("AnalyzedClickInfo.json"));
 
@@ -63,9 +63,17 @@ public class BliScanBuilder implements Callable<XnatImagescandataBean> {
 
         CatCatalogBean catCatalogBean = new CatCatalogBean();
 
-        Files.list(scanDir)
-             .map(this::createCatalogEntry)
-             .forEach(catCatalogBean::addEntries_entry);
+        try (final Stream<Path> files = Files.list(scanDir)) {
+            files.filter(Files::isRegularFile)
+                 .map(Path::getFileName)
+                 .map(Path::toString)
+                 .map(fileName -> {
+                     CatEntryBean catEntryBean = new CatEntryBean();
+                     catEntryBean.setUri(fileName);
+                     return catEntryBean;
+                 })
+                 .forEach(catCatalogBean::addEntries_entry);
+        }
 
         bliScan.addFile(resourceCatalog);
 
@@ -76,12 +84,6 @@ public class BliScanBuilder implements Callable<XnatImagescandataBean> {
         }
 
         return bliScan;
-    }
-
-    private CatEntryBean createCatalogEntry(Path path) {
-        CatEntryBean catEntryBean = new CatEntryBean();
-        catEntryBean.setUri(String.valueOf(path.getFileName()));
-        return catEntryBean;
     }
 
     public void setAnalyzedClickInfoHelper(AnalyzedClickInfoHelper analyzedClickInfoHelper) {

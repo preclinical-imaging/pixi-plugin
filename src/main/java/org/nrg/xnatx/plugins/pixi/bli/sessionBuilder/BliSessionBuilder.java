@@ -2,14 +2,10 @@ package org.nrg.xnatx.plugins.pixi.bli.sessionBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.nrg.session.SessionBuilder;
-import org.nrg.xdat.XDAT;
 import org.nrg.xdat.bean.PixiBlisessiondataBean;
-import org.nrg.xdat.bean.PixiBlisessiondataBlihotelsubjectBean;
 import org.nrg.xdat.bean.XnatImagesessiondataBean;
 import org.nrg.xdat.model.XnatImagescandataI;
 import org.nrg.xnat.helpers.prearchive.PrearcUtils;
-import org.nrg.xnatx.plugins.pixi.bli.helpers.AnalyzedClickInfoHelper;
-import org.nrg.xnatx.plugins.pixi.bli.models.AnalyzedClickInfo;
 
 import java.io.File;
 import java.io.Writer;
@@ -20,17 +16,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 public class BliSessionBuilder extends SessionBuilder {
 
     private final File sessionDir;
-    private AnalyzedClickInfoHelper analyzedClickInfoHelper;
 
     public BliSessionBuilder(final File sessionDir, final Writer fileWriter) {
         super(sessionDir, sessionDir.getPath(), fileWriter);
         this.sessionDir = sessionDir;
-        this.analyzedClickInfoHelper = XDAT.getContextService().getBean(AnalyzedClickInfoHelper.class);
     }
 
     @Override
@@ -59,27 +54,19 @@ public class BliSessionBuilder extends SessionBuilder {
 
         // Build scans
         Path scanDir = sessionDir.toPath().resolve("SCANS");
-        List<Path> scans = Files.list(scanDir).filter(Files::isDirectory).collect(Collectors.toList());
 
-        for (Path scan : scans) {
-            final BliScanBuilder bliScanBuilder = new BliScanBuilder(scan);
-            bliSession.addScans_scan(bliScanBuilder.call());
+        try (final Stream<Path> scans = Files.list(scanDir)) {
+            List<Path> scanList = scans.filter(Files::isDirectory).collect(Collectors.toList());
 
-            if (bliSession.getHotelsession() && bliSession.getBlihotelsubject().isEmpty()) {
-                // Only add hotel subjects once. This assumes all the subjects are in the same position in each scan
-                AnalyzedClickInfo analyzedClickInfo = analyzedClickInfoHelper.readJson(scan.resolve("AnalyzedClickInfo.json"));
-                String[] animalNumbers = analyzedClickInfo.getUserLabelNameSet().getAnimalNumber().split(",");
-
-                for (int i = 0; i < animalNumbers.length; i++) {
-                    PixiBlisessiondataBlihotelsubjectBean hotelSubject = new PixiBlisessiondataBlihotelsubjectBean();
-                    hotelSubject.setSubjectlabel(replaceWhitespace(animalNumbers[i].trim()));
-                    hotelSubject.setPosition(Integer.toString(i));
-                    bliSession.addBlihotelsubject(hotelSubject);
-                }
+            for (Path scan : scanList) {
+                final BliScanBuilder bliScanBuilder = new BliScanBuilder(scan);
+                bliSession.addScans_scan(bliScanBuilder.call());
             }
+        } catch (Exception e) {
+            log.error("Error building BLI session " + sessionDir.getPath(), e);
         }
 
-        // Set session date
+        // Set session date to earliest scan date
         Optional<Date> sessionDate = bliSession.getScans_scan().stream()
                                                                .map(XnatImagescandataI::getStartDate)
                                                                .map(d -> (Date) d)
@@ -88,25 +75,17 @@ public class BliSessionBuilder extends SessionBuilder {
                                                                .findFirst();
         sessionDate.ifPresent(bliSession::setDate);
 
-        // Set operator
-        Optional<String> operator = bliSession.getScans_scan().stream()
+        // Try to set operator. If there is only one operator, set it. Otherwise, leave it blank and user can see
+        // operators in scan metadata
+        List<String> operators = bliSession.getScans_scan().stream()
                                                               .map(XnatImagescandataI::getOperator)
                                                               .distinct()
-                                                              .findFirst();
+                                                              .collect(Collectors.toList());
+
+        Optional<String> operator = operators.size() == 1 ? Optional.of(operators.get(0)) : Optional.empty();
         operator.ifPresent(bliSession::setOperator);
 
         return bliSession;
     }
 
-    public void setAnalyzedClickInfoHelper(AnalyzedClickInfoHelper analyzedClickInfoHelper) {
-        this.analyzedClickInfoHelper = analyzedClickInfoHelper;
-    }
-
-    private String replaceWhitespace(String string) {
-        if (string == null) {
-            return null;
-        }
-
-        return string.replaceAll("\\s","_");
-    }
 }

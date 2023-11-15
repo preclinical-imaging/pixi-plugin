@@ -1,73 +1,108 @@
 <!-- BEGIN pixi-plugin templates/screens/UploadBli.vm -->
-<div>
-    <h2>PIXI Bioluminescent Imaging Uploader</h2>
+<div class="upload-container">
+    <h2>PIXI Bioluminescent Image Session Uploader</h2>
 
-    <p>Upload zipped (.zip) bioluminescent imaging sessions to a specified project.</p>
+    <div class="form-instructions">
+        <p>Upload zipped (.zip) bioluminescent imaging sessions to a specified project.</p>
+
+        <p>File format requirements:</p>
+
+        <ul>
+            <li>Must be a .zip file</li>
+            <li>Each image session must be in its own directory within the zip file.</li>
+            <li>Each directory must contain an AnalyzedClickInfo.txt file which contains the metadata for the session.</li>
+            <li>Imaging and non-imaging data files will be uploaded to the session.</li>
+        </ul>
+    </div>
 
     <form id="upload-form" name="upload-form" method="post">
 
-        <label for="project" class="project-label">$displayManager.getSingularDisplayNameForProject()</label>
+        <label for="project" class="project-label">Project:</label>
+        <select id="project" name="project" form="upload-form" required>
+            <option value="" disabled selected>Select a project</option>
+        </select>
 
-        <section class="project-inputs">
-            <select id="project" name="project" form="upload-form"  required>
-                <option value="" disabled selected>Select Project</option>
-            </select>
-        </section>
+        <label for="mapping" class="mapping-label">Mapping:</label>
+        <select id="mapping" name="mapping" form="upload-form" required>
+            <option value="" disabled selected>Select a mapping</option>
+        </select>
+        <p class="input-desc">Used to map fields from the AnalyzedClickInfo.txt file to XNAT fields.</p>
 
-        <label class="file-label" for="file">File</label>
+        <label class="file-label" for="file">Select a .zip file:</label>
+        <input type="file" id="file" name="file" accept="application/zip" required/>
 
-        <section class="file-inputs">
-            <input type="file" id="file" name="file" accept="application/zip" required/>
-        </section>
+        <input class="submit" id="upload-button" type="button" name="eventSubmit_doPerform" value="Begin Upload" onclick="submitForm();"/>
 
-        <input class="submit" id="uploadButton" type="button" name="eventSubmit_doPerform" value="Begin Upload" onclick="submitForm();"/>
     </form>
 </div>
 
 <style>
-    .project-label { grid-area: project-label; }
-    .project-inputs { grid-area: project-inputs; }
 
-    .file-label { grid-area: file-label; }
-    .file-inputs { grid-area: file-inputs; }
+    .upload-container {
+        width: 100%;
+    }
 
-    .submit { grid-area: submit; }
-
-    .project-label, .file-label {
-        font-weight: bold;
+    .form-instructions {
+        margin-bottom: 2em;
     }
 
     #upload-form {
-        width: 400px;
-        display: grid;
-        grid-template-columns: 100px 120px 180px;
+        display: flex;
+        flex-direction: column;
         row-gap: 1em;
-        grid-template-areas:
-            'project-label project-inputs project-inputs'
-            'file-label file-inputs file-inputs'
-            '. submit .'
+        font-size: 14px;
+        box-sizing: border-box;
+        width: 400px;
     }
+
+    #upload-form label {
+        font-weight: bold;
+    }
+
+    #upload-form select,
+    #upload-form input[type="file"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    #upload-button {
+        width: 30%;
+        margin-top: 10px;
+        background-color: #0074b8; /* XNAT blue color */
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        background-image: none;  /* Remove default button background */
+    }
+
+    #upload-button:hover {
+        background-color: #005eaa; /* Slightly darker blue on hover */
+    }
+
+    .input-desc {
+        margin: 0 0 10px 0;
+    }
+
 </style>
 
 <script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-projects.js')"></script>
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-bli-importer.js')"></script>
 
 <script type="text/javascript">
 
     // Form Elements
     let formEl            = document.getElementById("upload-form");
     let projectEl         = document.getElementById("project");
+    let mappingEl         = document.getElementById("mapping");
     let prearchiveCode0El = document.getElementById("prearchive-code-0");
     let prearchiveCode1El = document.getElementById("prearchive-code-1");
     let fileEl            = document.getElementById("file");
 
-    // Load projects then render project select box
-    let projects;
-    XNAT.plugin.pixi.projects.getAll().then(resultSet => resultSet['ResultSet']['Result'])
-                                      .then(prjs => {
-                                          projects = prjs;
-                                          renderProjectSelectBox(projectEl, prjs);
-                                      });
-
+    // Form rendering
     let renderProjectSelectBox = function(selectBox, projects) {
         console.debug('renderProjectSelectBox()')
 
@@ -84,18 +119,47 @@
         })
     }
 
-    function evaluateProject(ele) {
+    let renderMappingsSelectBox = async (selectBox, mappings, selectedMapping) => {
+        console.debug('renderMappingsSelectBox()')
 
+        // Clear select box
+        selectBox.options.length = 0;
+
+        // Placeholder
+        selectBox.options[0] = new Option("Select Mapping", "");
+        selectBox.options[0].disabled = true;
+        selectBox.options[0].selected = true;
+
+        mappings.forEach(mapping => {
+            selectBox.options[selectBox.length] = new Option(mapping['name'], mapping['name'], false, mapping['name'] === selectedMapping)
+        })
     }
+
+    // Load projects and mappings then render select boxes
+    let projects;
+    XNAT.plugin.pixi.projects.getAll().then(resultSet => resultSet['ResultSet']['Result'])
+                                      .then(prjs => {
+                                          projects = prjs;
+                                          renderProjectSelectBox(projectEl, prjs);
+                                      });
+
+    Promise.all([
+        XNAT.plugin.pixi.preferences.get('defaultBliImporterMapping'),
+        XNAT.plugin.pixi.bli.importer.mappings.getAll()
+    ]).then(([defaultMapping, mappings]) => {
+        defaultMapping = defaultMapping['defaultBliImporterMapping'];
+        renderMappingsSelectBox(mappingEl, mappings, defaultMapping);
+    });
 
     async function submitForm() {
         console.debug('submitForm()')
 
         function validateForm() {
             let validProject = XNAT.validate(projectEl).required().check();
-            let validImageArchiveFile = XNAT.validate(fileEl).is('fileType', 'zip').check()
+            let validImageArchiveFile = XNAT.validate(fileEl).is('fileType', 'zip').check();
+            let validMapping = XNAT.validate(mappingEl).required().check();
 
-            return validProject && validImageArchiveFile;
+            return validProject && validImageArchiveFile && validMapping;
         }
 
         let isValid = validateForm()
@@ -107,6 +171,7 @@
         }
 
         let projectId = projectEl.value;
+        let mapping = mappingEl.value;
         let uploadId = new Date().toISOString()
                                  .replaceAll('-', '_')
                                  .replaceAll(':', '_')
@@ -153,7 +218,8 @@
         let importServiceUrl = XNAT.url.csrfUrl('/data/services/import');
         importServiceUrl = XNAT.url.addQueryString(importServiceUrl, ['import-handler=BLI',
                                                                       `PROJECT_ID=${projectId}`,
-                                                                      `src=${encodedCachePath}`]);
+                                                                      `src=${encodedCachePath}`,
+                                                                      `mapping=${mapping}`]);
 
         // Extract the zip file from the users cache
         console.debug(`Extracting ${file.name}`);
@@ -167,7 +233,10 @@
 
             XNAT.ui.dialog.open({
                 title: 'Upload/Extraction Successful',
-                content: `<div class="success">Upload/Extraction of ${file.name} successful. Visit the <a target="_blank" href="/app/template/XDATScreen_prearchives.vm">prearchive</a> to review.</div>`,
+                content: `<div class="success">Upload/Extraction of ${file.name} successful. Depending on the projects
+                prearchive settings, visit the <a target="_blank" href="/app/template/XDATScreen_prearchives.vm">prearchive</a>
+                to review the session(s) before archiving or visit the <a target="_blank" href="/data/projects/${projectId}">project</a>
+                to view archived session(s).</div>`,
                 buttons: [
                     {
                         label: 'OK',
