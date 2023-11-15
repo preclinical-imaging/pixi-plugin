@@ -50,7 +50,7 @@ public class AnalyzedClickInfoObjectIdentifierMappingInitializer extends Abstrac
             log.info("BLI importer mappings already exists, skipping creation.");
         } else {
             AnalyzedClickInfoObjectIdentifierMapping mapping = AnalyzedClickInfoObjectIdentifierMapping.builder()
-                                                                                                       .name("Default")
+                                                                                                       .name("PIXI Default")
                                                                                                        .projectLabelField("")
                                                                                                        .projectLabelRegex("")
                                                                                                        .subjectLabelField("animalNumber")
