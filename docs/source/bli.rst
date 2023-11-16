@@ -8,8 +8,6 @@ XNAT does not provide a mechanism to upload these image sessions, so PIXI provid
 upload page, select Upload -> Upload BLI Session from the navigation menu.
 
 
-
-
 File Format Requirements
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
