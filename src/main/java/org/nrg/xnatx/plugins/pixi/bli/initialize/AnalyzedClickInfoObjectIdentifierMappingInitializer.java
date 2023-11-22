@@ -9,6 +9,7 @@ import org.nrg.xnatx.plugins.pixi.bli.models.AnalyzedClickInfoObjectIdentifierMa
 import org.nrg.xnatx.plugins.pixi.bli.services.AnalyzedClickInfoObjectIdentifierMappingService;
 import org.nrg.xnatx.plugins.pixi.preferences.PIXIPreferences;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,7 +25,7 @@ public class AnalyzedClickInfoObjectIdentifierMappingInitializer extends Abstrac
     private final PIXIPreferences pixiPreferences;
 
     @Autowired
-    public AnalyzedClickInfoObjectIdentifierMappingInitializer(final XFTManagerHelper xftManagerHelper,
+    public AnalyzedClickInfoObjectIdentifierMappingInitializer(@Qualifier("PixiXFTManagerHelper") final XFTManagerHelper xftManagerHelper,
                                                                final XnatAppInfo appInfo,
                                                                final AnalyzedClickInfoObjectIdentifierMappingService mappingService,
                                                                final PIXIPreferences pixiPreferences) {

@@ -5,9 +5,9 @@ import org.nrg.xft.schema.XFTManager;
 import org.nrg.xnatx.plugins.pixi.bli.helpers.XFTManagerHelper;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("PixiXFTManagerHelper")
 @Slf4j
-public class DefaultXFTManagerHelper implements XFTManagerHelper {
+public class PixiXFTManagerHelper implements XFTManagerHelper {
 
     /**
      * Checks if the XFTManager is initialized.
