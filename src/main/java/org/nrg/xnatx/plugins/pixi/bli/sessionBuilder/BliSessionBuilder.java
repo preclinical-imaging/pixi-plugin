@@ -26,6 +26,7 @@ public class BliSessionBuilder extends SessionBuilder {
     public BliSessionBuilder(final File sessionDir, final Writer fileWriter) {
         super(sessionDir, sessionDir.getPath(), fileWriter);
         this.sessionDir = sessionDir;
+        log.debug("BLI session builder created for session: {}", sessionDir.getPath());
     }
 
     @Override
@@ -35,6 +36,8 @@ public class BliSessionBuilder extends SessionBuilder {
 
     @Override
     public XnatImagesessiondataBean call() throws Exception {
+        log.debug("Building BLI session for session: {}", sessionDir.getPath());
+
         // Get proj/subj/sess/... parameters
         Map<String, String> parameters = getParameters();
         String project = parameters.getOrDefault(PrearcUtils.PARAM_PROJECT, null);

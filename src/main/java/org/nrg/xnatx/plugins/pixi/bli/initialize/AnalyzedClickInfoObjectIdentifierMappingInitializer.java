@@ -47,7 +47,7 @@ public class AnalyzedClickInfoObjectIdentifierMappingInitializer extends Abstrac
      */
     @Override
     protected void callImpl() throws InitializingTaskException {
-        log.info("Initializing default BLI importer mapping.");
+        log.debug("Initializing default BLI importer mapping.");
 
         if (!xftManagerHelper.isInitialized() || !appInfo.isInitialized()) {
             log.debug("XFTManagerHelper or XnatAppInfo is not initialized, skipping creation.");

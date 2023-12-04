@@ -84,6 +84,8 @@ public class BliImporter extends ImporterHandlerA {
 
     @Override
     public List<String> call() throws ClientException, ServerException {
+        log.debug("Starting BLI session upload. User: {}, Format: {}, uploadDate: {}, params: {}", user, format, uploadDate, params);
+
         // Project ID is required
         if (!params.containsKey(URIManager.PROJECT_ID)) {
             ClientException e = new ClientException("PROJECT_ID is a required parameter for BLI session uploads.");
@@ -171,7 +173,7 @@ public class BliImporter extends ImporterHandlerA {
 
         // Initialize the prearchive directory
         Path prearchiveTimestampPath = Paths.get(ArcSpecManager.GetInstance().getGlobalPrearchivePath(), projectId, timestamp);
-        Path prearchiveTempDirectoryPath = prearchiveTimestampPath.resolve(UNKNOWN_SESSION_LABEL);
+        Path prearchiveTempDirectoryPath = prearchiveTimestampPath.resolve(UNKNOWN_SESSION_LABEL).resolve("temp");
 
         // Import files to prearchive temp directory
         ze = zin.getNextEntry();
@@ -232,8 +234,7 @@ public class BliImporter extends ImporterHandlerA {
 
             scanDate = Optional.of(analyzedClickInfo.get().getLuminescentImage().getAcquisitionDateTime());
             scanLabel = analyzedClickInfoObjectIdentifier.getScanLabel(analyzedClickInfo.get())
-                                                         .map(this::replaceWhitespace
-            );
+                                                         .map(this::replaceWhitespace);
 
             uid = Optional.ofNullable(replaceWhitespace(analyzedClickInfo.get().getClickNumber().getClickNumber()));
 

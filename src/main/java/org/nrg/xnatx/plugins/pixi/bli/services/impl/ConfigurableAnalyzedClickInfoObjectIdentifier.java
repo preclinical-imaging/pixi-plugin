@@ -1,7 +1,7 @@
 package org.nrg.xnatx.plugins.pixi.bli.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.nrg.xnatx.plugins.pixi.bli.models.AnalyzedClickInfo;
 import org.nrg.xnatx.plugins.pixi.bli.models.AnalyzedClickInfoObjectIdentifierMapping;
 import org.nrg.xnatx.plugins.pixi.bli.services.AnalyzedClickInfoObjectIdentifier;
@@ -105,7 +105,8 @@ public class ConfigurableAnalyzedClickInfoObjectIdentifier implements AnalyzedCl
                 Matcher targetMatcher = targetPattern.matcher(value);
                 return Optional.of(targetMatcher.replaceAll(replacementString));
             }
-            return Optional.of(value);
+            // Trim whitespace from extracted value, and return null if empty string
+            return Optional.ofNullable(StringUtils.trimToNull(value));
         }
 
         return Optional.empty();
