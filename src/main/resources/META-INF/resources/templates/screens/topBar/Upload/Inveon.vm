@@ -1,0 +1,6 @@
+<!-- BEGIN pixi-plugin templates/screens/topBar/Upload/Inveon.vm -->
+
+<!-- Sequence: 30 -->
+<li><a href="$link.setPage("UploadInveon.vm")">Upload Inveon Images</a></li>
+
+<!-- END pixi-plugin templates/screens/topBar/Upload/Inveon.vm -->
