@@ -40,9 +40,19 @@ public abstract class BasePixiAnesthesiadata extends AutoPixiAnesthesiadata {
 	 * @throws Exception If there was an error copying the object
 	 */
 	public static PixiAnesthesiadataI copy(PixiAnesthesiadataI base, UserI user) {
+		if (base == null) {
+			return null;
+		}
+
 		PixiAnesthesiadata copy = new PixiAnesthesiadata(user);
-		copy.setAnesthesia(base.getAnesthesia());
-		copy.setRouteofadministration(base.getRouteofadministration());
+
+		if (base.getAnesthesia() != null) {
+			copy.setAnesthesia(base.getAnesthesia());
+		}
+		if (base.getRouteofadministration() != null) {
+			copy.setRouteofadministration(base.getRouteofadministration());
+		}
+
 		return copy;
 	}
 

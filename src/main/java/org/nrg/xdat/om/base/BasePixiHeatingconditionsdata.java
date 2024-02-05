@@ -40,12 +40,32 @@ public abstract class BasePixiHeatingconditionsdata extends AutoPixiHeatingcondi
 	 * @throws Exception If there was an error copying the object
 	 */
 	public static PixiHeatingconditionsdataI copy(PixiHeatingconditionsdataI base, UserI user) {
+		if (base == null) {
+			return null;
+		}
+
 		PixiHeatingconditionsdata copy = new PixiHeatingconditionsdata(user);
-		copy.setProcedurephase(base.getProcedurephase());
-		copy.setHeatingmethod(base.getHeatingmethod());
-		copy.setFeedbacktemperatureregulation(base.getFeedbacktemperatureregulation());
-		copy.setTemperaturesensordevicecomponent(base.getTemperaturesensordevicecomponent());
-		copy.setSetpointtemperature(base.getSetpointtemperature());
+
+		if (base.getProcedurephase() != null) {
+			copy.setProcedurephase(base.getProcedurephase());
+		}
+
+		if (base.getHeatingmethod() != null) {
+			copy.setHeatingmethod(base.getHeatingmethod());
+		}
+
+		if (base.getFeedbacktemperatureregulation() != null) {
+			copy.setFeedbacktemperatureregulation(base.getFeedbacktemperatureregulation());
+		}
+
+		if (base.getTemperaturesensordevicecomponent() != null) {
+			copy.setTemperaturesensordevicecomponent(base.getTemperaturesensordevicecomponent());
+		}
+
+		if (base.getSetpointtemperature() != null) {
+			copy.setSetpointtemperature(base.getSetpointtemperature());
+		}
+
 		return copy;
 	}
 

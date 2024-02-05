@@ -48,8 +48,15 @@ public abstract class BasePixiImageacquisitioncontextdata extends AutoPixiImagea
 		final PixiImageacquisitioncontextdataI copy = new PixiImageacquisitioncontextdata(user);
 
 		// Copy fasting data
-		final PixiFastingdataI fasting = PixiFastingdata.copy(base.getFasting(), user);
-		copy.setFasting(fasting);
+		try {
+			final PixiFastingdataI fasting = PixiFastingdata.copy(base.getFasting(), user);
+
+			if (fasting != null) {
+				copy.setFasting(fasting);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 
 		// Copy anesthesia data
 		base.getAnesthesias_anesthesia().stream().map(anesthesia -> {
@@ -60,7 +67,9 @@ public abstract class BasePixiImageacquisitioncontextdata extends AutoPixiImagea
 			}
 		}).forEach(anesthesia -> {
 			try {
-				copy.addAnesthesias_anesthesia(anesthesia);
+				if (anesthesia != null) {
+					copy.addAnesthesias_anesthesia(anesthesia);
+				}
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
@@ -75,7 +84,9 @@ public abstract class BasePixiImageacquisitioncontextdata extends AutoPixiImagea
 			}
 		}).forEach(heatingCondition -> {
 			try {
-				copy.addHeatingconditions_heatingconditions(heatingCondition);
+				if (heatingCondition != null) {
+					copy.addHeatingconditions_heatingconditions(heatingCondition);
+				}
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}

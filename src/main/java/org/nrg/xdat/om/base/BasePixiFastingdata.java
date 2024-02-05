@@ -40,9 +40,20 @@ public abstract class BasePixiFastingdata extends AutoPixiFastingdata {
 	 * @throws Exception If there was an error copying the object
 	 */
 	public static PixiFastingdataI copy(PixiFastingdataI base, UserI user) {
+		if (base == null) {
+			return null;
+		}
+
 		PixiFastingdata copy = new PixiFastingdata(user);
-		copy.setFastingstatus(base.getFastingstatus());
-		copy.setFastingduration(base.getFastingduration());
+
+		if (base.getFastingstatus() != null) {
+			copy.setFastingstatus(base.getFastingstatus());
+		}
+
+		if (base.getFastingduration() != null) {
+			copy.setFastingduration(base.getFastingduration());
+		}
+
 		return copy;
 	}
 
