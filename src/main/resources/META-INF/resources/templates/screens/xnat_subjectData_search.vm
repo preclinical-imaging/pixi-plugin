@@ -84,6 +84,8 @@
                         <input size="20" type="text" name="xnat:subjectData.COMBO0"
                                value="$!search.getWebFormValue("xnat:subjectData.COMBO0")" maxlength="100">
                     </td>
+                </tr>
+                <tr>
                     <td>
                         <h5>Species:</h5>
                         <select name="xnat:subjectData.SPECIES_equals" id="quick_search_pixi_species_select">
