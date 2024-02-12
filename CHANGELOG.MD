@@ -23,8 +23,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [PIXI-112][]: Change display of four mouse hotel scan record from one row of four subjects to two rows of two 
                 subjects. Content will be the same, but the layout is more readable.
-- [PIXI-117][]: Change log level to debug to troubleshoot issue with the DICOM hotel splitter creating BLI sessions 
-                instead of PET/CT sessions.
+- [PIXI-117][]: During BLI session building, throw exception instead of just logging error. BLI sessions were being
+                built for DICOM and Inveon images because the plugin was not throwing an exception when it should have.
+                More exception handling may be needed to distinguish between non BLI images and BLI sessions that are
+                not being built correctly.
 
 ### Fixed
 
