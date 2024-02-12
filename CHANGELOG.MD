@@ -27,6 +27,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
                 built for DICOM and Inveon images because the plugin was not throwing an exception when it should have.
                 More exception handling may be needed to distinguish between non BLI images and BLI sessions that are
                 not being built correctly.
+- [PIXI-125][]: Bioluminescence Imaging was misspelled. Change upload link to Bioluminescence Imaging instead of 'BLI' 
+                for clarity.
 
 ### Fixed
 
