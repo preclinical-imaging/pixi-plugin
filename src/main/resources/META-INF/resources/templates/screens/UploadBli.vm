@@ -1,9 +1,9 @@
 <!-- BEGIN pixi-plugin templates/screens/UploadBli.vm -->
 <div class="upload-container">
-    <h2>PIXI Bioluminescent Image Session Uploader</h2>
+    <h2>PIXI Bioluminescence Imaging Session Uploader</h2>
 
     <div class="form-instructions">
-        <p>Upload zipped (.zip) bioluminescent imaging sessions to a specified project.</p>
+        <p>Upload zipped (.zip) bioluminescence imaging sessions to a specified project.</p>
 
         <p>File format requirements:</p>
 

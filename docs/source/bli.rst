@@ -5,7 +5,7 @@ Bioluminescence imaging is a common modality for small animal imaging. The PIXI 
 by providing a new image session data type to store the data.
 
 XNAT does not provide a mechanism to upload these image sessions, so PIXI provides a new upload mechanism. To access the
-upload page, select Upload -> Upload BLI Session from the navigation menu.
+upload page, select Upload -> Bioluminescence Imaging from the navigation menu.
 
 
 File Format Requirements

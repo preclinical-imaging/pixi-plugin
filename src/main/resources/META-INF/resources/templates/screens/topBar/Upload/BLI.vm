@@ -1,6 +1,6 @@
 <!-- BEGIN pixi-plugin templates/screens/topBar/Upload/BLI.vm -->
 
 <!-- Sequence: 20 -->
-<li><a href="$link.setPage("UploadBli.vm")">Upload BLI Session</a></li>
+<li><a href="$link.setPage("UploadBli.vm")">Bioluminescence Imaging</a></li>
 
 <!-- END pixi-plugin templates/screens/topBar/Upload/BLI.vm -->
