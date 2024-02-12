@@ -8,6 +8,8 @@ import org.nrg.xdat.model.XnatImagescandataI;
 import org.nrg.xnat.helpers.prearchive.PrearcUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -65,8 +67,20 @@ public class BliSessionBuilder extends SessionBuilder {
                 final BliScanBuilder bliScanBuilder = new BliScanBuilder(scan);
                 bliSession.addScans_scan(bliScanBuilder.call());
             }
+        } catch (FileNotFoundException e) { // Exceptions are expected to be passed up the stack. Log and rethrow
+            log.error("AnalyzedClickInfo.json not found in " + scanDir + ". This might not be a BLI session.", e);
+            throw e;
+        } catch (IOException e) {
+            log.error("IO error building BLI session " + sessionDir.getPath(), e);
+            throw e;
         } catch (Exception e) {
             log.error("Error building BLI session " + sessionDir.getPath(), e);
+            throw e;
+        }
+
+        // If no scans were found, throw an exception. This might not be a BLI session if no scans were found
+        if (bliSession.getScans_scan().isEmpty()) {
+            throw new FileNotFoundException("No BLI scans found in " + scanDir + ". This might not be a BLI session.");
         }
 
         // Set session date to earliest scan date
