@@ -50,4 +50,4 @@ plugins directory and restart XNAT.
 [PIXI-120]: https://radiologics.atlassian.net/browse/PIXI-120
 [PIXI-123]: https://radiologics.atlassian.net/browse/PIXI-123
 [PIXI-124]: https://radiologics.atlassian.net/browse/PIXI-124
-
+[PIXI-125]: https://radiologics.atlassian.net/browse/PIXI-125
