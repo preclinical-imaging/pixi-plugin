@@ -2,10 +2,16 @@ package org.nrg.xnatx.plugins.pixi.inveon.sessionBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.nrg.session.SessionBuilder;
-import org.nrg.xdat.bean.XnatImagesessiondataBean;
+import org.nrg.xdat.bean.*;
+import org.nrg.xdat.model.XnatImagescandataI;
+import org.nrg.xnat.helpers.prearchive.PrearcUtils;
 
-import java.io.File;
-import java.io.Writer;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 public class InveonSessionBuilder extends SessionBuilder {
@@ -15,7 +21,6 @@ public class InveonSessionBuilder extends SessionBuilder {
     public InveonSessionBuilder(final File sessionDir, final Writer fileWriter) {
         super(sessionDir, sessionDir.getPath(), fileWriter);
         this.sessionDir = sessionDir;
-        log.debug("Inveon session builder created for session: {}", sessionDir.getPath());
     }
 
     @Override
@@ -28,10 +33,121 @@ public class InveonSessionBuilder extends SessionBuilder {
     public XnatImagesessiondataBean call() throws Exception {
         log.info("Building Inveon session for session: {}", sessionDir.getPath());
 
-        // TODO - Steve - Implement the InveonSessionBuilder. See BliSessionBuilder for an example.
-        log.error("InveonSessionBuilder not implemented yet");
+        // Get proj/subj/sess/... parameters
+        Map<String, String> parameters = getParameters();
+        String project = parameters.getOrDefault(PrearcUtils.PARAM_PROJECT, null);
+        String subject = parameters.getOrDefault(PrearcUtils.PARAM_SUBJECT_ID, "");
+        String label   = parameters.getOrDefault(PrearcUtils.PARAM_LABEL, null);
 
-        return null;
+        Set<String> keys = parameters.keySet();
+        for (String key : keys) {
+            log.debug("Key/Value pair: {} {}", key, parameters.get(key));
+        }
+
+        log.debug("Building Inveon Session for Project: {} Subject: {} Session: {}", project, subject, label);
+
+        // Build scans
+        Path scanDir = sessionDir.toPath().resolve("SCANS");
+
+        log.debug("Scan Dir path: {}", scanDir);
+        List<XnatImagescandataBean> scandataBeans = new ArrayList<>();
+        boolean hasPET = false;
+        boolean hasCT  = false;
+        try (final Stream<Path> scans = Files.list(scanDir)) {
+            List<Path> scanList = scans.filter(Files::isDirectory).collect(Collectors.toList());
+
+            for (Path scan : scanList) {
+                log.debug("About to call Inveon scan buildr: {}", scan.toString());
+                final InveonScanBuilder inveonScanBuilder = new InveonScanBuilder(scan);
+                XnatImagescandataBean imagescandataBean = inveonScanBuilder.call();
+                scandataBeans.add(imagescandataBean);
+                if (imagescandataBean.getModality().equals("PET")) {
+                    hasPET = true;
+                } else if (imagescandataBean.getModality().equals("CT")) {
+                    hasCT = true;
+                } else {
+                    // TODO review/repair
+                    log.error("Unrecognized modality {} for this scan {}", imagescandataBean.getModality(), imagescandataBean.getId());
+                }
+            }
+        } catch (FileNotFoundException e) { // Exceptions are expected to be passed up the stack. Log and rethrow
+            log.error("Inveon Session Builder logging a file not found error in folder: {}", scanDir, e);
+            throw e;
+        } catch (IOException e) {
+            log.error("IO error building Inveon session " + sessionDir.getPath(), e);
+            throw e;
+        } catch (Exception e) {
+            log.error("Error building Inveon session " + sessionDir.getPath(), e);
+            throw e;
+        }
+
+        // If no scans were found, throw an exception. T
+        if (scandataBeans.isEmpty()) {
+            throw new FileNotFoundException("Zero Inveon scans found in " + scanDir + ". Assuming this is not an Inveon session.");
+        }
+        if (! (hasPET || hasCT)) {
+            throw new FileNotFoundException("Did not find at least one CT or PET scan in " + scanDir + ". Assuming this is not an Inveon session.");
+        }
+
+        XnatImagesessiondataBean sessionBean;
+        if (hasPET) {
+            sessionBean = buildPetsessiondataBean(scandataBeans);
+        } else {
+            sessionBean = buildCTSessiondataBean(scandataBeans);
+        }
+
+        log.debug("Session directory: {}", sessionDir.getPath());
+        sessionBean.setPrearchivepath(sessionDir.getPath());
+        sessionBean.setProject(project);
+        sessionBean.setSubjectId(subject);
+        sessionBean.setLabel(label);
+
+        // Set session date to earliest scan date
+        Optional<Date> sessionDate = sessionBean.getScans_scan().stream()
+                .map(XnatImagescandataI::getStartDate)
+                .map(d -> (Date) d)
+                .distinct()
+                .sorted()
+                .findFirst();
+
+        sessionDate.ifPresent(sessionBean::setDate);
+
+        return sessionBean;
+    }
+
+    private XnatPetsessiondataBean buildPetsessiondataBean(List<XnatImagescandataBean> scandataBeans) {
+        XnatPetsessiondataBean sessionBean = new XnatPetsessiondataBean();
+        for (XnatImagescandataBean imagescandataBean : scandataBeans) {
+            sessionBean.addScans_scan(imagescandataBean);
+            if (imagescandataBean.getModality().equals("PET")) {
+                // Fill in PET data;
+                XnatPetscandataBean petscandataBean = (XnatPetscandataBean) imagescandataBean;
+
+                log.info("When building session, PET note {}", petscandataBean.getNote());
+                // TODO Review and add more metadata
+                String[] tokens = petscandataBean.getNote().split("\t");
+                sessionBean.setTracer_name(tokens[0]);
+                sessionBean.setTracer_isotope(tokens[1]);
+                sessionBean.setTracer_isotope_halfLife(tokens[2]);
+                petscandataBean.setNote("");
+            }
+        }
+
+        return sessionBean;
+    }
+
+    private XnatCtsessiondataBean buildCTSessiondataBean(List<XnatImagescandataBean> scandataBeans) {
+        // TODO Fill in this implementation
+        XnatCtsessiondataBean sessionBean = new XnatCtsessiondataBean();
+        for (XnatImagescandataBean imagescandataBean : scandataBeans) {
+            sessionBean.addScans_scan(imagescandataBean);
+            if (imagescandataBean.getModality().equals("CT")) {
+                log.error("Need to fill in the CT Session Bean");
+                // Fill in CT data;
+            }
+        }
+
+        return sessionBean;
     }
 
 }
