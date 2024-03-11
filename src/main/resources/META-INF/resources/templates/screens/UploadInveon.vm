@@ -3,25 +3,49 @@
     <h2>PIXI Inveon Image Session Uploader</h2>
 
     <div class="form-instructions">
-        <p>Upload zipped (.zip) Inveon small animal PET/CT image sessions to XNAT.</p>
+        <p>Upload a single session of Inveon PET/CT images to XNAT. </p>
 
         <p>File format requirements:</p>
 
         <ul>
             <li>Must be a .zip file</li>
-            <li>...</li>
+            <li>Each zip file should contain a single session of Inveon PET/CT images</li>
+            <li>Each image series will be uploaded as an XNAT scan</li>
         </ul>
+
+        <p>Select the project and subject to upload the image session to and provide label for the session.</p>
+        <p>If you are uploading a multi-subject hotel image session, select a project's <em>Hotel</em> subject.</p>
     </div>
 
     <form id="upload-form" name="upload-form" method="post">
 
-        <label for="project" class="project-label">Project:</label>
-        <select id="project" name="project" form="upload-form" required>
-            <option value="" disabled selected>Select a project</option>
-        </select>
+        <div class="filter-container">
+            <label for="project" class="filter-label">Select Project</label>
 
-        <label class="file-label" for="file">Select a .zip file:</label>
-        <input type="file" id="file" name="file" accept="application/zip" required/>
+            <label class="filter-icon" for="project-filter"><i class="fa fa-search"></i></label>
+            <input type="text" id="project-filter" name="project-filter" placeholder="Filter" onkeyup="" class="filter-input"/>
+
+            <select id="project" name="project" form="upload-form" size="5" required class="filer-select"></select>
+        </div>
+
+        <div class="filter-container">
+            <label for="subject" class="filter-label">Select Subject</label>
+
+            <label class="filter-icon" for="subject-filter"><i class="fa fa-search"></i></label>
+            <input type="text" id="subject-filter" name="subject-filter" placeholder="Filter" onkeyup="" class="filter-input"/>
+
+            <select id="subject" name="subject" form="upload-form" size="5" required class="filer-select"></select>
+        </div>
+
+        <div class="form-component">
+            <label for="session">Enter Session Label</label>
+            <input type="text" id="session" name="session" form="upload-form" required placeholder="Enter a label for the image session"/>
+        </div>
+
+        <div class="form-component">
+            <label class="file-label" for="file">Select Zip File</label>
+            <input type="file" id="file" name="file" accept="application/zip" required/>
+        </div>
 
         <input class="submit" id="upload-button" type="button" name="eventSubmit_doPerform" value="Begin Upload" onclick="submitForm();"/>
 
@@ -52,12 +76,38 @@
     }
 
     #upload-form select,
+    #upload-form text,
     #upload-form input[type="file"] {
         width: 100%;
         padding: 8px;
         border: 1px solid #ccc;
         border-radius: 4px;
         box-sizing: border-box;
+    }
+
+    #upload-form .filter-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        row-gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    #upload-form .filter-label {
+        flex: 2 1 auto;
+    }
+
+    #upload-form .filter-icon {
+        flex: 0 0 auto;
+        margin-right: 5px;
+    }
+
+    #upload-form .form-component {
+        display: flex;
+        flex-direction: column;
+        row-gap: 0.5rem;
+        margin-bottom: 0.5rem;
     }
 
     #upload-button {
@@ -88,6 +138,10 @@
     // Form Elements
     let formEl            = document.getElementById("upload-form");
     let projectEl         = document.getElementById("project");
+    let projectFilerInput = document.getElementById("project-filter");
+    let subjectEl         = document.getElementById("subject");
+    let subjectFilerInput = document.getElementById("subject-filter");
+    let sessionEl         = document.getElementById("session");
     let prearchiveCode0El = document.getElementById("prearchive-code-0");
     let prearchiveCode1El = document.getElementById("prearchive-code-1");
     let fileEl            = document.getElementById("file");
@@ -99,17 +153,11 @@
         // Clear select box
         selectBox.options.length = 0;
 
-        // Placeholder
-        selectBox.options[0] = new Option("Select " + XNAT.app.displayNames.singular.project, "");
-        selectBox.options[0].disabled = true;
-        selectBox.options[0].selected = true;
-
         projects.forEach(project => {
             selectBox.options[selectBox.length] = new Option(project['id'], project['id'])
         })
     }
 
-    // Load projects and mappings then render select boxes
     let projects;
     XNAT.plugin.pixi.projects.getAll().then(resultSet => resultSet['ResultSet']['Result'])
                                       .then(prjs => {
@@ -117,14 +165,72 @@
                                           renderProjectSelectBox(projectEl, prjs);
                                       });
 
+    let handleProjectChange = () => {
+        console.debug('handleProjectChange()')
+
+        // clear subject select box
+        subjectEl.options.length = 0;
+
+        let projectId = projectEl.value;
+
+        if (projectId) {
+            // update subject select box
+            XNAT.plugin.pixi.subjects.getAll(projectId)
+                                     .then(resultSet => resultSet['ResultSet']['Result'])
+                                     .then(subjects => {
+                                         // Sort subjects by label
+                                         subjects.sort(XNAT.plugin.pixi.compareGenerator('label'));
+
+                                         // If there is a hotel subject, move it to the top of the list
+                                         let hotelIndex = subjects.findIndex(subject => subject['label'].toLowerCase() === 'hotel');
+                                         if (hotelIndex !== -1) {
+                                             let hotel = subjects.splice(hotelIndex, 1)[0];
+                                             subjects.unshift(hotel);
+                                         }
+
+                                         subjects.forEach(subject => {
+                                             subjectEl.options.add(new Option(subject['label'], subject['id']))
+                                         });
+                                     });
+        }
+    }
+
+    let filterProject = (event) => {
+        console.debug('filterProject()')
+
+        let filter = event.target.value.toLowerCase();
+        let projects = Array.from(projectEl.options);
+
+        projects.forEach(project => {
+            project.hidden = !project.value.toLowerCase().includes(filter);
+        });
+    }
+
+    let filterSubject = (event) => {
+        console.debug('filterSubject()')
+
+        let filter = event.target.value.toLowerCase();
+        let subjects = Array.from(subjectEl.options);
+
+        subjects.forEach(subject => {
+            subject.hidden = !subject.text.toLowerCase().includes(filter);
+        });
+    }
+
+    projectEl.addEventListener('change', handleProjectChange);
+    projectFilerInput.addEventListener('keyup', filterProject);
+    subjectFilerInput.addEventListener('keyup', filterSubject);
+
     async function submitForm() {
         console.debug('submitForm()')
 
         function validateForm() {
             let validProject = XNAT.validate(projectEl).required().check();
+            let validSubject = XNAT.validate(subjectEl).required().check();
+            let validSession = XNAT.validate(sessionEl).required().check();
             let validImageArchiveFile = XNAT.validate(fileEl).is('fileType', 'zip').check();
 
-            return validProject && validImageArchiveFile;
+            return validProject && validSession && validSubject && validImageArchiveFile;
         }
 
         let isValid = validateForm()
@@ -136,6 +242,8 @@
         }
 
         let projectId = projectEl.value;
+        let subjectId = subjectEl.value;
+        let sessionLabel = sessionEl.value;
         let uploadId = new Date().toISOString()
                                  .replaceAll('-', '_')
                                  .replaceAll(':', '_')
@@ -182,6 +290,8 @@
         let importServiceUrl = XNAT.url.csrfUrl('/data/services/import');
         importServiceUrl = XNAT.url.addQueryString(importServiceUrl, ['import-handler=INVEON',
                                                                       `PROJECT_ID=${projectId}`,
+                                                                      `SUBJECT_ID=${subjectId}`,
+                                                                      `EXPT_LABEL=${sessionLabel}`,
                                                                       `src=${encodedCachePath}`,
                                                                       `cachePath=${encodedCachePath}`]);
 

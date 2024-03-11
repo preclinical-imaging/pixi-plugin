@@ -336,8 +336,19 @@ public class InveonImporter extends ImporterHandlerA {
             log.info("Scan Date: {}", scanDate.get().toString());
 
             if (firstScan) {
-                subjectId = Optional.ofNullable(extractSubjectId(inveonImageRepresentation));
-                sessionLabel = Optional.ofNullable(extractSessionLabel(inveonImageRepresentation));
+                // Override the subject ID if it is provided in the URI parameters
+                if (params.containsKey(URIManager.SUBJECT_ID)) {
+                    subjectId = Optional.of((String) params.get(URIManager.SUBJECT_ID));
+                } else {
+                    subjectId = Optional.ofNullable(extractSubjectId(inveonImageRepresentation));
+                }
+
+                // Override the session label if it is provided in the URI parameters
+                if (params.containsKey(URIManager.EXPT_LABEL)) {
+                    sessionLabel = Optional.of((String) params.get(URIManager.EXPT_LABEL));
+                } else {
+                    sessionLabel = Optional.ofNullable(extractSessionLabel(inveonImageRepresentation));
+                }
 
                 sessionFolder = Paths.get(inveonImageRepresentation.getPrearchiveTimestampPath(), sessionLabel.orElse(UNKNOWN_SESSION_LABEL));
 
