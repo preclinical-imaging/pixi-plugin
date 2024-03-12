@@ -79,6 +79,26 @@ vendorPreferencesPanel:
       content: >
         XNAT.plugin.pixi.vendorPreferenceManager.init('#vendor-preferences-manager');
 
+animalEndpointsPanel:
+  kind: panel
+  name: animalEndpointsPanel
+  label: Animal Endpoints
+  contents:
+    description:
+      tag: div.message
+      element:
+        style: "margin-bottom: 20px;"
+      contents:
+        "Configure the animal endpoint options available in the selection dropdowns in various forms."
+    animalEndpointsTable:
+      tag: "div#animal-endpoints-manager"
+    animalEndpointsScript:
+        tag: script|src="~/scripts/xnat/plugin/pixi/pixi-animalEndpoints.js"
+    renderAnimalEndpointsTable:
+        tag: script
+        content: >
+          let animalEndpointsManager = XNAT.plugin.pixi.animalEndpoints.manager('#animal-endpoints-manager');
+
 ###
 ### PDXs
 ###
@@ -188,6 +208,7 @@ siteSettings:
         ${subjectDisplayPreferencesForm}
         ${speciesPreferencesPanel}
         ${vendorPreferencesPanel}
+        ${animalEndpointsPanel}
     xenograftSettingsTab:
       kind: tab
       name: xenograftSettingsTab

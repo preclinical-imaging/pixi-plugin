@@ -103,6 +103,16 @@
                             <xs:documentation>Litter</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="dateOfDeath" type="xs:date" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Date of Death</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="endpoint" type="xs:string" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Animal Endpoint</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

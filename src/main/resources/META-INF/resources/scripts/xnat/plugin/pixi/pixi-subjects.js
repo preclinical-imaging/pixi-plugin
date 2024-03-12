@@ -64,6 +64,8 @@ XNAT.plugin.pixi.subjects = getObject(XNAT.plugin.pixi.subjects || {});
                 'strainImmuneSystemHumanizationType': demographicsData['strainImmuneSystemHumanizationType'] ? XNAT.plugin.pixi.unescapeHtml(demographicsJson[0]['items'][0]['data_fields']['strainImmuneSystemHumanizationType']) : '',
                 'geneticModifications': demographicsData['geneticModifications'] ? XNAT.plugin.pixi.unescapeHtml(demographicsJson[0]['items'][0]['data_fields']['geneticModifications']) : '',
                 'geneticModificationsSecondary': demographicsData['geneticModificationsSecondary'] ? XNAT.plugin.pixi.unescapeHtml(demographicsJson[0]['items'][0]['data_fields']['geneticModificationsSecondary']) : '',
+                'dateOfDeath': demographicsData['dateOfDeath'] ? XNAT.plugin.pixi.unescapeHtml(demographicsJson[0]['items'][0]['data_fields']['dateOfDeath']) : '',
+                'endpoint': demographicsData['endpoint'] ? XNAT.plugin.pixi.unescapeHtml(demographicsJson[0]['items'][0]['data_fields']['endpoint']) : ''
             }
         }
         
@@ -91,7 +93,8 @@ XNAT.plugin.pixi.subjects = getObject(XNAT.plugin.pixi.subjects || {});
     XNAT.plugin.pixi.subjects.createOrUpdate = async function(projectId, subjectLabel, group = null, species = null,
                                                               sex = null, dob = null, litter = null, strain = null,
                                                               source = null, stockNumber = null, humanizationType = null,
-                                                              geneticModifications = null, geneticModificationsNonStd = null) {
+                                                              geneticModifications = null, geneticModificationsNonStd = null,
+                                                              dateOfDeath = null, endpoint = null) {
         console.debug(`pixi-subjects.js: XNAT.plugin.pixi.subjects.create`);
 
         let subjectUrl = XNAT.url.csrfUrl(`/data/projects/${projectId}/subjects/${subjectLabel}`);
@@ -116,6 +119,8 @@ XNAT.plugin.pixi.subjects = getObject(XNAT.plugin.pixi.subjects || {});
         addQueryString('xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/strainImmuneSystemHumanizationType', humanizationType);
         addQueryString('xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/geneticModifications', geneticModifications);
         addQueryString('xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/geneticModificationsSecondary', geneticModificationsNonStd);
+        addQueryString('xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/dateOfDeath', dateOfDeath);
+        addQueryString('xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/endpoint', endpoint);
 
         subjectUrl = XNAT.url.addQueryString(subjectUrl, queryString);
 

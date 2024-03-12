@@ -31,6 +31,7 @@ public class PIXIPreferences extends AbstractPreferenceBean {
     public static final String DEMOGRAPHIC_DATA_IMPL_PREFERENCE_ID = "demographicDataImpl";
     public static final String SPECIES_PREFERENCE_ID =  "species";
     public static final String VENDOR_PREFERENCE_ID =  "vendors";
+    public static final String ENDPOINT_PREFERENCE_ID =  "endpoints";
     public static final String UI_SHOW_HUMAN_SEARCH_FIELDS_PREFERENCE_ID =  "uiShowHumanSearchFields";
     public static final String UI_SHOW_USER_READABLE_COUNTS_PREFERENCE_ID =  "uiShowUserReadableCounts";
     public static final String UI_HIDE_SITE_WIDE_COUNTS_PREFERENCE_ID =  "uiHideSiteWideCounts";
@@ -126,6 +127,25 @@ public class PIXIPreferences extends AbstractPreferenceBean {
             setListValue(VENDOR_PREFERENCE_ID, vendors);
         } catch (InvalidPreferenceName exception) {
             log.error("Error setting vendor preference.", exception);
+        }
+    }
+
+    @NrgPreference(defaultValue = "[\n   " +
+                "\"Euthanized\", " +
+                "\"Repurposed\", " +
+                "\"Expired - Age\", " +
+                "\"Expired - Disease Burden\", " +
+                "\"Natural Causes\"" +
+            "]")
+    public List<String> getEndpoints() {
+        return getListValue(ENDPOINT_PREFERENCE_ID);
+    }
+
+    public void setEndpoints(final List<String> endpoints) {
+        try {
+            setListValue(ENDPOINT_PREFERENCE_ID, endpoints);
+        } catch (InvalidPreferenceName exception) {
+            log.error("Error setting animal endpoints preference.", exception);
         }
     }
 

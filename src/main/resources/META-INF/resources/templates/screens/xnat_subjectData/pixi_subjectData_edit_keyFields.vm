@@ -147,6 +147,7 @@
 
 #set($species = [])
 #set($vendors = [])
+#set($endpoints = [])
 
 <datalist id="species">
     #foreach($specie in $species)
@@ -157,6 +158,12 @@
 <datalist id="vendors">
     #foreach($vendor in $vendors)
         <option value="$vendor"></option>
+    #end
+</datalist>
+
+<datalist id="endpoints">
+    #foreach($endpoint in $endpoints)
+        <option value="$endpoint"></option>
     #end
 </datalist>
 
@@ -257,6 +264,22 @@
             If different from standard nomenclature
         </div>
     </div>
+    <div class="form-component">
+        ## Date of Death
+        <label for="xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/dateOfDeath">Date of Death</label>
+        <input type="date"
+               id="xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/dateOfDeath"
+               name="xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/dateOfDeath"
+               value="$!om.getProperty("xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/dateOfDeath")">
+    </div>
+    <div class="form-component">
+        ## Animal Endpoints
+        <label for="xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/endpoint">Endpoint</label>
+        <input id="xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/endpoint"
+               name="xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/endpoint"
+               list="endpoints"
+               value="$!om.getProperty("xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/endpoint")">
+    </div>
 
 </div>
 
@@ -279,6 +302,16 @@
             option.value = vendor['vendor'];
             option.text = `${vendor['vendor']}`;
             vendorsDatalist.appendChild(option);
+        });
+    });
+
+    XNAT.plugin.pixi.animalEndpoints.get().then((endpoints) => {
+        let endpointsDatalist = document.getElementById("endpoints");
+        endpoints.forEach((endpoint) => {
+            let option = document.createElement("option");
+            option.value = endpoint;
+            option.text = endpoint;
+            endpointsDatalist.appendChild(option);
         });
     });
 

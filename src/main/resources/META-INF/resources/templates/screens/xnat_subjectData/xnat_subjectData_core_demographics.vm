@@ -32,7 +32,9 @@
         ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/strainImmuneSystemHumanizationType", "Strain Immune System Humanization Type"],
         ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/geneticModifications", "Genetic Modifications"],
         ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/sex", "Sex"],
-        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/dateOfBirth", "DOB"]
+        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/dateOfBirth", "DOB"],
+        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/dateOfDeath", "DOD"],
+        ["xnat:subjectData/demographics[@xsi:type=pixi:animalDemographicData]/endpoint", "Endpoint"]
     ])
 
     #foreach ($property in $properties)
