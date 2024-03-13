@@ -135,6 +135,7 @@ public class PIXIPreferences extends AbstractPreferenceBean {
                 "\"Repurposed\", " +
                 "\"Expired - Age\", " +
                 "\"Expired - Disease Burden\", " +
+                "\"Expired - Other\", " +
                 "\"Natural Causes\"" +
             "]")
     public List<String> getEndpoints() {
