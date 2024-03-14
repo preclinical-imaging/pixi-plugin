@@ -14,3 +14,4 @@
 <script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-animalHusbandryRecorder.js')"></script>
 <script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-drugTherapyRecorder.js')"></script>
 <script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-subjectWeightRecorder.js')"></script>
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-animalEndpoints.js')"></script>

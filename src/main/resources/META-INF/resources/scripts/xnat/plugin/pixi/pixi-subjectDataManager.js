@@ -66,10 +66,12 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                 "Stock #",
                 "Humanization Type",
                 "Genetic Mods",
-                "Genetic Mods (non-std)"
+                "Genetic Mods (non-std)",
+                "Date of Death",
+                "Endpoint",
             ];
 
-            let colWidths = [175, 115, 150, 50, 100, 100, 150, 150, 75, 135, 150, 150];
+            let colWidths = [175, 115, 150, 50, 100, 100, 150, 150, 75, 135, 150, 150, 100, 200];
 
             // Columns
             let columns = [
@@ -108,7 +110,19 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                 {data: 'stockNumber'},
                 {data: 'strainImmuneSystemHumanizationType'},
                 {data: 'geneticModifications'},
-                {data: 'geneticModificationsSecondary'}
+                {data: 'geneticModificationsSecondary'},
+                {
+                    data: 'dateOfDeath',
+                    type: 'date',
+                    dateFormat: 'MM/DD/YYYY'
+                },
+                {
+                    data: 'endpoint',
+                    type: 'autocomplete',
+                    filter: true,
+                    strict: false,
+                    source: []
+                },
             ]
             
             const initData = new Array(5).fill(undefined).map(u => ({
@@ -125,6 +139,8 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                 'strainImmuneSystemHumanizationType': '',
                 'geneticModifications': '',
                 'geneticModificationsSecondary': '',
+                'dateOfDeath': '',
+                'endpoint': ''
             }))
             
             let hotSettings = {
@@ -147,6 +163,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                         .then(() => this.addKeyboardShortCuts())
                         .then(() => this.initSpeciesSelector())
                         .then(() => this.initVendorSelector())
+                        .then(() => this.initEndpointSelector())
                         .then(() => this.hot.addHook('beforeChange', (changes, source) => this.beforeChange(changes, source)))
                         .then(() => this.hot.addHook('afterValidate', (isValid, value, row, prop) => this.afterValidate(isValid, value, row, prop)))
                         .then(() => this);
@@ -187,6 +204,10 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             // yyyy-mm-dd to mm/dd/yyyy
             if (subjectDetails['dateOfBirth']) {
                 subjectDetails['dateOfBirth'] = subjectDetails['dateOfBirth'].replace(/(\d{4})-(\d{2})-(\d{2})/, "$2/$3/$1");
+            }
+
+            if (subjectDetails['dateOfDeath']) {
+                subjectDetails['dateOfDeath'] = subjectDetails['dateOfDeath'].replace(/(\d{4})-(\d{2})-(\d{2})/, "$2/$3/$1");
             }
             
             return Promise.resolve([subjectDetails]);
@@ -243,6 +264,15 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
 
                 let columns = this.getColumns();
                 columns[7]['source'] = options;
+                this.hot.updateSettings({columns: columns});
+            });
+        }
+
+        initEndpointSelector() {
+            XNAT.plugin.pixi.animalEndpoints.get().then(endpoints => {
+                let options = Array.from(endpoints).sort();
+                let columns = this.getColumns();
+                columns[13]['source'] = options;
                 this.hot.updateSettings({columns: columns});
             });
         }
@@ -374,10 +404,12 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                     let humanizationType = this.hot.getDataAtRowProp(iRow, 'strainImmuneSystemHumanizationType');
                     let geneticModifications = this.hot.getDataAtRowProp(iRow, 'geneticModifications');
                     let geneticModificationsNonStd = this.hot.getDataAtRowProp(iRow, 'geneticModificationsSecondary');
+                    let dateOfDeath = this.hot.getDataAtRowProp(iRow, 'dateOfDeath');
+                    let endpoint = this.hot.getDataAtRowProp(iRow, 'endpoint');
 
                     await XNAT.plugin.pixi.subjects.createOrUpdate(projectId, subjectLabel, group, species,
                         sex, dob, litter, strain, source, stockNumber, humanizationType, geneticModifications,
-                        geneticModificationsNonStd)
+                        geneticModificationsNonStd, dateOfDeath, endpoint)
                         .then(url => {
                             successfulRows.push(iRow)
                             subjects.push({

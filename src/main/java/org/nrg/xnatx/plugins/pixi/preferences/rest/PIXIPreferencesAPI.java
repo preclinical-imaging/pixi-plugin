@@ -66,6 +66,7 @@ public class PIXIPreferencesAPI extends AbstractXapiRestController {
         // I think there is a bug in the preference library with caching. Manually add these.
         preferences.put(PIXIPreferences.SPECIES_PREFERENCE_ID , pixiPreferences.getSpecies());
         preferences.put(PIXIPreferences.VENDOR_PREFERENCE_ID  , pixiPreferences.getVendors());
+        preferences.put(PIXIPreferences.ENDPOINT_PREFERENCE_ID  , pixiPreferences.getEndpoints());
         preferences.put(PIXIPreferences.DEMOGRAPHIC_DATA_IMPL_PREFERENCE_ID  , pixiPreferences.getDemographicDataImpl());
         preferences.put(PIXIPreferences.UI_SHOW_HUMAN_SEARCH_FIELDS_PREFERENCE_ID  , pixiPreferences.getUiShowHumanSearchFields());
         preferences.put(PIXIPreferences.UI_SHOW_USER_READABLE_COUNTS_PREFERENCE_ID, pixiPreferences.getUiShowUserReadableCounts());
@@ -126,6 +127,10 @@ public class PIXIPreferencesAPI extends AbstractXapiRestController {
             }
             case (PIXIPreferences.VENDOR_PREFERENCE_ID): {
                 value = pixiPreferences.getVendors();
+                break;
+            }
+            case (PIXIPreferences.ENDPOINT_PREFERENCE_ID): {
+                value = pixiPreferences.getEndpoints();
                 break;
             }
             case (PIXIPreferences.DEMOGRAPHIC_DATA_IMPL_PREFERENCE_ID): {
