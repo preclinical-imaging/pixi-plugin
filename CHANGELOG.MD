@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- [PIXI-127][]: Capture animal date of death and endpoint.
+
 ## [1.1.0] - 2024-02-19
 
 ### Added
@@ -53,3 +55,4 @@ plugins directory and restart XNAT.
 [PIXI-123]: https://radiologics.atlassian.net/browse/PIXI-123
 [PIXI-124]: https://radiologics.atlassian.net/browse/PIXI-124
 [PIXI-125]: https://radiologics.atlassian.net/browse/PIXI-125
+[PIXI-127]: https://radiologics.atlassian.net/browse/PIXI-127
