@@ -156,6 +156,19 @@ public class InveonImporter extends ImporterHandlerA {
     private void processSessionMap(String projectId) throws ServerException, IOException {
         log.info("processSessionMap");
         log.info("Inveon Sessions Found: {}", inveonSessionFilesMap.size());
+        if (params.containsKey(URIManager.EXPT_LABEL) && inveonSessionFilesMap.size() > 1) {
+            // If the user specified a session label, then we cannot handle a zip where the user
+            // specified multiple sessions.
+            log.error("Cannot handle a zip file with {} sessions where the user specified one label: {}",
+                    inveonSessionFilesMap.size(),
+                    params.get(URIManager.EXPT_LABEL));
+            throw new ServerException(
+                    "Cannot handle a zip file with "
+                    + inveonSessionFilesMap.size()
+                    + " sessions where the user specified one label: "
+                    + params.get(URIManager.EXPT_LABEL));
+
+        }
 
         Iterator<InveonSessionFiles> it = inveonSessionFilesMap.values().iterator();
         while (it.hasNext()) {
