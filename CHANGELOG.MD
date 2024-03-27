@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - [PIXI-127][]: Capture animal date of death and endpoint.
+- [PIXI-113][]: Usability improvements to the Hotel Scan Record Form UI. 'Select Image Session' is now scrollable and
+                searchable.
 
 ## [1.1.0] - 2024-02-19
 
@@ -49,6 +51,7 @@ plugins directory and restart XNAT.
 [PIXI-70]: https://radiologics.atlassian.net/browse/PIXI-70
 [PIXI-111]: https://radiologics.atlassian.net/browse/PIXI-111
 [PIXI-112]: https://radiologics.atlassian.net/browse/PIXI-112
+[PIXI-113]: https://radiologics.atlassian.net/browse/PIXI-113
 [PIXI-116]: https://radiologics.atlassian.net/browse/PIXI-116
 [PIXI-117]: https://radiologics.atlassian.net/browse/PIXI-117
 [PIXI-120]: https://radiologics.atlassian.net/browse/PIXI-120

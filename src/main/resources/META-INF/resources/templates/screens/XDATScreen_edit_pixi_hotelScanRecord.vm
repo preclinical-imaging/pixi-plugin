@@ -243,19 +243,18 @@
                         </div>
 
                         <div class="panel-element stacked">
-                            <label class="element-label">Select Image Session</label>
+                            <label class="element-label pull-left" for="session-selector">Select Image Session</label>
+                            <div class="pull-right">
+                                <label class="filter-icon" for="session-filter"><i class="fa fa-search"></i></label>
+                                <input type="text" id="session-filter" name="session-filter" placeholder="Filter" onkeyup="" class="filter-input"/>
+                            </div>
                             <div class="element-wrapper">
-                                <label>
-                                    <select name="pixi:hotelScanRecord/session_label" id="session-selector">
-                                        <option>Select Image Session</option>
-                                    </select>
-                                </label>
+                                <select name="pixi:hotelScanRecord/session_label" id="session-selector" size="8"></select>
                                 <div class="description">
                                     Session Date: <span class="selected-session-date"></span>
                                     <input type="hidden" name="pixi:hotelScanRecord/date" />
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -672,6 +671,24 @@
             el.addEventListener("change", () => toggleFastingStatus(i))
         });
     }
+</script>
+
+<script>
+    const sessionSelector = document.getElementById('session-selector');
+    const sessionFilter = document.getElementById('session-filter');
+
+    const filterSessions = (event) => {
+        console.debug('Filtering sessions');
+
+        const filter = event.target.value.toLowerCase();
+        let sessions = Array.from(sessionSelector.options);
+
+        sessions.forEach((session) => {
+            session.hidden = !session.text.toLowerCase().includes(filter);
+        });
+    }
+
+    sessionFilter.addEventListener('keyup', filterSessions);
 </script>
 
 <script src="$content.getURI("scripts/xnat/plugin/pixi/pixi-imageAcqCtx.js")"></script>
