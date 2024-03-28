@@ -82,6 +82,7 @@ public class HotelInitializer extends AbstractInitializingTask {
             init2MouseHotel();
             init3MouseHotel();
             init3MouseOneRowHotel();
+            init5MouseHotel();
         }
     }
 
@@ -183,6 +184,34 @@ public class HotelInitializer extends AbstractInitializingTask {
         PixiHotelposition hotelPosition3 = newHotelPosition("Right",  3, 1);
 
         addHotelPositions(hotel, hotelPosition1, hotelPosition2, hotelPosition3);
+
+        saveHotel(hotel);
+
+        log.info("{} hotel initialized", hotelName);
+    }
+
+    /**
+     * Initializes a 5 Mouse hotel with five mice in one row.
+     */
+    private void init5MouseHotel() {
+        String hotelName = "5 Mouse";
+
+        log.info("Initializing hotel {}", hotelName);
+
+        if (hotelExists(hotelName)) {
+            log.info("{} hotel already exists. Skipping initialization", hotelName);
+            return;
+        }
+
+        PixiHotel hotel = newHotel(hotelName);
+
+        PixiHotelposition hotelPosition1 = newHotelPosition("Position1", 1, 1);
+        PixiHotelposition hotelPosition2 = newHotelPosition("Position2", 2, 1);
+        PixiHotelposition hotelPosition3 = newHotelPosition("Position3", 3, 1);
+        PixiHotelposition hotelPosition4 = newHotelPosition("Position4", 4, 1);
+        PixiHotelposition hotelPosition5 = newHotelPosition("Position5", 5, 1);
+
+        addHotelPositions(hotel, hotelPosition1, hotelPosition2, hotelPosition3, hotelPosition4, hotelPosition5);
 
         saveHotel(hotel);
 
