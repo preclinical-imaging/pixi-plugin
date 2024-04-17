@@ -35,10 +35,11 @@ public class BliScanBuilder implements Callable<XnatImagescandataBean> {
         log.debug("Building BLI scans for {}", scanDir);
 
         String id = scanDir.getFileName().toString();
+        Path imgDir = scanDir.resolve("IVIS");
 
         bliScan.setId(id);
 
-        AnalyzedClickInfo analyzedClickInfo = analyzedClickInfoHelper.readJson(scanDir.resolve("AnalyzedClickInfo.json"));
+        AnalyzedClickInfo analyzedClickInfo = analyzedClickInfoHelper.parseTxt(imgDir.resolve("AnalyzedClickInfo.txt"));
 
         bliScan.setOperator(analyzedClickInfo.getUserLabelNameSet().getUser());
 
@@ -52,18 +53,18 @@ public class BliScanBuilder implements Callable<XnatImagescandataBean> {
         // Set scan datetime
         bliScan.setStartDate(analyzedClickInfo.getLuminescentImage().getAcquisitionDateTime());
 
-        File resourceCatalogXml = new File(scanDir.toFile(), "scan_catalog.xml");
+        File resourceCatalogXml = new File(imgDir.toFile(), "scan_catalog.xml");
         XnatResourcecatalogBean resourceCatalog = new XnatResourcecatalogBean();
 
-        resourceCatalog.setUri(Paths.get("SCANS", id, "scan_catalog.xml").toString());
-        resourceCatalog.setLabel("BLI");
-        resourceCatalog.setFormat("BLI");
-        resourceCatalog.setContent("BLI");
-        resourceCatalog.setDescription("BLI Scan data");
+        resourceCatalog.setUri(Paths.get("SCANS", id, "IVIS", "scan_catalog.xml").toString());
+        resourceCatalog.setLabel("IVIS");
+        resourceCatalog.setFormat("IVIS");
+        resourceCatalog.setContent("IVIS");
+        resourceCatalog.setDescription("IVIS BLI Scan data");
 
         CatCatalogBean catCatalogBean = new CatCatalogBean();
 
-        try (final Stream<Path> files = Files.list(scanDir)) {
+        try (final Stream<Path> files = Files.list(imgDir)) {
             files.filter(Files::isRegularFile)
                  .map(Path::getFileName)
                  .map(Path::toString)

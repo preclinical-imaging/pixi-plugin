@@ -179,6 +179,7 @@
 
         let file = fileEl.files[0];
         let encodedFileName = encodeURIComponent(file.name);
+        encodedFileName = encodedFileName.replaceAll('%20', '_'); // Replace spaces with underscores
         let cachePath = `/user/cache/resources/${uploadId}/files/${encodedFileName}`;
         let encodedCachePath = encodeURIComponent(cachePath);
         let userResourceCacheUrl = XNAT.url.csrfUrl(`/data/${cachePath}`);
@@ -219,6 +220,7 @@
         importServiceUrl = XNAT.url.addQueryString(importServiceUrl, ['import-handler=BLI',
                                                                       `PROJECT_ID=${projectId}`,
                                                                       `src=${encodedCachePath}`,
+                                                                      `cachePath=${uploadId}/${encodedFileName}`,
                                                                       `mapping=${mapping}`]);
 
         // Extract the zip file from the users cache

@@ -1,6 +1,5 @@
 package org.nrg.xnatx.plugins.pixi.bli.helpers.impl;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -10,7 +9,7 @@ import org.nrg.xnatx.plugins.pixi.bli.models.AnalyzedClickInfo;
 import org.nrg.xnatx.plugins.pixi.bli.models.ClickNumber;
 import org.nrg.xnatx.plugins.pixi.bli.models.LuminescentImage;
 import org.nrg.xnatx.plugins.pixi.bli.models.UserLabelNameSet;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -22,9 +21,21 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
-@Component
+@Service
 @Slf4j
 public class DefaultAnalyzedClickInfoHelper implements AnalyzedClickInfoHelper {
+
+    public AnalyzedClickInfo parseTxt(Path txtFile) throws IOException {
+        // Verify that the file exists
+        if (!txtFile.toFile().exists()) {
+            throw new IOException("File does not exist: " + txtFile.toString());
+        }
+
+        // Create an InputStream from the file
+        try (InputStream inputStream = txtFile.toUri().toURL().openStream()) {
+            return parseTxt(inputStream, null, null);
+        }
+    }
 
     public AnalyzedClickInfo parseTxt(InputStream inputStream) throws IOException {
         return parseTxt(inputStream, null, null);
@@ -233,30 +244,4 @@ public class DefaultAnalyzedClickInfoHelper implements AnalyzedClickInfoHelper {
         return analyzedClickInfo;
     }
 
-    @Override
-    public AnalyzedClickInfo readJson(Path jsonFile) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
-        return mapper.readValue(jsonFile.toFile(), AnalyzedClickInfo.class);
-    }
-
-    @Override
-    public AnalyzedClickInfo readJson(InputStream inputStream) throws IOException {
-        return readJson(inputStream, null);
-    }
-
-    @Override
-    public AnalyzedClickInfo readJson(InputStream inputStream, Path jsonOutputPath) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
-        mapper.disable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
-        final AnalyzedClickInfo analyzedClickInfo = mapper.readValue(inputStream, AnalyzedClickInfo.class);
-
-        if (jsonOutputPath != null) {
-            ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
-            writer.writeValue(jsonOutputPath.toFile(), analyzedClickInfo);
-        }
-
-        return analyzedClickInfo;
-    }
 }

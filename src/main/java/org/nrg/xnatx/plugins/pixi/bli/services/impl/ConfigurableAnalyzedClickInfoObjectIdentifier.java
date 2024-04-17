@@ -93,9 +93,21 @@ public class ConfigurableAnalyzedClickInfoObjectIdentifier implements AnalyzedCl
 
         Matcher matcher;
         if (field.equalsIgnoreCase("ClickNumber")) {
-            matcher = pattern.matcher(analyzedClickInfo.getClickNumber().getClickNumber());
+            String clickNumber = analyzedClickInfo.getClickNumber().getClickNumber();
+
+            if (clickNumber == null) {
+                return Optional.empty();
+            }
+
+            matcher = pattern.matcher(clickNumber);
         } else {
-            matcher = pattern.matcher(analyzedClickInfo.getUserLabelNameSet().get(field));
+            String fieldVal = analyzedClickInfo.getUserLabelNameSet().get(field);
+
+            if (fieldVal == null) {
+                return Optional.empty();
+            }
+
+            matcher = pattern.matcher(fieldVal);
         }
 
         if (matcher.find()) {

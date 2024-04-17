@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -68,7 +69,7 @@ public class BliSessionBuilder extends SessionBuilder {
                 bliSession.addScans_scan(bliScanBuilder.call());
             }
         } catch (FileNotFoundException e) { // Exceptions are expected to be passed up the stack. Log and rethrow
-            log.error("AnalyzedClickInfo.json not found in " + scanDir + ". This might not be a BLI session.", e);
+            log.error("AnalyzedClickInfo.txt not found in " + scanDir + ". This might not be a BLI session.", e);
             throw e;
         } catch (IOException e) {
             log.error("IO error building BLI session " + sessionDir.getPath(), e);
@@ -86,6 +87,7 @@ public class BliSessionBuilder extends SessionBuilder {
         // Set session date to earliest scan date
         Optional<Date> sessionDate = bliSession.getScans_scan().stream()
                                                                .map(XnatImagescandataI::getStartDate)
+                                                               .filter(Objects::nonNull)
                                                                .map(d -> (Date) d)
                                                                .distinct()
                                                                .sorted()
@@ -96,6 +98,7 @@ public class BliSessionBuilder extends SessionBuilder {
         // operators in scan metadata
         List<String> operators = bliSession.getScans_scan().stream()
                                                               .map(XnatImagescandataI::getOperator)
+                                                              .filter(Objects::nonNull)
                                                               .distinct()
                                                               .collect(Collectors.toList());
 
