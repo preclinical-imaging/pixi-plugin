@@ -1,0 +1,352 @@
+<!-- BEGIN pixi-plugin templates/screens/Inveon.vm -->
+<div class="upload-container">
+    <h2>PIXI Inveon Image Session Uploader</h2>
+
+    <div class="form-instructions">
+        <p>Upload a single session of Inveon PET/CT images to XNAT. </p>
+
+        <p>File format requirements:</p>
+
+        <ul>
+            <li>Must be a .zip file</li>
+            <li>Each zip file should contain a single session of Inveon PET/CT images</li>
+            <li>Each image series will be uploaded as an XNAT scan</li>
+        </ul>
+
+        <p>Select the project and subject to upload the image session to and provide label for the session.</p>
+        <p>If you are uploading a multi-subject hotel image session, select a project's <em>Hotel</em> subject.</p>
+    </div>
+
+    <form id="upload-form" name="upload-form" method="post">
+
+        <div class="filter-container">
+            <label for="project" class="filter-label">Select Project</label>
+
+            <label class="filter-icon" for="project-filter"><i class="fa fa-search"></i></label>
+            <input type="text" id="project-filter" name="project-filter" placeholder="Filter" onkeyup="" class="filter-input"/>
+
+            <select id="project" name="project" form="upload-form" size="5" required class="filer-select"></select>
+        </div>
+
+        <div class="filter-container">
+            <label for="subject" class="filter-label">Select Subject</label>
+
+            <label class="filter-icon" for="subject-filter"><i class="fa fa-search"></i></label>
+            <input type="text" id="subject-filter" name="subject-filter" placeholder="Filter" onkeyup="" class="filter-input"/>
+
+            <select id="subject" name="subject" form="upload-form" size="5" required class="filer-select"></select>
+        </div>
+
+        <div class="form-component">
+            <label for="session">Enter Session Label</label>
+            <input type="text" id="session" name="session" form="upload-form" required placeholder="Enter a label for the image session"/>
+        </div>
+
+        <div class="form-component">
+            <label class="file-label" for="file">Select Zip File</label>
+            <input type="file" id="file" name="file" accept="application/zip" required/>
+        </div>
+
+        <input class="submit" id="upload-button" type="button" name="eventSubmit_doPerform" value="Begin Upload" onclick="submitForm();"/>
+
+    </form>
+</div>
+
+<style>
+
+    .upload-container {
+        width: 100%;
+    }
+
+    .form-instructions {
+        margin-bottom: 2em;
+    }
+
+    #upload-form {
+        display: flex;
+        flex-direction: column;
+        row-gap: 1em;
+        font-size: 14px;
+        box-sizing: border-box;
+        width: 400px;
+    }
+
+    #upload-form label {
+        font-weight: bold;
+    }
+
+    #upload-form select,
+    #upload-form text,
+    #upload-form input[type="file"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    #upload-form .filter-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        row-gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    #upload-form .filter-label {
+        flex: 2 1 auto;
+    }
+
+    #upload-form .filter-icon {
+        flex: 0 0 auto;
+        margin-right: 5px;
+    }
+
+    #upload-form .form-component {
+        display: flex;
+        flex-direction: column;
+        row-gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    #upload-button {
+        width: 30%;
+        margin-top: 10px;
+        background-color: #0074b8; /* XNAT blue color */
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        background-image: none;  /* Remove default button background */
+    }
+
+    #upload-button:hover {
+        background-color: #005eaa; /* Slightly darker blue on hover */
+    }
+
+    .input-desc {
+        margin: 0 0 10px 0;
+    }
+
+</style>
+
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-projects.js')"></script>
+
+<script type="text/javascript">
+
+    // Form Elements
+    let formEl            = document.getElementById("upload-form");
+    let projectEl         = document.getElementById("project");
+    let projectFilerInput = document.getElementById("project-filter");
+    let subjectEl         = document.getElementById("subject");
+    let subjectFilerInput = document.getElementById("subject-filter");
+    let sessionEl         = document.getElementById("session");
+    let prearchiveCode0El = document.getElementById("prearchive-code-0");
+    let prearchiveCode1El = document.getElementById("prearchive-code-1");
+    let fileEl            = document.getElementById("file");
+
+    // Form rendering
+    let renderProjectSelectBox = function(selectBox, projects) {
+        console.debug('renderProjectSelectBox()')
+
+        // Clear select box
+        selectBox.options.length = 0;
+
+        projects.forEach(project => {
+            selectBox.options[selectBox.length] = new Option(project['id'], project['id'])
+        })
+    }
+
+    let projects;
+    XNAT.plugin.pixi.projects.getAll().then(resultSet => resultSet['ResultSet']['Result'])
+                                      .then(prjs => {
+                                          projects = prjs;
+                                          renderProjectSelectBox(projectEl, prjs);
+                                      });
+
+    let handleProjectChange = () => {
+        console.debug('handleProjectChange()')
+
+        // clear subject select box
+        subjectEl.options.length = 0;
+
+        let projectId = projectEl.value;
+
+        if (projectId) {
+            // update subject select box
+            XNAT.plugin.pixi.subjects.getAll(projectId)
+                                     .then(resultSet => resultSet['ResultSet']['Result'])
+                                     .then(subjects => {
+                                         // Sort subjects by label
+                                         subjects.sort(XNAT.plugin.pixi.compareGenerator('label'));
+
+                                         // If there is a hotel subject, move it to the top of the list
+                                         let hotelIndex = subjects.findIndex(subject => subject['label'].toLowerCase() === 'hotel');
+                                         if (hotelIndex !== -1) {
+                                             let hotel = subjects.splice(hotelIndex, 1)[0];
+                                             subjects.unshift(hotel);
+                                         }
+
+                                         subjects.forEach(subject => {
+                                             subjectEl.options.add(new Option(subject['label'], subject['id']))
+                                         });
+                                     });
+        }
+    }
+
+    let filterProject = (event) => {
+        console.debug('filterProject()')
+
+        let filter = event.target.value.toLowerCase();
+        let projects = Array.from(projectEl.options);
+
+        projects.forEach(project => {
+            project.hidden = !project.value.toLowerCase().includes(filter);
+        });
+    }
+
+    let filterSubject = (event) => {
+        console.debug('filterSubject()')
+
+        let filter = event.target.value.toLowerCase();
+        let subjects = Array.from(subjectEl.options);
+
+        subjects.forEach(subject => {
+            subject.hidden = !subject.text.toLowerCase().includes(filter);
+        });
+    }
+
+    projectEl.addEventListener('change', handleProjectChange);
+    projectFilerInput.addEventListener('keyup', filterProject);
+    subjectFilerInput.addEventListener('keyup', filterSubject);
+
+    async function submitForm() {
+        console.debug('submitForm()')
+
+        function validateForm() {
+            let validProject = XNAT.validate(projectEl).required().check();
+            let validSubject = XNAT.validate(subjectEl).required().check();
+            let validSession = XNAT.validate(sessionEl).required().check();
+            let validImageArchiveFile = XNAT.validate(fileEl).is('fileType', 'zip').check();
+
+            return validProject && validSession && validSubject && validImageArchiveFile;
+        }
+
+        let isValid = validateForm()
+
+        console.debug(`Inveon uploader form validation: ${isValid}`);
+
+        if (!isValid) {
+            return;
+        }
+
+        let projectId = projectEl.value;
+        let subjectId = subjectEl.value;
+        let sessionLabel = sessionEl.value;
+        let uploadId = new Date().toISOString()
+                                 .replaceAll('-', '_')
+                                 .replaceAll(':', '_')
+                                 .replaceAll('.', '_');
+
+        let file = fileEl.files[0];
+        let encodedFileName = encodeURIComponent(file.name);
+        let cachePath = `/user/cache/resources/${uploadId}/files/${encodedFileName}`;
+        let encodedCachePath = encodeURIComponent(cachePath);
+        let userResourceCacheUrl = XNAT.url.csrfUrl(`/data/${cachePath}`);
+
+        let formDataFileOnly = new FormData()
+        formDataFileOnly.append('file', file)
+
+        // Upload the zip file to the users cache
+        console.debug(`Uploading ${file.name}`);
+        XNAT.ui.dialog.static.wait(`Uploading ${file.name}`,{id: "inveon_upload"});
+
+        let response = await fetch(userResourceCacheUrl, {
+            method: 'PUT',
+            body : formDataFileOnly
+        })
+
+        if (response.ok) {
+            console.debug('Upload successful');
+            XNAT.ui.dialog.close("inveon_upload");
+        } else {
+            console.error(`Failed to upload ${file.name}`)
+            XNAT.ui.dialog.close("inveon_upload");
+            XNAT.ui.dialog.open({
+                title: 'Upload Failed',
+                content: `<div class="error">Failed to upload ${file.name}.</div>`,
+                buttons: [
+                    {
+                        label: 'OK',
+                        isDefault: true,
+                        close: true,
+                    }
+                ]
+            })
+            return;
+        }
+
+        let importServiceUrl = XNAT.url.csrfUrl('/data/services/import');
+        importServiceUrl = XNAT.url.addQueryString(importServiceUrl, ['import-handler=INVEON',
+                                                                      `PROJECT_ID=${projectId}`,
+                                                                      `SUBJECT_ID=${subjectId}`,
+                                                                      `EXPT_LABEL=${sessionLabel}`,
+                                                                      `src=${encodedCachePath}`,
+                                                                      `cachePath=${encodedCachePath}`]);
+
+        // Extract the zip file from the users cache
+        console.debug(`Extracting ${file.name}`);
+        XNAT.ui.dialog.static.wait(`Extracting ${file.name}`,{id: "inveon_extraction"});
+
+        response = await fetch(importServiceUrl, {method: 'POST'})
+
+        if (response.ok) {
+            console.debug('Extraction successful');
+            XNAT.ui.dialog.close("inveon_extraction");
+
+            XNAT.ui.dialog.open({
+                title: 'Upload/Extraction Successful',
+                content: `<div class="success">Upload/Extraction of ${file.name} successful. Depending on the projects
+                prearchive settings, visit the <a target="_blank" href="/app/template/XDATScreen_prearchives.vm">prearchive</a>
+                to review the session(s) before archiving or visit the <a target="_blank" href="/data/projects/${projectId}">project</a>
+                to view archived session(s).</div>`,
+                buttons: [
+                    {
+                        label: 'OK',
+                        isDefault: true,
+                        close: true,
+                    }
+                ]
+            })
+        } else {
+            console.error(`Failed to extract ${file.name}`)
+            XNAT.ui.dialog.close("inveon_extraction");
+
+            response.text().then(text => {
+                // Error message is returned as html. Try to extract from the h3 tags.
+                let error = text.match(/<h3>(.*)<\/h3>/);
+
+                if (error.length === 2) {
+                    return `Failed to extract ${file.name}: <br> <b>${error[1]}</b>`;
+                } else {
+                    return `Failed to extract ${file.name}`;
+                }
+            }).then(error => {
+                XNAT.ui.dialog.open({
+                    title: 'Extraction Failed',
+                    content: `<div class="error">${error}</div>`,
+                    buttons: [
+                        {
+                            label: 'OK',
+                            isDefault: true,
+                            close: true,
+                        }
+                    ]
+                })
+            })
+        }
+    }
+</script>
+
+<!-- END pixi-plugin templates/screens/Inveon.vm -->

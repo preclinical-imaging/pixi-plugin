@@ -34,6 +34,7 @@ public class PIXIPreferences extends AbstractPreferenceBean {
     public static final String ENDPOINT_PREFERENCE_ID =  "endpoints";
     public static final String UI_SHOW_HUMAN_SEARCH_FIELDS_PREFERENCE_ID =  "uiShowHumanSearchFields";
     public static final String UI_SHOW_USER_READABLE_COUNTS_PREFERENCE_ID =  "uiShowUserReadableCounts";
+    public static final String UI_SHOW_INVEON_IMPORTER_PREFERENCE_ID =  "uiShowInveonImporter";
     public static final String UI_HIDE_SITE_WIDE_COUNTS_PREFERENCE_ID =  "uiHideSiteWideCounts";
     public static final String DEFAULT_BLI_IMPORTER_MAPPING = "defaultBliImporterMapping";
 
@@ -173,6 +174,19 @@ public class PIXIPreferences extends AbstractPreferenceBean {
             setBooleanValue(uiShowUserReadableCounts, UI_SHOW_USER_READABLE_COUNTS_PREFERENCE_ID);
         } catch (InvalidPreferenceName e) {
             log.error("Invalid preference name 'uiShowUserReadableCounts': something is very wrong here.", e);
+        }
+    }
+
+    @NrgPreference(defaultValue = "false")
+    public Boolean getUiShowInveonImporter() {
+        return getBooleanValue(UI_SHOW_INVEON_IMPORTER_PREFERENCE_ID);
+    }
+
+    public void setUiShowInveonImporter(final Boolean uiShowInveonImporter) {
+        try {
+            setBooleanValue(uiShowInveonImporter, UI_SHOW_INVEON_IMPORTER_PREFERENCE_ID);
+        } catch (InvalidPreferenceName e) {
+            log.error("Invalid preference name 'uiShowInveonImporter': something is very wrong here.", e);
         }
     }
 

@@ -11,6 +11,7 @@ import org.nrg.xnat.services.XnatAppInfo;
 import org.nrg.xnat.services.system.HostInfoService;
 import org.nrg.xnat.turbine.utils.IDGenerator;
 import org.nrg.xnatx.plugins.pixi.bli.config.BliConfig;
+import org.nrg.xnatx.plugins.pixi.inveon.config.InveonConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -90,7 +91,7 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.DEFAULT_DIGITS;
                 "org.nrg.xnatx.plugins.pixi.imageAcqCtx.services.impl",
                 "org.nrg.xnatx.plugins.pixi.rest",
 })
-@Import({BliConfig.class})
+@Import({BliConfig.class, InveonConfig.class})
 @Slf4j
 public class PIXIPlugin {
 
@@ -109,7 +110,8 @@ public class PIXIPlugin {
 
     @Bean
     public ImporterHandlerPackages pixiImporterHandlerPackages() {
-        return new ImporterHandlerPackages("org.nrg.xnatx.plugins.pixi.bli.importer");
+        return new ImporterHandlerPackages("org.nrg.xnatx.plugins.pixi.bli.importer",
+                                           "org.nrg.xnatx.plugins.pixi.inveon.importer");
     }
 
 }

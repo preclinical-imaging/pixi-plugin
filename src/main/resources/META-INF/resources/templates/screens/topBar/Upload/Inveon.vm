@@ -1,0 +1,17 @@
+<!-- BEGIN pixi-plugin templates/screens/topBar/Upload/Inveon.vm -->
+
+<!-- Sequence: 30 -->
+<li id="inveon-upload-nav" style="display: none"><a href="$link.setPage("UploadInveon.vm")">Upload Inveon Images</a></li>
+
+<script type="text/javascript">
+    let uploadInveonNav = document.getElementById('inveon-upload-nav');
+
+    XNAT.plugin.pixi.preferences.get('uiShowInveonImporter')
+                                .then(preference => preference['uiShowInveonImporter'])
+                                .then(showInveonImporter => {
+                                    if (showInveonImporter) {
+                                        uploadInveonNav.style.display = 'block';
+                                    }
+                                });
+</script>
+<!-- END pixi-plugin templates/screens/topBar/Upload/Inveon.vm -->

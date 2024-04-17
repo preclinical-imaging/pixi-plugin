@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [PIXI-119][]: Adds single session upload of native Inveon PET/CT images. Enable in the plugin preferences.
 - [PIXI-127][]: Capture animal date of death and endpoint.
+
+###  Changed
+
 - [PIXI-113][]: Usability improvements to the Hotel Scan Record Form UI. 'Select Image Session' is now scrollable and
                 searchable.
 
@@ -54,6 +60,7 @@ plugins directory and restart XNAT.
 [PIXI-113]: https://radiologics.atlassian.net/browse/PIXI-113
 [PIXI-116]: https://radiologics.atlassian.net/browse/PIXI-116
 [PIXI-117]: https://radiologics.atlassian.net/browse/PIXI-117
+[PIXI-119]: https://radiologics.atlassian.net/browse/PIXI-119
 [PIXI-120]: https://radiologics.atlassian.net/browse/PIXI-120
 [PIXI-123]: https://radiologics.atlassian.net/browse/PIXI-123
 [PIXI-124]: https://radiologics.atlassian.net/browse/PIXI-124

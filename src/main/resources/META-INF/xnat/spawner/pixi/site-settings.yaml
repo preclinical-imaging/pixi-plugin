@@ -156,6 +156,28 @@ hotelPanel:
         XNAT.plugin.pixi.hotelPreferenceManager.init('#hotel-preferences-manager');
 
 ###
+### Inveon
+###
+
+uiShowInveonImporter:
+  kind: panel.input.switchbox
+  name: uiShowInveonImporter
+  label: Enable Inveon Image Importer
+  description: >
+    Enable the Inveon Image Importer in the Upload menu for importing Inveon PET/CT images.
+
+inveonImporter:
+  kind: panel.form
+  id: inveonImporter
+  name: inveonImporter
+  label: Inveon Image Importer
+  method: POST
+  contentType: json
+  url: /xapi/pixi/preferences
+  contents:
+    ${uiShowInveonImporter}
+
+###
 ### BLI
 ###
 
@@ -226,11 +248,12 @@ siteSettings:
       active: true
       contents:
         ${hotelPanel}
-    bliImporterSettingsTab:
+    imageImporterSettingsTab:
       kind: tab
-      name: bliImporterSettingsTab
-      label: BLI Importer
+      name: imageImporterSettingsTab
+      label: Image Importers
       group: pixiTabGroup
       active: true
       contents:
+        ${inveonImporter}
         ${bliImporterMappings}
