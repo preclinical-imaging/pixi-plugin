@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.2.0-RC1] - 2024-04-17
+## [1.2.0-RC2] - 2024-04-18
 
 ### Added
 
@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ###  Changed
 
+- [PIXI-125][]: Bioluminescence is too long for the upload nav link. Revert back to 'BLI' for the upload link.
 - [PIXI-128][]: Add IVIS subdirectory to SCANS folder for BLI imports to match XNAT's expected directory structure.
                 Refactor BLI importer by removing some dependencies and simplifying import logic.
 - [PIXI-113][]: Usability improvements to the Hotel Scan Record Form UI. 'Select Image Session' is now scrollable and
