@@ -13,9 +13,3 @@ To build the PIXI XNAT plugin, run the following command:
 ```
 
 The plugin jar file will be located in the `build/libs` directory.
-
-## Release History
-
-- Version 1.0.0 (Date: 09/01/2023)
-    - Initial release of the PIXI XNAT plugin.
-
