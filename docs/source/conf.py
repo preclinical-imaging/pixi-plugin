@@ -3,11 +3,11 @@
 # -- Project information
 
 project = 'PIXI'
-copyright = '2023, Washington University in St. Louis'
+copyright = '2024, Washington University in St. Louis'
 author = 'Kooresh Shoghi'
 
-release = '1.0'
-version = '1.0.0'
+release = '1.2.0'
+version = '1.2.0'
 
 # -- General configuration
 
