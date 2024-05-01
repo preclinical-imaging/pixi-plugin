@@ -1,10 +1,22 @@
 Installation
 ============
 
-1. `XNAT Plugin Model`_
-2. `Select & Download Plugins`_
-3. `Installation Environment`_
-4. `Run XNAT with Docker Compose`_
+1. `Quick Start`_
+2. `XNAT Plugin Model`_
+3. `Select & Download Plugins`_
+4. `Installation Environment`_
+5. `Run XNAT with Docker Compose`_
+
+-----------
+Quick Start
+-----------
+
+The easiest way to get started with PIXI is to use the Dockerized version of XNAT. Jump to the
+`Run XNAT with Docker Compose`_ section below to get started.
+
+For IT administrators who want to deploy XNAT with PIXI in a production environment, check the
+`XNAT Installation Guide page`_ for detailed instructions. The Docker Compose environment is also a good reference for
+understanding the components of a production installation.
 
 -----------------
 XNAT Plugin Model
@@ -127,4 +139,5 @@ when you install Docker.
 .. _Container Service: https://wiki.xnat.org/container-service/
 .. _Batch Launch: https://wiki.xnat.org/xnat-tools/batch-launch-plugin
 .. _JupyterHub Integration: https://wiki.xnat.org/jupyter-integration
+.. _XNAT Installation Guide page: https://wiki.xnat.org/documentation/xnat-installation-guide
 
