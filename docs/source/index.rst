@@ -1,9 +1,6 @@
 Preclinical Imaging XNAT-Enabled Informatics: PIXI
 ==================================================
 
-**Test 2023.11.06 14:05**
-
-
 **PIXI** is a free and open source XNAT plugin designed to support imaging informatics
 for preclinical experiments. It introduces an additional subject data
 model to XNAT tailored for small animal subjects and adds non-imaging
