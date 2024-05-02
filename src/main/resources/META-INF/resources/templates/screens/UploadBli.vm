@@ -17,19 +17,70 @@
 
     <form id="upload-form" name="upload-form" method="post">
 
-        <label for="project" class="project-label">Project:</label>
-        <select id="project" name="project" form="upload-form" required>
-            <option value="" disabled selected>Select a project</option>
-        </select>
+        <fieldset>
+            <legend>Project & Data Selection</legend>
 
-        <label for="mapping" class="mapping-label">Mapping:</label>
-        <select id="mapping" name="mapping" form="upload-form" required>
-            <option value="" disabled selected>Select a mapping</option>
-        </select>
-        <p class="input-desc">Used to map fields from the AnalyzedClickInfo.txt file to XNAT fields.</p>
+                <div class="filter-container">
+                    <label for="project" class="filter-label">Select Project</label>
 
-        <label class="file-label" for="file">Select a .zip file:</label>
-        <input type="file" id="file" name="file" accept="application/zip" required/>
+                    <label class="filter-icon" for="project-filter"><i class="fa fa-search"></i></label>
+                    <input type="text" id="project-filter" name="project-filter" placeholder="Filter" onkeyup="" class="filter-input"/>
+
+                    <select id="project" name="project" form="upload-form" size="8" required class="filer-select"></select>
+                </div>
+
+                <div class="form-component">
+                    <label class="file-label" for="file">Select ZIP File to Upload:</label>
+                    <input type="file" id="file" name="file" accept="application/zip" required/>
+                </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Subject & Session Identification</legend>
+
+            <div class="form-component">
+                <label for="subject-label-option" class="subject-label-option">Subject Labeling Option:</label>
+                <select id="subject-label-option" name="subject-label-option" form="upload-form">
+                    <option value="hotel">Multi-Subject Image Session - Send to Projects 'Hotel' Subject</option>
+                    <option value="animalNumber">Use Animal Number field</option>
+                    <option value="comment1">Use Comment1 field</option>
+                    <option value="comment2">Use Comment2 field</option>
+                </select>
+                <p class="input-desc">Map each image session to an XNAT subject. New subjects will be created as needed.</p>
+            </div>
+
+            <div class="form-component">
+                <label for="session-label-option" class="session-label-option">Session Labeling Option:</label>
+                <select id="session-label-option" name="session-label-option" form="upload-form">
+                    <option value="clickNumber">Use ClickNumber field</option>
+                    <option value="experiment">Use Experiment field</option>
+                    <option value="comment1">Use Comment1 field</option>
+                    <option value="comment2">Use Comment2 field</option>
+                </select>
+                <p class="input-desc">Specify how to label each image session in XNAT.</p>
+            </div>
+
+            <div class="advanced-options" style="display: none;">
+
+                <div class="form-component">
+                    <label for="subject-label-regex" class="subject-label-regex">Subject Labeling Regex:</label>
+                    <input type="text" id="subject-label-regex" name="subject-field-regex" form="upload-form">
+                    <div>
+                        <p class="input-desc">Enter regex to extract subject label. If empty, the entire field is used. Ignore if using 'Multi-Subject Image Session' option.</p>
+
+                    </div>
+                </div>
+
+                <div class="form-component">
+                    <label for="session-label-regex" class="session-label-regex">Session Labeling Regex:</label>
+                    <input type="text" id="session-label-regex" name="session-label-regex" form="upload-form">
+                    <p class="input-desc">Enter regex to extract session label. If empty, the entire field is used.</p>
+                </div>
+
+            </div>
+
+            <button type="button" class="advanced-options-button">Show Advanced Options</button>
+        </fieldset>
 
         <input class="submit" id="upload-button" type="button" name="eventSubmit_doPerform" value="Begin Upload" onclick="submitForm();"/>
 
@@ -52,20 +103,46 @@
         row-gap: 1em;
         font-size: 14px;
         box-sizing: border-box;
-        width: 400px;
+        width: 600px;
     }
 
     #upload-form label {
-        font-weight: bold;
+        font-weight: normal;
     }
 
     #upload-form select,
+    #upload-form text,
     #upload-form input[type="file"] {
         width: 100%;
         padding: 8px;
         border: 1px solid #ccc;
         border-radius: 4px;
         box-sizing: border-box;
+    }
+
+    #upload-form .filter-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        row-gap: 0.5rem;
+        margin-bottom: 2rem;
+    }
+
+    #upload-form .filter-label {
+        flex: 2 1 auto;
+    }
+
+    #upload-form .filter-icon {
+        flex: 0 0 auto;
+        margin-right: 5px;
+    }
+
+    #upload-form .form-component {
+        display: flex;
+        flex-direction: column;
+        row-gap: 0.5rem;
+        margin-bottom: 0.5rem;
     }
 
     #upload-button {
@@ -77,6 +154,7 @@
         border-radius: 4px;
         cursor: pointer;
         background-image: none;  /* Remove default button background */
+        align-self: flex-end;
     }
 
     #upload-button:hover {
@@ -85,6 +163,28 @@
 
     .input-desc {
         margin: 0 0 10px 0;
+        font-size: 12px;
+    }
+
+    #upload-form fieldset {
+        margin: 1em 0;
+        padding: 1em;
+        border: 1px solid #ccc;
+        background-color: #fdfdfd;
+        border-radius: 4px;
+    }
+
+    #upload-form legend {
+        font-weight: bold;
+    }
+
+    #upload-form .advanced-options-button {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+        background-image: none;  /* Remove default button background */
     }
 
 </style>
@@ -93,14 +193,27 @@
 <script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-bli-importer.js')"></script>
 
 <script type="text/javascript">
-
     // Form Elements
     let formEl            = document.getElementById("upload-form");
     let projectEl         = document.getElementById("project");
+    let projectFilerInput = document.getElementById("project-filter");
     let mappingEl         = document.getElementById("mapping");
     let prearchiveCode0El = document.getElementById("prearchive-code-0");
     let prearchiveCode1El = document.getElementById("prearchive-code-1");
     let fileEl            = document.getElementById("file");
+    let advancedOptionsEl = document.querySelector('.advanced-options');
+    let subjectLabelOptionEl = document.getElementById("subject-label-option");
+    let sessionLabelOptionEl = document.getElementById("session-label-option");
+    let subjectLabelRegexEl = document.getElementById("subject-label-regex");
+    let sessionLabelRegexEl = document.getElementById("session-label-regex");
+
+    // Advanced options accordion button
+    document.querySelector('.advanced-options-button').addEventListener('click', () => {
+        let advancedOptions = document.querySelector('.advanced-options');
+        advancedOptions.style.display = advancedOptions.style.display === 'none' ? 'block' : 'none';
+        let button = document.querySelector('.advanced-options-button');
+        button.textContent = button.textContent === 'Show Advanced Options' ? 'Hide Advanced Options' : 'Show Advanced Options';
+    });
 
     // Form rendering
     let renderProjectSelectBox = function(selectBox, projects) {
@@ -109,29 +222,8 @@
         // Clear select box
         selectBox.options.length = 0;
 
-        // Placeholder
-        selectBox.options[0] = new Option("Select " + XNAT.app.displayNames.singular.project, "");
-        selectBox.options[0].disabled = true;
-        selectBox.options[0].selected = true;
-
         projects.forEach(project => {
             selectBox.options[selectBox.length] = new Option(project['id'], project['id'])
-        })
-    }
-
-    let renderMappingsSelectBox = async (selectBox, mappings, selectedMapping) => {
-        console.debug('renderMappingsSelectBox()')
-
-        // Clear select box
-        selectBox.options.length = 0;
-
-        // Placeholder
-        selectBox.options[0] = new Option("Select Mapping", "");
-        selectBox.options[0].disabled = true;
-        selectBox.options[0].selected = true;
-
-        mappings.forEach(mapping => {
-            selectBox.options[selectBox.length] = new Option(mapping['name'], mapping['name'], false, mapping['name'] === selectedMapping)
         })
     }
 
@@ -143,13 +235,19 @@
                                           renderProjectSelectBox(projectEl, prjs);
                                       });
 
-    Promise.all([
-        XNAT.plugin.pixi.preferences.get('defaultBliImporterMapping'),
-        XNAT.plugin.pixi.bli.importer.mappings.getAll()
-    ]).then(([defaultMapping, mappings]) => {
-        defaultMapping = defaultMapping['defaultBliImporterMapping'];
-        renderMappingsSelectBox(mappingEl, mappings, defaultMapping);
-    });
+    // Event listeners
+    let filterProject = (event) => {
+        console.debug('filterProject()')
+
+        let filter = event.target.value.toLowerCase();
+        let projects = Array.from(projectEl.options);
+
+        projects.forEach(project => {
+            project.hidden = !project.value.toLowerCase().includes(filter);
+        });
+    }
+
+    projectFilerInput.addEventListener('keyup', filterProject);
 
     async function submitForm() {
         console.debug('submitForm()')
@@ -157,9 +255,10 @@
         function validateForm() {
             let validProject = XNAT.validate(projectEl).required().check();
             let validImageArchiveFile = XNAT.validate(fileEl).is('fileType', 'zip').check();
-            let validMapping = XNAT.validate(mappingEl).required().check();
+            let validSubjectLabelOption = XNAT.validate(subjectLabelOptionEl).required().check();
+            let validSessionLabelOption = XNAT.validate(sessionLabelOptionEl).required().check();
 
-            return validProject && validImageArchiveFile && validMapping;
+            return validProject && validImageArchiveFile && validSubjectLabelOption && validSessionLabelOption;
         }
 
         let isValid = validateForm()
@@ -171,7 +270,6 @@
         }
 
         let projectId = projectEl.value;
-        let mapping = mappingEl.value;
         let uploadId = new Date().toISOString()
                                  .replaceAll('-', '_')
                                  .replaceAll(':', '_')
@@ -216,12 +314,24 @@
             return;
         }
 
+        let subjectLabelOption = subjectLabelOptionEl.value;
+        let encodedSubjectLabelOption = encodeURIComponent(subjectLabelOption);
+        let sessionLabelOption = sessionLabelOptionEl.value;
+        let encodedSessionLabelOption = encodeURIComponent(sessionLabelOption);
+        let subjectLabelRegex = subjectLabelRegexEl.value ? subjectLabelRegexEl.value : '(.*)';
+        let encodedSubjectLabelRegex = encodeURIComponent(subjectLabelRegex);
+        let sessionLabelRegex = sessionLabelRegexEl.value ? sessionLabelRegexEl.value : '(.*)';
+        let encodedSessionLabelRegex = encodeURIComponent(sessionLabelRegex);
+
         let importServiceUrl = XNAT.url.csrfUrl('/data/services/import');
         importServiceUrl = XNAT.url.addQueryString(importServiceUrl, ['import-handler=BLI',
                                                                       `PROJECT_ID=${projectId}`,
                                                                       `src=${encodedCachePath}`,
                                                                       `cachePath=${uploadId}/${encodedFileName}`,
-                                                                      `mapping=${mapping}`]);
+                                                                      `subjectLabelOption=${encodedSubjectLabelOption}`,
+                                                                      `sessionLabelOption=${encodedSessionLabelOption}`,
+                                                                      `subjectLabelRegex=${encodedSubjectLabelRegex}`,
+                                                                      `sessionLabelRegex=${encodedSessionLabelRegex}`]);
 
         // Extract the zip file from the users cache
         console.debug(`Extracting ${file.name}`);
