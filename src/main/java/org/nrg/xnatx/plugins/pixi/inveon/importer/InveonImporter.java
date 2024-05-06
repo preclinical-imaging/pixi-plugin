@@ -46,6 +46,11 @@ public class InveonImporter extends ImporterHandlerA {
 
     public static final String IMPORTER_HANDLER = "INVEON";
 
+    public static final String SUBJECT_LABELING_OPTION_PARAM = "subjectLabelOption";
+    public static final String SESSION_LABELING_OPTION_PARAM = "sessionLabelOption";
+    public static final String SUBJECT_LABEL_REGEX_PARAM = "subjectLabelRegex";
+    public static final String SESSION_LABEL_REGEX_PARAM = "sessionLabelRegex";
+
     private static final String UNKNOWN_SESSION_LABEL = "inveon_unknown";
 
     private final FileWriterWrapperI fw;
@@ -524,36 +529,66 @@ public class InveonImporter extends ImporterHandlerA {
     // Extract a value for Subject ID for this instance of InveonImageRepresentation
     // TODO:  Need a better scheme than assume the PCIF naming convention
     private String extractSubjectId(InveonImageRepresentation inveonImageRepresentation) {
-        String[] tokens = inveonImageRepresentation.getName().split("_");
-        return tokens[0];
-    }
+        String subjectLabelingOption = (String) params.getOrDefault(SUBJECT_LABELING_OPTION_PARAM, "subject_identifier");
+        String subjectLabelRegex = (String) params.getOrDefault(SUBJECT_LABEL_REGEX_PARAM, "(.*)");
 
-    // Extract a value for Session Label for this file name
-    // TODO:  Need a better scheme than assume the PCIF naming convention
-    private String extractSessionLabel(String fileName) {
-        String[] tokens = fileName.split("_");
-        return tokens[0];
-    }
-
-    // Extract a value for Session Label for this instance of InveonImageRepresentation
-    // TODO:  Need a better scheme than assume the PCIF naming convention
-    private String extractSessionLabel(InveonImageRepresentation inveonImageRepresentation) {
-        return extractSessionLabel(inveonImageRepresentation.getName());
-    }
-
-    // Extract a value for Scan Label for this file name
-    // TODO:  Need a better scheme than assume the PCIF naming convention
-    private String extractScanLabel(String fileName) {
-        String extension = FilenameUtils.getExtension(fileName);
-        if (extension.equals("img")) {
-            int index = fileName.lastIndexOf("img");
-            return fileName.substring(0,index);
-            //return FilenameUtils.getName(fileName);
+        if (subjectLabelingOption.toLowerCase().contains("hotel")) {
+            return "Hotel";
         }
-        String[] tokens = fileName.split("\\.");
-        return tokens[0];
+
+        String subjectLabel = inveonImageRepresentation.getHeaderValue(subjectLabelingOption);
+        if (subjectLabel == null) {
+            return "Unknown";
+        }
+
+        // Extract the subject ID from the subject label using the regex
+        return subjectLabel.replaceAll(subjectLabelRegex, "$1");
     }
 
+    private String extractSessionLabel(InveonImageRepresentation inveonImageRepresentation) {
+        String sessionLabelingOption = (String) params.getOrDefault(SESSION_LABELING_OPTION_PARAM, "session_identifier");
+        String sessionLabelRegex = (String) params.getOrDefault(SESSION_LABEL_REGEX_PARAM, "(.*)");
+
+        String sessionLabel = null;
+
+        switch (sessionLabelingOption) {
+            case "session_identifier":
+                sessionLabel = inveonImageRepresentation.getHeaderValue("session_identifier");
+                break;
+            case "file_name":
+                sessionLabel = inveonImageRepresentation.getPixelFileName();
+
+                if (sessionLabel.endsWith(".img")) {
+                    sessionLabel = sessionLabel.substring(0, sessionLabel.length() - 4);
+                }
+
+                break;
+            case "pcif":
+                // Special case for internal WUSTL PCIF lab
+                // First 9 characters of filename
+                sessionLabel = inveonImageRepresentation.getPixelFileName();
+
+                if (sessionLabel == null) {
+                    sessionLabel = inveonImageRepresentation.getHeaderFileName();
+                }
+
+                if (sessionLabel == null) {
+                    sessionLabel = UNKNOWN_SESSION_LABEL;
+                } else {
+                    if (sessionLabel.length() > 9) {
+                        sessionLabel = sessionLabel.substring(0, 9);
+                    }
+                }
+
+                break;
+            default:
+                sessionLabel = UNKNOWN_SESSION_LABEL;
+        }
+
+        sessionLabel = sessionLabel.replaceAll("[^a-zA-Z0-9]", "_");
+
+        return sessionLabel;
+    }
 
     // Extract a value for Scan Label for this instance of InveonImageRepresentation
     // TODO:  Need a better scheme than assume the PCIF naming convention
