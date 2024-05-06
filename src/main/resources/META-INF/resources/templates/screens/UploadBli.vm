@@ -30,7 +30,7 @@
                 </div>
 
                 <div class="form-component">
-                    <label class="file-label" for="file">Select ZIP File to Upload:</label>
+                    <label class="file-label" for="file">Select ZIP File to Upload</label>
                     <input type="file" id="file" name="file" accept="application/zip" required/>
                 </div>
         </fieldset>
@@ -39,10 +39,11 @@
             <legend>Subject & Session Identification</legend>
 
             <div class="form-component">
-                <label for="subject-label-option" class="subject-label-option">Subject Labeling Option:</label>
+                <label for="subject-label-option" class="subject-label-option">Subject Labeling Option</label>
                 <select id="subject-label-option" name="subject-label-option" form="upload-form">
                     <option value="hotel">Multi-Subject Image Session - Send to Projects 'Hotel' Subject</option>
                     <option value="animalNumber">Use Animal Number field</option>
+                    <option value="experiment">Use Experiment field</option>
                     <option value="comment1">Use Comment1 field</option>
                     <option value="comment2">Use Comment2 field</option>
                 </select>
@@ -50,7 +51,7 @@
             </div>
 
             <div class="form-component">
-                <label for="session-label-option" class="session-label-option">Session Labeling Option:</label>
+                <label for="session-label-option" class="session-label-option">Session Labeling Option</label>
                 <select id="session-label-option" name="session-label-option" form="upload-form">
                     <option value="clickNumber">Use ClickNumber field</option>
                     <option value="experiment">Use Experiment field</option>
@@ -63,18 +64,17 @@
             <div class="advanced-options" style="display: none;">
 
                 <div class="form-component">
-                    <label for="subject-label-regex" class="subject-label-regex">Subject Labeling Regex:</label>
-                    <input type="text" id="subject-label-regex" name="subject-field-regex" form="upload-form">
+                    <label for="subject-label-regex" class="subject-label-regex">Subject Labeling Regex <a id="subject-label-regex-info"><i class="fa fa-question-circle" style="font-size: 16px; color: rgb(26, 117, 194);"></i></a></label>
+                    <input type="text" id="subject-label-regex" name="subject-field-regex" form="upload-form" disabled>
                     <div>
-                        <p class="input-desc">Enter regex to extract subject label. If empty, the entire field is used. Ignore if using 'Multi-Subject Image Session' option.</p>
-
+                        <p class="input-desc">Enter a regular expression to extract the subject label from the selected field. If left empty, the entire field will be used. This option is ignored if the 'Multi-Subject Image Session' option is selected.</p>
                     </div>
                 </div>
 
                 <div class="form-component">
-                    <label for="session-label-regex" class="session-label-regex">Session Labeling Regex:</label>
+                    <label for="session-label-regex" class="session-label-regex">Session Labeling Regex <a id="session-label-regex-info"><i class="fa fa-question-circle" style="font-size: 16px; color: rgb(26, 117, 194);"></i></a></label>
                     <input type="text" id="session-label-regex" name="session-label-regex" form="upload-form">
-                    <p class="input-desc">Enter regex to extract session label. If empty, the entire field is used.</p>
+                    <p class="input-desc">Enter a regular expression to extract the session label from the selected field. If left empty, the entire field will be used.</p>
                 </div>
 
             </div>
@@ -190,7 +190,6 @@
 </style>
 
 <script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-projects.js')"></script>
-<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-bli-importer.js')"></script>
 
 <script type="text/javascript">
     // Form Elements
@@ -248,6 +247,70 @@
     }
 
     projectFilerInput.addEventListener('keyup', filterProject);
+
+    let handleSubjectLabelOptionChange = (event) => {
+        console.debug('handleSubjectLabelOptionChange()')
+
+        let hotelOption = event.target.value;
+        let subjectLabelRegex = document.getElementById('subject-label-regex');
+
+        if (hotelOption.toLowerCase().includes('hotel')) {
+            subjectLabelRegex.value = '';
+            subjectLabelRegex.disabled = true;
+        } else {
+            subjectLabelRegex.disabled = false;
+        }
+    }
+
+    subjectLabelOptionEl.addEventListener('change', handleSubjectLabelOptionChange);
+
+    // Info icon tooltips
+    let subjectLabelRegexInfo = document.getElementById('subject-label-regex-info');
+    let sessionLabelRegexInfo = document.getElementById('session-label-regex-info');
+
+    subjectLabelRegexInfo.addEventListener('click', () => {
+        XNAT.ui.dialog.open({
+            title: 'Subject Labeling Regex',
+            width: 450,
+            content: `<p>Enter a regular expression to extract the subject label from the selected field. If left empty, the entire field will be used. This option is ignored if the 'Multi-Subject Image Session' option is selected.</p>
+                      <p> Examples: </p>
+                      <ul>
+                        <li>Extract the first word from the selected field: <code>^(\w+)</code></li>
+                        <li>Extract the second word from the selected field: <code>^\w+\s(\w+)</code></li>
+                        <li>Extract the first 9 characters from the selected field: <code>^(.{9})</code></li>
+                      </ul>
+                    `,
+            buttons: [
+                {
+                    label: 'OK',
+                    isDefault: true,
+                    close: true,
+                }
+            ]
+        })
+    });
+
+    sessionLabelRegexInfo.addEventListener('click', () => {
+        XNAT.ui.dialog.open({
+            title: 'Session Labeling Regex',
+            width: 450,
+            content: `<p>Enter a regular expression to extract the session label from the selected field. If left empty, the entire field will be used.</p>
+                      <p> Examples: </p>
+                      <ul>
+                        <li>Extract the first word from the selected field: <code>^(\w+)</code></li>
+                        <li>Extract the second word from the selected field: <code>^\w+\s(\w+)</code></li>
+                        <li>Extract the first 9 characters from the selected field: <code>^(.{9})</code></li>
+                      </ul>
+                    `,
+            buttons: [
+                {
+                    label: 'OK',
+                    isDefault: true,
+                    close: true,
+                }
+            ]
+        })
+    });
 
     async function submitForm() {
         console.debug('submitForm()')
