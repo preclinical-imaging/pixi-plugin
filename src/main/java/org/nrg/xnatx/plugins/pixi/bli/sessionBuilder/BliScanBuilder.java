@@ -53,6 +53,13 @@ public class BliScanBuilder implements Callable<XnatImagescandataBean> {
         // Set scan datetime
         bliScan.setStartDate(analyzedClickInfo.getLuminescentImage().getAcquisitionDateTime());
 
+        // Set scan type
+        bliScan.setType("");
+
+        // Set series description
+        String seriesDescription = makeSeriesDescription(analyzedClickInfo);
+        bliScan.setSeriesDescription(seriesDescription);
+
         File resourceCatalogXml = new File(imgDir.toFile(), "scan_catalog.xml");
         XnatResourcecatalogBean resourceCatalog = new XnatResourcecatalogBean();
 
@@ -85,6 +92,15 @@ public class BliScanBuilder implements Callable<XnatImagescandataBean> {
         }
 
         return bliScan;
+    }
+
+    private String makeSeriesDescription(AnalyzedClickInfo analyzedClickInfo) {
+        String experiment = analyzedClickInfo.getUserLabelNameSet().getExperiment();
+        String comment1 = analyzedClickInfo.getUserLabelNameSet().getComment1();
+        String comment2 = analyzedClickInfo.getUserLabelNameSet().getComment2();
+        String timePoint = analyzedClickInfo.getUserLabelNameSet().getTimePoint();
+
+        return String.format("%s %s %s %s", experiment, comment1, comment2, timePoint);
     }
 
     public void setAnalyzedClickInfoHelper(AnalyzedClickInfoHelper analyzedClickInfoHelper) {
