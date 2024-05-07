@@ -44,6 +44,7 @@
                     <option value="hotel">Multi-Subject Image Session - Send to Projects 'Hotel' Subject</option>
                     <option value="animalNumber">Use Animal Number field</option>
                     <option value="experiment">Use Experiment field</option>
+                    <option value="group">Use Group field</option>
                     <option value="comment1">Use Comment1 field</option>
                     <option value="comment2">Use Comment2 field</option>
                 </select>
@@ -55,6 +56,7 @@
                 <select id="session-label-option" name="session-label-option" form="upload-form">
                     <option value="clickNumber">Use ClickNumber field</option>
                     <option value="experiment">Use Experiment field</option>
+                    <option value="group">Use Group field</option>
                     <option value="comment1">Use Comment1 field</option>
                     <option value="comment2">Use Comment2 field</option>
                 </select>
