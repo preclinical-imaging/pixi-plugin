@@ -277,9 +277,9 @@
             content: `<p>Enter a regular expression to extract the subject label from the selected field. If left empty, the entire field will be used. This option is ignored if the 'Multi-Subject Image Session' option is selected.</p>
                       <p> Examples: </p>
                       <ul>
-                        <li>Extract the first word from the selected field: <code>^(\w+)</code></li>
-                        <li>Extract the second word from the selected field: <code>^\w+\s(\w+)</code></li>
-                        <li>Extract the first 9 characters from the selected field: <code>^(.{9})</code></li>
+                        <li>Extract the first word from the selected field <pre>^(\\w+)</pre></li>
+                        <li>Extract the second word from the selected field <pre>^\\w+\\s(\\w+)</pre></li>
+                        <li>Extract the first 9 characters from the selected field <pre>^(.{9})</pre></li>
                       </ul>
                     `,
             buttons: [
@@ -299,9 +299,9 @@
             content: `<p>Enter a regular expression to extract the session label from the selected field. If left empty, the entire field will be used.</p>
                       <p> Examples: </p>
                       <ul>
-                        <li>Extract the first word from the selected field: <code>^(\w+)</code></li>
-                        <li>Extract the second word from the selected field: <code>^\w+\s(\w+)</code></li>
-                        <li>Extract the first 9 characters from the selected field: <code>^(.{9})</code></li>
+                        <li>Extract the first word from the selected field <pre>^(\\w+)</pre></li>
+                        <li>Extract the second word from the selected field <pre>^\\w+\\s(\\w+)</pre></li>
+                        <li>Extract the first 9 characters from the selected field <pre>^(.{9})</pre></li>
                       </ul>
                     `,
             buttons: [
