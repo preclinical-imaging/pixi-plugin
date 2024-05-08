@@ -52,6 +52,7 @@
                     <option value="pcif" class="pcif">PCIF mpet naming convention</option>
                     <option value="study_identifier">Use Study Identifier field</option>
                     <option value="file_name">Use File Name</option>
+                    <option value="datetime">Use the Image Acquisition Date/Time</option>
                 </select>
                 <p class="input-desc">Specify how to label each image session in XNAT.</p>
             </div>
