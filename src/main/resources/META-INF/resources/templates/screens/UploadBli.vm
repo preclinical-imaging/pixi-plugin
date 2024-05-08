@@ -39,7 +39,7 @@
             <legend>Subject & Session Identification</legend>
 
             <div class="form-component">
-                <label for="subject-label-option" class="subject-label-option">Subject Labeling Option</label>
+                <label for="subject-label-option" class="subject-label-option">Subject Labeling Option <a id="subject-label-option-info"><i class="fa fa-question-circle" style="font-size: 16px; color: rgb(26, 117, 194);"></i></a></label>
                 <select id="subject-label-option" name="subject-label-option" form="upload-form">
                     <option value="hotel">Multi-Subject Image Session - Send to Projects 'Hotel' Subject</option>
                     <option value="animalNumber">Use Animal Number field</option>
@@ -52,9 +52,10 @@
             </div>
 
             <div class="form-component">
-                <label for="session-label-option" class="session-label-option">Session Labeling Option</label>
+                <label for="session-label-option" class="session-label-option">Session Labeling Option <a id="session-label-option-info"><i class="fa fa-question-circle" style="font-size: 16px; color: rgb(26, 117, 194);"></i></a></label>
                 <select id="session-label-option" name="session-label-option" form="upload-form">
                     <option value="clickNumber">Use ClickNumber field</option>
+                    <option value="datetime">Use the Image Acquisition Date/Time</option>
                     <option value="experiment">Use Experiment field</option>
                     <option value="group">Use Group field</option>
                     <option value="comment1">Use Comment1 field</option>
@@ -267,8 +268,49 @@
     subjectLabelOptionEl.addEventListener('change', handleSubjectLabelOptionChange);
 
     // Info icon tooltips
+    let subjectLabelOptionInfo = document.getElementById('subject-label-option-info');
+    let sessionLabelOptionInfo = document.getElementById('session-label-option-info');
     let subjectLabelRegexInfo = document.getElementById('subject-label-regex-info');
     let sessionLabelRegexInfo = document.getElementById('session-label-regex-info');
+
+    subjectLabelOptionInfo.addEventListener('click', () => {
+        XNAT.ui.dialog.open({
+            title: 'Subject Labeling Option',
+            width: 450,
+            content: `
+                      <p>Select an option for mapping each image session to an XNAT subject.</p>
+                      <p>The 'Multi-Subject Image Session' option will send all image sessions to the 'Hotel' subject in the selected project. Select this option if all image sessions contain multiple subjects.</p>
+                      <p>Selecting any other option will use the specified field from the AnalyzedClickInfo.txt file in the image session directory for subject labeling.</p>
+                    `,
+            buttons: [
+                {
+                    label: 'OK',
+                    isDefault: true,
+                    close: true,
+                }
+            ]
+        })
+    });
+
+    sessionLabelOptionInfo.addEventListener('click', () => {
+        XNAT.ui.dialog.open({
+            title: 'Session Labeling Option',
+            width: 450,
+            content: `
+                      <p>Select a field from the AnalyzedClickInfo.txt metadata file to use as the session label in XNAT. Note that all image sessions must have a unique session label.</p>
+                      <p>The ClickNumber field (sometimes called Image Number) as a unique identifier for each image session.</p>
+                      <p>The Image Acquisition Date/Time field can typically be used as a unique identifier for each image session.</p>
+                      <p>The Experiment, Group, Comment1, and Comment2 fields are user-defined fields in the AnalyzedClickInfo.txt file which can be used as the session label.</p>
+                    `,
+            buttons: [
+                {
+                    label: 'OK',
+                    isDefault: true,
+                    close: true,
+                }
+            ]
+        })
+    });
 
     subjectLabelRegexInfo.addEventListener('click', () => {
         XNAT.ui.dialog.open({
