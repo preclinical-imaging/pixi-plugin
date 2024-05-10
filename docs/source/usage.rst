@@ -100,8 +100,8 @@ The models for these data types are found in `Data Models <pixi_data_model.html>
 | Animal Husbandry          | Record animal feeding and housing information over an interval during which conditions are relatively homogeneous.                                 |
 +---------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
 
-Hotel Splitter
---------------
+DICOM Hotel Splitter
+--------------------
 
 The PIXI platform supports the standard practice of scanning multiple small animals at one time using a hotel apparatus.
 We anticipate that scanner vendors have yet to implement the parts of the DICOM Standard that support hotel scans,
@@ -165,6 +165,61 @@ When you select "Run Container", that job is launched using the Container infras
 
 .. image:: ./images/pixi_run_hotel_splitter_container.png
  :align: center
+
+
+Bioluminescence Imaging
+-----------------------
+
+Bioluminescence imaging is a common modality for small animal imaging. The PIXI plugin supports this modality
+by providing a new image session data type to store the data.
+
+XNAT does not provide a mechanism to upload these image sessions. PIXI provides an importer to upload IVIS bioluminescence
+imaging data to XNAT. The importer reads the metadata from the AnalyzedClickInfo.txt and ClickInfo.txt files generated
+by the IVIS system and uploads the data to XNAT. To access the upload page, select Upload -> Upload BLI Images from the
+top menu.
+
+
+File Format Requirements
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The PIXI BLI importer is designed to import data from IVIS Imaging Systems. The IVIS system produces a directory
+of imaging and non-imaging files. The directory generally contains the following files:
+
+- AnalyzedClickInfo.txt (required)
+- ClickInfo.txt (required)
+- background.tif
+- luminescent.tif
+- photograph.tif
+- readbias.tif
+
+Other files may be present and will be uploaded to XNAT. AnalyzedClickInfo.txt and ClickInfo.txt are required and contain
+metadata about the imaging session which will be stored in the XNAT database.
+
+Uploading IVIS Imaging Data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To upload IVIS bioluminescence imaging data to XNAT, from the top menu, select the Upload -> Upload BLI Images menu
+item to access the upload page.
+
+In the Project & Data Selection section, select the project to upload the data to and select a zip file containing the
+IVIS data. The zip file can contain multiple IVIS directories which will be uploaded as separate image sessions.
+
+In the Subject & Session Identification section, select the subject and session labeling option to use. The importer
+needs to know how to map the IVIS data to the XNAT data model.
+
+For the Subject Labeling option, selecting the 'Multi-Subject Image Session' option will store the session in a projects
+'Hotel' subject. This special subject is used for storing multi-subject image sessions. You can also choose a field from
+the AnalyzedClickInfo.txt file to use as the subject label.
+
+For the Session Labeling option, you can choose a field from the AnalyzedClickInfo.txt file to use as the session label.
+The default option will use the Image Number / Click Number field from the AnalyzedClickInfo.txt file. You can also
+choose to use a field from the AnalyzedClickInfo.txt file to use as the session label.
+
+In certain cases, the user input my need to extract a substring from a field. For example, the AnalyzedClickInfo.txt file
+Comment1 field may contain a string like 'M1 Prone'. The user may want to extract the 'M1' part of the string to use as
+the subject label. The user can specify a regular expression to extract a substring from a field in the Advanced Options
+section. In the example, the user would specify a regular expression like '^(\w+)' to extract the first word from the
+Comment1 field. `Regex101 <https://regex101.com/>`_ is a useful tool for testing regular expressions in the browser.
 
 
 .. _XNAT platform: https://www.xnat.org

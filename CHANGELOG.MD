@@ -14,6 +14,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [PIXI-133][]: Extract scanner model, software version, time point, view (prone/supine/dorsal/ventral), and time point
                 from AnalyzeClickInfo.txt during BLI scan building
 
+### Changed
+
+- [PIXI-134][]: Refactored the BLI upload UI to enhance user experience. Simplified the process by removing the need for
+                pre-defined mappings. Would still like to add a site-wide and project level setting feature but this is
+                more user-friendly than the previous version.
+
+
 ## [1.2.0] - 2024-04-18
 
 ### Added
@@ -82,3 +89,4 @@ plugins directory and restart XNAT.
 [PIXI-131]: https://radiologics.atlassian.net/browse/PIXI-131
 [PIXI-132]: https://radiologics.atlassian.net/browse/PIXI-132
 [PIXI-133]: https://radiologics.atlassian.net/browse/PIXI-133
+[PIXI-134]: https://radiologics.atlassian.net/browse/PIXI-134
