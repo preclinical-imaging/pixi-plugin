@@ -6,6 +6,7 @@ const quickSearchSubjectTab$ = document.getElementById("quick-search-subject");
 const quickSearchMrTab$      = document.getElementById("quick-search-mrSessionData");
 const quickSearchPetTab$     = document.getElementById("quick-search-petSessionData");
 const quickSearchCtTab$      = document.getElementById("quick-search-ctSessionData");
+const quickSearchBliTab$   = document.getElementById("quick-search-bliSessionData");
 
 const config = { attributes: true, false: true, subtree: false };
 
@@ -49,6 +50,15 @@ const ctSearchTabLoadedCallback = function(mutationsList, observer) {
     }
 };
 
+const bliSearchTabLoadedCallback = function(mutationsList, observer) {
+    for(const mutation of mutationsList) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'data-loaded') {
+            console.debug('BLI search tab loaded.');
+            XNAT.plugin.pixi.speciesPreferenceManager.setSelectOptions("bli_quick_search_pixi_species_select")
+        }
+    }
+};
+
 const subjectTabObserver = new MutationObserver(subjectSearchTabLoadedCallback);
 subjectTabObserver.observe(quickSearchSubjectTab$, config);
 
@@ -60,3 +70,6 @@ petTabObserver.observe(quickSearchPetTab$, config);
 
 const ctTabObserver = new MutationObserver(ctSearchTabLoadedCallback);
 ctTabObserver.observe(quickSearchCtTab$, config);
+
+const bliTabObserver = new MutationObserver(bliSearchTabLoadedCallback);
+bliTabObserver.observe(quickSearchBliTab$, config);

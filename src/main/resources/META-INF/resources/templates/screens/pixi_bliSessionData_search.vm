@@ -1,0 +1,116 @@
+<div id="bli-advanced-search" class="advanced-search-fields autogen" style="min-height: 350px">
+
+    <a href="#!" style="position:absolute;right:0;top:0;font-size:12px;" class="link"
+       onclick="XNAT.ui.popup('$link.setPage("SearchHelp.vm").addPathInfo("popup","true")','Help',500,600)">Help</a>
+
+    <div class="search-group by-criteria">
+
+        <h3>
+            <label>
+                Search by Criteria
+                <input type="radio" class="search-method by-criteria" value="by-criteria" name="search-by" checked>
+            </label>
+        </h3>
+
+        <div id="bli-pixi-subject-data-fields">
+            <!-- pixi / animal subject fields -->
+            <h4>Preclinical $displayManager.getSingularDisplayNameForSubject() Fields</h4>
+
+            <table cellspacing="0">
+                <tr>
+                    <td>
+                        <h5>$displayManager.getSingularDisplayNameForSubject() ID:</h5>
+                        <input type="hidden" name="xnat:subjectData.COMBO0_FIELDS"
+                               value="xnat:subjectData/ID_equals,xnat:subjectData/label_equals,xnat:subjectData/sharing/share/label_equals"/>
+                        <input size="20" type="text" name="xnat:subjectData.COMBO0"
+                               value="$!search.getWebFormValue("xnat:subjectData.COMBO0")" maxlength="100">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h5>Species:</h5>
+                        <select name="xnat:subjectData.SPECIES_equals" id="bli_quick_search_pixi_species_select">
+                            <option value="" SELECTED>(SELECT)</option>
+                        </select>
+                    </td>
+                    <td>
+                        <h5>Strain:</h5>
+                        #xdatSearchField($schemaElement $schemaElement.getDisplayField("STRAIN"))
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+
+        <!-- session fields -->
+        <h4>$displayManager.getSingularDisplayNameForImageSession() Fields</h4>
+
+        <div class="search-item">
+            <h5>$displayManager.getSingularDisplayNameForImageSession() ID:</h5>
+            <input type="hidden"
+                   name="xnat:mrSessionData.COMBO1_FIELDS"
+                   value="pixi:bliSessionData/ID_equals,pixi:bliSessionData/label_equals,pixi:bliSessionData/sharing/share/label_equals">
+
+            <input type="text" size="20"
+                   name="pixi:bliSessionData.COMBO1"
+                   value="$!search.getWebFormValue("pixi:bliSessionData.COMBO1")"
+                   maxlength="100">
+        </div>
+
+        <div class="search-item">
+            <h5>Operator:</h5>
+            <!-- Operator -->
+            <input type="text" size="20"
+                   name="pixi:bliSessionData.OPERATOR_equals"
+                   value="$!search.getWebFormValue("pixi:bliSessionData.OPERATOR_equals")"
+                   maxlength="100">
+        </div>
+
+        <div class="search-item">
+            <h5>Date Range:</h5>
+            #xdatSearchField($schemaElement $schemaElement.getDisplayField("DATE"))
+        </div>
+
+        <div class="clear"></div>
+
+        <br>
+
+        <!-- advancedSearchCreateProjectList -->
+        <h5>$displayManager.getSingularDisplayNameForProject():</h5>
+        #advancedSearchCreateProjectList($data $displayManager $search $schemaElement)
+
+        <div class="clear"></div>
+
+    </div>
+
+    <div style="padding-left:40px;" class="search-group by-id">
+
+        <h3><label>Search by Exact IDs
+            <input type="radio" class="search-method by-id" value="by-id" name="search-by"></label>
+        </h3>
+
+        <select name="pixi:bliSessionData.COMBO0_FIELDS" required>
+            <option value="pixi:bliSessionData/ID_in,pixi:bliSessionData/label_in,pixi:bliSessionData/sharing/share/label_in"
+                    #if($!search.getWebFormValue("pixi:bliSessionData.COMBO0_FIELDS")==
+                        "pixi:bliSessionData/ID_in,pixi:bliSessionData/label_in,pixi:bliSessionData/sharing/share/label_in")SELECTED#end>
+                $displayManager.getSingularDisplayNameForImageSession().toUpperCase() ID
+            </option>
+            <option value="xnat:subjectData/ID_in,xnat:subjectData/label_in,xnat:subjectData/sharing/share/label_in"
+                    #if($!search.getWebFormValue("pixi:bliSessionData.COMBO0_FIELDS")==
+                        "xnat:subjectData/ID_in,xnat:subjectData/label_in,xnat:subjectData/sharing/share/label_in")SELECTED#end>
+                $displayManager.getSingularDisplayNameForSubject().toUpperCase()
+            </option>
+        </select>
+
+        <textarea class="exact-ids" name="pixi:bliSessionData.COMBO0" cols="30" rows="6">$!search.getWebFormValue(
+            "pixi:bliSessionData.COMBO0")</textarea>
+
+    </div>
+</div>
+
+<script src="$content.getURI("/scripts/xnat/plugin/pixi/pixi-module.js")"></script>
+<script src="$content.getURI("/scripts/xnat/plugin/pixi/pixi-speciesPreferences.js")"></script>
+
+<script type="text/javascript">
+    XNAT.plugin.pixi.speciesPreferenceManager.setSelectOptions("bli_quick_search_pixi_species_select")
+</script>
