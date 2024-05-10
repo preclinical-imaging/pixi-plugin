@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [PIXI-131][]: Add xml display documents for BLI
+
 ## [1.2.0] - 2024-04-18
 
 ### Added
@@ -72,3 +76,4 @@ plugins directory and restart XNAT.
 [PIXI-125]: https://radiologics.atlassian.net/browse/PIXI-125
 [PIXI-127]: https://radiologics.atlassian.net/browse/PIXI-127
 [PIXI-128]: https://radiologics.atlassian.net/browse/PIXI-128
+[PIXI-131]: https://radiologics.atlassian.net/browse/PIXI-131

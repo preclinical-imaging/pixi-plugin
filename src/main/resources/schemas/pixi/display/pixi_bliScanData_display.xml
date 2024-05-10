@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Displays xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xdat/display.xsd"
+          schema-element="pixi:bliScanData" full-description="BliScan" brief-description="BliScan">
+    <DisplayField id="IMAGE_SESSION_ID" header="image_session_ID" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/image_session_ID"/>
+    </DisplayField>
+    <DisplayField id="NOTE" header="Note" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/note"/>
+    </DisplayField>
+    <DisplayField id="QUALITY" header="Quality" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/quality"/>
+    </DisplayField>
+    <DisplayField id="CONDITION" header="Condition" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/condition"/>
+    </DisplayField>
+    <DisplayField id="SERIES_DESCRIPTION" header="Series Description" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/series_description"/>
+    </DisplayField>
+    <DisplayField id="SERIES_CLASS" header="Series Class" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/series_class"/>
+    </DisplayField>
+    <DisplayField id="DOCUMENTATION" header="Documentation" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/documentation"/>
+    </DisplayField>
+    <DisplayField id="SCANNER" header="Scanner" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/scanner"/>
+    </DisplayField>
+    <DisplayField id="SCANNER_MANUFACTURER" header="Manufacturer" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/scanner/manufacturer"/>
+    </DisplayField>
+    <DisplayField id="SCANNER_MODEL" header="Model" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/scanner/model"/>
+    </DisplayField>
+    <DisplayField id="SCANNER_SOFTWAREVERSION" header="Software Version" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/scanner/softwareVersion"/>
+    </DisplayField>
+    <DisplayField id="MODALITY" header="Modality" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/modality"/>
+    </DisplayField>
+    <DisplayField id="FRAMES" header="Frames" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/frames"/>
+    </DisplayField>
+    <DisplayField id="OPERATOR" header="Operator" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/operator"/>
+    </DisplayField>
+    <DisplayField id="STARTTIME" header="Time" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/startTime"/>
+    </DisplayField>
+    <DisplayField id="START_DATE" header="Date" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/start_date"/>
+    </DisplayField>
+    <DisplayField id="REQUESTEDPROCEDUREDESCRIPTION" header="Requested Procedure Description" visible="true"
+                  searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/requestedProcedureDescription"/>
+    </DisplayField>
+    <DisplayField id="PROTOCOLNAME" header="Protocol Name" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/protocolName"/>
+    </DisplayField>
+    <DisplayField id="BODYPARTEXAMINED" header="Body Part Examined" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/bodyPartExamined"/>
+    </DisplayField>
+    <DisplayField id="CUSTOM_FIELDS" header="Custom Fields" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/custom_fields"/>
+    </DisplayField>
+    <DisplayField id="ID" header="ID" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/ID"/>
+    </DisplayField>
+    <DisplayField id="TYPE" header="Type" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/type"/>
+    </DisplayField>
+    <DisplayField id="UID" header="UID" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/UID"/>
+    </DisplayField>
+    <DisplayField id="PROJECT" header="Project" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData/project"/>
+        <HTML-Link>
+            <Property name="HREF" value="@WEBAPPapp/action/DisplayItemAction/search_value/@Field1/search_element/xnat:projectData/search_field/xnat:projectData.ID">
+                <InsertValue id="Field1" field="PROJECT"/>
+            </Property>
+            <Property name="ONCLICK" value="return rpt('@Field1','xnat:projectData','xnat:projectData.ID');">
+                <InsertValue id="Field1" field="PROJECT"/>
+            </Property>
+        </HTML-Link>
+    </DisplayField>
+    <DisplayField id="SUBJECT_ID" header="Subject" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="xnat:imageSessionData.subject_ID"/>
+        <HTML-Link>
+            <Property name="HREF" value="none"/>
+            <Property name="ONCLICK" value="return rpt('@Field1','xnat:subjectData','xnat:subjectData.ID');">
+                <InsertValue id="Field1" field="SUBJECT_ID"/>
+            </Property>
+        </HTML-Link>
+    </DisplayField>
+    <DisplayField id="SESSION_LABEL" header="BLI Session" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="xnat:imageSessionData.label"/>
+        <HTML-Link>
+            <Property name="HREF" value="@WEBAPPdata/experiments/@Field3?format=html">
+                <InsertValue id="Field3" field="IMAGE_SESSION_ID"/>
+            </Property>
+        </HTML-Link>
+    </DisplayField>
+    <DisplayField id="INSERT_DATE" header="Inserted" visible="true" searchable="true" data-type="string">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData.meta.insert_date"/>
+    </DisplayField>
+    <DisplayField id="INSERT_USER" header="Creator" visible="true" searchable="true" data-type="string">
+        <DisplayFieldElement name="Field1" schema-element="pixi:bliScanData.meta.insert_user.login"/>
+    </DisplayField>
+    <DisplayVersion versionName="listing" default-order-by="IMAGE_SESSION_ID" default-sort-order="DESC"
+                    brief-description="BliScan" dark-color="9999CC" light-color="CCCCFF">
+        <DisplayFieldRef id="PROJECT"/>
+        <DisplayFieldRef id="SESSION_LABEL"/>
+        <DisplayFieldRef id="START_DATE"/>
+        <DisplayFieldRef id="STARTTIME"/>
+        <DisplayFieldRef id="SERIES_DESCRIPTION"/>
+        <DisplayFieldRef id="OPERATOR"/>
+        <DisplayFieldRef id="SCANNER_MODEL"/>
+        <DisplayFieldRef id="SCANNER"/>
+    </DisplayVersion>
+    <DisplayVersion versionName="full" default-order-by="IMAGE_SESSION_ID" default-sort-order="DESC"
+                    brief-description="BliScan" dark-color="9999CC" light-color="CCCCFF">
+        <DisplayFieldRef id="IMAGE_SESSION_ID"/>
+        <DisplayFieldRef id="NOTE"/>
+        <DisplayFieldRef id="QUALITY"/>
+        <DisplayFieldRef id="CONDITION"/>
+        <DisplayFieldRef id="SERIES_DESCRIPTION"/>
+        <DisplayFieldRef id="SERIES_CLASS"/>
+        <DisplayFieldRef id="DOCUMENTATION"/>
+        <DisplayFieldRef id="SCANNER"/>
+        <DisplayFieldRef id="SCANNER_MANUFACTURER"/>
+        <DisplayFieldRef id="SCANNER_MODEL"/>
+        <DisplayFieldRef id="SCANNER_SOFTWAREVERSION"/>
+        <DisplayFieldRef id="MODALITY"/>
+        <DisplayFieldRef id="FRAMES"/>
+        <DisplayFieldRef id="OPERATOR"/>
+        <DisplayFieldRef id="STARTTIME"/>
+        <DisplayFieldRef id="START_DATE"/>
+        <DisplayFieldRef id="REQUESTEDPROCEDUREDESCRIPTION"/>
+        <DisplayFieldRef id="PROTOCOLNAME"/>
+        <DisplayFieldRef id="BODYPARTEXAMINED"/>
+        <DisplayFieldRef id="CUSTOM_FIELDS"/>
+        <DisplayFieldRef id="ID"/>
+        <DisplayFieldRef id="TYPE"/>
+        <DisplayFieldRef id="UID"/>
+        <DisplayFieldRef id="PROJECT"/>
+    </DisplayVersion>
+</Displays>
