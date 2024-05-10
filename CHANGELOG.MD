@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [PIXI-131][]: Add xml display documents for BLI
 - [PIXI-132][]: Add velocity vm search templates for BLI
+- [PIXI-133][]: Extract scanner model, software version, time point, view (prone/supine/dorsal/ventral), and time point
+                from AnalyzeClickInfo.txt during BLI scan building
 
 ## [1.2.0] - 2024-04-18
 
@@ -79,3 +81,4 @@ plugins directory and restart XNAT.
 [PIXI-128]: https://radiologics.atlassian.net/browse/PIXI-128
 [PIXI-131]: https://radiologics.atlassian.net/browse/PIXI-131
 [PIXI-132]: https://radiologics.atlassian.net/browse/PIXI-132
+[PIXI-133]: https://radiologics.atlassian.net/browse/PIXI-133
