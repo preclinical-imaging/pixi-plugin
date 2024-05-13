@@ -1,0 +1,39 @@
+<div class="advanced-search-fields autogen">
+    <div class="search-group by-criteria"><h3><label>Search by Criteria <input type="checkbox"
+                                                                               class="search-method by-criteria"
+                                                                               value="by-criteria"></label></h3>
+
+        <table>
+            <tr>
+                <td>
+                    <h5>Project:</h5>
+                    #xdatSearchField($schemaElement $schemaElement.getDisplayField("PROJECT"))
+                </td>
+                <td>
+                    <h5>$displayManager.getSingularDisplayNameForSubject():</h5>
+                    <input type="hidden" name="xnat:subjectData.COMBO0_FIELDS"
+                           value="xnat:subjectData/ID_equals,xnat:subjectData/label_equals,xnat:subjectData/sharing/share/label_equals"/>
+                    <input size="20" type="text" name="xnat:subjectData.COMBO0"
+                           value="$!search.getWebFormValue("xnat:subjectData.COMBO0")" maxlength="100">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p></p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h5>Measurement Date:</h5>
+                    #xdatSearchField($schemaElement $schemaElement.getDisplayField("DATE"))
+                </td>
+                <td>
+                    <h5>Technician:</h5>
+                    #xdatSearchField($schemaElement $schemaElement.getDisplayField("TECHNICIAN"))
+                </td>
+            </tr>
+        </table>
+
+        <div class="clear"></div>
+    </div>
+</div>
