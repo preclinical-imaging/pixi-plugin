@@ -5,6 +5,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.nrg.action.ClientException;
 import org.nrg.action.ServerException;
 import org.nrg.framework.constants.PrearchiveCode;
@@ -35,6 +36,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -675,12 +678,33 @@ public class InveonImporter extends ImporterHandlerA {
         }
 
         String subjectLabel = inveonImageRepresentation.getHeaderValue(subjectLabelingOption);
-        if (subjectLabel == null) {
+        if (StringUtils.isBlank(subjectLabel)) {
             return "Unknown";
         }
 
-        // Extract the subject ID from the subject label using the regex
-        return subjectLabel.replaceAll(subjectLabelRegex, "$1");
+        try {
+            // Apply the regex to extract the subject label
+            Pattern pattern = Pattern.compile(subjectLabelRegex);
+            Matcher matcher = pattern.matcher(subjectLabel);
+
+            if (matcher.find()) {
+                subjectLabel = matcher.group(1);
+            } else {
+                log.warn("No match found for subject label regex: '{}'", subjectLabelRegex);
+                subjectLabel = "Unknown";
+            }
+
+            if (StringUtils.isBlank(subjectLabel)) {
+                subjectLabel = "Unknown";
+            }
+        } catch (Exception e) {
+            // Not best practice to catch Exception, but we shouldn't fail the upload if regex fails
+            log.error("Error applying subject label regex '{}' to subject label '{}'. Error: {}",
+                      subjectLabelRegex, subjectLabel, e.getMessage());
+            subjectLabel = "Unknown";
+        }
+
+        return subjectLabel;
     }
 
     private String extractSessionLabel(InveonImageRepresentation inveonImageRepresentation) {
@@ -712,11 +736,11 @@ public class InveonImporter extends ImporterHandlerA {
                 // First 9 characters of filename
                 sessionLabel = inveonImageRepresentation.getPixelFileName();
 
-                if (sessionLabel == null) {
+                if (StringUtils.isBlank(sessionLabel)) {
                     sessionLabel = inveonImageRepresentation.getHeaderFileName();
                 }
 
-                if (sessionLabel == null) {
+                if (StringUtils.isBlank(sessionLabel)) {
                     sessionLabel = UNKNOWN_SESSION_LABEL;
                 } else {
                     if (sessionLabel.length() > 9) {
@@ -732,7 +756,29 @@ public class InveonImporter extends ImporterHandlerA {
 
         sessionLabel = sessionLabel.replaceAll("[^a-zA-Z0-9]", "_");
 
-        log.debug("Final session label: " + sessionLabel);
+        try {
+            // Apply the regex to extract the session label
+            Pattern pattern = Pattern.compile(sessionLabelRegex);
+            Matcher matcher = pattern.matcher(sessionLabel);
+
+            if (matcher.find()) {
+                sessionLabel = matcher.group(1);
+            } else {
+                log.warn("No match found for session label regex: '{}'", sessionLabelRegex);
+                sessionLabel = UNKNOWN_SESSION_LABEL;
+            }
+
+            if (StringUtils.isBlank(sessionLabel)) {
+                sessionLabel = UNKNOWN_SESSION_LABEL;
+            }
+        } catch (Exception e) {
+            // Not best practice to catch Exception, but we shouldn't fail the upload if regex fails
+            log.error("Error applying session label regex '{}' to session label '{}'. Error: {}",
+                      sessionLabelRegex, sessionLabel, e.getMessage());
+            sessionLabel = UNKNOWN_SESSION_LABEL;
+        }
+
+        log.debug("Final session label: {}", sessionLabel);
         return sessionLabel;
     }
 
