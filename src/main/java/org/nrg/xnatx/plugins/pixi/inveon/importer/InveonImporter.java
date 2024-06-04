@@ -288,6 +288,11 @@ public class InveonImporter extends ImporterHandlerA {
         String extension = FilenameUtils.getExtension(pathName);
         String fileName  = FilenameUtils.getName(pathName);
 
+        // Skip mac metadata files/directories
+        if (fileName.startsWith("__MACOSX") || fileName.startsWith("._") || fileName.startsWith(".DS_Store")) {
+            return ze;
+        }
+
         String name = "";
         String scanFileKey = "";
         if (extension.equals("hdr")) {
