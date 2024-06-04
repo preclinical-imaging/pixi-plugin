@@ -8,8 +8,10 @@
         <p>File format requirements:</p>
 
         <ul>
-            <li>Must be a .zip file</li>
-            <li>...</li>
+            <li>The file must be in .zip format, containing one or more image sessions.</li>
+            <li>Only files with .img and .img.hdr extensions will be processed.</li>
+            <li>Each image scan should have a pair of .img and .img.hdr files with identical names.</li>
+            <li>The paired .img and .img.hdr files can be located in the same directory or in different directories.</li>
         </ul>
 
     </div>
