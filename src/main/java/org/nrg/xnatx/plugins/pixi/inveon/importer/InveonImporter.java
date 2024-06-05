@@ -5,6 +5,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.nrg.action.ClientException;
 import org.nrg.action.ServerException;
@@ -201,7 +202,7 @@ public class InveonImporter extends ImporterHandlerA {
     // This method assumes that the caller has already determined that the scan files are consistent.
     // That is, there are no cases where we have a .img file and no .img.hdr file and no cases where
     // the .img file is missing.
-    private void  constructSessions() throws ServerException {
+    private void  constructSessions() throws ServerException, IOException {
         log.debug("InveonImporter::constructSessions");
         for (Map.Entry<String, InveonImageRepresentation> entry: inveonScanFilesMap.entrySet()) {
             String key = entry.getKey();
@@ -216,20 +217,72 @@ public class InveonImporter extends ImporterHandlerA {
             if (inveonSessionFiles == null) {
                 inveonSessionFiles = new InveonSessionFiles();
                 inveonSessionFiles.setSessionLabel(sessionLabel);
+                inveonSessionFiles.setPrearchiveTimestampPath(inveonImageRepresentation.getPrearchiveTimestampPath());
 
                 // The timestamp will be used as part of a directory path
                 inveonSessionFiles.setTimeStamp(inveonImageRepresentation.getTimestamp());
+                log.debug("New Session Object with timestamp {}", inveonSessionFiles.getTimeStamp());
             } else {
+                // This is the second (or third, ...) scan in this session
+                // Because of code later in XNAT core, we want to move these files
+                // into the same timestamp folder as the first scan in this session
+
+                Set<String> keySet = inveonSessionFiles.getInveonImageMap().keySet();
+                String randomKey = keySet.iterator().next();
+                consolidateScanFolders(inveonSessionFiles.getInveonImageRepresentation(randomKey), inveonImageRepresentation);
 
             }
             String imageName = inveonImageRepresentation.getName();
             inveonSessionFiles.putInveonImageRepresentation(imageName, inveonImageRepresentation);
             inveonSessionFilesMap.put(sessionLabel, inveonSessionFiles);
 
-            log.error("PUT " + sessionLabel + " " + imageName + " " + inveonImageRepresentation.getPixelFileName());
-            log.error("TIMESTAMP: " + inveonImageRepresentation.getPrearchiveTimestampPath());
-            log.error("TEMP:      " + inveonImageRepresentation.getPrearchiveTempFolder());
+            log.debug("PUT " + sessionLabel + " " + imageName + " " + inveonImageRepresentation.getPixelFileName());
         }
+    }
+
+    private void consolidateScanFolders(InveonImageRepresentation existingScan, InveonImageRepresentation scanToConsolidate) throws ServerException, IOException {
+        // Grab the subfolder of the existing path. This should be named with the session label.
+        // We know at this stage that string is most likely 'inveon_unknown'.
+        File targetFolder = extractSingleSubFolder(existingScan.getPrearchiveTimestampPath());
+
+        // Grab the subfolder of the scan to be consolidated. Then grab the subfolder beneath that.
+        File toConsolidateSessionFolder = extractSingleSubFolder(scanToConsolidate.getPrearchiveTimestampPath());
+        File toConsolidateScanFolder    = extractSingleSubFolder(toConsolidateSessionFolder.getAbsolutePath());
+        String scanFolderName = toConsolidateScanFolder.getName();
+
+        log.debug("Target: " + targetFolder.getAbsolutePath() + " To Consolidate: " + toConsolidateScanFolder.getAbsolutePath());
+        String toConsolidateTarget = targetFolder.getPath() + "/" + scanFolderName;
+        if (toConsolidateTarget.equals(scanToConsolidate.getPrearchiveTempFolder())) {
+            // This means the scan to be consolidated is already under the target folder.
+            log.debug("No need to move scan to target folder. It is already in the target folder.");
+        } else {
+            log.debug("Final consolidated path: " + toConsolidateTarget);
+            File sessionFolderToDelete   = toConsolidateScanFolder.getParentFile();
+            File timestampFolderToDelete = sessionFolderToDelete.getParentFile();
+
+            //FileUtils.moveDirectory(toConsolidateScanFolder, toConsolidateSessionFolder);
+            FileUtils.moveDirectoryToDirectory(toConsolidateScanFolder, targetFolder, false);
+            scanToConsolidate.setPrearchiveTempFolder(toConsolidateTarget);
+
+            if (FileUtils.isEmptyDirectory(sessionFolderToDelete)) {
+                FileUtils.deleteDirectory(sessionFolderToDelete);
+            }
+            if (FileUtils.isEmptyDirectory(timestampFolderToDelete)) {
+                FileUtils.deleteDirectory(timestampFolderToDelete);
+            }
+        }
+    }
+
+    private File extractSingleSubFolder(String path) throws ServerException {
+        File[] subfolders = new File(path).listFiles();
+
+        if (subfolders.length == 0) {
+            throw new ServerException("Folder " + path + " has no subfolders. We expected exactly one.");
+        } else if (subfolders.length > 1) {
+            throw new ServerException("Folder " + path + " has " + subfolders.length + " subfolders. We expected exactly one.");
+        }
+        // We know there is one item in the collection. Grab that single item as the target folder.
+        return subfolders[0];
     }
     private void processSessionMap(String projectId) throws ServerException, IOException {
         log.debug("Inveon Sessions Found: {}", inveonSessionFilesMap.size());
@@ -346,7 +399,7 @@ public class InveonImporter extends ImporterHandlerA {
             } else {
                 // This should not happen
                 throw new ServerException(
-                    "Severe coding error. The file extension is not .hdr nor .img, but we should have alread tested for this " +
+                    "Severe coding error. The file extension is not .hdr nor .img, but we should have already tested for this " +
                     fileName);
             }
             Path prearchiveFile = Paths.get(inveonScan.getPrearchiveTempFolder(), fileName);

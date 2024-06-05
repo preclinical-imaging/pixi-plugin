@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Data
 @Builder
@@ -16,6 +17,7 @@ public class InveonSessionFiles {
 
     private String sessionLabel;
     private String timeStamp;
+    private String prearchiveTimestampPath;
     private Map<String, InveonImageRepresentation> inveonImageMap;
 
     public void putInveonImageRepresentation(String name, InveonImageRepresentation inveonImageRepresentation) {
