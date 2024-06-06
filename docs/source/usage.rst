@@ -166,6 +166,41 @@ When you select "Run Container", that job is launched using the Container infras
 .. image:: ./images/pixi_run_hotel_splitter_container.png
  :align: center
 
+Uploading Native Inveon PET/CT Imaging Data
+-------------------------------------------
+
+To upload native Inveon PET/CT images to your XNAT, follow these steps:
+
+1. Enable the Inveon image uploader in the XNAT plugin settings. Navigate to
+   `Administer -> Plugin Settings -> PIXI tab group -> Image Importers tab`. Check the 'Enable Inveon Image Uploader'
+   checkbox and save the settings. This only needs to be done once.
+
+2. From the top menu, select `Upload -> Upload Inveon Images` to access the upload page.
+
+3. You can upload a .zip file containing the Inveon images (.img and .img.hdr files). Note that any additional files in
+   the .zip file will be ignored.
+
+4. In the `Project & Data Selection` section, select the project to which you want to upload the data and select a .zip
+   file containing the Inveon data.
+
+5. In the `Subject & Session Identification` section, select the subject and session labeling option to use. This is
+   necessary for the importer to map the Inveon data to the XNAT data model.
+
+ - For the subject labeling option, selecting the 'Multi-Subject Image Session' option will store the session in a
+   project's 'Hotel' subject. This special subject is used for storing multi-subject image sessions. Alternatively,
+   you can use the subject identifier from the .img.hdr file as the subject label.
+
+ - For the session labeling option, you can choose to use the study identifier from the .img.hdr file, the image file
+   name, or the image acquisition date/time as the session label.
+
+6. In some cases, you may need to extract a substring from a field. For example, you may want to use the first N
+   characters of the file name as the session label. You can specify a regular expression to extract a substring from a
+   field in the `Advanced Options` section. For instance, you would specify a regular expression like '^(.{N})' to
+   extract the first N characters from the file name.
+
+7. After selecting the project, .zip file, and labeling options, click 'Begin Upload' to start the upload process. If
+   there are any issues with uploading the Inveon images to your project, the image sessions will be stored in the XNAT
+   prearchive which can be accessed from the top menu by selecting `Upload -> Go to prearchive`.
 
 Bioluminescence Imaging
 -----------------------

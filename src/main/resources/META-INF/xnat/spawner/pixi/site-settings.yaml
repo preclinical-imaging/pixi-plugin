@@ -179,7 +179,7 @@ inveonImporter:
   kind: panel.form
   id: inveonImporter
   name: inveonImporter
-  label: Inveon Image Importer
+  label: Inveon Image Uploader
   method: POST
   contentType: json
   url: /xapi/pixi/preferences
