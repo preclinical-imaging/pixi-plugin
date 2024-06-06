@@ -2,6 +2,7 @@ package org.nrg.xnatx.plugins.pixi.inveon.factories;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.nrg.xnatx.plugins.pixi.inveon.models.InveonImageRepresentation;
 
 import java.io.File;
@@ -74,6 +75,9 @@ public class InveonImageRepresentationFactory {
     // Map the integer value for modality taken from the Inveon .hdr file to
     // a string known by XNAT.
     private String mapModality(String value) {
+        if (StringUtils.isBlank(value)) {
+            value = "0";
+        }
         int v = Integer.parseInt(Optional.ofNullable(value).orElse("0"));
         String rtn = "Unknown";
         switch (v) {

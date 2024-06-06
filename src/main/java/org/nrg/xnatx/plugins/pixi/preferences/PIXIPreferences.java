@@ -35,6 +35,7 @@ public class PIXIPreferences extends AbstractPreferenceBean {
     public static final String UI_SHOW_HUMAN_SEARCH_FIELDS_PREFERENCE_ID =  "uiShowHumanSearchFields";
     public static final String UI_SHOW_USER_READABLE_COUNTS_PREFERENCE_ID =  "uiShowUserReadableCounts";
     public static final String UI_SHOW_INVEON_IMPORTER_PREFERENCE_ID =  "uiShowInveonImporter";
+    public static final String UI_SHOW_INVEON_PCIF_OPTION_PREFERENCE_ID =  "uiShowInveonPcifOption";
     public static final String UI_HIDE_SITE_WIDE_COUNTS_PREFERENCE_ID =  "uiHideSiteWideCounts";
     public static final String DEFAULT_BLI_IMPORTER_MAPPING = "defaultBliImporterMapping";
 
@@ -187,6 +188,19 @@ public class PIXIPreferences extends AbstractPreferenceBean {
             setBooleanValue(uiShowInveonImporter, UI_SHOW_INVEON_IMPORTER_PREFERENCE_ID);
         } catch (InvalidPreferenceName e) {
             log.error("Invalid preference name 'uiShowInveonImporter': something is very wrong here.", e);
+        }
+    }
+
+    @NrgPreference(defaultValue = "false")
+    public Boolean getUiShowInveonPcifOption() {
+        return getBooleanValue(UI_SHOW_INVEON_PCIF_OPTION_PREFERENCE_ID);
+    }
+
+    public void setUiShowInveonPcifOption(final Boolean uiShowInveonPcifOption) {
+        try {
+            setBooleanValue(uiShowInveonPcifOption, UI_SHOW_INVEON_PCIF_OPTION_PREFERENCE_ID);
+        } catch (InvalidPreferenceName e) {
+            log.error("Invalid preference name 'uiShowInveonPcifOption': something is very wrong here.", e);
         }
     }
 

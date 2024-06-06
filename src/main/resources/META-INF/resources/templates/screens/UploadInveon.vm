@@ -1,51 +1,83 @@
 <!-- BEGIN pixi-plugin templates/screens/Inveon.vm -->
 <div class="upload-container">
-    <h2>PIXI Inveon Image Session Uploader</h2>
+    <h2>Inveon Image Uploader</h2>
 
     <div class="form-instructions">
-        <p>Upload a single session of Inveon PET/CT images to XNAT. </p>
+        <p>Upload zipped (.zip) native Inveon PET/CT image session(s) to XNAT.</p>
 
         <p>File format requirements:</p>
 
         <ul>
-            <li>Must be a .zip file</li>
-            <li>Each zip file should contain a single session of Inveon PET/CT images</li>
-            <li>Each image series will be uploaded as an XNAT scan</li>
+            <li>The file must be in .zip format, containing one or more image sessions.</li>
+            <li>Only files with .img and .img.hdr extensions will be processed.</li>
+            <li>Each image scan should have a pair of .img and .img.hdr files with identical names.</li>
         </ul>
 
-        <p>Select the project and subject to upload the image session to and provide label for the session.</p>
-        <p>If you are uploading a multi-subject hotel image session, select a project's <em>Hotel</em> subject.</p>
     </div>
 
     <form id="upload-form" name="upload-form" method="post">
 
-        <div class="filter-container">
-            <label for="project" class="filter-label">Select Project</label>
+        <fieldset>
+            <legend>Project & Data Selection</legend>
 
-            <label class="filter-icon" for="project-filter"><i class="fa fa-search"></i></label>
-            <input type="text" id="project-filter" name="project-filter" placeholder="Filter" onkeyup="" class="filter-input"/>
+            <div class="filter-container">
+                <label for="project" class="filter-label">Select Project</label>
 
-            <select id="project" name="project" form="upload-form" size="5" required class="filer-select"></select>
-        </div>
+                <label class="filter-icon" for="project-filter"><i class="fa fa-search"></i></label>
+                <input type="text" id="project-filter" name="project-filter" placeholder="Filter" onkeyup="" class="filter-input"/>
 
-        <div class="filter-container">
-            <label for="subject" class="filter-label">Select Subject</label>
+                <select id="project" name="project" form="upload-form" size="8" required class="filer-select"></select>
+            </div>
 
-            <label class="filter-icon" for="subject-filter"><i class="fa fa-search"></i></label>
-            <input type="text" id="subject-filter" name="subject-filter" placeholder="Filter" onkeyup="" class="filter-input"/>
+            <div class="form-component">
+                <label class="file-label" for="file">Select ZIP File to Upload</label>
+                <input type="file" id="file" name="file" accept="application/zip" required/>
+            </div>
+        </fieldset>
 
-            <select id="subject" name="subject" form="upload-form" size="5" required class="filer-select"></select>
-        </div>
+        <fieldset>
+            <legend>Subject & Session Identification</legend>
 
-        <div class="form-component">
-            <label for="session">Enter Session Label</label>
-            <input type="text" id="session" name="session" form="upload-form" required placeholder="Enter a label for the image session"/>
-        </div>
+            <div class="form-component">
+                <label for="subject-label-option" class="subject-label-option">Subject Labeling Option</label>
+                <select id="subject-label-option" name="subject-label-option" form="upload-form">
+                    <option value="hotel">Multi-Subject Image Session - Send to Projects 'Hotel' Subject</option>
+                    <option value="subject_identifier">Use Subject Identifier field</option>
+                </select>
+                <p class="input-desc">Map each image session to an XNAT subject. New subjects will be created as needed.</p>
+            </div>
 
-        <div class="form-component">
-            <label class="file-label" for="file">Select Zip File</label>
-            <input type="file" id="file" name="file" accept="application/zip" required/>
-        </div>
+            <div class="form-component">
+                <label for="session-label-option" class="session-label-option">Session Labeling Option</label>
+                <select id="session-label-option" name="session-label-option" form="upload-form">
+                    <option value="study_identifier">Use Study Identifier field</option>
+                    <option value="file_name">Use File Name</option>
+                    <option value="datetime">Use the Image Acquisition Date/Time</option>
+                </select>
+                <p class="input-desc">Specify how to label each image session in XNAT.</p>
+            </div>
+
+            <div class="advanced-options" style="display: none;">
+
+                <div class="form-component">
+                    <label for="subject-label-regex" class="subject-label-regex">Subject Labeling Regex <a id="subject-label-regex-info"><i class="fa fa-question-circle" style="font-size: 16px; color: rgb(26, 117, 194);"></i></a></label>
+                    <input type="text" id="subject-label-regex" name="subject-field-regex" form="upload-form" disabled>
+                    <div>
+                        <p class="input-desc">Enter a regular expression to extract the subject label from the selected field. If left empty, the entire field will be used. This option is ignored if the 'Multi-Subject Image Session' option is selected.</p>
+
+                    </div>
+                </div>
+
+                <div class="form-component">
+                    <label for="session-label-regex" class="session-label-regex">Session Labeling Regex <a id="session-label-regex-info"><i class="fa fa-question-circle" style="font-size: 16px; color: rgb(26, 117, 194);"></i></a></label>
+                    <input type="text" id="session-label-regex" name="session-label-regex" form="upload-form">
+                    <p class="input-desc">Enter a regular expression to extract the session label from the selected field. If left empty, the entire field will be used.</p>
+                </div>
+
+            </div>
+
+            <button type="button" class="advanced-options-button">Show Advanced Options</button>
+        </fieldset>
 
         <input class="submit" id="upload-button" type="button" name="eventSubmit_doPerform" value="Begin Upload" onclick="submitForm();"/>
 
@@ -68,11 +100,11 @@
         row-gap: 1em;
         font-size: 14px;
         box-sizing: border-box;
-        width: 400px;
+        width: 600px;
     }
 
     #upload-form label {
-        font-weight: bold;
+        font-weight: normal;
     }
 
     #upload-form select,
@@ -91,7 +123,7 @@
         flex-wrap: wrap;
         align-items: center;
         row-gap: 0.5rem;
-        margin-bottom: 0.5rem;
+        margin-bottom: 2rem;
     }
 
     #upload-form .filter-label {
@@ -119,6 +151,7 @@
         border-radius: 4px;
         cursor: pointer;
         background-image: none;  /* Remove default button background */
+        align-self: flex-end;
     }
 
     #upload-button:hover {
@@ -127,6 +160,28 @@
 
     .input-desc {
         margin: 0 0 10px 0;
+        font-size: 12px;
+    }
+
+    #upload-form fieldset {
+        margin: 1em 0;
+        padding: 1em;
+        border: 1px solid #ccc;
+        background-color: #fdfdfd;
+        border-radius: 4px;
+    }
+
+    #upload-form legend {
+        font-weight: bold;
+    }
+
+    #upload-form .advanced-options-button {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+        background-image: none;  /* Remove default button background */
     }
 
 </style>
@@ -145,6 +200,35 @@
     let prearchiveCode0El = document.getElementById("prearchive-code-0");
     let prearchiveCode1El = document.getElementById("prearchive-code-1");
     let fileEl            = document.getElementById("file");
+    let advancedOptionsEl = document.querySelector('.advanced-options');
+    let subjectLabelOptionEl = document.getElementById("subject-label-option");
+    let sessionLabelOptionEl = document.getElementById("session-label-option");
+    let subjectLabelRegexEl = document.getElementById("subject-label-regex");
+    let sessionLabelRegexEl = document.getElementById("session-label-regex");
+
+    // Show/hide PCIF option
+    XNAT.plugin.pixi.preferences.get('uiShowInveonPcifOption')
+            .then(preference => preference['uiShowInveonPcifOption'])
+            .then(showPcifOption => {
+                if (showPcifOption) {
+                    console.debug('Showing PCIF option')
+                    // Add PCIF option to session labeling options <option value="pcif" class="pcif">PCIF mpet naming convention</option>
+                    let pcifOption = document.createElement('option');
+                    pcifOption.value = 'pcif';
+                    pcifOption.classList.add('pcif');
+                    pcifOption.textContent = 'PCIF mpet naming convention';
+                    pcifOption.selected = true;
+                    sessionLabelOptionEl.appendChild(pcifOption);
+                }
+            });
+
+    // Advanced options accordion button
+    document.querySelector('.advanced-options-button').addEventListener('click', () => {
+        let advancedOptions = document.querySelector('.advanced-options');
+        advancedOptions.style.display = advancedOptions.style.display === 'none' ? 'block' : 'none';
+        let button = document.querySelector('.advanced-options-button');
+        button.textContent = button.textContent === 'Show Advanced Options' ? 'Hide Advanced Options' : 'Show Advanced Options';
+    });
 
     // Form rendering
     let renderProjectSelectBox = function(selectBox, projects) {
@@ -165,36 +249,6 @@
                                           renderProjectSelectBox(projectEl, prjs);
                                       });
 
-    let handleProjectChange = () => {
-        console.debug('handleProjectChange()')
-
-        // clear subject select box
-        subjectEl.options.length = 0;
-
-        let projectId = projectEl.value;
-
-        if (projectId) {
-            // update subject select box
-            XNAT.plugin.pixi.subjects.getAll(projectId)
-                                     .then(resultSet => resultSet['ResultSet']['Result'])
-                                     .then(subjects => {
-                                         // Sort subjects by label
-                                         subjects.sort(XNAT.plugin.pixi.compareGenerator('label'));
-
-                                         // If there is a hotel subject, move it to the top of the list
-                                         let hotelIndex = subjects.findIndex(subject => subject['label'].toLowerCase() === 'hotel');
-                                         if (hotelIndex !== -1) {
-                                             let hotel = subjects.splice(hotelIndex, 1)[0];
-                                             subjects.unshift(hotel);
-                                         }
-
-                                         subjects.forEach(subject => {
-                                             subjectEl.options.add(new Option(subject['label'], subject['id']))
-                                         });
-                                     });
-        }
-    }
-
     let filterProject = (event) => {
         console.debug('filterProject()')
 
@@ -206,31 +260,82 @@
         });
     }
 
-    let filterSubject = (event) => {
-        console.debug('filterSubject()')
+    projectFilerInput.addEventListener('keyup', filterProject);
 
-        let filter = event.target.value.toLowerCase();
-        let subjects = Array.from(subjectEl.options);
+    let handleSubjectLabelOptionChange = (event) => {
+        console.debug('handleSubjectLabelOptionChange()')
 
-        subjects.forEach(subject => {
-            subject.hidden = !subject.text.toLowerCase().includes(filter);
-        });
+        let hotelOption = event.target.value;
+        let subjectLabelRegex = document.getElementById('subject-label-regex');
+
+        if (hotelOption.toLowerCase().includes('hotel')) {
+            subjectLabelRegex.value = '';
+            subjectLabelRegex.disabled = true;
+        } else {
+            subjectLabelRegex.disabled = false;
+        }
     }
 
-    projectEl.addEventListener('change', handleProjectChange);
-    projectFilerInput.addEventListener('keyup', filterProject);
-    subjectFilerInput.addEventListener('keyup', filterSubject);
+    subjectLabelOptionEl.addEventListener('change', handleSubjectLabelOptionChange);
+
+    // Info icon tooltips
+    let subjectLabelRegexInfo = document.getElementById('subject-label-regex-info');
+    let sessionLabelRegexInfo = document.getElementById('session-label-regex-info');
+
+    subjectLabelRegexInfo.addEventListener('click', () => {
+        XNAT.ui.dialog.open({
+            title: 'Subject Labeling Regex',
+            width: 450,
+            content: `<p>Enter a regular expression to extract the subject label from the selected field. If left empty, the entire field will be used. This option is ignored if the 'Multi-Subject Image Session' option is selected.</p>
+                      <p> Examples: </p>
+                      <ul>
+                        <li>Extract the first word from the selected field <pre>^(\\w+)</pre></li>
+                        <li>Extract the second word from the selected field <pre>^\\w+\\s(\\w+)</pre></li>
+                        <li>Extract the first 9 characters from the selected field <pre>^(.{9})</pre></li>
+                      </ul>
+                    `,
+            buttons: [
+                {
+                    label: 'OK',
+                    isDefault: true,
+                    close: true,
+                }
+            ]
+        })
+    });
+
+    sessionLabelRegexInfo.addEventListener('click', () => {
+        XNAT.ui.dialog.open({
+            title: 'Session Labeling Regex',
+            width: 450,
+            content: `<p>Enter a regular expression to extract the session label from the selected field. If left empty, the entire field will be used.</p>
+                      <p> Examples: </p>
+                      <ul>
+                        <li>Extract the first word from the selected field <pre>^(\\w+)</pre></li>
+                        <li>Extract the second word from the selected field <pre>^\\w+\\s(\w+)</pre></li>
+                        <li>Extract the first 9 characters from the selected field <pre>^(.{9})</pre></li>
+                      </ul>
+                    `,
+            buttons: [
+                {
+                    label: 'OK',
+                    isDefault: true,
+                    close: true,
+                }
+            ]
+        })
+    });
 
     async function submitForm() {
         console.debug('submitForm()')
 
         function validateForm() {
             let validProject = XNAT.validate(projectEl).required().check();
-            let validSubject = XNAT.validate(subjectEl).required().check();
-            let validSession = XNAT.validate(sessionEl).required().check();
             let validImageArchiveFile = XNAT.validate(fileEl).is('fileType', 'zip').check();
+            let validSubjectLabelOption = XNAT.validate(subjectLabelOptionEl).required().check();
+            let validSessionLabelOption = XNAT.validate(sessionLabelOptionEl).required().check();
 
-            return validProject && validSession && validSubject && validImageArchiveFile;
+            return validProject && validImageArchiveFile && validSubjectLabelOption && validSessionLabelOption;
         }
 
         let isValid = validateForm()
@@ -242,8 +347,6 @@
         }
 
         let projectId = projectEl.value;
-        let subjectId = subjectEl.value;
-        let sessionLabel = sessionEl.value;
         let uploadId = new Date().toISOString()
                                  .replaceAll('-', '_')
                                  .replaceAll(':', '_')
@@ -251,6 +354,7 @@
 
         let file = fileEl.files[0];
         let encodedFileName = encodeURIComponent(file.name);
+        encodedFileName = encodedFileName.replaceAll('%20', '_'); // Replace spaces with underscores
         let cachePath = `/user/cache/resources/${uploadId}/files/${encodedFileName}`;
         let encodedCachePath = encodeURIComponent(cachePath);
         let userResourceCacheUrl = XNAT.url.csrfUrl(`/data/${cachePath}`);
@@ -287,13 +391,24 @@
             return;
         }
 
+        let subjectLabelOption = subjectLabelOptionEl.value;
+        let encodedSubjectLabelOption = encodeURIComponent(subjectLabelOption);
+        let sessionLabelOption = sessionLabelOptionEl.value;
+        let encodedSessionLabelOption = encodeURIComponent(sessionLabelOption);
+        let subjectLabelRegex = subjectLabelRegexEl.value ? subjectLabelRegexEl.value : '(.*)';
+        let encodedSubjectLabelRegex = encodeURIComponent(subjectLabelRegex);
+        let sessionLabelRegex = sessionLabelRegexEl.value ? sessionLabelRegexEl.value : '(.*)';
+        let encodedSessionLabelRegex = encodeURIComponent(sessionLabelRegex);
+
         let importServiceUrl = XNAT.url.csrfUrl('/data/services/import');
         importServiceUrl = XNAT.url.addQueryString(importServiceUrl, ['import-handler=INVEON',
                                                                       `PROJECT_ID=${projectId}`,
-                                                                      `SUBJECT_ID=${subjectId}`,
-                                                                      `EXPT_LABEL=${sessionLabel}`,
                                                                       `src=${encodedCachePath}`,
-                                                                      `cachePath=${encodedCachePath}`]);
+                                                                      `cachePath=${encodedCachePath}`,
+                                                                      `subjectLabelOption=${encodedSubjectLabelOption}`,
+                                                                      `sessionLabelOption=${encodedSessionLabelOption}`,
+                                                                      `subjectLabelRegex=${encodedSubjectLabelRegex}`,
+                                                                      `sessionLabelRegex=${encodedSessionLabelRegex}`]);
 
         // Extract the zip file from the users cache
         console.debug(`Extracting ${file.name}`);

@@ -22,6 +22,7 @@ public class InveonImageRepresentation {
     private String prearchiveTimestampPath;
     private String timestamp;
     private String modality;
+    private int    index;
     private Map<String, String> headerMap;
     private List<String> headerUnmappedLines;
 
@@ -34,6 +35,9 @@ public class InveonImageRepresentation {
 
     public String getHeaderValue(String key) {
         String rtn = "";
+        if (headerMap == null) {
+            headerMap = new HashMap<>();
+        }
         if (headerMap.containsKey(key)) {
             rtn = headerMap.get(key);
         }

@@ -162,20 +162,30 @@ hotelPanel:
 uiShowInveonImporter:
   kind: panel.input.switchbox
   name: uiShowInveonImporter
-  label: Enable Inveon Image Importer
+  label: Enable Inveon Image Uploader
   description: >
-    Enable the Inveon Image Importer in the Upload menu for importing Inveon PET/CT images.
+    Enable the Inveon image uploader in the Upload navigation menu. This uploader is used to import native Inveon
+    PET/CT images into XNAT.
+
+uiShowInveonPcifOption:
+  kind: panel.input.switchbox
+  name: uiShowInveonPcifOption
+  label: Enable PCIF Session Labeling Option
+  description: >
+    Enable the PCIF session labeling option in the Inveon image uploader. This option will use the first 9 characters of
+    the filenames to label the sessions. Mainly for WUSTL PCIF lab sessions.
 
 inveonImporter:
   kind: panel.form
   id: inveonImporter
   name: inveonImporter
-  label: Inveon Image Importer
+  label: Inveon Image Uploader
   method: POST
   contentType: json
   url: /xapi/pixi/preferences
   contents:
     ${uiShowInveonImporter}
+    ${uiShowInveonPcifOption}
 
 #################################################
 ####  Root Site Admin Spawner Config Object  ####
