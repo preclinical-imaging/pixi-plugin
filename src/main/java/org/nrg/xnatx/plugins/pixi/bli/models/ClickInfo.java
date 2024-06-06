@@ -9,11 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @Slf4j
-public class AnalyzedClickInfo {
+public class ClickInfo {
 
     private ClickNumber clickNumber;
-    private PhotographicImage photographicImage;
-    private LuminescentImage luminescentImage;
-    private UserLabelNameSet userLabelNameSet;
+    private CameraSystemInfo cameraSystemInfo;
 
 }

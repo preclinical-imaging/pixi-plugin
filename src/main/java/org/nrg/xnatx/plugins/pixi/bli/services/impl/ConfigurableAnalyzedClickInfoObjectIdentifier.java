@@ -8,6 +8,7 @@ import org.nrg.xnatx.plugins.pixi.bli.services.AnalyzedClickInfoObjectIdentifier
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -100,7 +101,29 @@ public class ConfigurableAnalyzedClickInfoObjectIdentifier implements AnalyzedCl
             }
 
             matcher = pattern.matcher(clickNumber);
-        } else {
+        } else if (field.equalsIgnoreCase("datetime")) {
+            LocalDateTime datetime = null;
+            datetime = analyzedClickInfo.getLuminescentImage().getLocalAcquisitionDateTime();
+
+            if (datetime == null) {
+                datetime = analyzedClickInfo.getPhotographicImage().getLocalAcquisitionDateTime();
+
+                if (datetime == null) {
+                    return Optional.empty();
+                }
+            }
+
+            // reformat to YYYYMMDDHHMMSS
+            String datetimeString = datetime.toString();
+            datetimeString = datetimeString.replace("-", "")
+                                           .replace("T", "")
+                                           .replace(":", "")
+                                           .replace(".", "")
+                                           .replace("_", "")
+                                           .replace(" ", "");
+
+            matcher = pattern.matcher(datetimeString);
+        } else { // General case for all other fields in UserLabelNameSet
             String fieldVal = analyzedClickInfo.getUserLabelNameSet().get(field);
 
             if (fieldVal == null) {

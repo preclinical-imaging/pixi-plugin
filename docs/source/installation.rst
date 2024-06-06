@@ -105,7 +105,7 @@ when you install Docker.
 
   .. code-block:: bash
     
-    wget -q -P ./xnat/plugins/ https://github.com/preclinical-imaging/pixi-plugin/releases/download/v1.0.0/pixi-plugin-1.0.0.jar
+    wget -q -P ./xnat/plugins/ https://github.com/preclinical-imaging/pixi-plugin/releases/download/v1.2.0/pixi-plugin-1.2.0.jar
 
   Other helpful plugins can be downloaded with the following commands:
 

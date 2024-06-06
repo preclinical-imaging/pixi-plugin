@@ -1,0 +1,11 @@
+<script type="text/javascript">
+    // Uncomment to enable quick search tab for BLI data. Leaving out until BLI has more searchable fields. Still available in Advanced Search.
+
+    // XNAT.frontTabSearchItems = XNAT.frontTabSearchItems || [];
+    //
+    // XNAT.frontTabSearchItems.push({
+    //     'dataTab': 'quick-search-bliSessionData',
+    //     'tabTitle': 'BLI',
+    //     'dataType': 'pixi:bliSessionData'
+    // });
+</script>

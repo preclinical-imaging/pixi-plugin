@@ -1,0 +1,92 @@
+<div class="advanced-search-fields autogen">
+    <div class="search-group by-criteria"><h3><label>Search by Criteria <input type="checkbox"
+                                                                               class="search-method by-criteria"
+                                                                               value="by-criteria"></label></h3>
+
+        <table>
+            <tr>
+                <td>
+                    <h5>Project:</h5>
+                    #xdatSearchField($schemaElement $schemaElement.getDisplayField("PROJECT"))
+                </td>
+                <td>
+                    <h5>$displayManager.getSingularDisplayNameForSubject():</h5>
+                    <input type="hidden" name="xnat:subjectData.COMBO0_FIELDS"
+                           value="xnat:subjectData/ID_equals,xnat:subjectData/label_equals,xnat:subjectData/sharing/share/label_equals"/>
+                    <input size="20" type="text" name="xnat:subjectData.COMBO0"
+                           value="$!search.getWebFormValue("xnat:subjectData.COMBO0")" maxlength="100">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p></p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h5>Animal Feed:</h5>
+                    #xdatSearchField($schemaElement $schemaElement.getDisplayField("ANIMALFEED"))
+                </td>
+                <td>
+                    <h5>Feed Source:</h5>
+                    #xdatSearchField($schemaElement $schemaElement.getDisplayField("FEEDSOURCE"))
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h5>Feed Manufacturer:</h5>
+                    #xdatSearchField($schemaElement $schemaElement.getDisplayField("FEEDMANUFACTURER"))
+                </td>
+                <td>
+                    <h5>Feed Product Name:</h5>
+                    #xdatSearchField($schemaElement $schemaElement.getDisplayField("FEEDPRODUCTNAME"))
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h5>Feed Product Code:</h5>
+                    #xdatSearchField($schemaElement $schemaElement.getDisplayField("FEEDPRODUCTCODE"))
+                </td>
+                <td>
+                    <h5>Feeding Method:</h5>
+                    #xdatSearchField($schemaElement $schemaElement.getDisplayField("FEEDINGMETHOD"))
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h5>Water Type:</h5>
+                    #xdatSearchField($schemaElement $schemaElement.getDisplayField("WATERTYPE"))
+                </td>
+                <td>
+                    <h5>Water Delivery:</h5>
+                    #xdatSearchField($schemaElement $schemaElement.getDisplayField("WATERDELIVERY"))
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <h5>Number Of Animals Within Same Housing Unit:</h5>
+                    #xdatSearchField($schemaElement $schemaElement.getDisplayField("NUMBEROFANIMALSWITHINSAMEHOUSINGUNIT"))
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <h5>Sex Of Animals Within SameHousing Unit:</h5>
+                    #xdatSearchField($schemaElement $schemaElement.getDisplayField("SEXOFANIMALSWITHINSAMEHOUSINGUNIT"))
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h5>Environmental Temperature:</h5>
+                    #xdatSearchField($schemaElement $schemaElement.getDisplayField("ENVIRONMENTALTEMPERATURE"))
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h5>Housing Humidity:</h5>
+                    #xdatSearchField($schemaElement $schemaElement.getDisplayField("HOUSINGHUMIDITY"))
+                </td>
+            </tr>
+        </table>
+        <div class="clear"></div>
+    </div>
+</div>
