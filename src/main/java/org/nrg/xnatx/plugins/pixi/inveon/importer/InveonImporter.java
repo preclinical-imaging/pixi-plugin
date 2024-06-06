@@ -176,7 +176,7 @@ public class InveonImporter extends ImporterHandlerA {
 
         // We believe the scan files are consistent. Create sessions from these.
         String sessionLabelOption = (String) params.get("sessionLabelOption");
-        log.debug("sessionLabelOption: " + sessionLabelOption);
+        log.debug("sessionLabelOption: {}", sessionLabelOption);
         if (sessionLabelOption == null) {
             throw new ServerException("No value passed for sessionLabelOption");
         }
@@ -199,7 +199,6 @@ public class InveonImporter extends ImporterHandlerA {
     private void  constructSessions() throws ServerException, IOException {
         log.debug("InveonImporter::constructSessions");
         for (Map.Entry<String, InveonImageRepresentation> entry: inveonScanFilesMap.entrySet()) {
-            String key = entry.getKey();
             InveonImageRepresentation inveonImageRepresentation = entry.getValue();
 
             // We know we have both the .img and .img.hdr files
@@ -230,7 +229,7 @@ public class InveonImporter extends ImporterHandlerA {
             inveonSessionFiles.putInveonImageRepresentation(imageName, inveonImageRepresentation);
             inveonSessionFilesMap.put(sessionLabel, inveonSessionFiles);
 
-            log.debug("PUT " + sessionLabel + " " + imageName + " " + inveonImageRepresentation.getPixelFileName());
+            log.debug("PUT {} {} {}", sessionLabel, imageName, inveonImageRepresentation.getPixelFileName());
         }
     }
 
@@ -244,13 +243,13 @@ public class InveonImporter extends ImporterHandlerA {
         File toConsolidateScanFolder    = extractSingleSubFolder(toConsolidateSessionFolder.getAbsolutePath());
         String scanFolderName = toConsolidateScanFolder.getName();
 
-        log.debug("Target: " + targetFolder.getAbsolutePath() + " To Consolidate: " + toConsolidateScanFolder.getAbsolutePath());
+        log.debug("Target: {} To Consolidate: {}", targetFolder.getAbsolutePath(), toConsolidateScanFolder.getAbsolutePath());
         String toConsolidateTarget = targetFolder.getPath() + "/" + scanFolderName;
         if (toConsolidateTarget.equals(scanToConsolidate.getPrearchiveTempFolder())) {
             // This means the scan to be consolidated is already under the target folder.
             log.debug("No need to move scan to target folder. It is already in the target folder.");
         } else {
-            log.debug("Final consolidated path: " + toConsolidateTarget);
+            log.debug("Final consolidated path: {}", toConsolidateTarget);
             File sessionFolderToDelete   = toConsolidateScanFolder.getParentFile();
             File timestampFolderToDelete = sessionFolderToDelete.getParentFile();
 
@@ -669,7 +668,7 @@ public class InveonImporter extends ImporterHandlerA {
         String sessionLabelRegex = (String) params.getOrDefault(SESSION_LABEL_REGEX_PARAM, "(.*)");
 
         String sessionLabel = null;
-        log.debug("In extractSessionLabel, option = " + sessionLabelingOption);
+        log.debug("In extractSessionLabel, option = {}", sessionLabelingOption);
 
         switch (sessionLabelingOption) {
             case "study_identifier":
