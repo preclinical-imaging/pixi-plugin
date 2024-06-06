@@ -264,12 +264,8 @@ public class InveonImporter extends ImporterHandlerA {
             FileUtils.moveDirectoryToDirectory(toConsolidateScanFolder, targetFolder, false);
             scanToConsolidate.setPrearchiveTempFolder(toConsolidateTarget);
 
-            if (FileUtils.isEmptyDirectory(sessionFolderToDelete)) {
-                FileUtils.deleteDirectory(sessionFolderToDelete);
-            }
-            if (FileUtils.isEmptyDirectory(timestampFolderToDelete)) {
-                FileUtils.deleteDirectory(timestampFolderToDelete);
-            }
+            FileUtils.deleteDirectory(sessionFolderToDelete);
+            FileUtils.deleteDirectory(timestampFolderToDelete);
         }
     }
 
