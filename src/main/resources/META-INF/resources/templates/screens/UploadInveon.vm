@@ -1,9 +1,9 @@
 <!-- BEGIN pixi-plugin templates/screens/Inveon.vm -->
 <div class="upload-container">
-    <h2>PIXI Inveon Image Session Uploader</h2>
+    <h2>Inveon Image Uploader</h2>
 
     <div class="form-instructions">
-        <p>Upload zipped (.zip) Inveon PET/CT image session(s) to XNAT.</p>
+        <p>Upload zipped (.zip) native Inveon PET/CT image session(s) to XNAT.</p>
 
         <p>File format requirements:</p>
 
@@ -11,7 +11,6 @@
             <li>The file must be in .zip format, containing one or more image sessions.</li>
             <li>Only files with .img and .img.hdr extensions will be processed.</li>
             <li>Each image scan should have a pair of .img and .img.hdr files with identical names.</li>
-            <li>The paired .img and .img.hdr files can be located in the same directory or in different directories.</li>
         </ul>
 
     </div>
@@ -51,7 +50,6 @@
             <div class="form-component">
                 <label for="session-label-option" class="session-label-option">Session Labeling Option</label>
                 <select id="session-label-option" name="session-label-option" form="upload-form">
-                    <option value="pcif" class="pcif">PCIF mpet naming convention</option>
                     <option value="study_identifier">Use Study Identifier field</option>
                     <option value="file_name">Use File Name</option>
                     <option value="datetime">Use the Image Acquisition Date/Time</option>
@@ -207,6 +205,22 @@
     let sessionLabelOptionEl = document.getElementById("session-label-option");
     let subjectLabelRegexEl = document.getElementById("subject-label-regex");
     let sessionLabelRegexEl = document.getElementById("session-label-regex");
+
+    // Show/hide PCIF option
+    XNAT.plugin.pixi.preferences.get('uiShowInveonPcifOption')
+            .then(preference => preference['uiShowInveonPcifOption'])
+            .then(showPcifOption => {
+                if (showPcifOption) {
+                    console.debug('Showing PCIF option')
+                    // Add PCIF option to session labeling options <option value="pcif" class="pcif">PCIF mpet naming convention</option>
+                    let pcifOption = document.createElement('option');
+                    pcifOption.value = 'pcif';
+                    pcifOption.classList.add('pcif');
+                    pcifOption.textContent = 'PCIF mpet naming convention';
+                    pcifOption.selected = true;
+                    sessionLabelOptionEl.appendChild(pcifOption);
+                }
+            });
 
     // Advanced options accordion button
     document.querySelector('.advanced-options-button').addEventListener('click', () => {
