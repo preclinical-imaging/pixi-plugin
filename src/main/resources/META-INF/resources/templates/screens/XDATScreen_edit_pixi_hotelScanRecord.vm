@@ -369,6 +369,17 @@
         .template-selector {
             margin: 0 10px 0 0;
         }
+
+        #subject-selector-0,
+        #subject-selector-1,
+        #subject-selector-2,
+        #subject-selector-3,
+        #subject-selector-4,
+        #subject-selector-5,
+        #subject-selector-6,
+        #session-selector {
+            width: 100%;
+        }
     </style>
 
     <h4>Apply Fasting / Heating / Anesthesia Templates (Optional)</h4>
@@ -406,11 +417,22 @@
                         <h4>Position: <span class="hotel-unit-position">$positionName</span></h4>
                         <input type="hidden" name="pixi:hotelScanRecord/hotel_subjects/subject[$i]/position" value="$positionName" />
                         <div class="panel-element stacked">
-                            <label class="element-label" for="pixi:hotelScanRecord/hotel_subjects/subject[$i]/subject_id">
-                                Subject ID
-                            </label>
+                            <div class="row">
+                                <label for="subject-selector-$i" class="element-label pull-left" >Subject ID</label>
+                                <div class="pull-right">
+                                    <label for="subject-filter-$i" class="filter-icon"><i class="fa fa-search"></i></label>
+                                    <input id="subject-filter" name="subject-filter-$i" class="filter-input" type="text"  placeholder="Filter" onkeyup=""/>
+                                </div>
+                            </div>
                             <div class="element-wrapper">
-                                #pixiSelectBox("pixi:hotelScanRecord/hotel_subjects/subject[$i]/subject_id" "subject-selector" $item $subjectOptions $vr)
+                                <select id="subject-selector-$i" name="pixi:hotelScanRecord/hotel_subjects/subject[$i]/subject_id" class="subject-selector" size="8">
+                                    <option value="" #if($!item.getProperty("pixi:hotelScanRecord/hotel_subjects/subject[$i]/subject_id") == "") selected #end>Empty</option>
+                                    #foreach($subject in $subjects)
+                                        #if (!$subject.label.equalsIgnoreCase("Hotel"))
+                                            <option value="$subject.id" #if($subject.id.equals($item.getProperty("pixi:hotelScanRecord/hotel_subjects/subject[$i]/subject_id"))) selected #end>$subject.label</option>
+                                        #end
+                                    #end
+                                </select>
                             </div>
                             #pixiHiddenBox("pixi:hotelScanRecord/hotel_subjects/subject[$i]/subject_label" "subject-label-selector" $item "" $vr)
                         </div>
@@ -689,6 +711,37 @@
     }
 
     sessionFilter.addEventListener('keyup', filterSessions);
+</script>
+<script>
+    const initSubjectFilters = () => {
+        const subjectFilters = document.querySelectorAll('input[id^=subject-filter]');
+
+        const filterSubjects = (event) => {
+            console.debug('Filtering subjects');
+            console.debug(event);
+
+            const filter = event.target.value.toLowerCase();
+            let subjects = Array.from(event.target.closest('.panel-element').querySelectorAll('option'));
+
+            console.debug(filter);
+            console.debug(subjects);
+
+            subjects.forEach((subject) => {
+                subject.hidden = !subject.label.toLowerCase().includes(filter);
+            });
+        }
+
+        subjectFilters.forEach((filter) => {
+            filter.addEventListener('keyup', filterSubjects);
+        });
+    }
+
+    initSubjectFilters();
+
+    document.addEventListener('hotel-units-created', () => {
+        initSubjectFilters();
+    });
+
 </script>
 
 <script src="$content.getURI("scripts/xnat/plugin/pixi/pixi-imageAcqCtx.js")"></script>

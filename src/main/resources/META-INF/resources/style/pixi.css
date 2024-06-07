@@ -72,7 +72,3 @@ body.xnat .column .panel.active {
 .column table th {
     text-align: left;
 }
-
-#session-selector {
-    width: 100%;
-}

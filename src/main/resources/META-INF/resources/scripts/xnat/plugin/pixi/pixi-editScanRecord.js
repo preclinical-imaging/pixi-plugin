@@ -24,6 +24,28 @@ console.log('pixi-editScanRecord.js');
 
         const createHotelUnit = function (i, position) {
             // i = the unit index
+
+            // Filterable Subject Selector
+            const subjectOptions = XNAT.plugin.pixi.pixiSubjects.map(subject => {
+                return spawn('option', { value: subject.value, label: subject.label, selected: subject.value === '' });
+            });
+
+            const subjectIdComponent = spawn('div.panel-element.stacked.col-1', [
+                spawn('div.row', [
+                    spawn(`label.element-label.pull-left|for=\'subject-selector-${i}\'`, 'Subject ID'),
+                    spawn('div.pull-right', [
+                        spawn(`label.filter-icon|for=\'subject-filter-${i}\'`, [
+                            spawn('i.fa.fa-search')
+                        ]),
+                        spawn(`input#subject-filter-${i}.filter-input|type=\'text\'|placeholder=\'Filter\'`)
+                    ]),
+                ]),
+                spawn('div.element-wrapper', [
+                    spawn(`select#subject-selector-${i}.subject-selector|name=\'pixi:hotelScanRecord/hotel_subjects/subject[` + i + ']/subject_id\'|size=\'8\'', [
+                        ...subjectOptions
+                    ]),
+                ])
+            ]);
             
             const fastingStatusEl = XNAT.ui.panel.select.single({
                 className: 'stacked',
@@ -157,12 +179,7 @@ console.log('pixi-editScanRecord.js');
                             name: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/position',
                             value: position.name
                         }),
-                        XNAT.ui.panel.select.single({
-                            className: 'stacked subject-selector',
-                            name: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/subject_id',
-                            label: 'Subject ID',
-                            options: XNAT.plugin.pixi.pixiSubjects
-                        }),
+                        subjectIdComponent,
                         spawn('input', {
                             type: 'hidden',
                             className: 'subject-label-selector',
@@ -252,6 +269,8 @@ console.log('pixi-editScanRecord.js');
         selectedHotel.positions.forEach(function (position, i) {
             $('#hotel-units').append(createHotelUnit(i, position));
         })
+
+        document.dispatchEvent(new Event('hotel-units-created'));
     };
     XNAT.plugin.pixi.hotelScanRecords = hotelScanRecords = [];
 
@@ -435,7 +454,12 @@ console.log('pixi-editScanRecord.js');
     });
 
     $(document).on('change','.subject-selector',function(){
-        var subjectLabel = $(this).find('option:selected').html();
+        var subjectLabel = $(this).find('option:selected')[0].label;
+
+        if (subjectLabel.includes('Empty')) {
+            subjectLabel = '';
+        }
+
         $(this).parents('.hotel-unit').find('input.subject-label-selector').val(subjectLabel);
     });
 
