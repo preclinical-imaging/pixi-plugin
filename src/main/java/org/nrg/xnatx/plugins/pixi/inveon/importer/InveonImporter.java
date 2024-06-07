@@ -174,6 +174,12 @@ public class InveonImporter extends ImporterHandlerA {
             }
         }
 
+        // If the user specified a session label, then ignore session label options
+        if (params.containsKey(URIManager.EXPT_LABEL)) {
+            constructSessions();
+            return;
+        }
+
         // We believe the scan files are consistent. Create sessions from these.
         String sessionLabelOption = (String) params.get("sessionLabelOption");
         log.debug("sessionLabelOption: {}", sessionLabelOption);
@@ -626,6 +632,10 @@ public class InveonImporter extends ImporterHandlerA {
     // Extract a value for Subject ID for this instance of InveonImageRepresentation
     // TODO:  Need a better scheme than assume the PCIF naming convention
     private String extractSubjectId(InveonImageRepresentation inveonImageRepresentation) {
+        if (params.containsKey(URIManager.SUBJECT_ID)) {
+            return (String) params.get(URIManager.SUBJECT_ID);
+        }
+
         String subjectLabelingOption = (String) params.getOrDefault(SUBJECT_LABELING_OPTION_PARAM, "subject_identifier");
         String subjectLabelRegex = (String) params.getOrDefault(SUBJECT_LABEL_REGEX_PARAM, "(.*)");
 
@@ -664,6 +674,10 @@ public class InveonImporter extends ImporterHandlerA {
     }
 
     private String extractSessionLabel(InveonImageRepresentation inveonImageRepresentation) {
+        if (params.containsKey(URIManager.EXPT_LABEL)) {
+            return (String) params.get(URIManager.EXPT_LABEL);
+        }
+
         String sessionLabelingOption = (String) params.getOrDefault(SESSION_LABELING_OPTION_PARAM, "study_identifier");
         String sessionLabelRegex = (String) params.getOrDefault(SESSION_LABEL_REGEX_PARAM, "(.*)");
 
