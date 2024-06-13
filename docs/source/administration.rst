@@ -215,6 +215,14 @@ configuration you can do so by following the steps below.
    Note that Z is always set to 1, splitting is currently only done in the X and Y dimensions.
 6. Click "Save".
 
+---------------
+Image Importers
+---------------
+
+The Inveon image importer is a feature of the PIXI plugin that allows you to import native Inveon PET/CT images into
+XNAT. To use the Inveon image importer, click the enable toggle and then click "Save" to save the changes. The Inveon
+image importer will be available in the Upload navigation menu when enabled.
+
 Project Settings
 ----------------
 
