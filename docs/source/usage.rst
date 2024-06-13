@@ -160,12 +160,8 @@ In the Actions box on the Session Page, select Run Containers -> Hotel Session S
 .. image:: ./images/pixi_select_hotel_splitter_container.png
  :align: center
 
-8. PIXI will present a dialog box to allow you to adjust pixel offsets for the images
-and a button to run the container that will perform this task.
-When you select "Run Container", that job is launched using the Container infrastructure you have deployed.
-
-.. image:: ./images/pixi_run_hotel_splitter_container.png
- :align: center
+8. Container service will present a dialog with the parameters used for the hotel splitter. When you select
+"Run Container", the job is launched using the container infrastructure you have deployed.
 
 Uploading Native Inveon PET/CT Imaging Data
 -------------------------------------------
