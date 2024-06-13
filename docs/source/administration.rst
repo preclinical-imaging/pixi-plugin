@@ -188,23 +188,23 @@ Before proceeding you'll need to have XNAT's Container Service running. We will 
 1. Navigate to Administer --> Plugin Settings.
 2. Under "Container Service" select the "Images & Commands" tab.
 3. Click "New Image".
-4. For the image name enter "xnat/pixi_pydicom_split".
+4. For the image name enter "xnat/mice-image-splitter".
 5. For the version enter ":latest". For specific version tags checkout out
-   `Docker Hub <https://hub.docker.com/r/xnat/pixi_pydicom_split/tags>`_.
+   `Docker Hub <https://hub.docker.com/r/xnat/mice-image-splitter/tags>`_.
 6. Click "Pull Image".
 7. Navigate to the "Command Configurations" tab.
-8. Enable the two xnat/pixi_pydicom_split commands.
+8. Enable the xnat/mice-image-splitter commands.
 
-The two container commands also need to be enabled at the project level by a project owner or a site admin.
+The container commands also need to be enabled at the project level by a project owner or a site admin.
 
 1. Navigate to a project and click the "Project Settings" link in the Actions box.
 2. Click the "Configure Commands" tab.
-3. Click the "Enable" toggle on the two xnat/pixi_pydicom_split commands.
+3. Click the "Enable" toggle on all of the xnat/mice-image-splitter commands.
 
 *Setting up Hotels*
 
 The 'hotel' splitting is based on the `DICOM Subject Relative Position in Image <https://dicom.nema.org/medical/dicom/current/output/html/part03.html#sect_C.7.1.4.1.1.1>`_
-tag. PIXI includes hotel configurations for 2, 3 and 4 subjects. If you need to add a hotel with a different
+tag. PIXI includes some common hotel configurations. If you need to add a hotel with a different
 configuration you can do so by following the steps below.
 
 1. Navigate to Administer --> Plugin Settings.
