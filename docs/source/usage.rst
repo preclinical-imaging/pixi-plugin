@@ -50,6 +50,7 @@ In this context, you can batch enter multiple research subjects using a spreadsh
 
 - Select the project where the subject information will be stored.
 - The software defaults to a spreadsheet with 5 rows, but you can increase the number of rows.
+- Scroll left and right to see all the columns that are available for data entry.
 
 You will likely find it convenient to fill in one row and then copy/paste common data into the following rows.
 
@@ -159,12 +160,8 @@ In the Actions box on the Session Page, select Run Containers -> Hotel Session S
 .. image:: ./images/pixi_select_hotel_splitter_container.png
  :align: center
 
-8. PIXI will present a dialog box to allow you to adjust pixel offsets for the images
-and a button to run the container that will perform this task.
-When you select "Run Container", that job is launched using the Container infrastructure you have deployed.
-
-.. image:: ./images/pixi_run_hotel_splitter_container.png
- :align: center
+8. Container service will present a dialog with the parameters used for the hotel splitter. When you select
+"Run Container", the job is launched using the container infrastructure you have deployed.
 
 Uploading Native Inveon PET/CT Imaging Data
 -------------------------------------------
@@ -217,7 +214,7 @@ top menu.
 File Format Requirements
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-The PIXI BLI importer is designed to import data from IVIS Imaging Systems. The IVIS system produces a directory
+The BLI importer is designed to import data from IVIS Imaging Systems. The IVIS system produces a directory
 of imaging and non-imaging files. The directory generally contains the following files:
 
 - AnalyzedClickInfo.txt (required)
@@ -254,8 +251,11 @@ In certain cases, the user input my need to extract a substring from a field. Fo
 Comment1 field may contain a string like 'M1 Prone'. The user may want to extract the 'M1' part of the string to use as
 the subject label. The user can specify a regular expression to extract a substring from a field in the Advanced Options
 section. In the example, the user would specify a regular expression like '^(\w+)' to extract the first word from the
-Comment1 field. `Regex101 <https://regex101.com/>`_ is a useful tool for testing regular expressions in the browser.
+Comment1 field.
 
+After selecting the project, zip file, and labeling options, click 'Begin Upload' to start the upload process. If there
+are any issues with uploading the IVIS BLI images to your project, the image sessions will be stored in the XNAT
+prearchive which can be accessed from the top menu by selecting Upload -> Go to prearchive.
 
 .. _XNAT platform: https://www.xnat.org
 .. _How To Use XNAT: https://wiki.xnat.org/documentation/how-to-use-xnat
