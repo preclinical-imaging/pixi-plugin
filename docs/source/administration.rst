@@ -21,6 +21,7 @@ Subject settings include:
 - Subject Display Preferences
 - Species
 - Animal Vendors / Suppliers
+- Animal Endpoints
 
 Select Subject settings under PIXI in the Plugin Setting column of the display.
 
@@ -50,6 +51,12 @@ This is similar to the preference for species.
 The administrator can enter a known list of suppliers in this preference setting.
 XNAT will provide these as menu items at the point of data entry to support consistent terminology.
 As with species, a user will be able to enter a different value, but that value will not be automatically added to this list.
+
+*Animal Endpoints:*
+Data entry forms include animal endpoint selections. The PIXI plugin supports an ontology of defined terms for endpoints
+that will appear in menu items for user selection. The administrator can create, update and delete terms through this
+setting.  Users will be able to user other terms for endpoints when entering data, but these terms are not automatically
+added to the ontology.
 
 -----------------------------
 PDX and Cell Line Preferences
