@@ -1,8 +1,8 @@
 Administration
 ==============
 
-Plugin Settings
----------------
+Site Settings
+-------------
 
 Plugin settings for the PIXI plugin or any other XNAT plugin can be modified by administrators.
 From any view, select Administer -> Plugin Settings in the menu bar.
@@ -12,11 +12,9 @@ Please see instructions below for various configuration settings.
 .. image:: ./images/plugin_settings.png
  :align: center
 
---------------------------
-Site Plugin Settings
---------------------------
-
-**Subject Settings**
+----------------
+Subject Settings
+----------------
 
 Subject settings include:
 
@@ -53,7 +51,9 @@ The administrator can enter a known list of suppliers in this preference setting
 XNAT will provide these as menu items at the point of data entry to support consistent terminology.
 As with species, a user will be able to enter a different value, but that value will not be automatically added to this list.
 
-**PDX and Cell Line Preferences**
+-----------------------------
+PDX and Cell Line Preferences
+-----------------------------
 
 Patient-Derived Xenograft (PDX) information is maintained by PIXI as a site-wide resource.
 That allows the PDX information to be entered once and reused/referenced in a single project and across multiple projects.
@@ -68,9 +68,8 @@ You can provide a web link for both types of entities to refer to documentation 
 .. image:: ./images/pdx_cell-line_administration.png
  :align: center
 
-
 ----------------------------
-Hotel splitter configuration
+Hotel Splitter Configuration
 ----------------------------
 
 The hotel image splitter is a feature of the PIXI plugin that allows you to split multi-subject DICOM images into
@@ -209,11 +208,12 @@ configuration you can do so by following the steps below.
    Note that Z is always set to 1, splitting is currently only done in the X and Y dimensions.
 6. Click "Save".
 
-----------------
 Project Settings
 ----------------
 
-*Subject Settings*
+----------------
+Subject Settings
+----------------
 
 **Subject Display Preferences**
 The subject display preferences can be set at the project level to override the site-wide preferences. This allows
@@ -222,7 +222,10 @@ set the subject display preferences for a project, navigate to the project and c
 Actions box. Select the "Subject Settings" tab and select the desired subject display preferences (xnat:demographicData
 or pixi:animalDemographicData) from the "Subject Display Preferences" dropdown. Click "Save" to save the changes.
 
-*Image Acquisition Contexts*
+--------------------------
+Image Acquisition Contexts
+--------------------------
+
 The image acquisition context preferences are set at the project level and are used to help populate commonly repeated
 fields for fasting, anesthesia, and heating conditions in the hotel scan record form.
 
@@ -230,4 +233,3 @@ To create a fasting, anesthesia, or heating conditions template for a project, n
 "Project Settings" link in the Actions box. Select the "Subject Settings" tab and click the "Add" button for each
 context type. Add a name for the template, and then add the values that will be populated in the hotel scan record form.
 Click "Save" to save the changes.
-
