@@ -214,7 +214,7 @@ top menu.
 File Format Requirements
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-The PIXI BLI importer is designed to import data from IVIS Imaging Systems. The IVIS system produces a directory
+The BLI importer is designed to import data from IVIS Imaging Systems. The IVIS system produces a directory
 of imaging and non-imaging files. The directory generally contains the following files:
 
 - AnalyzedClickInfo.txt (required)
@@ -251,8 +251,11 @@ In certain cases, the user input my need to extract a substring from a field. Fo
 Comment1 field may contain a string like 'M1 Prone'. The user may want to extract the 'M1' part of the string to use as
 the subject label. The user can specify a regular expression to extract a substring from a field in the Advanced Options
 section. In the example, the user would specify a regular expression like '^(\w+)' to extract the first word from the
-Comment1 field. `Regex101 <https://regex101.com/>`_ is a useful tool for testing regular expressions in the browser.
+Comment1 field.
 
+After selecting the project, zip file, and labeling options, click 'Begin Upload' to start the upload process. If there
+are any issues with uploading the IVIS BLI images to your project, the image sessions will be stored in the XNAT
+prearchive which can be accessed from the top menu by selecting Upload -> Go to prearchive.
 
 .. _XNAT platform: https://www.xnat.org
 .. _How To Use XNAT: https://wiki.xnat.org/documentation/how-to-use-xnat
