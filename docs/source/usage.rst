@@ -50,6 +50,7 @@ In this context, you can batch enter multiple research subjects using a spreadsh
 
 - Select the project where the subject information will be stored.
 - The software defaults to a spreadsheet with 5 rows, but you can increase the number of rows.
+- Scroll left and right to see all the columns that are available for data entry.
 
 You will likely find it convenient to fill in one row and then copy/paste common data into the following rows.
 
