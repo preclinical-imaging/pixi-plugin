@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
                 pre-defined mappings. Would still like to add a site-wide and project level setting feature but this is
                 more user-friendly than the previous version.
 - [PIXI-135][]: Update default generated search.vm files for PIXI datatypes
+- [PIXI-137][]: Update the native Inveon file importer to accept more than one session at a time.
 - [PIXI-138][]: Usability improvements to the Hotel Scan Record Form UI. Subject ID selector is now scrollable and
                 searchable.
 
@@ -93,4 +94,5 @@ plugins directory and restart XNAT.
 [PIXI-133]: https://radiologics.atlassian.net/browse/PIXI-133
 [PIXI-134]: https://radiologics.atlassian.net/browse/PIXI-134
 [PIXI-135]: https://radiologics.atlassian.net/browse/PIXI-135
+[PIXI-137]: https://radiologics.atlassian.net/browse/PIXI-137
 [PIXI-138]: https://radiologics.atlassian.net/browse/PIXI-138
