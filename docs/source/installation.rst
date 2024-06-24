@@ -105,14 +105,14 @@ when you install Docker.
 
   .. code-block:: bash
     
-    wget -q -P ./xnat/plugins/ https://github.com/preclinical-imaging/pixi-plugin/releases/download/v1.2.0/pixi-plugin-1.2.0.jar
+    wget -q -P ./xnat/plugins/ https://github.com/preclinical-imaging/pixi-plugin/releases/download/v1.3.0-rc.1/pixi-plugin-1.3.0-rc.1.jar
 
   Other helpful plugins can be downloaded with the following commands:
 
   .. code-block:: bash
 
-    wget -q -P ./xnat/plugins/ https://api.bitbucket.org/2.0/repositories/icrimaginginformatics/ohif-viewer-xnat-plugin/downloads/ohif-viewer-3.6.0.jar
-    wget -q -P ./xnat/plugins/ https://api.bitbucket.org/2.0/repositories/xnatdev/container-service/downloads/container-service-3.4.1-fat.jar
+    wget -q -P ./xnat/plugins/ https://api.bitbucket.org/2.0/repositories/icrimaginginformatics/ohif-viewer-xnat-plugin/downloads/ohif-viewer-3.6.2.jar
+    wget -q -P ./xnat/plugins/ https://api.bitbucket.org/2.0/repositories/xnatdev/container-service/downloads/container-service-3.4.3-fat.jar
     wget -q -P ./xnat/plugins/ https://api.bitbucket.org/2.0/repositories/xnatx/xnatx-batch-launch-plugin/downloads/batch-launch-0.6.0.jar
 
 3. Initialize the XNAT docker compose environment variables. Review the .env file and make changes as appropriate.
