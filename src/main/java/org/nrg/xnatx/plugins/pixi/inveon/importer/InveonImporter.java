@@ -5,6 +5,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.nrg.action.ClientException;
 import org.nrg.action.ServerException;
 import org.nrg.framework.constants.PrearchiveCode;
@@ -35,6 +36,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -45,6 +48,11 @@ import static org.nrg.xnat.archive.Operation.Rebuild;
 public class InveonImporter extends ImporterHandlerA {
 
     public static final String IMPORTER_HANDLER = "INVEON";
+
+    public static final String SUBJECT_LABELING_OPTION_PARAM = "subjectLabelOption";
+    public static final String SESSION_LABELING_OPTION_PARAM = "sessionLabelOption";
+    public static final String SUBJECT_LABEL_REGEX_PARAM = "subjectLabelRegex";
+    public static final String SESSION_LABEL_REGEX_PARAM = "sessionLabelRegex";
 
     private static final String UNKNOWN_SESSION_LABEL = "inveon_unknown";
 
@@ -62,6 +70,9 @@ public class InveonImporter extends ImporterHandlerA {
 
     // Key in the inveonSessionFilesMap is the session label
     private final Map<String, InveonSessionFiles> inveonSessionFilesMap = new HashMap<>();
+    private final Map<String, InveonImageRepresentation> inveonScanFilesMap = new HashMap<>();
+
+    private int inveonImageIndex = 0;
 
     public InveonImporter(final Object listenerControl,
                           final UserI user,
@@ -94,7 +105,6 @@ public class InveonImporter extends ImporterHandlerA {
         }
 
         String projectId = (String) params.get(URIManager.PROJECT_ID);
-        String sessionLabel = (String) params.get(URIManager.EXPT_LABEL);
 
         // Only accepting ZIP format
         if (format == Format.ZIP) {
@@ -104,19 +114,17 @@ public class InveonImporter extends ImporterHandlerA {
                 ZipEntry ze = zin.getNextEntry();
                 while (null != ze) {
                     // Make no assumptions about folder structure.
-                    // Stage and organize files based on file naming convention from
-                    // WUSTL Pre-Clinical Imaging Facility (PCIF).
-                    // TODO: Repair for files that do not follow that convention
+                    // Stage and organize files based on parameters entered along with upload request.
+                    // These are normally made in the Web UI by a user.
                     if (!ze.isDirectory()) {
-                        ze = stageInveonFile(projectId, sessionLabel, ze, zin);
+                        ze = stageInveonFile(projectId, ze, zin);
                     }
                     ze = zin.getNextEntry();
                 }
-            } catch (IOException e) {
+            } catch (IOException | ServerException | ClientException e) {
                 log.error("Error uploading Inveon session.", e);
                 cleanupOnImportFailure();
                 throw new ServerException(e);
-            } catch (ServerException | ClientException e) {
             } catch (Exception e) {
                 log.error("Error uploading Inveon session.", e);
                 cleanupOnImportFailure();
@@ -124,40 +132,155 @@ public class InveonImporter extends ImporterHandlerA {
             }
         } else {
             ClientException e = new ClientException("Unsupported file format " + format);
-            log.error("Unsupported file format: {}", format);
+            log.error("Unsupported file format: {}; upload only supports ZIP files", format);
             throw e;
         }
 
         // Work through all files that were staged during the unzip process above.
         // The call the processSessionMap walks through everything and creates
         // prearchive entries that will be the input to the Archive process.
-
         try {
+            processScanMap(projectId);
             processSessionMap(projectId);
         } catch (IOException e) {
-            log.error("Error uploading Inveon session.", e);
-            // TODO repair
-//                cleanupOnImportFailure();
+            log.error("Error uploading Inveon session(s).", e);
+            cleanupOnImportFailure();
             throw new ServerException(e);
         }
 
         // Files have been staged and placed in folders in the prearchive.
         // Make queue entries to trigger session building.
 
-        log.debug("Send the Session Build Requests");
         // Send a build request after all sessions have been imported
         sessions.forEach(this::sendSessionBuildRequest);
-        log.debug("Done sending Session Build Requests");
-
-        // TODO Review this. I don't think we clean up folders because
-        // Session building needs them.
-        //cleanupPrearchiveFolders();
 
         return Lists.newArrayList(uris);
     }
 
+    // Review the entries in the map of scan files
+    // 1. Throw an error if there are any entries that are missing the .hdr or .img file.
+    // 2. Determine session information and create session files
+
+    private void processScanMap(String projectId) throws ServerException, IOException {
+        // Make a pass through the scan files and throw an exception if we encounter an error
+        log.debug("InveonImporter::processScanMap");
+        for (Map.Entry<String, InveonImageRepresentation> entry: inveonScanFilesMap.entrySet()) {
+            String key = entry.getKey();
+            InveonImageRepresentation inveonImageRepresentation = entry.getValue();
+            if ((inveonImageRepresentation.getHeaderFileName() == null) || inveonImageRepresentation.getHeaderFileName().isEmpty()) {
+                throw new ServerException("No header file specified for this path: " + key);
+            } else if ((inveonImageRepresentation.getPixelFileName() == null) || inveonImageRepresentation.getPixelFileName().isEmpty()) {
+                throw new ServerException("No pixel file specified for this path: " + key);
+            }
+        }
+
+        // If the user specified a session label, then ignore session label options
+        if (params.containsKey(URIManager.EXPT_LABEL)) {
+            constructSessions();
+            return;
+        }
+
+        // We believe the scan files are consistent. Create sessions from these.
+        String sessionLabelOption = (String) params.get("sessionLabelOption");
+        log.debug("sessionLabelOption: {}", sessionLabelOption);
+        if (sessionLabelOption == null) {
+            throw new ServerException("No value passed for sessionLabelOption");
+        }
+        if (sessionLabelOption.equals("pcif")) {
+            constructSessions();
+        } else if (sessionLabelOption.equals("study_identifier")) {
+            constructSessions();
+        } else if (sessionLabelOption.equals("datetime")) {
+            constructSessions();
+        } else if (sessionLabelOption.equals("file_name")) {
+            constructSessions();
+        } else {
+            throw new ServerException("Unrecognized value for sessionLabelOption: " + sessionLabelOption);
+        }
+    }
+
+    // This method assumes that the caller has already determined that the scan files are consistent.
+    // That is, there are no cases where we have a .img file and no .img.hdr file and no cases where
+    // the .img file is missing.
+    private void  constructSessions() throws ServerException, IOException {
+        log.debug("InveonImporter::constructSessions");
+        for (Map.Entry<String, InveonImageRepresentation> entry: inveonScanFilesMap.entrySet()) {
+            InveonImageRepresentation inveonImageRepresentation = entry.getValue();
+
+            // We know we have both the .img and .img.hdr files
+            // Parse the header file and extract the metadata so we can build the scan and session objects
+            factory.fillInveonHeaderMap(inveonImageRepresentation);
+
+            String sessionLabel = extractSessionLabel(inveonImageRepresentation);
+            InveonSessionFiles inveonSessionFiles = inveonSessionFilesMap.get(sessionLabel);
+            if (inveonSessionFiles == null) {
+                inveonSessionFiles = new InveonSessionFiles();
+                inveonSessionFiles.setSessionLabel(sessionLabel);
+                inveonSessionFiles.setPrearchiveTimestampPath(inveonImageRepresentation.getPrearchiveTimestampPath());
+
+                // The timestamp will be used as part of a directory path
+                inveonSessionFiles.setTimeStamp(inveonImageRepresentation.getTimestamp());
+                log.debug("New Session Object with timestamp {}", inveonSessionFiles.getTimeStamp());
+            } else {
+                // This is the second (or third, ...) scan in this session
+                // Because of code later in XNAT core, we want to move these files
+                // into the same timestamp folder as the first scan in this session
+
+                Set<String> keySet = inveonSessionFiles.getInveonImageMap().keySet();
+                String randomKey = keySet.iterator().next();
+                consolidateScanFolders(inveonSessionFiles.getInveonImageRepresentation(randomKey), inveonImageRepresentation);
+
+            }
+            String imageName = inveonImageRepresentation.getName();
+            inveonSessionFiles.putInveonImageRepresentation(imageName, inveonImageRepresentation);
+            inveonSessionFilesMap.put(sessionLabel, inveonSessionFiles);
+
+            log.debug("PUT {} {} {}", sessionLabel, imageName, inveonImageRepresentation.getPixelFileName());
+        }
+    }
+
+    private void consolidateScanFolders(InveonImageRepresentation existingScan, InveonImageRepresentation scanToConsolidate) throws ServerException, IOException {
+        // Grab the subfolder of the existing path. This should be named with the session label.
+        // We know at this stage that string is most likely 'inveon_unknown'.
+        File targetFolder = extractSingleSubFolder(existingScan.getPrearchiveTimestampPath());
+
+        // Grab the subfolder of the scan to be consolidated. Then grab the subfolder beneath that.
+        File toConsolidateSessionFolder = extractSingleSubFolder(scanToConsolidate.getPrearchiveTimestampPath());
+        File toConsolidateScanFolder    = extractSingleSubFolder(toConsolidateSessionFolder.getAbsolutePath());
+        String scanFolderName = toConsolidateScanFolder.getName();
+
+        log.debug("Target: {} To Consolidate: {}", targetFolder.getAbsolutePath(), toConsolidateScanFolder.getAbsolutePath());
+        String toConsolidateTarget = targetFolder.getPath() + "/" + scanFolderName;
+        if (toConsolidateTarget.equals(scanToConsolidate.getPrearchiveTempFolder())) {
+            // This means the scan to be consolidated is already under the target folder.
+            log.debug("No need to move scan to target folder. It is already in the target folder.");
+        } else {
+            log.debug("Final consolidated path: {}", toConsolidateTarget);
+            File sessionFolderToDelete   = toConsolidateScanFolder.getParentFile();
+            File timestampFolderToDelete = sessionFolderToDelete.getParentFile();
+
+            //FileUtils.moveDirectory(toConsolidateScanFolder, toConsolidateSessionFolder);
+            FileUtils.moveDirectoryToDirectory(toConsolidateScanFolder, targetFolder, false);
+            scanToConsolidate.setPrearchiveTempFolder(toConsolidateTarget);
+
+            FileUtils.deleteDirectory(sessionFolderToDelete);
+            FileUtils.deleteDirectory(timestampFolderToDelete);
+        }
+    }
+
+    private File extractSingleSubFolder(String path) throws ServerException {
+        File[] subfolders = new File(path).listFiles();
+
+        if (subfolders == null || subfolders.length == 0) {
+            throw new ServerException("Folder " + path + " has no subfolders. We expected exactly one.");
+        } else if (subfolders.length > 1) {
+            throw new ServerException("Folder " + path + " has " + subfolders.length + " subfolders. We expected exactly one.");
+        }
+        // We know there is one item in the collection. Grab that single item as the target folder.
+        return subfolders[0];
+    }
+
     private void processSessionMap(String projectId) throws ServerException, IOException {
-        log.debug("processSessionMap");
         log.debug("Inveon Sessions Found: {}", inveonSessionFilesMap.size());
         if (params.containsKey(URIManager.EXPT_LABEL) && inveonSessionFilesMap.size() > 1) {
             // If the user specified a session label, then we cannot handle a zip where the user
@@ -173,13 +296,6 @@ public class InveonImporter extends ImporterHandlerA {
 
         }
 
-        Iterator<InveonSessionFiles> it = inveonSessionFilesMap.values().iterator();
-        while (it.hasNext()) {
-            InveonSessionFiles inveonSessionFiles = it.next();
-            log.debug("Session Label {} with {} files", inveonSessionFiles.getSessionLabel(), inveonSessionFiles.getInveonImageMap().size());
-        }
-        log.debug("Done with index");
-
         // The loop below is executed one time for each of the sessions that were identified
         // during the initial staging process.
         // Each iteration corresponds to one session.
@@ -189,7 +305,6 @@ public class InveonImporter extends ImporterHandlerA {
         while (inveonSessionFilesIterator.hasNext()) {
             InveonSessionFiles inveonSessionFiles = inveonSessionFilesIterator.next();
             log.debug("Session label: {}", inveonSessionFiles.getSessionLabel());
-            log.debug("Session Files Count {}", inveonSessionFiles.getInveonImageMap().size());
             Map<String, InveonImageRepresentation> map = inveonSessionFiles.getInveonImageMap();
             Set<String> imageKeys = inveonSessionFiles.getInveonImageMap().keySet();
             Iterator<String> keyIterator = imageKeys.iterator();
@@ -202,12 +317,10 @@ public class InveonImporter extends ImporterHandlerA {
             while (keyIterator.hasNext()) {
                 String key = keyIterator.next();
                 InveonImageRepresentation inveonImageRepresentation = inveonSessionFiles.getInveonImageRepresentation(key);
-                factory.fillInveonHeaderMap(inveonImageRepresentation);
-                log.debug("Key: {}, value {} {} {}", key, map.get(key).getModality(), map.get(key).getHeaderFileName(), map.get(key).getPixelFileName());
                 modalitySet.add(map.get(key).getModality());
             }
 
-            // The step above set the value for modality in the inveonImageRepresentation instances
+            // The step above sets the value for modality in the inveonImageRepresentation instances
             // and created a set that lists the modalities that are included.
             // Process the session depending on the type.
             if (modalitySet.contains("PET")) {
@@ -218,87 +331,81 @@ public class InveonImporter extends ImporterHandlerA {
         }
     }
 
-    protected ZipEntry stageInveonFile(final String projectId, String sessionLabel, ZipEntry ze, ZipInputStream zin) throws IOException, ServerException, ClientException {
+    // Call this method for each file referenced in the zip file that was uploaded.
+    // Stage an Inveon native format file by creating or updating an entry in the inveonScanFilesMap.
+    // We will process the files in that map later, after we have staged all of the files.
+    protected ZipEntry stageInveonFile(final String projectId, ZipEntry ze, ZipInputStream zin) throws IOException, ServerException, ClientException {
         final String pathName = ze.getName();
-        log.debug("Importing file: {}", pathName);
+
         String extension = FilenameUtils.getExtension(pathName);
         String fileName  = FilenameUtils.getName(pathName);
 
-        String name = "";
-        if (extension.equals("hdr")) {
-            name = FilenameUtils.getBaseName(fileName);
-        } else if (extension.equals("img")) {
-            name = fileName;
-        } else {
-            // TODO Determine if we need anything else
-            log.error("Unrecognized file extension: {}", extension);
+        // Skip mac metadata files/directories
+        if (fileName.startsWith("__MACOSX") || fileName.startsWith("._") || fileName.startsWith(".DS_Store")) {
+            return ze;
         }
+
+        String name = "";
+        String scanFileKey = "";
+        if (extension.equals("hdr")) {
+            //  xxx.img.hdr becomes xxx.img
+            name = FilenameUtils.getBaseName(fileName);
+            scanFileKey = FilenameUtils.getFullPath(pathName) + FilenameUtils.getBaseName(pathName);
+        } else if (extension.equals("img")) {
+            //  xxx.img
+            name = fileName;
+            scanFileKey = FilenameUtils.getFullPath(pathName) + FilenameUtils.getName(pathName);
+        } else {
+            log.error("Unrecognized file extension: {}; file is not imported into the system.", extension);
+        }
+
+        log.debug("Importing file: {} with Scan File Key {}", pathName, scanFileKey);
 
         // TODO It would be better to extract a scan label from something in the header itself
         String imageName = FilenameUtils.getBaseName(name);
         String scanLabel = imageName;
-        log.debug("File Name {} Name {} Image Name {}", fileName, name, imageName);
-        log.debug("Session Label: {}, Scan Label: {}", sessionLabel, scanLabel);
-
-        // Find existing instance of InveonSessionFiles based on sessionLabel or create a new one
-        // At one time, we computed Session Label from the files and supported multiple sessions in one zip
-        // Now, we limit scope to one session in a zip file, and the session label is passed in.
-        // It does no harm to have a map that will have a single entry based on the Session Label that
-        // is passed in. If we return to computing a Session Label from the files, this map will
-        // be handy to have.
-        InveonSessionFiles inveonSessionFiles = inveonSessionFilesMap.get(sessionLabel);
-        if (inveonSessionFiles == null) {
-            inveonSessionFiles = new InveonSessionFiles();
-            inveonSessionFiles.setSessionLabel(sessionLabel);
-
-            // The timestamp will be used as part of a directory path
-            inveonSessionFiles.setTimeStamp(PrearcUtils.makeTimestamp());
-        }
+        log.debug("File Name {} Name {} Image Name {} Scan Label {}", fileName, name, imageName, scanLabel);
 
         boolean keepFile = (extension.equals("hdr") || extension.equals("img"));
 
         if (keepFile) {
-            InveonImageRepresentation inveonImageRepresentation = inveonSessionFiles.getInveonImageRepresentation(imageName);
-            if (inveonImageRepresentation == null) {
-                inveonImageRepresentation = new InveonImageRepresentation();
-                inveonImageRepresentation.setName(imageName);
-                inveonImageRepresentation.setTimestamp(inveonSessionFiles.getTimeStamp());
+            // Find existing instance of InveonImageRepresentation based on scanFileKey or create a new one.
+            // We are creating a map with one entry for each scan (.img file + .img.hdr file)
 
-                Path prearchiveTimestampPath = Paths.get(ArcSpecManager.GetInstance().getGlobalPrearchivePath(), projectId, inveonSessionFiles.getTimeStamp());
+            InveonImageRepresentation inveonScan = inveonScanFilesMap.get(scanFileKey);
+            if (inveonScan == null) {
+                inveonScan = new InveonImageRepresentation();
+                inveonScan.setName(imageName);
+                inveonScan.setIndex(inveonImageIndex++);
+
+                // The timestamp will be used as part of a directory path
+                inveonScan.setTimestamp(PrearcUtils.makeTimestamp());
+
+                Path prearchiveTimestampPath = Paths.get(ArcSpecManager.GetInstance().getGlobalPrearchivePath(), projectId, inveonScan.getTimestamp());
                 Path prearchiveTempDirectoryPath = prearchiveTimestampPath.resolve(UNKNOWN_SESSION_LABEL).resolve(scanLabel);
                 timestampDirectories.add(prearchiveTimestampPath); // Keep track of timestamp paths, will delete these folders in case of error
                 Files.createDirectories(prearchiveTempDirectoryPath);
-                inveonImageRepresentation.setPrearchiveTempFolder(prearchiveTempDirectoryPath.toString());
-                inveonImageRepresentation.setPrearchiveTimestampPath(prearchiveTimestampPath.toString());
+                inveonScan.setPrearchiveTempFolder(prearchiveTempDirectoryPath.toString());
+                inveonScan.setPrearchiveTimestampPath(prearchiveTimestampPath.toString());
             }
-
             if (extension.equals("hdr")) {
-                inveonImageRepresentation.setHeaderFileName(fileName);
+                inveonScan.setHeaderFileName(fileName);
             } else if (extension.equals("img")) {
-                inveonImageRepresentation.setPixelFileName(fileName);
+                inveonScan.setPixelFileName(fileName);
             } else {
-                // TODO Code for this error case
                 // This should not happen
+                throw new ServerException(
+                    "Severe coding error. The file extension is not .hdr nor .img, but we should have already tested for this " +
+                    fileName);
             }
-            inveonSessionFiles.putInveonImageRepresentation(imageName, inveonImageRepresentation);
-            log.debug("InveonImageRepresentation Name {}", inveonImageRepresentation.getName());
-            log.debug("About to place inveonSessionFiles in the Session Files Map, session label is {} {}", sessionLabel, inveonSessionFiles.getSessionLabel());
-            inveonSessionFilesMap.put(sessionLabel, inveonSessionFiles);
-
-            Path prearchiveFile = Paths.get(inveonImageRepresentation.getPrearchiveTempFolder(), fileName);
+            Path prearchiveFile = Paths.get(inveonScan.getPrearchiveTempFolder(), fileName);
             ZipEntryFileWriterWrapper zipEntryFileWriterWrapper = new ZipEntryFileWriterWrapper(ze, zin);
             zipEntryFileWriterWrapper.write(prearchiveFile.toFile());
             log.debug("Wrote file: {}", prearchiveFile.toString());
+
+            inveonScanFilesMap.put(scanFileKey, inveonScan);
         } else {
-            // TODO Determine if any explicit cleanup is needed
-            /*
-            Path prearchiveFile = Paths.get(inveonImageRepresentation.getPrearchiveTempFolder(), fileName);
-            ZipEntryFileWriterWrapper zipEntryFileWriterWrapper = new ZipEntryFileWriterWrapper(ze, zin);
-            zipEntryFileWriterWrapper.write(prearchiveFile.toFile());
-            log.info("Wrote file: {}", prearchiveFile.toString());
-            log.info("Discard this file: {}", prearchiveFile.toString());
-            Files.deleteIfExists(prearchiveFile);
-             */
+            // TODO Determine if any explicit cleanup is needed for a file we are not keeping
         }
         return ze;
     }
@@ -419,6 +526,7 @@ public class InveonImporter extends ImporterHandlerA {
         Optional<String> subjectId = Optional.of("");
         Optional<String> sessionLabel = Optional.of("");
         Path sessionFolder = null;
+        log.debug("Process PET session with subject ID {} and session label {}", subjectId.get(), sessionLabel.get());
 
         while (iterator.hasNext()) {
             // This outer loop will fill in the data needed for each scan.
@@ -524,41 +632,129 @@ public class InveonImporter extends ImporterHandlerA {
     // Extract a value for Subject ID for this instance of InveonImageRepresentation
     // TODO:  Need a better scheme than assume the PCIF naming convention
     private String extractSubjectId(InveonImageRepresentation inveonImageRepresentation) {
-        String[] tokens = inveonImageRepresentation.getName().split("_");
-        return tokens[0];
-    }
-
-    // Extract a value for Session Label for this file name
-    // TODO:  Need a better scheme than assume the PCIF naming convention
-    private String extractSessionLabel(String fileName) {
-        String[] tokens = fileName.split("_");
-        return tokens[0];
-    }
-
-    // Extract a value for Session Label for this instance of InveonImageRepresentation
-    // TODO:  Need a better scheme than assume the PCIF naming convention
-    private String extractSessionLabel(InveonImageRepresentation inveonImageRepresentation) {
-        return extractSessionLabel(inveonImageRepresentation.getName());
-    }
-
-    // Extract a value for Scan Label for this file name
-    // TODO:  Need a better scheme than assume the PCIF naming convention
-    private String extractScanLabel(String fileName) {
-        String extension = FilenameUtils.getExtension(fileName);
-        if (extension.equals("img")) {
-            int index = fileName.lastIndexOf("img");
-            return fileName.substring(0,index);
-            //return FilenameUtils.getName(fileName);
+        if (params.containsKey(URIManager.SUBJECT_ID)) {
+            return (String) params.get(URIManager.SUBJECT_ID);
         }
-        String[] tokens = fileName.split("\\.");
-        return tokens[0];
+
+        String subjectLabelingOption = (String) params.getOrDefault(SUBJECT_LABELING_OPTION_PARAM, "subject_identifier");
+        String subjectLabelRegex = (String) params.getOrDefault(SUBJECT_LABEL_REGEX_PARAM, "(.*)");
+
+        if (subjectLabelingOption.toLowerCase().contains("hotel")) {
+            return "Hotel";
+        }
+
+        String subjectLabel = inveonImageRepresentation.getHeaderValue(subjectLabelingOption);
+        if (StringUtils.isBlank(subjectLabel)) {
+            return "Unknown";
+        }
+
+        try {
+            // Apply the regex to extract the subject label
+            Pattern pattern = Pattern.compile(subjectLabelRegex);
+            Matcher matcher = pattern.matcher(subjectLabel);
+
+            if (matcher.find()) {
+                subjectLabel = matcher.group(1);
+            } else {
+                log.warn("No match found for subject label regex: '{}'", subjectLabelRegex);
+                subjectLabel = "Unknown";
+            }
+
+            if (StringUtils.isBlank(subjectLabel)) {
+                subjectLabel = "Unknown";
+            }
+        } catch (Exception e) {
+            // Not best practice to catch Exception, but we shouldn't fail the upload if regex fails
+            log.error("Error applying subject label regex '{}' to subject label '{}'. Error: {}",
+                      subjectLabelRegex, subjectLabel, e.getMessage());
+            subjectLabel = "Unknown";
+        }
+
+        return subjectLabel;
     }
 
+    private String extractSessionLabel(InveonImageRepresentation inveonImageRepresentation) {
+        if (params.containsKey(URIManager.EXPT_LABEL)) {
+            return (String) params.get(URIManager.EXPT_LABEL);
+        }
+
+        String sessionLabelingOption = (String) params.getOrDefault(SESSION_LABELING_OPTION_PARAM, "study_identifier");
+        String sessionLabelRegex = (String) params.getOrDefault(SESSION_LABEL_REGEX_PARAM, "(.*)");
+
+        String sessionLabel = null;
+        log.debug("In extractSessionLabel, option = {}", sessionLabelingOption);
+
+        switch (sessionLabelingOption) {
+            case "study_identifier":
+                sessionLabel = inveonImageRepresentation.getHeaderValue("study_identifier");
+                break;
+            case "datetime":
+                sessionLabel =
+                        inveonImageRepresentation.getHeaderValue("SCAN_DATE") + "_" +
+                        inveonImageRepresentation.getHeaderValue("SCAN_TIME");
+                break;
+            case "file_name":
+                sessionLabel = inveonImageRepresentation.getPixelFileName();
+
+                if (sessionLabel.endsWith(".img")) {
+                    sessionLabel = sessionLabel.substring(0, sessionLabel.length() - 4);
+                }
+                break;
+
+            case "pcif":
+                // Special case for internal WUSTL PCIF lab
+                // First 9 characters of filename
+                sessionLabel = inveonImageRepresentation.getPixelFileName();
+
+                if (StringUtils.isBlank(sessionLabel)) {
+                    sessionLabel = inveonImageRepresentation.getHeaderFileName();
+                }
+
+                if (StringUtils.isBlank(sessionLabel)) {
+                    sessionLabel = UNKNOWN_SESSION_LABEL;
+                } else {
+                    if (sessionLabel.length() > 9) {
+                        sessionLabel = sessionLabel.substring(0, 9);
+                    }
+                }
+
+                break;
+            default:
+                sessionLabel = UNKNOWN_SESSION_LABEL;
+                break;
+        }
+
+        sessionLabel = sessionLabel.replaceAll("[^a-zA-Z0-9]", "_");
+
+        try {
+            // Apply the regex to extract the session label
+            Pattern pattern = Pattern.compile(sessionLabelRegex);
+            Matcher matcher = pattern.matcher(sessionLabel);
+
+            if (matcher.find()) {
+                sessionLabel = matcher.group(1);
+            } else {
+                log.warn("No match found for session label regex: '{}'", sessionLabelRegex);
+                sessionLabel = UNKNOWN_SESSION_LABEL;
+            }
+
+            if (StringUtils.isBlank(sessionLabel)) {
+                sessionLabel = UNKNOWN_SESSION_LABEL;
+            }
+        } catch (Exception e) {
+            // Not best practice to catch Exception, but we shouldn't fail the upload if regex fails
+            log.error("Error applying session label regex '{}' to session label '{}'. Error: {}",
+                      sessionLabelRegex, sessionLabel, e.getMessage());
+            sessionLabel = UNKNOWN_SESSION_LABEL;
+        }
+
+        log.debug("Final session label: {}", sessionLabel);
+        return sessionLabel;
+    }
 
     // Extract a value for Scan Label for this instance of InveonImageRepresentation
     // TODO:  Need a better scheme than assume the PCIF naming convention
     private String extractScanLabel(InveonImageRepresentation inveonImageRepresentation) {
-        //return extractScanLabel(inveonImageRepresentation.getName());
         log.debug("extractScanLabel returns {}", inveonImageRepresentation.getName());
         return inveonImageRepresentation.getName();
     }
@@ -627,20 +823,6 @@ public class InveonImporter extends ImporterHandlerA {
             }
         } catch (Exception e) {
             log.error("Error deleting sessions from the prearchive", e);
-        }
-    }
-
-    private void cleanupPrearchiveFolders() {
-        log.debug("Start Inveon prearchive cleanup");
-        // TODO Repair the code below
-        // Need to review how the temporary folders are created and how to unwind everything
-        try {
-            for (Path timestampDirectory : timestampDirectories) {
-                log.debug("Remove folder: {}", timestampDirectory.toString());
-//                recursiveFolderDelete(timestampDirectory.toFile());
-            }
-        } catch (Exception e) {
-            log.error("Error deleting folders from the prearchive", e);
         }
     }
 

@@ -24,6 +24,7 @@ import org.nrg.xnat.services.messaging.prearchive.PrearchiveOperationRequest;
 import org.nrg.xnatx.plugins.pixi.bli.factories.AnalyzedClickInfoObjectIdentifierFactory;
 import org.nrg.xnatx.plugins.pixi.bli.helpers.*;
 import org.nrg.xnatx.plugins.pixi.bli.models.AnalyzedClickInfo;
+import org.nrg.xnatx.plugins.pixi.bli.models.AnalyzedClickInfoObjectIdentifierMapping;
 import org.nrg.xnatx.plugins.pixi.bli.services.AnalyzedClickInfoObjectIdentifier;
 
 import java.io.File;
@@ -48,7 +49,11 @@ import static org.nrg.xnat.archive.Operation.Rebuild;
 @Slf4j
 public class BliImporter extends ImporterHandlerA {
     public static final String BLI_IMPORTER = "BLI";
-    public static final String ANALYZED_CLICK_INFO_OBJECT_IDENTIFIER_MAPPING_URI_PARAM = "mapping";
+
+    public static final String SUBJECT_LABELING_OPTION_PARAM = "subjectLabelOption";
+    public static final String SESSION_LABELING_OPTION_PARAM = "sessionLabelOption";
+    public static final String SUBJECT_LABEL_REGEX_PARAM = "subjectLabelRegex";
+    public static final String SESSION_LABEL_REGEX_PARAM = "sessionLabelRegex";
 
     private final FileWriterWrapperI fw;
     private final InputStream in;
@@ -165,11 +170,8 @@ public class BliImporter extends ImporterHandlerA {
         final SessionData session = new SessionData();
         final String timestamp = prearcUtilsHelper.makeTimestamp();
 
-        // Get the mapping name from the params, needed to parse AnalyzedClickInfo.txt
-        final String mappingName = (String) params.getOrDefault(ANALYZED_CLICK_INFO_OBJECT_IDENTIFIER_MAPPING_URI_PARAM, "");
-        final AnalyzedClickInfoObjectIdentifier analyzedClickInfoObjectIdentifier = analyzedClickInfoObjectIdentifierFactory.create(mappingName);
-
         // Parse AnalyzedClickInfo.txt
+        final AnalyzedClickInfoObjectIdentifier analyzedClickInfoObjectIdentifier = createAnalyzedClickInfoObjectIdentifier();
         final AnalyzedClickInfo analyzedClickInfo = analyzedClickInfoHelper.parseTxt(directory.resolve("AnalyzedClickInfo.txt"));
 
         Optional<String> sessionLabel = analyzedClickInfoObjectIdentifier.getSessionLabel(analyzedClickInfo).map(this::replaceWhitespace);
@@ -191,13 +193,17 @@ public class BliImporter extends ImporterHandlerA {
             scanLabel = uid;
         }
 
-        // Override subject and expt label if provided in the params
+        // Override subject, expt, and scan label if provided in the params
         if (params.containsKey(URIManager.SUBJECT_ID)) {
             subjectId = Optional.of((String) params.get(URIManager.SUBJECT_ID));
         }
 
         if (params.containsKey(URIManager.EXPT_LABEL)) {
             sessionLabel = Optional.of((String) params.get(URIManager.EXPT_LABEL));
+        }
+
+        if (params.containsKey(URIManager.SCAN_ID)) {
+            scanLabel = Optional.of((String) params.get(URIManager.SCAN_ID));
         }
 
         // Populate session
@@ -380,6 +386,44 @@ public class BliImporter extends ImporterHandlerA {
 
     protected void setAnalyzedClickInfoHelper(final AnalyzedClickInfoHelper analyzedClickInfoHelper) {
         this.analyzedClickInfoHelper = analyzedClickInfoHelper;
+    }
+
+    /**
+     * Creates an AnalyzedClickInfoObjectIdentifier object based on the URL parameters.
+     *
+     * @return An AnalyzedClickInfoObjectIdentifier object
+     */
+    protected AnalyzedClickInfoObjectIdentifier createAnalyzedClickInfoObjectIdentifier() {
+        String subjectLabelField = (String) params.getOrDefault(SUBJECT_LABELING_OPTION_PARAM, "animalNumber");
+        String sessionLabelField = (String) params.getOrDefault(SESSION_LABELING_OPTION_PARAM, "clickNumber");
+        String subjectLabelRegex = (String) params.getOrDefault(SUBJECT_LABEL_REGEX_PARAM, "(.*)");
+        String sessionLabelRegex = (String) params.getOrDefault(SESSION_LABEL_REGEX_PARAM, "(.*)");
+
+        Boolean hotelSession = subjectLabelField.toLowerCase(Locale.ROOT).contains("hotel");
+
+        if (StringUtils.isBlank(subjectLabelRegex)) {
+            subjectLabelRegex = "(.*)";
+        }
+
+        if (StringUtils.isBlank(sessionLabelRegex)) {
+            sessionLabelRegex = "(.*)";
+        }
+
+        AnalyzedClickInfoObjectIdentifierMapping mapping = AnalyzedClickInfoObjectIdentifierMapping.builder()
+                                                                                                   .name("ImporterMapping")
+                                                                                                   .projectLabelField("")
+                                                                                                   .projectLabelRegex("")
+                                                                                                   .subjectLabelField(subjectLabelField)
+                                                                                                   .subjectLabelRegex(subjectLabelRegex)
+                                                                                                   .hotelSession(hotelSession)
+                                                                                                   .hotelSubjectSeparator("")
+                                                                                                   .sessionLabelField(sessionLabelField)
+                                                                                                   .sessionLabelRegex(sessionLabelRegex)
+                                                                                                   .scanLabelField("clickNumber")
+                                                                                                   .scanLabelRegex("(.*)")
+                                                                                                   .build();
+
+        return analyzedClickInfoObjectIdentifierFactory.create(mapping);
     }
 
 }

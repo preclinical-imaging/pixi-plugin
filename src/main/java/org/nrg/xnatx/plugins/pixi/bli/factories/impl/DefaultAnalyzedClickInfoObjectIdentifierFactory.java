@@ -42,4 +42,14 @@ public class DefaultAnalyzedClickInfoObjectIdentifierFactory implements Analyzed
         }
     }
 
+    /**
+     * Creates a new {@link ConfigurableAnalyzedClickInfoObjectIdentifier} using the provided mapping.
+     * @param mapping The mapping to use to configure the object identifier
+     * @return The object identifier configured with the provided mapping
+     */
+    @Override
+    public AnalyzedClickInfoObjectIdentifier create(AnalyzedClickInfoObjectIdentifierMapping mapping) {
+        return new ConfigurableAnalyzedClickInfoObjectIdentifier(mapping);
+    }
+
 }

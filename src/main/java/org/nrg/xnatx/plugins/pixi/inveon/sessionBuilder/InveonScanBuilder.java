@@ -84,6 +84,7 @@ public class InveonScanBuilder implements Callable<XnatImagescandataBean> {
             catCatalogBean.toXML(resourceCatalogXmlWriter, true);
         } catch (IOException e) {
             log.error("Unable to write scan catalog", e);
+            throw e;
         }
 
         log.debug("Inveon Scan Builder, about to return XNAT Scan Data Bean");

@@ -23,6 +23,7 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.DEFAULT_DIGITS;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @XnatPlugin(value = "PIXIPlugin", name = "PIXI Plugin",
+            description = "The Preclinical Imaging XNAT-Enabled Informatics (PIXI) Plugin provides support for preclinical imaging data.",
             logConfigurationFile = "pixi-logback.xml",
             entityPackages = {
                                 "org.nrg.xnatx.plugins.pixi.xenografts.entities",

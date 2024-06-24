@@ -9,6 +9,7 @@ import org.nrg.xnatx.plugins.pixi.bli.models.AnalyzedClickInfo;
 import org.nrg.xnatx.plugins.pixi.bli.models.ClickNumber;
 import org.nrg.xnatx.plugins.pixi.bli.models.LuminescentImage;
 import org.nrg.xnatx.plugins.pixi.bli.models.UserLabelNameSet;
+import org.nrg.xnatx.plugins.pixi.bli.models.PhotographicImage;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedWriter;
@@ -56,6 +57,7 @@ public class DefaultAnalyzedClickInfoHelper implements AnalyzedClickInfoHelper {
 
         AnalyzedClickInfo analyzedClickInfo = new AnalyzedClickInfo();
         ClickNumber clickNumber = new ClickNumber();
+        PhotographicImage photographicImage = new PhotographicImage();
         LuminescentImage luminescentImage = new LuminescentImage();
         UserLabelNameSet userLabelNameSet = new UserLabelNameSet();
 
@@ -97,6 +99,54 @@ public class DefaultAnalyzedClickInfoHelper implements AnalyzedClickInfoHelper {
                         clickInfoType = clickInfoType.trim();
 
                         clickNumber.setClickInfoType(clickInfoType);
+
+                        break;
+                    }
+
+                    // Photographic Image
+                    case ("*** photographic image"): {
+                        photographicImage.setPhotographicImage(value);
+
+                        // Acquisition Date
+                        String acqDate = analyzedClickInfoScanner.nextLine();
+
+                        if (outputWriter != null) {
+                            outputWriter.write(acqDate);
+                            outputWriter.newLine();
+                        }
+
+                        acqDate = acqDate.split(":", 2)[1];
+                        acqDate = acqDate.trim();
+
+                        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
+                        luminescentImage.setAcquisitionDate(LocalDate.parse(acqDate, dateFormatter));
+
+                        // Acquisition Time
+                        String acqTime = analyzedClickInfoScanner.nextLine();
+
+                        if (outputWriter != null) {
+                            outputWriter.write(acqTime);
+                            outputWriter.newLine();
+                        }
+
+                        acqTime = acqTime.split(":", 2)[1];
+                        acqTime = acqTime.trim();
+
+                        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+                        luminescentImage.setAcquisitionTime(LocalTime.parse(acqTime, timeFormatter));
+
+                        // Acquisition Seconds
+                        String acqSeconds = analyzedClickInfoScanner.nextLine();
+
+                        if (outputWriter != null) {
+                            outputWriter.write(acqSeconds);
+                            outputWriter.newLine();
+                        }
+
+                        acqSeconds = acqSeconds.split(":", 2)[1];
+                        acqSeconds = acqSeconds.trim();
+
+                        luminescentImage.setAcquisitionSeconds(Long.parseLong(acqSeconds));
 
                         break;
                     }

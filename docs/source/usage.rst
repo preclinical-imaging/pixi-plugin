@@ -50,6 +50,7 @@ In this context, you can batch enter multiple research subjects using a spreadsh
 
 - Select the project where the subject information will be stored.
 - The software defaults to a spreadsheet with 5 rows, but you can increase the number of rows.
+- Scroll left and right to see all the columns that are available for data entry.
 
 You will likely find it convenient to fill in one row and then copy/paste common data into the following rows.
 
@@ -100,8 +101,8 @@ The models for these data types are found in `Data Models <pixi_data_model.html>
 | Animal Husbandry          | Record animal feeding and housing information over an interval during which conditions are relatively homogeneous.                                 |
 +---------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
 
-Hotel Splitter
---------------
+DICOM Hotel Splitter
+--------------------
 
 The PIXI platform supports the standard practice of scanning multiple small animals at one time using a hotel apparatus.
 We anticipate that scanner vendors have yet to implement the parts of the DICOM Standard that support hotel scans,
@@ -159,13 +160,102 @@ In the Actions box on the Session Page, select Run Containers -> Hotel Session S
 .. image:: ./images/pixi_select_hotel_splitter_container.png
  :align: center
 
-8. PIXI will present a dialog box to allow you to adjust pixel offsets for the images
-and a button to run the container that will perform this task.
-When you select "Run Container", that job is launched using the Container infrastructure you have deployed.
+8. Container service will present a dialog with the parameters used for the hotel splitter. When you select
+"Run Container", the job is launched using the container infrastructure you have deployed.
 
-.. image:: ./images/pixi_run_hotel_splitter_container.png
- :align: center
+Uploading Native Inveon PET/CT Imaging Data
+-------------------------------------------
 
+To upload native Inveon PET/CT images to your XNAT, follow these steps:
+
+1. Enable the Inveon image uploader in the XNAT plugin settings. Navigate to
+   `Administer -> Plugin Settings -> PIXI tab group -> Image Importers tab`. Check the 'Enable Inveon Image Uploader'
+   checkbox and save the settings. This only needs to be done once.
+
+2. From the top menu, select `Upload -> Upload Inveon Images` to access the upload page.
+
+3. You can upload a .zip file containing the Inveon images (.img and .img.hdr files). Note that any additional files in
+   the .zip file will be ignored.
+
+4. In the `Project & Data Selection` section, select the project to which you want to upload the data and select a .zip
+   file containing the Inveon data.
+
+5. In the `Subject & Session Identification` section, select the subject and session labeling option to use. This is
+   necessary for the importer to map the Inveon data to the XNAT data model.
+
+ - For the subject labeling option, selecting the 'Multi-Subject Image Session' option will store the session in a
+   project's 'Hotel' subject. This special subject is used for storing multi-subject image sessions. Alternatively,
+   you can use the subject identifier from the .img.hdr file as the subject label.
+
+ - For the session labeling option, you can choose to use the study identifier from the .img.hdr file, the image file
+   name, or the image acquisition date/time as the session label.
+
+6. In some cases, you may need to extract a substring from a field. For example, you may want to use the first N
+   characters of the file name as the session label. You can specify a regular expression to extract a substring from a
+   field in the `Advanced Options` section. For instance, you would specify a regular expression like '^(.{N})' to
+   extract the first N characters from the file name.
+
+7. After selecting the project, .zip file, and labeling options, click 'Begin Upload' to start the upload process. If
+   there are any issues with uploading the Inveon images to your project, the image sessions will be stored in the XNAT
+   prearchive which can be accessed from the top menu by selecting `Upload -> Go to prearchive`.
+
+Bioluminescence Imaging
+-----------------------
+
+Bioluminescence imaging is a common modality for small animal imaging. The PIXI plugin supports this modality
+by providing a new image session data type to store the data.
+
+XNAT does not provide a mechanism to upload these image sessions. PIXI provides an importer to upload IVIS bioluminescence
+imaging data to XNAT. The importer reads the metadata from the AnalyzedClickInfo.txt and ClickInfo.txt files generated
+by the IVIS system and uploads the data to XNAT. To access the upload page, select Upload -> Upload BLI Images from the
+top menu.
+
+
+File Format Requirements
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The BLI importer is designed to import data from IVIS Imaging Systems. The IVIS system produces a directory
+of imaging and non-imaging files. The directory generally contains the following files:
+
+- AnalyzedClickInfo.txt (required)
+- ClickInfo.txt (required)
+- background.tif
+- luminescent.tif
+- photograph.tif
+- readbias.tif
+
+Other files may be present and will be uploaded to XNAT. AnalyzedClickInfo.txt and ClickInfo.txt are required and contain
+metadata about the imaging session which will be stored in the XNAT database.
+
+Uploading IVIS Imaging Data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To upload IVIS bioluminescence imaging data to XNAT, from the top menu, select the Upload -> Upload BLI Images menu
+item to access the upload page.
+
+In the Project & Data Selection section, select the project to upload the data to and select a zip file containing the
+IVIS data. The zip file can contain multiple IVIS directories which will be uploaded as separate image sessions.
+
+In the Subject & Session Identification section, select the subject and session labeling option to use. The importer
+needs to know how to map the IVIS data to the XNAT data model.
+
+For the Subject Labeling option, selecting the 'Multi-Subject Image Session' option will store the session in a projects
+'Hotel' subject. This special subject is used for storing multi-subject image sessions. You can also choose a field from
+the AnalyzedClickInfo.txt file to use as the subject label.
+
+For the Session Labeling option, you can choose a field from the AnalyzedClickInfo.txt file to use as the session label.
+The default option will use the Image Number / Click Number field from the AnalyzedClickInfo.txt file. You can also
+choose to use a field from the AnalyzedClickInfo.txt file to use as the session label.
+
+In certain cases, the user input my need to extract a substring from a field. For example, the AnalyzedClickInfo.txt file
+Comment1 field may contain a string like 'M1 Prone'. The user may want to extract the 'M1' part of the string to use as
+the subject label. The user can specify a regular expression to extract a substring from a field in the Advanced Options
+section. In the example, the user would specify a regular expression like '^(\w+)' to extract the first word from the
+Comment1 field.
+
+After selecting the project, zip file, and labeling options, click 'Begin Upload' to start the upload process. If there
+are any issues with uploading the IVIS BLI images to your project, the image sessions will be stored in the XNAT
+prearchive which can be accessed from the top menu by selecting Upload -> Go to prearchive.
 
 .. _XNAT platform: https://www.xnat.org
 .. _How To Use XNAT: https://wiki.xnat.org/documentation/how-to-use-xnat

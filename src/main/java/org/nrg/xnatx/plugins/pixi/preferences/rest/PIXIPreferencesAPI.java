@@ -71,6 +71,7 @@ public class PIXIPreferencesAPI extends AbstractXapiRestController {
         preferences.put(PIXIPreferences.UI_SHOW_HUMAN_SEARCH_FIELDS_PREFERENCE_ID  , pixiPreferences.getUiShowHumanSearchFields());
         preferences.put(PIXIPreferences.UI_SHOW_USER_READABLE_COUNTS_PREFERENCE_ID, pixiPreferences.getUiShowUserReadableCounts());
         preferences.put(PIXIPreferences.UI_SHOW_INVEON_IMPORTER_PREFERENCE_ID, pixiPreferences.getUiShowInveonImporter());
+        preferences.put(PIXIPreferences.UI_SHOW_INVEON_PCIF_OPTION_PREFERENCE_ID, pixiPreferences.getUiShowInveonPcifOption());
         preferences.put(PIXIPreferences.UI_HIDE_SITE_WIDE_COUNTS_PREFERENCE_ID, pixiPreferences.getUiHideSiteWideCounts());
         preferences.put(PIXIPreferences.DEFAULT_BLI_IMPORTER_MAPPING, pixiPreferences.getDefaultBliImporterMapping());
 
@@ -148,6 +149,10 @@ public class PIXIPreferencesAPI extends AbstractXapiRestController {
             }
             case (PIXIPreferences.UI_SHOW_INVEON_IMPORTER_PREFERENCE_ID): {
                 value = pixiPreferences.getUiShowInveonImporter();
+                break;
+            }
+            case (PIXIPreferences.UI_SHOW_INVEON_PCIF_OPTION_PREFERENCE_ID): {
+                value = pixiPreferences.getUiShowInveonPcifOption();
                 break;
             }
             case (PIXIPreferences.UI_HIDE_SITE_WIDE_COUNTS_PREFERENCE_ID): {

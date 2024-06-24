@@ -1,8 +1,8 @@
 Administration
 ==============
 
-Plugin Settings
----------------
+Site Settings
+-------------
 
 Plugin settings for the PIXI plugin or any other XNAT plugin can be modified by administrators.
 From any view, select Administer -> Plugin Settings in the menu bar.
@@ -12,17 +12,16 @@ Please see instructions below for various configuration settings.
 .. image:: ./images/plugin_settings.png
  :align: center
 
---------------------------
-Site Plugin Settings
---------------------------
-
-**Subject Settings**
+----------------
+Subject Settings
+----------------
 
 Subject settings include:
 
 - Subject Display Preferences
 - Species
 - Animal Vendors / Suppliers
+- Animal Endpoints
 
 Select Subject settings under PIXI in the Plugin Setting column of the display.
 
@@ -53,7 +52,15 @@ The administrator can enter a known list of suppliers in this preference setting
 XNAT will provide these as menu items at the point of data entry to support consistent terminology.
 As with species, a user will be able to enter a different value, but that value will not be automatically added to this list.
 
-**PDX and Cell Line Preferences**
+*Animal Endpoints:*
+Data entry forms include animal endpoint selections. The PIXI plugin supports an ontology of defined terms for endpoints
+that will appear in menu items for user selection. The administrator can create, update and delete terms through this
+setting.  Users will be able to user other terms for endpoints when entering data, but these terms are not automatically
+added to the ontology.
+
+-----------------------------
+PDX and Cell Line Preferences
+-----------------------------
 
 Patient-Derived Xenograft (PDX) information is maintained by PIXI as a site-wide resource.
 That allows the PDX information to be entered once and reused/referenced in a single project and across multiple projects.
@@ -68,9 +75,8 @@ You can provide a web link for both types of entities to refer to documentation 
 .. image:: ./images/pdx_cell-line_administration.png
  :align: center
 
-
 ----------------------------
-Hotel splitter configuration
+Hotel Splitter Configuration
 ----------------------------
 
 The hotel image splitter is a feature of the PIXI plugin that allows you to split multi-subject DICOM images into
@@ -182,23 +188,23 @@ Before proceeding you'll need to have XNAT's Container Service running. We will 
 1. Navigate to Administer --> Plugin Settings.
 2. Under "Container Service" select the "Images & Commands" tab.
 3. Click "New Image".
-4. For the image name enter "xnat/pixi_pydicom_split".
+4. For the image name enter "xnat/mice-image-splitter".
 5. For the version enter ":latest". For specific version tags checkout out
-   `Docker Hub <https://hub.docker.com/r/xnat/pixi_pydicom_split/tags>`_.
+   `Docker Hub <https://hub.docker.com/r/xnat/mice-image-splitter/tags>`_.
 6. Click "Pull Image".
 7. Navigate to the "Command Configurations" tab.
-8. Enable the two xnat/pixi_pydicom_split commands.
+8. Enable the xnat/mice-image-splitter commands.
 
-The two container commands also need to be enabled at the project level by a project owner or a site admin.
+The container commands also need to be enabled at the project level by a project owner or a site admin.
 
 1. Navigate to a project and click the "Project Settings" link in the Actions box.
 2. Click the "Configure Commands" tab.
-3. Click the "Enable" toggle on the two xnat/pixi_pydicom_split commands.
+3. Click the "Enable" toggle on all of the xnat/mice-image-splitter commands.
 
 *Setting up Hotels*
 
 The 'hotel' splitting is based on the `DICOM Subject Relative Position in Image <https://dicom.nema.org/medical/dicom/current/output/html/part03.html#sect_C.7.1.4.1.1.1>`_
-tag. PIXI includes hotel configurations for 2, 3 and 4 subjects. If you need to add a hotel with a different
+tag. PIXI includes some common hotel configurations. If you need to add a hotel with a different
 configuration you can do so by following the steps below.
 
 1. Navigate to Administer --> Plugin Settings.
@@ -209,11 +215,20 @@ configuration you can do so by following the steps below.
    Note that Z is always set to 1, splitting is currently only done in the X and Y dimensions.
 6. Click "Save".
 
-----------------
+---------------
+Image Importers
+---------------
+
+The Inveon image importer is a feature of the PIXI plugin that allows you to import native Inveon PET/CT images into
+XNAT. To use the Inveon image importer, click the enable toggle and then click "Save" to save the changes. The Inveon
+image importer will be available in the Upload navigation menu when enabled.
+
 Project Settings
 ----------------
 
-*Subject Settings*
+----------------
+Subject Settings
+----------------
 
 **Subject Display Preferences**
 The subject display preferences can be set at the project level to override the site-wide preferences. This allows
@@ -222,7 +237,10 @@ set the subject display preferences for a project, navigate to the project and c
 Actions box. Select the "Subject Settings" tab and select the desired subject display preferences (xnat:demographicData
 or pixi:animalDemographicData) from the "Subject Display Preferences" dropdown. Click "Save" to save the changes.
 
-*Image Acquisition Contexts*
+--------------------------
+Image Acquisition Contexts
+--------------------------
+
 The image acquisition context preferences are set at the project level and are used to help populate commonly repeated
 fields for fasting, anesthesia, and heating conditions in the hotel scan record form.
 
@@ -230,4 +248,3 @@ To create a fasting, anesthesia, or heating conditions template for a project, n
 "Project Settings" link in the Actions box. Select the "Subject Settings" tab and click the "Add" button for each
 context type. Add a name for the template, and then add the values that will be populated in the hotel scan record form.
 Click "Save" to save the changes.
-

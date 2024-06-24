@@ -3,12 +3,12 @@
  */
 plugins {
     id "java"
-    id "org.nrg.xnat.build.xnat-data-builder" version "1.8.9"
+    id "org.nrg.xnat.build.xnat-data-builder" version "1.8.10"
     id "io.freefair.lombok" version "6.0.0-m2"
 }
 
 group "org.nrg.xnatx.plugins"
-version "1.2.0"
+version "1.3.0-rc.1"
 description "PIXI Plugin for XNAT."
 
 repositories {
@@ -26,7 +26,7 @@ configurations {
 }
 
 dependencies {
-    xnatProvided platform("org.nrg:parent:1.8.9")
+    xnatProvided platform("org.nrg:parent:1.8.10")
     xnatProvided "org.nrg:framework"
     xnatProvided "org.nrg.xnat:xnat-data-models"
     xnatProvided "org.nrg.xnat:web"
