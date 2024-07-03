@@ -265,8 +265,9 @@ public class InveonImageRepresentationFactory {
         if (key.equals("scan_time")) {
             try {
                 // Example: scan_time Thu Dec 14 11:32:21 2023
+                // Example: scan_time Thu Dec 4 11:32:21 2023
                 String rawDate = tokens[2] + " " + tokens[3] + " " + tokens[5];
-                LocalDate xx = LocalDate.parse(rawDate, DateTimeFormatter.ofPattern("MMM dd yyyy"));
+                LocalDate xx = LocalDate.parse(rawDate, DateTimeFormatter.ofPattern("MMM d yyyy"));
                 String formattedDate = xx.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
                 String formattedTime = tokens[4].replaceAll(":", "");
                 String formatedDateTime = formattedDate + " " + formattedTime;
