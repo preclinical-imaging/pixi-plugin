@@ -1,6 +1,7 @@
 package org.nrg.xnatx.plugins.pixi.inveon.sessionBuilder;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.nrg.xdat.bean.*;
 import org.nrg.xnatx.plugins.pixi.inveon.factories.InveonImageRepresentationFactory;
 import org.nrg.xnatx.plugins.pixi.inveon.models.InveonImageRepresentation;
@@ -199,13 +200,33 @@ public class InveonScanBuilder implements Callable<XnatImagescandataBean> {
         XnatCtscandataBean scandataBean = new XnatCtscandataBean();
 
         // TODO Review and add other parameters
-        scandataBean.setParameters_exposuretime(inveonImageRepresentation.getHeaderValue("ct_exposure_time"));
-        scandataBean.setParameters_kvp(inveonImageRepresentation.getHeaderValue("ct_xray_voltage"));
-        scandataBean.setParameters_xraytubecurrent(inveonImageRepresentation.getHeaderValue("ct_anode_current"));
-        scandataBean.setParameters_distancesourcetodetector(inveonImageRepresentation.getHeaderValue("ct_source_to_detector"));
-        scandataBean.setParameters_voxelres_x(inveonImageRepresentation.getHeaderValue("pixel_size_x"));
-        scandataBean.setParameters_voxelres_y(inveonImageRepresentation.getHeaderValue("pixel_size_y"));
-        scandataBean.setParameters_voxelres_z(inveonImageRepresentation.getHeaderValue("pixel_size_z"));
+        if (StringUtils.isNotBlank(inveonImageRepresentation.getHeaderValue("ct_exposure_time"))) {
+            scandataBean.setParameters_exposuretime(inveonImageRepresentation.getHeaderValue("ct_exposure_time"));
+        }
+
+        if (StringUtils.isNotBlank(inveonImageRepresentation.getHeaderValue("ct_xray_voltage"))) {
+            scandataBean.setParameters_kvp(inveonImageRepresentation.getHeaderValue("ct_xray_voltage"));
+        }
+
+        if (StringUtils.isNotBlank(inveonImageRepresentation.getHeaderValue("ct_anode_current"))) {
+            scandataBean.setParameters_xraytubecurrent(inveonImageRepresentation.getHeaderValue("ct_anode_current"));
+        }
+
+        if (StringUtils.isNotBlank(inveonImageRepresentation.getHeaderValue("ct_source_to_detector"))) {
+            scandataBean.setParameters_distancesourcetodetector(inveonImageRepresentation.getHeaderValue("ct_source_to_detector"));
+        }
+
+        if (StringUtils.isNotBlank(inveonImageRepresentation.getHeaderValue("pixel_size_x"))) {
+            scandataBean.setParameters_voxelres_x(inveonImageRepresentation.getHeaderValue("pixel_size_x"));
+        }
+
+        if (StringUtils.isNotBlank(inveonImageRepresentation.getHeaderValue("pixel_size_y"))) {
+            scandataBean.setParameters_voxelres_y(inveonImageRepresentation.getHeaderValue("pixel_size_y"));
+        }
+
+        if (StringUtils.isNotBlank(inveonImageRepresentation.getHeaderValue("pixel_size_z"))) {
+            scandataBean.setParameters_voxelres_z(inveonImageRepresentation.getHeaderValue("pixel_size_z"));
+        }
 
         return scandataBean;
     }

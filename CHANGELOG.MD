@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- [PIXI-140]: Fix issue with empty strings and date parsing with Inveon image imports.
+
 ## [1.3.0] - 2024-06-24
 
 ### Added
@@ -100,3 +102,4 @@ plugins directory and restart XNAT.
 [PIXI-137]: https://radiologics.atlassian.net/browse/PIXI-137
 [PIXI-138]: https://radiologics.atlassian.net/browse/PIXI-138
 [PIXI-139]: https://radiologics.atlassian.net/browse/PIXI-139
+[PIXI-140]: https://radiologics.atlassian.net/browse/PIXI-140
