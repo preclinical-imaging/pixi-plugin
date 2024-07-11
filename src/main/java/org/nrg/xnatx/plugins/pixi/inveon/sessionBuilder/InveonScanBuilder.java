@@ -41,6 +41,16 @@ public class InveonScanBuilder implements Callable<XnatImagescandataBean> {
 
         //String id = scanDir.getFileName().toString();
         String id = scanDir.getParent().getFileName().toString();
+
+        // Need to replace any special characters in the ID
+        id = id.replaceAll("[^a-zA-Z0-9]", "_");
+
+        int maxIdLength = 63; // Arbitrary but reasonable length
+
+        if (id.length() > maxIdLength) {
+            id = id.substring(0, maxIdLength);
+        }
+
         log.debug("Scan ID {}", id);
 
         imagescandataBean.setId(id);
