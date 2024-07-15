@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
 - [PIXI-140]: Fix issue with empty strings and date parsing with Inveon image imports.
+- [PIXI-144]: Session and scan time were not being populated when building Inveon PET/CT sessions.
 
 ## [1.3.0] - 2024-06-24
 
@@ -103,3 +106,4 @@ plugins directory and restart XNAT.
 [PIXI-138]: https://radiologics.atlassian.net/browse/PIXI-138
 [PIXI-139]: https://radiologics.atlassian.net/browse/PIXI-139
 [PIXI-140]: https://radiologics.atlassian.net/browse/PIXI-140
+[PIXI-144]: https://radiologics.atlassian.net/browse/PIXI-144

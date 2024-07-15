@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -135,7 +136,9 @@ public class InveonScanBuilder implements Callable<XnatImagescandataBean> {
         scandataBean.setScanner_model(mapModel(map.get("model")));
 
         scandataBean.setFrames(Optional.ofNullable(map.get("total_frames")).orElse(""));
-        scandataBean.setStartDate(factory.transformScanDate(inveonImageRepresentation));
+        Date scanDateTime = factory.transformScanDate(inveonImageRepresentation);
+        scandataBean.setStartDate(scanDateTime);
+        scandataBean.setStarttime(scanDateTime);
         scandataBean.setOperator(Optional.ofNullable(map.get("operator")).orElse(""));
         scandataBean.setType(Optional.ofNullable(map.get("ACQUISITION_MODE_TEXT")).orElse(""));
         log.debug("Scan Data Bean type {}", scandataBean.getType());
