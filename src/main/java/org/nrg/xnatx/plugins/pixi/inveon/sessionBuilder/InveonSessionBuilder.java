@@ -108,6 +108,15 @@ public class InveonSessionBuilder extends SessionBuilder {
 
         sessionDate.ifPresent(sessionBean::setDate);
 
+        Optional<Date> sessionTime = sessionBean.getScans_scan().stream()
+                .map(XnatImagescandataI::getStarttime)
+                .map(d -> (Date) d)
+                .distinct()
+                .sorted()
+                .findFirst();
+
+        sessionTime.ifPresent(sessionBean::setTime);
+
         return sessionBean;
     }
 
