@@ -8,7 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nullable;
 import javax.persistence.Entity;
-import javax.validation.constraints.NotBlank;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 @Entity
 @Data
