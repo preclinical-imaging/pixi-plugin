@@ -125,7 +125,7 @@
     <DisplayField id="TEMPERATURESENSORDEVICECOMPONENT" header="Temperature Sensor Device Component" visible="true" searchable="true">
         <DisplayFieldElement name="Field1" schema-element="pixi:imageAcquisitionContextAssessorData/imageAcquisitionContext/heatingConditions[0]/heatingConditions/temperatureSensorDeviceComponent"/>
     </DisplayField>
-    <DisplayField id="SETPOINTEMPERATURE" header="Setpoint Temperature" visible="true" searchable="true">
+    <DisplayField id="SETPOINTTEMPERATURE" header="Setpoint Temperature" visible="true" searchable="true">
         <DisplayFieldElement name="Field1" schema-element="pixi:imageAcquisitionContextAssessorData/imageAcquisitionContext/heatingConditions[0]/heatingConditions/setpointTemperature"/>
     </DisplayField>
 
