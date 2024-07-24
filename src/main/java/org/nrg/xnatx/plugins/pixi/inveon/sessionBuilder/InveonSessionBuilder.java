@@ -98,23 +98,25 @@ public class InveonSessionBuilder extends SessionBuilder {
         sessionBean.setSubjectId(subject);
         sessionBean.setLabel(label);
 
-        // Set session date to earliest scan date
-        Optional<Date> sessionDate = sessionBean.getScans_scan().stream()
-                .map(XnatImagescandataI::getStartDate)
-                .map(d -> (Date) d)
-                .distinct()
-                .sorted()
-                .findFirst();
+        String modality = hasPET ? "PET" : "CT";
 
-        sessionDate.ifPresent(sessionBean::setDate);
+        Optional<Date> sessionDate = sessionBean.getScans_scan().stream()
+                                                .filter(s -> s.getModality().equalsIgnoreCase(modality))
+                                                .map(XnatImagescandataI::getStartDate)
+                                                .map(d -> (Date) d)
+                                                .distinct()
+                                                .sorted()
+                                                .findFirst();
 
         Optional<Date> sessionTime = sessionBean.getScans_scan().stream()
-                .map(XnatImagescandataI::getStarttime)
-                .map(d -> (Date) d)
-                .distinct()
-                .sorted()
-                .findFirst();
+                                                .filter(s -> s.getModality().equalsIgnoreCase(modality))
+                                                .map(XnatImagescandataI::getStarttime)
+                                                .map(d -> (Date) d)
+                                                .distinct()
+                                                .sorted()
+                                                .findFirst();
 
+        sessionDate.ifPresent(sessionBean::setDate);
         sessionTime.ifPresent(sessionBean::setTime);
 
         return sessionBean;
