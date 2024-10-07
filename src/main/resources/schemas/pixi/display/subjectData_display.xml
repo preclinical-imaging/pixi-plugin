@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ xnat-data-models: /Users/rherrick/Development/XNAT/1.7/plugins/xnat-data-models/src/main/resources/schemas/xnat/display/subjectData_display.xml
+  ~ xnat-data-models: src/main/resources/schemas/pixi/display/subjectData_display.xml
   ~ XNAT http://www.xnat.org
   ~ Copyright (c) 2017, Washington University School of Medicine
   ~ All Rights Reserved
