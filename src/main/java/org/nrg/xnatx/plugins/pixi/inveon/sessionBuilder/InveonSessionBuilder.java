@@ -9,6 +9,7 @@ import org.nrg.xnat.helpers.prearchive.PrearcUtils;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -134,12 +135,49 @@ public class InveonSessionBuilder extends SessionBuilder {
                 // into the Scan Data Bean note. This is terrible and should be repaired.
                 // TODO Repair using the Note field in the PET Scan Data Bean as a temp store for tracer info
                 log.debug("When building session, PET note {}", petscandataBean.getNote());
-                // TODO Review and add more metadata
                 String[] tokens = petscandataBean.getNote().split("\t");
                 sessionBean.setTracer_name(tokens[0]);
                 sessionBean.setTracer_isotope(tokens[1]);
                 sessionBean.setTracer_isotope_halfLife(tokens[2]);
+
+                try {
+                    Date timestamp = convertTimestamp(tokens[3]);
+
+                    if (timestamp != null) {
+                        sessionBean.setTracer_starttime(timestamp);
+                    } else {
+                        log.error("Error parsing tracer start time: {}", tokens[3]);
+                    }
+                } catch (Exception e) {
+                    log.error("Error parsing tracer start time: {}", tokens[3], e);
+                }
+
+                sessionBean.setTracer_dose(tokens[4]);
+
+                try {
+                    sessionBean.setTracer_dose_units(convertDoseUnits(tokens[5]));
+                } catch (Exception e) {
+                    log.error("Error parsing tracer dose units: {}", tokens[5], e);
+                }
+
+                // Clear the note field hack
                 petscandataBean.setNote("");
+
+                if (petscandataBean.getScanner_model() != null) {
+                    sessionBean.setScanner_model(petscandataBean.getScanner_model());
+                }
+
+                if (petscandataBean.getScanner_manufacturer() != null) {
+                    sessionBean.setScanner_manufacturer(petscandataBean.getScanner_manufacturer());
+                }
+
+                if (petscandataBean.getOperator() != null) {
+                    sessionBean.setOperator(petscandataBean.getOperator());
+                }
+
+                if (petscandataBean.getStarttime() != null) {
+                    sessionBean.setStartTime((Date) petscandataBean.getStarttime());
+                }
             }
         }
 
@@ -158,6 +196,42 @@ public class InveonSessionBuilder extends SessionBuilder {
         }
 
         return sessionBean;
+    }
+
+    /**
+     * Input format is  "Sun Sep 16 01:03:52 1973"
+     * @param inveonTimestamp
+     * @return
+     */
+    private Date convertTimestamp(String inveonTimestamp) {
+        // Convert from "Sun Sep 16 01:03:52 1973" format to a Date object
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
+        Date date = null;
+        try {
+            date = sdf.parse(inveonTimestamp);
+        } catch (Exception e) {
+            log.error("Error parsing timestamp: {}", inveonTimestamp, e);
+        }
+        return date;
+    }
+
+    /** Convert Inveon Dose Map units to mCi and Bq
+     * # Dose units (integer)
+     * #   0 - Unknown dose units
+     * #   1 - mCi
+     * #   2 - MBq
+     * @param inveonDoseUnits - "0" or "1" or "2"
+     * @return "MBq" or "mCi"
+     */
+    private String convertDoseUnits(String inveonDoseUnits) {
+        switch (inveonDoseUnits) {
+            case "1":
+                return "mCi";
+            case "2":
+                return "MBq";
+            default:
+                return "Unknown";
+        }
     }
 
 }

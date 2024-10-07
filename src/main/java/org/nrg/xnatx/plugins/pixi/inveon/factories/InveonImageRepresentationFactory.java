@@ -284,6 +284,9 @@ public class InveonImageRepresentationFactory {
         } else if (key.equals("injected_compound")) {
             String value = line.substring(keyLength + 1);
             inveonImageRepresentation.putHeaderValue(key, value);
+        } else if (key.equals("injection_time")) {
+            String value = line.substring(keyLength + 1);
+            inveonImageRepresentation.putHeaderValue(key, value);
         }
     }
 }

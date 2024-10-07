@@ -199,13 +199,16 @@ public class InveonScanBuilder implements Callable<XnatImagescandataBean> {
         String injectedCompound = Optional.ofNullable(map.get("injected_compound")).orElse("");
         String isotopeName      = Optional.ofNullable(map.get("isotope")).orElse("");
         String isotopeHalfLife  = Optional.ofNullable(map.get("isotope_half_life")).orElse("");
+        String injectionTime    = Optional.ofNullable(map.get("injection_time")).orElse("");
+        String dose             = Optional.ofNullable(map.get("dose")).orElse("");
+        String doseUnits        = Optional.ofNullable(map.get("dose_units")).orElse("");
         String delimiter = "\t";
         log.debug("Injected compound {} ", injectedCompound);
 
         //TODO Fix this
-        scandataBean.setNote(injectedCompound + delimiter + isotopeName + delimiter + isotopeHalfLife);
+        scandataBean.setNote(injectedCompound + delimiter + isotopeName + delimiter + isotopeHalfLife + delimiter +
+                injectionTime + delimiter + dose + delimiter + doseUnits);
         //scandataBean.setParameters_recontype(inveonImageRepresentation.getHeaderValue("RECON_ALGORITHM_TEXT"));
-
         return scandataBean;
     }
 

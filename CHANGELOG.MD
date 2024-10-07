@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [PIXI-140]: Fix issue with empty strings and date parsing with Inveon image imports.
 - [PIXI-144]: Session and scan time were not being populated when building Inveon PET/CT sessions.
 - [PIXI-145]: Setpoint Temperature id misspelled in display xml and throws DisplayFieldNotFoundException in logs.
+- [PIXI-151]: Inveon session builder was not extracting the doseage and injection time into the database.
 
 ### Changed
 
@@ -114,3 +115,4 @@ plugins directory and restart XNAT.
 [PIXI-144]: https://radiologics.atlassian.net/browse/PIXI-144
 [PIXI-145]: https://radiologics.atlassian.net/browse/PIXI-145
 [PIXI-150]: https://radiologics.atlassian.net/browse/PIXI-150
+[PIXI-151]: https://radiologics.atlassian.net/browse/PIXI-151
