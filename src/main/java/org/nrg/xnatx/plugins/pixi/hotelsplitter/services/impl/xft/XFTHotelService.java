@@ -170,8 +170,8 @@ public class XFTHotelService implements HotelService {
         // Hotels must have two positions
         List<PixiHotelpositionI> hotelPositions = hotel.getPositions_position();
 
-        if (hotelPositions.size() < 2) {
-            e.addInvalidField("positions - hotels must have at least two hotel positions.");
+        if (hotelPositions.size() < 1) {
+            e.addInvalidField("positions - hotels must have at one position.");
             isValid = false;
         }
 

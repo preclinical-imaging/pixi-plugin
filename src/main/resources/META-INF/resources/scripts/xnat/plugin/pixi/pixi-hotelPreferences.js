@@ -247,8 +247,8 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
 
                     console.debug("pixi-hotelPreferences.js - Hotel position deleted.")
                 },
-                title: hotel['positions'].length <= 2 ? "Cannot delete, hotel's must contain at least two positions." : "Delete" ,
-                disabled: hotel['positions'].length <= 2,
+                title: hotel['positions'].length === 0 ? "Cannot delete, hotel's must contain at least one positions." : "Delete" ,
+                disabled: hotel['positions'].length === 0,
             }, [ spawn('i.fa.fa-trash') ]);
         }
 
@@ -357,9 +357,9 @@ XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
                             }
                         })
 
-                        // Hotels must have two hotel positions, otherwise it wouldn't be a hotel.
-                        if (hotel['positions'].length <=1) {
-                            errorMessages.push('Hotels must have at least two animal positions.');
+                        // Hotels must have at least one position
+                        if (hotel['positions'].length === 0) {
+                            errorMessages.push('Hotels must have at least one position.');
                         }
 
                         if (errorMessages.length) {
