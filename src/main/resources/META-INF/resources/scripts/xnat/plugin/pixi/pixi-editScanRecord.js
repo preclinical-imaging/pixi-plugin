@@ -393,6 +393,27 @@ console.log('pixi-editScanRecord.js');
 
     };
 
+    XNAT.plugin.pixi.getSessionTime = async function(project, sessionId) {
+        let sessionTime;
+        const response = await fetch(XNAT.url.rootUrl(`/data/projects/${project}/experiments/${sessionId}?format=json`),
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        )
+
+        if (response.ok) {
+            const data = await response.json();
+            sessionTime = data["items"][0]["data_fields"]["time"];
+        } else {
+            console.error(`Error fetching session time for session ${sessionId}`);
+        }
+
+        return sessionTime;
+    }
+
     XNAT.plugin.pixi.toggleSessionSource = function(source){
         // toggle the source of the image session -- either already in the project, or awaiting import
         $('.session-source').each(function(){

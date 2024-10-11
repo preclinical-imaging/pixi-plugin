@@ -114,6 +114,10 @@
                 <th class="left">Image Session Date</th>
                 <td>$!item.getProperty("date")</td>
             </tr>
+            <tr>
+                <th class="left">Image Session Time</th>
+                <td id="session-time"></td>
+            </tr>
         #else
             <tr><td>No Hotel Session Found</td></tr>
         #end
@@ -252,4 +256,14 @@
     // XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
 
     if ('$status.toString()' === 'Waiting for Session') XNAT.plugin.pixi.checkSession(null,'${sessionId}','$om.getLabel()');
+
+    // Display the scan time
+    async function displayScanTime() {
+        let sessionTime = await XNAT.plugin.pixi.getSessionTime('${project}','${sessionId}');
+        if (sessionTime) {
+            jq('#session-time').text(sessionTime);
+        }
+    }
+
+    displayScanTime()
 </script>

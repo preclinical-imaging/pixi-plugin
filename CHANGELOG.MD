@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [PIXI-153]: Add scan time to the hotel scan record form.
+
 ### Fixed
 
 - [PIXI-140]: Fix issue with empty strings and date parsing with Inveon image imports.
@@ -118,3 +122,4 @@ plugins directory and restart XNAT.
 [PIXI-150]: https://radiologics.atlassian.net/browse/PIXI-150
 [PIXI-151]: https://radiologics.atlassian.net/browse/PIXI-151
 [PIXI-152]: https://radiologics.atlassian.net/browse/PIXI-152
+[PIXI-153]: https://radiologics.atlassian.net/browse/PIXI-153
