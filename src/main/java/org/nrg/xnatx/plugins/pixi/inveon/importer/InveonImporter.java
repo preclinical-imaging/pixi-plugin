@@ -703,7 +703,6 @@ public class InveonImporter extends ImporterHandlerA {
 
             case "pcif":
                 // Special case for internal WUSTL PCIF lab
-                // First 9 characters of filename
                 sessionLabel = inveonImageRepresentation.getPixelFileName();
 
                 if (StringUtils.isBlank(sessionLabel)) {
@@ -713,7 +712,21 @@ public class InveonImporter extends ImporterHandlerA {
                 if (StringUtils.isBlank(sessionLabel)) {
                     sessionLabel = UNKNOWN_SESSION_LABEL;
                 } else {
-                    if (sessionLabel.length() > 9) {
+                    // File name: mpet5013c_ct1_v1.ct.img -> Session label: mpet5013c_1
+                    // File name: mpet5013c_em1_v1.pet.img -> Session label: mpet5013c_1
+                    // File name: mpet5013c_ct2_v1.ct.img -> Session label: mpet5013c_2
+                    // File name: mpet5013c_em2_v1.pet.img -> Session label: mpet5013c_2
+                    // The 1 or 2 is the timepoint
+
+                    String regex = "(.*)_(ct|em)(\\d+)_v(\\d+).(.*)";
+                    Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+                    Matcher matcher = pattern.matcher(sessionLabel);
+
+                    if (matcher.matches() && matcher.groupCount() >= 3) {
+                        String prefix = matcher.group(1);
+                        String timepoint = matcher.group(3);
+                        sessionLabel = prefix + "_" + timepoint;
+                    } else if (sessionLabel.length() > 9) {
                         sessionLabel = sessionLabel.substring(0, 9);
                     }
                 }

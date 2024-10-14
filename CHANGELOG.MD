@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [PIXI-150]: Update display XML listings for PET and CT to make them more user-friendly.
 - [PIXI-152]: Allow for single mouses/rat hotels in the hotel scan record form.
+- [PIXI-154]: Update PCIF naming scheme in the Inveon importer to include the timepoint as part of the XNAT session name
 
 ## [1.3.0] - 2024-06-24
 
@@ -123,3 +124,4 @@ plugins directory and restart XNAT.
 [PIXI-151]: https://radiologics.atlassian.net/browse/PIXI-151
 [PIXI-152]: https://radiologics.atlassian.net/browse/PIXI-152
 [PIXI-153]: https://radiologics.atlassian.net/browse/PIXI-153
+[PIXI-154]: https://radiologics.atlassian.net/browse/PIXI-154
