@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- [PIXI-147]: Change validation logic in hotel scan record to prevent user from accidentally creating a scan record when
+              the subject ID is not set.
 - [PIXI-150]: Update display XML listings for PET and CT to make them more user-friendly.
 - [PIXI-152]: Allow for single mouses/rat hotels in the hotel scan record form.
 - [PIXI-154]: Update PCIF naming scheme in the Inveon importer to include the timepoint as part of the XNAT session name
@@ -120,6 +122,7 @@ plugins directory and restart XNAT.
 [PIXI-140]: https://radiologics.atlassian.net/browse/PIXI-140
 [PIXI-144]: https://radiologics.atlassian.net/browse/PIXI-144
 [PIXI-145]: https://radiologics.atlassian.net/browse/PIXI-145
+[PIXI-147]: https://radiologics.atlassian.net/browse/PIXI-147
 [PIXI-150]: https://radiologics.atlassian.net/browse/PIXI-150
 [PIXI-151]: https://radiologics.atlassian.net/browse/PIXI-151
 [PIXI-152]: https://radiologics.atlassian.net/browse/PIXI-152

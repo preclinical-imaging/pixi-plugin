@@ -909,9 +909,107 @@
 <script type="text/javascript">
 	function validateForm()
 	{
-		//INSERT CUSTOM CONTENT HERE
+		let validation = validate();
+
+        if (!validation) {
+            return false;
+        }
 
 		validateExperimentForm();
 		return false;
 	}
+
+    // Check if a value is blank
+    const isBlank = (value) => {
+        // Check if the value is undefined or null
+        if (value === undefined || value === null) {
+            return true;
+        }
+
+        // Convert the value to a string and trim whitespace
+        const trimmedValue = String(value).trim();
+
+        // Check if the trimmed string is empty
+        return trimmedValue === '';
+    }
+
+    function validate() {
+        // Check if the hotel selector is empty
+        const hotelSelector = document.getElementById('pixi:hotelScanRecord/hotel');
+        if (hotelSelector.value === 'Select Hotel Type') {
+            XNAT.dialog.open({
+                title: 'Error',
+                content: 'Please select a hotel type.',
+                buttons: [
+                    {
+                        label: 'Close',
+                        isDefault: true,
+                        close: true,
+                        action: function(){
+                            XNAT.ui.dialog.closeAll();
+                            xmodal.closeAll();
+                        }
+                    },
+                ]
+            });
+
+            return false;
+        }
+
+        // Collect list of invalid hotel positions
+        // If a subject is not selected, the inputs should be empty
+        let invalidPositions = [];
+        document.querySelectorAll('.subject-selector').forEach((subjectSelector) => {
+            // Navigate upward to the hotel-unit div
+            const hotelUnit = subjectSelector.closest('.hotel-unit');
+
+            // Get the name of the hotel position
+            const position = hotelUnit.querySelector('[name*="position"]').value;
+
+            // Select the main inputs for a subject
+            const inputs = Array.from(hotelUnit.querySelectorAll('select[name*="orientation"], input[name*="weight"], input[name*="injection_time"], input[name*="activity"]'));
+
+            // If an input is non-empty, but the subject selector is empty, warn the user
+            if (isBlank(subjectSelector.value)) {
+                inputs.forEach(input => {
+                    if (!isBlank(input.value)) {
+                        // only add the position to the list once
+                        if (!invalidPositions.includes(position)) {
+                            invalidPositions.push(position);
+                        }
+                    }
+                });
+            }
+        });
+
+        // If there are invalid positions, warn the user
+        if (invalidPositions.length > 0) {
+            XNAT.dialog.open({
+                title: 'Error',
+                content: `You have entered data for a subjects in the <b>${invalidPositions.join(', ')}</b> position(s), but have not selected a subject. Please select a subject for each position or clear the data.`,
+                buttons: [
+                    {
+                        label: 'Close',
+                        isDefault: true,
+                        close: true,
+                        action: function(){
+                            XNAT.ui.dialog.closeAll();
+                            xmodal.closeAll();
+                        }
+                    },
+                ]
+            });
+
+            return false;
+        }
+
+        // Clear blank values from the form before submission
+        document.querySelector('#hotel-units')?.querySelectorAll('input, select').forEach((el) => {
+            if (isBlank(el.value)) {
+                el.value = '';
+            }
+        });
+
+        return true;
+    }
 </script>
