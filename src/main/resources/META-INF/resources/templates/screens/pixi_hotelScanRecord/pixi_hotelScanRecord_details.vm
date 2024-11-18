@@ -124,6 +124,7 @@
     </table>
     <br class="clear">
     <h3>Hotel Type: $!item.getProperty("hotel")</h3>
+    <h3>Technician Perspective: $!item.getProperty("technician_perspective")</h3>
 </div>
 
 #set($hotelSubjects = $!item.getChildItems("hotel_subjects/subject").size())

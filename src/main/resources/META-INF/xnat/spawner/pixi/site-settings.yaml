@@ -145,7 +145,7 @@ hotelPanel:
     hotelDescription:
       tag: div.message
       contents:
-        "This panel lists all of the 'mouse hotels' which can be used with the hotel image session splitter. They describe the relative position of a subject in the image pixel data. These hotels capture DICOMs 'Subject Relative Position in Image' attribute."
+        "This panel lists all of the 'mouse hotels' which can be used with the hotel image session splitter. They describe the relative position of a subject in the image pixel data. These hotels capture DICOMs 'Subject Relative Position in Image' attribute. When facing the front of the machine the first value (X) starts at one for the left most subject holder and monotonically increases by one for each successive subject holder towards the right, and the second value (Y) starts at one for the top most subject holder and monotonically increases by one for each successively lower subject holder."
     hotelContainer:
       tag: "div#hotel-preferences-manager"
     hotelPreferencesJs:

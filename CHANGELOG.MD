@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - [PIXI-153]: Add scan time to the hotel scan record form.
+- [PIXI-155]: Adds a technician perspective field to the hotel scan record form as some scanners are viewed/labeled
+              based on the technician viewing from the back of the scanner. The hotel splitter will use this field to
+              determine the correct orientation when splitting the hotel session into individual image sessions.
 
 ### Fixed
 
@@ -128,3 +131,4 @@ plugins directory and restart XNAT.
 [PIXI-152]: https://radiologics.atlassian.net/browse/PIXI-152
 [PIXI-153]: https://radiologics.atlassian.net/browse/PIXI-153
 [PIXI-154]: https://radiologics.atlassian.net/browse/PIXI-154
+[PIXI-155]: https://radiologics.atlassian.net/browse/PIXI-155

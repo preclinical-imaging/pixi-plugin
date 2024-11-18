@@ -681,6 +681,22 @@
                             </xs:appinfo>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="technician_perspective" type="xs:string" minOccurs="0">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <xs:documentation>Typically, the hotel positions are labeled based on the technician looking at the gantry from the front of the scanner. Some scanners may be labeled from the back. This field allows the user to specify the perspective of the technician.</xs:documentation>
+                                <xdat:element ignoreWarnings="true"/>
+                            </xs:appinfo>
+                        </xs:annotation>
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="Front"/>
+                                <xs:enumeration value="front"/>
+                                <xs:enumeration value="Back"/>
+                                <xs:enumeration value="back"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
                     <xs:element name="hotel_subjects">
                         <xs:complexType>
                             <xs:sequence>
