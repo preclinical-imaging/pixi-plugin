@@ -180,6 +180,7 @@ public class PixiHotelScanRecordAPI extends AbstractExperimentXapiRestController
 
        return HotelScanRecordDTO.builder()
                 .projectID(hotelScanRecord.getProject())
+                .technicianPerspective(hotelScanRecord.getTechnicianPerspective())
                 .hotelSessionID(hotelScanRecord.getSessionLabel())
                 .hotelSubjects(hotelSubjectDTOs)
                 .build();

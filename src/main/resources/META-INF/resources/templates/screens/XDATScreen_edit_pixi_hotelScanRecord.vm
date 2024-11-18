@@ -347,6 +347,11 @@
         </script>
     #end
 
+    <div class="message">
+        Select a hotel based on the required number of hotel units (e.g., a 4-bed hotel may be used when scanning 3 subjects). The hotel positions are typically labeled based on the technician looking at the gantry from the front of the scanner but some scanners are viewed from the back. Select the appropriate perspective.
+    </div>
+
+    <br>
 
     <h3>Define Hotel Session Record</h3>
     #if(!$om.getId())
@@ -364,6 +369,19 @@
         <p><strong>Hotel Type:</strong> $item.getStringProperty("pixi:hotelScanRecord/hotel")</p>
         #xdatHiddenBox("pixi:hotelScanRecord/hotel" $item "")
     #end
+
+    <br>
+    <h3>Technician Perspective</h3>
+    <div class="panel-element">
+        <div class="element-wrapper">
+            <label>
+                <select class="technician-perspective" name="pixi:hotelScanRecord/technician_perspective" id="pixi:hotelScanRecord/technician_perspective">
+                    <option value="Front" #if($item.getProperty("pixi:hotelScanRecord/technician_perspective") == "Front") selected #end>Front</option>
+                    <option value="Back" #if($item.getProperty("pixi:hotelScanRecord/technician_perspective") == "Back") selected #end>Back</option>
+                </select>
+            </label>
+        </div>
+    </div>
 
     <style>
         .template-selector {

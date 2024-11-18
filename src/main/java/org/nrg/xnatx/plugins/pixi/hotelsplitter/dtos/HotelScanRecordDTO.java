@@ -23,7 +23,11 @@ public class HotelScanRecordDTO {
     @NotBlank
     private String hotelSessionID;
 
-    @ApiModelProperty(required = true, dataType = "java.util.Set<org.nrg.xnatx.plugins.pixi.hotelsplitter.dtos>", position = 2)
+    @ApiModelProperty(required = true, example = "Front", position = 2)
+    @NotBlank
+    private String technicianPerspective;
+
+    @ApiModelProperty(required = true, dataType = "java.util.Set<org.nrg.xnatx.plugins.pixi.hotelsplitter.dtos>", position = 3)
     @NotBlank
     private Set<HotelSubjectDTO> hotelSubjects;
 }

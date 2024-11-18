@@ -109,6 +109,9 @@
     <DisplayField id="HOTEL_NAME" header="Hotel" visible="true" searchable="true">
         <DisplayFieldElement name="Field1" schema-element="pixi:hotelScanRecord/hotel"/>
     </DisplayField>
+    <DisplayField id="TECHNICIAN_PERSPECTIVE" header="Technician Perspective" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:hotelScanRecord/technician_perspective"/>
+    </DisplayField>
     <DisplayField id="STATUS" header="Status" visible="true" searchable="true">
         <DisplayFieldElement name="Field1" schema-element="pixi:hotelScanRecord/status"/>
     </DisplayField>
