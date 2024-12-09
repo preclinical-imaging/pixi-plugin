@@ -1,9 +1,9 @@
-name: Develop
+name: Build Plugin JAR
 
 on:
   push:
     branches:
-        - develop
+        - main
 
 jobs:
   build:
