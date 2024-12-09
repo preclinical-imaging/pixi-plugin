@@ -7,7 +7,7 @@ copyright = '2024, Washington University in St. Louis'
 author = 'Kooresh Shoghi'
 
 release = '1.3'
-version = '1.3.1'
+version = '1.3.2-SNAPSHOT'
 
 # -- General configuration
 
