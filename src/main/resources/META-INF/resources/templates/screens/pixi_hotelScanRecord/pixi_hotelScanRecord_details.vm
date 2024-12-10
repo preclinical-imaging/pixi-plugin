@@ -156,6 +156,10 @@
                             <td>$!subject.getProperty("weight")</td>
                         </tr>
                         <tr>
+                            <th>Injection Date</th>
+                            <td>$!subject.getProperty("injection_date")</td>
+                        </tr>
+                        <tr>
                             <th>Injection Time</th>
                             <td>$!subject.getProperty("injection_time")</td>
                         </tr>

@@ -317,6 +317,7 @@
                         <p><strong>Image Session:</strong> <a href="$content.getURI("/data/projects/${project}/experiments/${sessionId}?format=html")" class="selected-session-label">$item.getStringProperty("session_label")</a> <i class="spacer pad5"></i> <a href="#!" onclick="changeHotelSession()"><button class="btn btn-sm">Edit</button> </a></p>
                         <p><strong>Session Date:</strong> <span class="selected-session-date">$!item.getProperty("pixi:hotelScanRecord/date")</span></p>
                         #xdatHiddenBox("pixi:hotelScanRecord/session_label" $item "")
+                        #xdatHiddenBox("pixi:hotelScanRecord/date" $item "")
                     </div>
                 </div>
             </div>
@@ -475,6 +476,20 @@
                                 #xdatTextBox("pixi:hotelScanRecord/hotel_subjects/subject[$i]/weight" $item "" $vr)
                             </div>
 
+                        </div>
+
+                        <div class="panel-element stacked">
+                            <label class="element-label" for="pixi:hotelScanRecord/hotel_subjects/subject[$i]/injection_date">
+                                Injection Date
+                            </label>
+                            <div class="element-wrapper">
+                                <input type="date"
+                                       id="pixi:hotelScanRecord/hotel_subjects/subject[$i]/injection_date"
+                                       name="pixi:hotelScanRecord/hotel_subjects/subject[$i]/injection_date"
+                                       value="$item.getProperty("pixi:hotelScanRecord/hotel_subjects/subject[$i]/injection_date")">
+                                <br>
+                                <a class="small_text" href="#!" onclick="XNAT.plugin.pixi.useSessionDateForInjectionDate(event, $i)">Use Session Date</a>
+                            </div>
                         </div>
 
                         <div class="panel-element stacked">
@@ -985,7 +1000,7 @@
             const position = hotelUnit.querySelector('[name*="position"]').value;
 
             // Select the main inputs for a subject
-            const inputs = Array.from(hotelUnit.querySelectorAll('select[name*="orientation"], input[name*="weight"], input[name*="injection_time"], input[name*="activity"]'));
+            const inputs = Array.from(hotelUnit.querySelectorAll('select[name*="orientation"], input[name*="weight"], input[name*="injection_date"], input[name*="injection_time"], input[name*="activity"]'));
 
             // If an input is non-empty, but the subject selector is empty, warn the user
             if (isBlank(subjectSelector.value)) {

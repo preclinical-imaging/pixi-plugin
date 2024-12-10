@@ -605,6 +605,11 @@
                     <xs:documentation>Subject weight (g)</xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="injection_date" type="xs:date" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Radiopharmaceutical Injection Date</xs:documentation>
+                </xs:annotation>
+            </xs:element>
             <xs:element name="injection_time" type="xs:time" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation>Radiopharmaceutical Injection Time</xs:documentation>
