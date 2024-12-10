@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Data
@@ -22,6 +23,7 @@ public class HotelSubjectDTO {
     @ApiModelProperty(required = true, example = "Top Left", position = 2) @NotBlank private HotelPositionDTO position;
     @ApiModelProperty private String orientation;
     @ApiModelProperty @Positive private Double weight;
+    @ApiModelProperty @JsonFormat(pattern = "yyyyMMdd") private LocalDate injectionDate;
     @ApiModelProperty @JsonFormat(pattern= "HHmmss") private LocalTime injectionTime; // Time is in DICOM Format
     @ApiModelProperty @Positive private Double activity;
     @ApiModelProperty private String notes;

@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- [PIXI-156]: Add injection date to the hotel scan record form. Sometimes animals are injected on a different day than 
+              the scan is performed.
+
 ## [1.3.1] - 20204-11-19
 
 ### Added
@@ -134,3 +137,4 @@ plugins directory and restart XNAT.
 [PIXI-153]: https://radiologics.atlassian.net/browse/PIXI-153
 [PIXI-154]: https://radiologics.atlassian.net/browse/PIXI-154
 [PIXI-155]: https://radiologics.atlassian.net/browse/PIXI-155
+[PIXI-156]: https://radiologics.atlassian.net/browse/PIXI-156

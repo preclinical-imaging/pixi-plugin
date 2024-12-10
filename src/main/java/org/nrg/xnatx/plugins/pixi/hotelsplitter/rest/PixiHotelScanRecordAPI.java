@@ -33,7 +33,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Map;
 import java.util.Objects;
@@ -135,6 +137,10 @@ public class PixiHotelScanRecordAPI extends AbstractExperimentXapiRestController
                                   .map(Objects::toString)
                                   .map(Double::parseDouble)
                                   .orElse(null);
+        LocalDate injectionDate = Optional.ofNullable(hotelSubject.getInjectionDate())
+                                          .map(Date.class::cast)
+                                          .map(Date::toLocalDate)
+                                          .orElse(null);
         LocalTime injectionTime = Optional.ofNullable(hotelSubject.getInjectionTime())
                                           .map(Time.class::cast)
                                           .map(Time::toLocalTime)
@@ -156,6 +162,7 @@ public class PixiHotelScanRecordAPI extends AbstractExperimentXapiRestController
                               .orientation(orientation)
                               .weight(weight)
                               .activity(activity)
+                              .injectionDate(injectionDate)
                               .injectionTime(injectionTime)
                               .notes(notes)
                               .splitSessionLabel(splitSessionLabel)

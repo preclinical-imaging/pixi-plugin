@@ -160,6 +160,21 @@ console.log('pixi-editScanRecord.js');
                     spawn('div.description', 'Specify the route of administration used for the anesthesia')
                 ])
             ]);
+
+            const injectionDateEl = spawn('div.panel-element.stacked', [
+                spawn('label.element-label|for=\'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/injection_date\'', 'Injection Date'),
+                spawn('div.element-wrapper', [
+                    spawn('input|type=\'date\'', {
+                        id: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/injection_date',
+                        name: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/injection_date',
+                    }),
+                    spawn('br'),
+                    spawn('a.small_text', {
+                        href: '#!',
+                        onclick: (e) => XNAT.plugin.pixi.useSessionDateForInjectionDate(e, i)
+                    }, 'Use Session Date')
+                ])
+            ]);
             
             const splitSessionLabelEl = XNAT.ui.panel.input({
                 className: 'stacked',
@@ -214,6 +229,7 @@ console.log('pixi-editScanRecord.js');
                             name: 'pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/weight',
                             label: 'Weight (g)'
                         }),
+                        injectionDateEl,
                         XNAT.ui.panel.input({
                             className: 'stacked',
                             type: 'time',
@@ -577,5 +593,38 @@ console.log('pixi-editScanRecord.js');
             }
         }
     };
+
+    XNAT.plugin.pixi.useSessionDateForInjectionDate = function(e, i) {
+        console.log('Using session date for injection date for hotel position', i);
+        e.preventDefault();
+
+        const sessionSource = document.querySelector('input[name="session_existence"]:checked')?.value;
+        let sessionDate = '';
+
+        if (sessionSource === 'existing') {
+            console.log('Get session date from existing image session');
+            sessionDate = document.querySelector('input[name="pixi:hotelScanRecord/date"]')?.value;
+        } else if (sessionSource === 'new') {
+            console.log('New image session, not in XNAT, using user input session date');
+            const datepickerValue = document.querySelector('#datepicker1')?.value;
+            if (datepickerValue) {
+                const [month, day, year] = datepickerValue.split('/');
+                sessionDate = `${year}-${month}-${day}`;
+            }
+        } else {
+            console.log('Existing hotel scan record, using session date from the record');
+            sessionDate = document.querySelector('span.selected-session-date')?.textContent;
+        }
+
+        if (sessionDate) {
+            console.log(`Setting injection date for hotel position ${i} to ${sessionDate}`);
+            document.querySelector('input[name="pixi:hotelScanRecord/hotel_subjects/subject[' + i + ']/injection_date"]').value = sessionDate;
+
+
+        } else {
+            console.error('Session date not found.');
+            xmodal.message("Error", "Session date not found.");
+        }
+    }
 
 }));
