@@ -60,13 +60,14 @@ XNAT.plugin.pixi.pdxs = getObject(XNAT.plugin.pixi.pdxs || {});
     }
 
     class XenograftManager {
-        constructor(xenograftType) {
+        constructor(xenograftType, urlRoot) {
             this.xenograftType = xenograftType;
+            this.urlRoot = urlRoot;
             this.data = [];
         }
 
         url(append) {
-            let url = '/xapi/pixi/' + this.xenograftType.toLowerCase().replaceAll(/\s/g,'') + '/';
+            let url = this.urlRoot
             url = append ? url + append : url;
             return restUrl(url);
         }
@@ -354,7 +355,7 @@ XNAT.plugin.pixi.pdxs = getObject(XNAT.plugin.pixi.pdxs || {});
 
     class PDXManager extends XenograftManager {
         constructor() {
-            super('Patient-Derived Tumor');
+            super('Patient-Derived Tumor', '/xapi/pixi/pdx/');
         }
 
         getSpawnerElements() {
@@ -374,7 +375,7 @@ XNAT.plugin.pixi.pdxs = getObject(XNAT.plugin.pixi.pdxs || {});
 
     class CellLineManager extends XenograftManager {
         constructor() {
-            super('Cell Line');
+            super('Cell Line', '/xapi/pixi/cellline/');
         }
 
         getSpawnerElements() {
