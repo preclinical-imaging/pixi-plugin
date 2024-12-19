@@ -71,7 +71,7 @@ $page.setVlinkColor($ui.vlink)
                                     }
                                 </style>
                                 <tr>
-                                    #formLabelRequired("PDX ID")
+                                    #formLabelRequired("Patient-Derived Tumor ID")
                                     <td>
                                         <div class="choices__select__pixi form-control" id="pixi:pdxData/sourceId-select">
                                             <select name="pixi:pdxData/sourceId" id="pixi:pdxData/sourceId" required>
@@ -89,7 +89,7 @@ $page.setVlinkColor($ui.vlink)
                                             </select>
                                         </div>
                                     </td>
-                                    <td><button id="new-pdx-button" type="button" onclick="XNAT.plugin.pixi.pdxManager.dialog({}, true, updateChoices)">New PDX</button></td>
+                                    <td><button id="new-pdx-button" type="button" onclick="XNAT.plugin.pixi.pdxManager.dialog({}, true, updateChoices)">New Patient-Derived Tumor</button></td>
                                 </tr>
                                 <tr>
                                     #formLabelRequired("Injection Date")
@@ -167,7 +167,7 @@ $page.setVlinkColor($ui.vlink)
         const injectionYearEl = document.getElementsByName("pixi:pdxData/date.year")[0]
 
         let validateSourceId = XNAT.validate(sourceIdEl).reset().chain();
-        validateSourceId.required(true).failure("PDX ID is required.")
+        validateSourceId.required(true).failure("Patient-Derived Tumor ID is required.")
 
         let validateMonth = XNAT.validate(injectionMonthEl).reset().chain();
         validateMonth.is('integer').failure("Injection Date is required.")

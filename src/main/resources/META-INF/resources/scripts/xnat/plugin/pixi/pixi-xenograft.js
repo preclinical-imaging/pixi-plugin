@@ -354,7 +354,7 @@ XNAT.plugin.pixi.pdxs = getObject(XNAT.plugin.pixi.pdxs || {});
 
     class PDXManager extends XenograftManager {
         constructor() {
-            super('PDX');
+            super('Patient-Derived Tumor');
         }
 
         getSpawnerElements() {
@@ -363,9 +363,9 @@ XNAT.plugin.pixi.pdxs = getObject(XNAT.plugin.pixi.pdxs || {});
             spawnerElements.push(
                 XNAT.ui.panel.input.text({
                 name: 'storage',
-                label: 'PDX Storage',
+                label: 'Storage',
                 id: 'storage',
-                description: 'Optional: PDX storage method.'
+                description: 'Optional: Storage method for this tumor model.'
             }).element)
 
             return spawnerElements;

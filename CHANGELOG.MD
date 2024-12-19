@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [PIXI-141]: A few internal changes to support XNAT 1.9 compatibility. The plugin is now works with XNAT 1.9.
 
+### Changed
+
+- [PIXI-157]: Rename Patient-Derived Xenografts table to Patient-Derived Tumors in the plugin settings. The table name
+              was misleading and did not reflect that we are storing tumor model data, not animal model data.
+
 ## [1.3.1] - 20204-11-19
 
 ### Added
@@ -145,3 +150,4 @@ plugins directory and restart XNAT.
 [PIXI-154]: https://radiologics.atlassian.net/browse/PIXI-154
 [PIXI-155]: https://radiologics.atlassian.net/browse/PIXI-155
 [PIXI-156]: https://radiologics.atlassian.net/browse/PIXI-156
+[PIXI-157]: https://radiologics.atlassian.net/browse/PIXI-157

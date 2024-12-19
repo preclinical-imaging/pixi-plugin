@@ -106,7 +106,7 @@ animalEndpointsPanel:
 pdxPanel:
   kind: panel
   name: pdxPanel
-  label: Patient-Derived Xenografts
+  label: Patient-Derived Tumors
   contents:
     pdxPreferencesTable:
       tag: "div#pdx-manager"
@@ -212,10 +212,10 @@ siteSettings:
         ${speciesPreferencesPanel}
         ${vendorPreferencesPanel}
         ${animalEndpointsPanel}
-    xenograftSettingsTab:
+    tumorModelSettingsTab:
       kind: tab
-      name: xenograftSettingsTab
-      label: PDXs and Cell Lines
+      name: tumorModelSettingsTab
+      label: Tumor Models
       group: pixiTabGroup
       active: true
       contents:
