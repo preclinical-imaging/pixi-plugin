@@ -113,7 +113,7 @@
             <MappingColumn schemaField="pixi:pdxData.ID" queryField="expt_id"/>
         </MappingColumns>
     </DisplayField>
-    <DisplayField id="SOURCEID" header="PDX ID" visible="true" searchable="true">
+    <DisplayField id="SOURCEID" header="Patient-Derived Tumor ID" visible="true" searchable="true">
         <DisplayFieldElement name="Field1" schema-element="pixi:pdxData/sourceId"/>
     </DisplayField>
     <DisplayField id="INJECTIONSITE" header="Injection Site" visible="true" searchable="true">

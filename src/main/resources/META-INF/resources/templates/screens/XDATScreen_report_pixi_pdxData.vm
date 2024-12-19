@@ -24,7 +24,7 @@ $page.setVlinkColor($ui.vlink)
 				<TR>
 					<TD valign="top">
 						<TABLE>
-							<TR><TD>PDX ID</TD><TD>$!item.getStringProperty("pixi:pdxData/sourceId")</TD></TR>
+							<TR><TD>Patient-Derived Tumor ID</TD><TD>$!item.getStringProperty("pixi:pdxData/sourceId")</TD></TR>
 							<TR><TD>Injection Date</TD><TD>$!item.getProperty("pixi:pdxData/date")</TD></TR>
 							<TR><TD>Injection Site</TD><TD>$!item.getStringProperty("pixi:pdxData/injectionSite")</TD></TR>
 							<TR><TD>Injection Type</TD><TD>$!item.getStringProperty("pixi:pdxData/injectionType")</TD></TR>

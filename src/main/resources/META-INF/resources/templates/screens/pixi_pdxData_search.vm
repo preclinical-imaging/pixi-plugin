@@ -24,7 +24,7 @@
             </tr>
             <tr>
                 <td>
-                    <h5>PDX ID:</h5>
+                    <h5>Patient-Derived Tumor ID:</h5>
                     #xdatSearchField($schemaElement $schemaElement.getDisplayField("SOURCEID"))
                 </td>
                 <td>

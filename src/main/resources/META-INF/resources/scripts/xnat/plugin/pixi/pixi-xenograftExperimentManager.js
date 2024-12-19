@@ -22,7 +22,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
     XNAT.plugin.pixi.pdxExperimentManager = class PdxExperimentManager extends XNAT.plugin.pixi.abstractExperimentManager {
         
         constructor() {
-            super("PIXI Patient-derived Tumor Engraftment Data Manager",
+            super("Patient-derived Tumor Engraftment Data Manager",
                   "Record and update patient-derived tumor tissue engraftments for small animal subjects within a project.",
                   "<div class='instructions action create whole'><ol>\n" +
                       "  <li>Select the project from the list of available projects in XNAT.</li>\n" +
@@ -80,7 +80,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
             let colHeaders = [
                 "Subject ID *",
                 "Experiment ID",
-                "PDX ID *",
+                "Patient-Derived Tumor ID *",
                 "Injection Date *",
                 "Injection Site",
                 "Injection Type",
@@ -90,7 +90,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
                 "Notes"
             ];
             
-            let colWidths = [150, 100, 150, 100, 150, 150, 150, 150, 115, 130];
+            let colWidths = [150, 100, 200, 100, 150, 150, 150, 150, 115, 130];
     
             const pdxs = await XNAT.plugin.pixi.pdxs.get()
                                    .then(pdxs => pdxs.sort(pixi.compareGenerator('sourceId')))
@@ -263,7 +263,7 @@ XNAT.plugin.pixi = pixi = getObject(XNAT.plugin.pixi || {});
     XNAT.plugin.pixi.cellLineExperimentManager = class CellLineExperimentManager extends XNAT.plugin.pixi.abstractExperimentManager {
         
         constructor() {
-            super("PIXI Cell Line Data Manager",
+            super("Cell Line Data Manager",
                   "Record and update cell line injections for small animal subjects within a project.",
                   "<div class='instructions action create whole'><ol>\n" +
                       "  <li>Select the project from the list of available projects in XNAT.</li>\n" +
