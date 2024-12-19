@@ -1,0 +1,23 @@
+name: Pull Request
+
+on:
+  pull_request:
+      branches:
+        - main
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build PIXI Plugin JAR
+        uses: ./.github/actions/build-plugin-jar
+        with:
+          java-version: '8'
+          gradle-version: '6.7'

@@ -1,0 +1,37 @@
+name: 'Build PIXI Plugin JAR'
+description: 'Builds the PIXI plugin JAR file'
+inputs:
+  java-version:
+    description: 'The version of Java to set up'
+    required: true
+    default: '8'
+  gradle-version:
+    description: 'The version of Gradle to set up'
+    required: true
+    default: '6.7'
+outputs:
+  jar-path:
+    description: 'The path to the built JAR file'
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ inputs.java-version }}
+        distribution: 'zulu'
+        java-package: 'jdk'
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+      with:
+        gradle-version: ${{ inputs.gradle-version }}
+
+    - name: Build JAR with Gradle Wrapper
+      shell: bash
+      run: ./gradlew clean jar
+
+    - name: Set output
+      id: set-output
+      shell: bash
+      run: echo "jar-path=build/libs/*.jar" >> $GITHUB_OUTPUT
