@@ -34,4 +34,4 @@ runs:
     - name: Set output
       id: set-output
       shell: bash
-      run: echo "jar-path=build/libs/*.jar" >> $GITHUB_OUTPUT
+      run: echo "jar-path=build/libs/*.jar" >> "$GITHUB_ENV"
