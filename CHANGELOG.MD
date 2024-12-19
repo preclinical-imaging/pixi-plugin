@@ -7,8 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
 - [PIXI-156]: Add injection date to the hotel scan record form. Sometimes animals are injected on a different day than 
               the scan is performed.
+
+### Fixed
+
+- [PIXI-141]: A few internal changes to support XNAT 1.9 compatibility. The plugin is now works with XNAT 1.9.
 
 ## [1.3.1] - 20204-11-19
 
@@ -128,6 +134,7 @@ plugins directory and restart XNAT.
 [PIXI-138]: https://radiologics.atlassian.net/browse/PIXI-138
 [PIXI-139]: https://radiologics.atlassian.net/browse/PIXI-139
 [PIXI-140]: https://radiologics.atlassian.net/browse/PIXI-140
+[PIXI-141]: https://radiologics.atlassian.net/browse/PIXI-141
 [PIXI-144]: https://radiologics.atlassian.net/browse/PIXI-144
 [PIXI-145]: https://radiologics.atlassian.net/browse/PIXI-145
 [PIXI-147]: https://radiologics.atlassian.net/browse/PIXI-147
