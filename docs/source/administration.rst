@@ -58,22 +58,13 @@ that will appear in menu items for user selection. The administrator can create,
 setting.  Users will be able to user other terms for endpoints when entering data, but these terms are not automatically
 added to the ontology.
 
------------------------------
-PDX and Cell Line Preferences
------------------------------
+-----------------------
+Tumor Model Preferences
+-----------------------
 
-Patient-Derived Xenograft (PDX) information is maintained by PIXI as a site-wide resource.
-That allows the PDX information to be entered once and reused/referenced in a single project and across multiple projects.
-You can manage the set of PDXs as an administrator.
-Cell lines are managed globally in the same way.
-
-As described above, enter the Plugin Settings page from the Administer menu.
-Select *PDXs and Cell Lines* under Plugin Settings (PIXI) in the left flap.
-You can create, update or delete a PDX enter or a Cell Line entry when the administration page is rendered.
-You can provide a web link for both types of entities to refer to documentation provided by the PDX or Cell Line provider.
-
-.. image:: ./images/pdx_cell-line_administration.png
- :align: center
+Patient-derived tumor and cell line model information is maintained by PIXI as a site-wide resource.
+That allows the tumor model information to be entered once and reused/referenced across multiple projects.
+You can manage these as an administrator by selecting Tumor Models under PIXI in the XNAT plugin settings.
 
 ----------------------------
 Hotel Splitter Configuration
