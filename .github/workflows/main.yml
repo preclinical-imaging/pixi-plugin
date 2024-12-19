@@ -1,0 +1,30 @@
+name: Main
+
+on:
+  push:
+    branches:
+        - main
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build PIXI Plugin JAR
+        uses: ./.github/actions/build-plugin-jar
+        with:
+          java-version: '8'
+          gradle-version: '6.7'
+
+      - name: Upload JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: pixi-plugin-jar
+          path: ${{ env.jar-path }}
+          retention-days: 14
