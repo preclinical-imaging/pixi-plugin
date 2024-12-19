@@ -6,8 +6,8 @@ project = 'PIXI'
 copyright = '2024, Washington University in St. Louis'
 author = 'Kooresh Shoghi'
 
-release = '1.3'
-version = '1.3.2-SNAPSHOT'
+release = '1.4'
+version = '1.4.0'
 
 # -- General configuration
 
