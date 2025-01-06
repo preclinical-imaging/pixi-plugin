@@ -29,6 +29,10 @@
     <xs:element name="BliSession" type="pixi:bliSessionData"/>
     <xs:element name="BliScan" type="pixi:bliScanData"/>
 
+    <xs:element name="Biodistribution" type="pixi:biodistributionData"/>
+    <xs:element name="BiodInjection" type="pixi:biodInjectionData"/>
+    <xs:element name="BiodUptake" type="pixi:biodSampleUptakeData"/>
+
     <xs:complexType name="animalDemographicData">
         <xs:annotation>
             <xs:appinfo>
@@ -720,5 +724,150 @@
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="biodistributionData">
+        <xs:annotation>
+            <xs:documentation>An event in which the biodistribution of a tracer compound is measured in a small animal subject.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="xnat:subjectAssessorData">
+                <xs:sequence>
+                    <xs:element name="injection_data" type="pixi:biodInjectionData" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Injection data</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="sample_uptake_data" type="pixi:biodSampleUptakeData"  minOccurs="0" maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:documentation>Sample uptake data</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="animal_weight" type="xs:decimal" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Animal weight</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="animal_weight_unit" type="xs:string" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Animal weight unit (g)</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="animal_sacrifice_date" type="xs:date" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Animal sacrifice date</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="animal_sacrifice_time" type="xs:time" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Animal sacrifice time</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="technician" type="xs:string" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Individual responsible for this measurement.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="biodInjectionData">
+        <xs:sequence>
+            <xs:element name="compound" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Tracer/Compound</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="isotope" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Isotope</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="half_life" type="xs:decimal" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Half-life</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="half_life_unit" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Half-life unit (s, m, h)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="injected_dose" type="xs:decimal" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Injected dose</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="injected_dose_unit" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Injected dose unit (MBq or μCi)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="injection_volume" type="xs:decimal" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Injection volume</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="injection_volume_unit" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Injection volume unit (mL)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="injection_route" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Injection route</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="injection_site" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Injection site</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="injection_date" type="xs:date" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Injection date</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="injection_time" type="xs:time" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Injection time</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="biodSampleUptakeData">
+        <xs:sequence>
+            <xs:element name="sample_type" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Tissue or organ sample type (e.g. blood, liver, kidney, feces)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="sample_weight" type="xs:decimal" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Samples weight</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="sample_weight_unit" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Samples weight unit (g)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="percent_injected_dose_per_gram" type="xs:decimal" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Percent injected dose per gram</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="percent_injected_dose_per_organ" type="xs:decimal" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Percent injected dose per organ</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="timepoint" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Timepoint</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
     </xs:complexType>
 </xs:schema>

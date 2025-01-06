@@ -78,6 +78,10 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.DEFAULT_DIGITS;
                                          singular = "BLI Scan",
                                          plural = "BLI Scans",
                                          code = "BLIScan"),
+                          @XnatDataModel(value = PixiBiodistributiondata.SCHEMA_ELEMENT_NAME,
+                                         singular = "Biodistribution",
+                                         plural = "Biodistributions",
+                                         code = "BIOD"),
                           })
 @ComponentScan({"org.nrg.xnatx.plugins.pixi.xenografts.entities",
                 "org.nrg.xnatx.plugins.pixi.xenografts.repositories",

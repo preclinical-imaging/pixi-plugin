@@ -1,0 +1,371 @@
+$page.setTitle("Biodistribution Data")
+$page.setLinkColor($ui.alink)
+$page.setVlinkColor($ui.vlink)
+#set($months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"])
+#set($days = [ 1..31 ])
+#set($years = [ $!turbineUtils.getYear()..2000])
+#set($routes = ["Intravenous", "Intramuscular", "Subcutaneous", "Intraperitoneal" ])
+<datalist id="routes">
+    #foreach($route in $routes)
+    <option value="$route">
+    #end
+</datalist>
+#if ($data.message)
+<font color="red" size="3">$data.message</font>
+#end
+<p>
+
+<datalist id="sample_types">
+    <option value="Adrenals">Adrenals</option>
+    <option value="Abd. Aorta">Abd. Aorta</option>
+    <option value="Bladder">Bladder</option>
+    <option value="Blood">Blood</option>
+    <option value="Bone (Femur)">Bone (Femur)</option>
+    <option value="Bone (Tibia/Fibula)">Bone (Tibia/Fibula)</option>
+    <option value="Brain (Whole)">Brain (Whole)</option>
+    <option value="Brain Stem">Brain Stem</option>
+    <option value="Cerebellum">Cerebellum</option>
+    <option value="Rest of Brain">Rest of Brain</option>
+    <option value="Cortex">Cortex</option>
+    <option value="Fat">Fat</option>
+    <option value="Feces">Feces</option>
+    <option value="Gall Bladder">Gall Bladder</option>
+    <option value="Heart">Heart</option>
+    <option value="Hippocampus">Hippocampus</option>
+    <option value="Hypothalamus">Hypothalamus</option>
+    <option value="Kidneys">Kidneys</option>
+    <option value="Liver">Liver</option>
+    <option value="Marrow">Marrow</option>
+    <option value="Muscle (abdominal)">Muscle (abdominal)</option>
+    <option value="Olfactory Bulbs">Olfactory Bulbs</option>
+    <option value="Ovaries">Ovaries</option>
+    <option value="Pancreas">Pancreas</option>
+    <option value="Prostate">Prostate</option>
+    <option value="Small Intestine">Small Intestine</option>
+    <option value="Spleen">Spleen</option>
+    <option value="Stomach">Stomach</option>
+    <option value="Striatum">Striatum</option>
+    <option value="Tail">Tail</option>
+    <option value="Testes">Testes</option>
+    <option value="Thalamus">Thalamus</option>
+    <option value="Thymus">Thymus</option>
+    <option value="Thyroid">Thyroid</option>
+    <option value="Tumor">Tumor</option>
+    <option value="Tumor (L)">Tumor (L)</option>
+    <option value="Tumor (R)">Tumor (R)</option>
+    <option value="Upper Lg Intestinal">Upper Lg Intestinal</option>
+    <option value="Lower Lg Intestinal">Lower Lg Intestinal</option>
+    <option value="Urine">Urine</option>
+    <option value="Uterus">Uterus</option>
+</datalist>
+
+<datalist id="timepoints">
+    <datalist id="timepoints">
+        <option value="1 min">1 min</option>
+        <option value="2 min">2 min</option>
+        <option value="5 min">5 min</option>
+        <option value="10 min">10 min</option>
+        <option value="15 min">15 min</option>
+        <option value="20 min">20 min</option>
+        <option value="30 min">30 min</option>
+        <option value="40 min">40 min</option>
+        <option value="1 hour">1 hour</option>
+        <option value="2 hour">2 hour</option>
+        <option value="3 hour">3 hour</option>
+        <option value="4 hour">4 hour</option>
+        <option value="6 hour">6 hour</option>
+        <option value="8 hour">8 hour</option>
+        <option value="12 hour">12 hour</option>
+        <option value="18 hour">18 hour</option>
+        <option value="24 hour">24 hour</option>
+        <option value="36 hour">36 hour</option>
+        <option value="48 hour">48 hour</option>
+        <option value="60 hour">60 hour</option>
+        <option value="72 hour">72 hour</option>
+        <option value="84 hour">84 hour</option>
+        <option value="96 hour">96 hour</option>
+        <option value="120 hour">120 hour</option>
+        <option value="144 hour">144 hour</option>
+    </datalist>
+</datalist>
+
+<form ID="form1" name="form1" method="post" action="$link.setAction("ModifyPixiItem")">
+    <input type="hidden" name="project" value="$!{project}">
+    #if($vr)
+        <font color="red">Invalid parameters:<BR>$vr.toHTML()</font>
+        <HR>
+    #end
+
+    <TABLE width="100%">
+        <TR>
+            <TD>
+                <table width="100%">
+                    <TR>
+                        <TD align="left" valign="middle">
+                            <DIV class="edit_title">Biodistribution Details</DIV>
+                        </TD>
+                    </TR>
+                </TABLE>
+            </TD>
+        </TR>
+        <TR>
+            <TD>
+                <TABLE width="100%">
+                    <TR>
+                        <TD valign="top">
+                            <TABLE>
+                                <TR>
+                                    <TD colspan='2'>
+                                        #parse("/screens/xnat_edit_subjectAssessorData.vm")
+                                    </TD>
+                                </TR>
+                                <tr>
+                                    <TD colspan="2">#parse("/screens/EditProjectSpecificFields.vm")</TD>
+                                </tr>
+                                <TR>
+                                    #formLabel("Experient Date")
+                                    <TD>
+                                        <input type="date"
+                                               id="pixi:biodistributionData/date"
+                                               name="pixi:biodistributionData/date"
+                                               value="$item.getProperty("pixi:biodistributionData/date")">
+                                    </TD>
+                                </TR>
+                                <TR>
+                                    #formLabel("Technician")
+                                    <TD>#xdatStringBox("pixi:biodistributionData/technician" $item "" $vr)</TD>
+                                </TR>
+                                <TR>
+                                    #formLabel("Animal Weight (g)")
+                                    <TD>#xdatTextBox("pixi:biodistributionData/animal_weight" $item "" $vr)</TD>
+                                    <TD>#xdatHiddenBox("pixi:biodistributionData/animal_weight_unit" $item "g")</TD>
+                                </TR>
+                                <TR>
+                                    #formLabel("Animal Sacrifice Date/Time")
+                                    <TD>
+                                        <input type="date"
+                                               id="pixi:biodistributionData/animal_sacrifice_date"
+                                               name="pixi:biodistributionData/animal_sacrifice_date"
+                                               value="$item.getProperty("pixi:biodistributionData/animal_sacrifice_date")">
+                                        <input type="time"
+                                               id="pixi:biodistributionData/animal_sacrifice_time"
+                                               name="pixi:biodistributionData/animal_sacrifice_time"
+                                               value="$item.getProperty("pixi:biodistributionData/animal_sacrifice_time")">
+                                    </TD>
+                                </TR>
+                            </TABLE>
+                        </TD>
+                    </TR>
+                </TABLE>
+            </TD>
+        </TR>
+        <TR>
+            <TD>
+                <TABLE>
+                    <TR>
+                        <TD align="left" valign="top">
+                            <TABLE>
+                                <TR>
+                                    <TH align="left"><BR><font face="$ui.sansSerifFonts" size="2">Injection Data</font></TH>
+                                </TR>
+                                <TR>
+                                    <TD align="left" valign="top">
+                                        <TABLE>
+                                            <TR>
+                                                #formLabel("Compound")
+                                                <TD>#xdatStringBox("pixi:biodistributionData/injection_data/compound" $item "" $vr)</TD>
+                                            </TR>
+                                            <TR>
+                                                #formLabel("Isotope")
+                                                <TD>#xdatStringBox("pixi:biodistributionData/injection_data/isotope" $item "" $vr)</TD>
+                                            </TR>
+                                            <TR>
+                                                #formLabel("Half Life (s)")
+                                                <TD>#xdatTextBox("pixi:biodistributionData/injection_data/half_life" $item "" $vr)</TD>
+                                                <TD>#xdatHiddenBox("pixi:biodistributionData/injection_data/half_life_unit" $item "s")</TD>
+                                            </TR>
+                                            <TR>
+                                                #formLabel("Injected Dose (&#181;Ci)")
+                                                <TD>#xdatTextBox("pixi:biodistributionData/injection_data/injected_dose" $item "" $vr)</TD>
+                                                <TD>#xdatHiddenBox("pixi:biodistributionData/injection_data/injected_dose_unit" $item "&#181;Ci")</TD>
+                                            </TR>
+                                            <TR>
+                                                #formLabel("Injection Volume and Unit")
+                                                <TD>#xdatTextBox("pixi:biodistributionData/injection_data/injection_volume" $item "" $vr)</TD>
+                                                <TD>#xdatTextBox("pixi:biodistributionData/injection_data/injection_volume_unit" $item "" $vr)</TD>
+                                            </TR>
+                                            <TR>
+                                                #formLabel("Injection Site")
+                                                <TD>#xdatStringBox("pixi:biodistributionData/injection_data/injection_site" $item "" $vr)</TD>
+                                            </TR>
+                                            <TR>
+                                                #formLabel("Injection Route")
+                                                <TD><input list="routes" id="pixi:biodistributionData/injection_data/injection_route" name="pixi:biodistributionData/injection_data/injection_route" value="$!item.getProperty("pixi:biodistributionData/injection_data/injection_route")"></TD>
+                                            </TR>
+                                            <TR>
+                                                #formLabel("Injection Date/Time")
+                                                <TD>
+                                                    <input type="date"
+                                                           id="pixi:biodistributionData/injection_data/injection_date"
+                                                           name="pixi:biodistributionData/injection_data/injection_date"
+                                                           value="$item.getProperty("pixi:biodistributionData/injection_data/injection_date")">
+                                                    <input type="time"
+                                                           id="pixi:biodistributionData/injection_data/injection_time"
+                                                           name="pixi:biodistributionData/injection_data/injection_time"
+                                                           value="$item.getProperty("pixi:biodistributionData/injection_data/injection_time")">
+                                                </TD>
+                                            </TR>
+                                            #xdatHiddenBox("pixi:biodistributionData/injection_data/pixi_biodInjectionData_id" $item "")
+                                        </TABLE>
+                                    </TD>
+                                </TR>
+                            </TABLE>
+                            <!-- END pixi:biodistributionData/injection_data -->
+                        </TD>
+                    </TR>
+                    <!-- BEGIN pixi:biodistributionData/sample_uptake_data -->
+                    <TR><TH align="left"><BR><font face="$ui.sansSerifFonts" size="2">Sample Uptake Data</font></TH></TR>
+                    <TR>
+                        <TD align="left" valign="top">
+                            <TABLE id="sampleUptakeTable">
+                                <TR>
+                                    <TD>Sample Type</TD>
+                                    <TD>Sample Weight (g)</TD>
+                                    <TD>%ID/g</TD>
+                                    <TD>%ID/organ</TD>
+                                    <TD>Timepoint</TD>
+                                    <TD>Action</TD>
+                                </TR>
+                                <!-- Template row for cloning -->
+                                <TR id="sampleRowTemplate" style="display:none;">
+                                    <TD>
+                                        <input list="sample_types" id="pixi:biodistributionData/sample_uptake_data[*]/sample_type" name="pixi:biodistributionData/sample_uptake_data[*]/sample_type" value="">
+                                    </TD>
+                                    <TD>
+                                        <input type="text" id="pixi:biodistributionData/sample_uptake_data[*]/sample_weight" name="pixi:biodistributionData/sample_uptake_data[*]/sample_weight" value="">
+                                        <input type="hidden" id="pixi:biodistributionData/sample_uptake_data[*]/sample_weight_unit" name="pixi:biodistributionData/sample_uptake_data[*]/sample_weight_unit" value="">
+                                    </TD>
+                                    <TD>
+                                        <input type="text" id="pixi:biodistributionData/sample_uptake_data[*]/percent_injected_dose_per_gram" name="pixi:biodistributionData/sample_uptake_data[*]/percent_injected_dose_per_gram">
+                                    </TD>
+                                    <TD>
+                                        <input type="text" id="pixi:biodistributionData/sample_uptake_data[*]/percent_injected_dose_per_organ" name="pixi:biodistributionData/sample_uptake_data[*]/percent_injected_dose_per_organ">
+                                    </TD>
+                                    <TD>
+                                        <input list="timepoints"
+                                               id="pixi:biodistributionData/sample_uptake_data[*]/timepoint"
+                                               name="pixi:biodistributionData/sample_uptake_data[*]/timepoint"
+                                               value="">
+                                    </TD>
+                                    <TD>
+                                        <button type="button" onclick="removeSampleRow(this)"><i class="fa fa-trash" title="Remove"></i></button>
+                                    </TD>
+                                    <TD>
+                                        <input type="hidden" id="pixi:biodistributionData/sample_uptake_data[*]/pixi_biodSampleUptakeData_id" name="pixi:biodistributionData/sample_uptake_data[*]/pixi_biodSampleUptakeData_id">
+                                    </TD>
+                                </TR>
+                                <!-- Existing rows -->
+                                #set($pixi_biodSampleUptakeData_5_NUM_ROWS=$item.getChildItems("pixi:biodistributionData/sample_uptake_data").size() - 1)
+                                #if($pixi_biodSampleUptakeData_5_NUM_ROWS >= 0)
+                                    #foreach($pixi_biodSampleUptakeData_5_COUNTER in [0..$pixi_biodSampleUptakeData_5_NUM_ROWS])
+                                        <TR>
+                                            <TD>
+                                                <input list="sample_types" id="pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/sample_type"
+                                                       name="pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/sample_type"
+                                                       value="$!item.getStringProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/sample_type")">
+                                            </TD>
+                                            <TD>#xdatTextBox("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/sample_weight" $item "" $vr) #xdatHiddenBox("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/sample_weight_unit" $item "g")</TD>
+                                            <TD>#xdatTextBox("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/percent_injected_dose_per_gram" $item "" $vr)</TD>
+                                            <TD>#xdatTextBox("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/percent_injected_dose_per_organ" $item "" $vr)</TD>
+                                            <TD>
+                                                <input list="timepoints" id="pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint"
+                                                       name="pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint"
+                                                       value="$!item.getStringProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint")">
+                                            </TD>
+                                            <TD><button type="button" onclick="removeSampleRow(this)"><i class="fa fa-trash" title="Remove"></i></button></TD>
+                                            #xdatHiddenBox("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/pixi_biodSampleUptakeData_id" $item "")
+                                        </TR>
+                                    #end
+                                #end
+                            </TABLE>
+                            <!-- Add sample row button -->
+                            <button type="button" onclick="addSampleRow()">Add Sample</button>
+                        </TD>
+                    </TR>
+                    <!-- END pixi:biodistributionData/sample_uptake_data -->
+                </TABLE>
+                <!-- END pixi:biodistributionData -->
+            </TD>
+        </TR>
+        <TR>
+            #formLabel("Notes")
+        </TR>
+        <TR>
+            <TD>#xdatTextArea("pixi:biodistributionData/note" $item "" $vr 3 45)</TD>
+        </TR>
+        <TR>
+            <TD>
+                #xdatEditProps($item $edit_screen)
+        <TR>
+            <TD COLSPAN=2 ALIGN=left><input type="button" ONCLICK="validateForm();" name="eventSubmit_doInsert"
+                                            value="Submit"/></TD>
+        </TR>
+        </TD>
+        </TR>
+    </TABLE>
+</form>
+
+<script type="text/javascript">
+    function addSampleRow() {
+        let table = document.getElementById("sampleUptakeTable");
+        let templateRow = document.getElementById("sampleRowTemplate");
+        let newRow = templateRow.cloneNode(true);
+        newRow.style.display = "";
+        newRow.removeAttribute("id");
+
+        let rowCount = table.getElementsByTagName("tr").length - 2; // Subtract 2 to account for the template row
+        let inputs = newRow.getElementsByTagName("input");
+
+        for (let i = 0; i < inputs.length; i++) {
+            let id = inputs[i].id;
+            if (id) {
+                inputs[i].id = id.replace("[*]", "[" + rowCount + "]");
+            }
+
+            let name = inputs[i].name;
+            if (name) {
+                inputs[i].name = name.replace("[*]", "[" + rowCount + "]");
+            }
+
+            if (name && name.endsWith("sample_weight")) {
+                inputs[i].addEventListener('change', function() {
+                    let weightUnitInput = newRow.querySelector(`input[name='pixi:biodistributionData/sample_uptake_data[${rowCount}]/sample_weight_unit']`);
+                    if (this.value) {
+                        weightUnitInput.value = "g";
+                    } else {
+                        weightUnitInput.value = "";
+                    }
+                });
+            }
+
+        }
+
+        table.appendChild(newRow);
+    }
+
+    function removeSampleRow(button) {
+        let row = button.parentNode.parentNode;
+        row.remove();
+    }
+
+    function validateForm() {
+        validateSubjectAssessorForm();
+
+        // Delete sampleRowTemplate before submitting
+        let sampleRowTemplate = document.getElementById("sampleRowTemplate");
+        if (sampleRowTemplate) {
+            sampleRowTemplate.remove();
+        }
+        return false;
+    }
+</script>
