@@ -172,8 +172,8 @@ $page.setVlinkColor($ui.vlink)
                                     <TD align="left" valign="top">
                                         <TABLE>
                                             <TR>
-                                                #formLabel("Compound")
-                                                <TD>#xdatStringBox("pixi:biodistributionData/injection_data/compound" $item "" $vr)</TD>
+                                                #formLabel("Tracer")
+                                                <TD>#xdatStringBox("pixi:biodistributionData/injection_data/tracer" $item "" $vr)</TD>
                                             </TR>
                                             <TR>
                                                 #formLabel("Isotope")

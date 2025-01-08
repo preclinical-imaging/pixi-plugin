@@ -127,8 +127,8 @@
     <DisplayField id="TECHNICIAN" header="Technician" visible="true" searchable="true">
         <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/technician"/>
     </DisplayField>
-    <DisplayField id="COMPOUND" header="Compound" visible="true" searchable="true">
-        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/compound"/>
+    <DisplayField id="TRACER" header="Tracer" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/tracer"/>
     </DisplayField>
     <DisplayField id="ISOTOPE" header="Isotope" visible="true" searchable="true">
         <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/isotope"/>
@@ -168,7 +168,7 @@
         <DisplayFieldRef id="LABEL"/>
         <DisplayFieldRef id="DATE"/>
         <DisplayFieldRef id="ISOTOPE"/>
-        <DisplayFieldRef id="COMPOUND"/>
+        <DisplayFieldRef id="TRACER"/>
         <DisplayFieldRef id="TECHNICIAN"/>
         <DisplayFieldRef id="BIOD_SAMPLE_TYPE_COUNT_AGG"/>
     </DisplayVersion>
@@ -178,7 +178,7 @@
         <DisplayFieldRef id="SUBJECT_LABEL" element_name="xnat:subjectData"/>
         <DisplayFieldRef id="DATE"/>
         <DisplayFieldRef id="ISOTOPE"/>
-        <DisplayFieldRef id="COMPOUND"/>
+        <DisplayFieldRef id="TRACER"/>
         <DisplayFieldRef id="TECHNICIAN"/>
     </DisplayVersion>
     <DisplayVersion versionName="full" default-order-by="DATE" default-sort-order="DESC"
@@ -187,7 +187,7 @@
         <DisplayFieldRef id="SUBJECT_LABEL" element_name="xnat:subjectData"/>
         <DisplayFieldRef id="DATE"/>
         <DisplayFieldRef id="ISOTOPE"/>
-        <DisplayFieldRef id="COMPOUND"/>
+        <DisplayFieldRef id="TRACER"/>
         <DisplayFieldRef id="TECHNICIAN"/>
         <DisplayFieldRef id="BIOD_SAMPLE_TYPE_COUNT_AGG"/>
     </DisplayVersion>
@@ -195,7 +195,7 @@
                     brief-description="Biodistribution" dark-color="9999CC" light-color="CCCCFF">
         <DisplayFieldRef id="DATE"/>
         <DisplayFieldRef id="ISOTOPE"/>
-        <DisplayFieldRef id="COMPOUND"/>
+        <DisplayFieldRef id="TRACER"/>
         <DisplayFieldRef id="TECHNICIAN"/>
         <DisplayFieldRef id="BIOD_SAMPLE_TYPE_COUNT_AGG"/>
     </DisplayVersion>
@@ -205,7 +205,7 @@
         <DisplayFieldRef id="SUB_PROJECT_IDENTIFIER" element_name="xnat:subjectData"/>
         <DisplayFieldRef id="DATE"/>
         <DisplayFieldRef id="ISOTOPE"/>
-        <DisplayFieldRef id="COMPOUND"/>
+        <DisplayFieldRef id="TRACER"/>
         <DisplayFieldRef id="BIOD_SAMPLE_TYPE_COUNT_AGG"/>
     </DisplayVersion>
     <ViewLink alias="PIXI_BIODISTRIBUTIONDATA_PROJECTS">

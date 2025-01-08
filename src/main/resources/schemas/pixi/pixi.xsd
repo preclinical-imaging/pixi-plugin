@@ -728,7 +728,7 @@
 
     <xs:complexType name="biodistributionData">
         <xs:annotation>
-            <xs:documentation>An event in which the biodistribution of a tracer compound is measured in a small animal subject.</xs:documentation>
+            <xs:documentation>An event in which the biodistribution of a radiopharmaceutical is measured in a subject.</xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="xnat:subjectAssessorData">
@@ -774,9 +774,9 @@
     </xs:complexType>
     <xs:complexType name="biodInjectionData">
         <xs:sequence>
-            <xs:element name="compound" type="xs:string" minOccurs="0">
+            <xs:element name="tracer" type="xs:string" minOccurs="0">
                 <xs:annotation>
-                    <xs:documentation>Tracer/Compound</xs:documentation>
+                    <xs:documentation>Tracer</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="isotope" type="xs:string" minOccurs="0">

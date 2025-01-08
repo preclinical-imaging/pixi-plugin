@@ -42,8 +42,8 @@
                     #xdatSearchField($schemaElement $schemaElement.getDisplayField("ISOTOPE"))
                 </td>
                 <td>
-                    <h5>Compound:</h5>
-                    #xdatSearchField($schemaElement $schemaElement.getDisplayField("COMPOUND"))
+                    <h5>Tracer:</h5>
+                    #xdatSearchField($schemaElement $schemaElement.getDisplayField("TRACER"))
                 </td>
             </tr>
             <tr>
