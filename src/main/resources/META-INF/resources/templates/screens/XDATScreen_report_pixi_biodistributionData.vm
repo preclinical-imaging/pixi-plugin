@@ -83,10 +83,6 @@ $page.setVlinkColor($ui.vlink)
                                             <TD>$!item.getStringProperty("pixi:biodistributionData/injection_data/isotope")</TD>
                                         </TR>
                                         <TR>
-                                            <TD>Half Life</TD>
-                                            <TD>$!item.getProperty("pixi:biodistributionData/injection_data/half_life") $!item.getStringProperty("pixi:biodistributionData/injection_data/half_life_unit")</TD>
-                                        </TR>
-                                        <TR>
                                             <TD>Injected Dose</TD>
                                             <TD>$!item.getProperty("pixi:biodistributionData/injection_data/injected_dose") $!item.getStringProperty("pixi:biodistributionData/injection_data/injected_dose_unit")</TD>
                                         </TR>

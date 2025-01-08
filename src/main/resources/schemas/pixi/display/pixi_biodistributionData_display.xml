@@ -133,12 +133,6 @@
     <DisplayField id="ISOTOPE" header="Isotope" visible="true" searchable="true">
         <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/isotope"/>
     </DisplayField>
-    <DisplayField id="HALF_LIFE" header="Half Life" visible="true" searchable="true">
-        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/half_life"/>
-    </DisplayField>
-    <DisplayField id="HALF_LIFE_UNIT" header="Half Life Unit" visible="true" searchable="true">
-        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/half_life_unit"/>
-    </DisplayField>
     <DisplayField id="INJECTION_DOSE" header="Injection Dose" visible="true" searchable="true">
         <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/injection_dose"/>
     </DisplayField>

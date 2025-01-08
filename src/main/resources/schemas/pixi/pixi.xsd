@@ -784,16 +784,6 @@
                     <xs:documentation>Isotope</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="half_life" type="xs:decimal" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation>Half-life</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="half_life_unit" type="xs:string" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation>Half-life unit (s, m, h)</xs:documentation>
-                </xs:annotation>
-            </xs:element>
             <xs:element name="injected_dose" type="xs:decimal" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation>Injected dose</xs:documentation>

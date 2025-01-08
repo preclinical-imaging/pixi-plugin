@@ -180,11 +180,6 @@ $page.setVlinkColor($ui.vlink)
                                                 <TD>#xdatStringBox("pixi:biodistributionData/injection_data/isotope" $item "" $vr)</TD>
                                             </TR>
                                             <TR>
-                                                #formLabel("Half Life (s)")
-                                                <TD>#xdatTextBox("pixi:biodistributionData/injection_data/half_life" $item "" $vr)</TD>
-                                                <TD>#xdatHiddenBox("pixi:biodistributionData/injection_data/half_life_unit" $item "s")</TD>
-                                            </TR>
-                                            <TR>
                                                 #formLabel("Injected Dose (&#181;Ci)")
                                                 <TD>#xdatTextBox("pixi:biodistributionData/injection_data/injected_dose" $item "" $vr)</TD>
                                                 <TD>#xdatHiddenBox("pixi:biodistributionData/injection_data/injected_dose_unit" $item "&#181;Ci")</TD>
