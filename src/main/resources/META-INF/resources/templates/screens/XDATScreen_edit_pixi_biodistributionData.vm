@@ -59,34 +59,10 @@ $page.setVlinkColor($ui.vlink)
     <option value="Uterus">Uterus</option>
 </datalist>
 
-<datalist id="timepoints">
-    <datalist id="timepoints">
-        <option value="1 min">1 min</option>
-        <option value="2 min">2 min</option>
-        <option value="5 min">5 min</option>
-        <option value="10 min">10 min</option>
-        <option value="15 min">15 min</option>
-        <option value="20 min">20 min</option>
-        <option value="30 min">30 min</option>
-        <option value="40 min">40 min</option>
-        <option value="1 hour">1 hour</option>
-        <option value="2 hour">2 hour</option>
-        <option value="3 hour">3 hour</option>
-        <option value="4 hour">4 hour</option>
-        <option value="6 hour">6 hour</option>
-        <option value="8 hour">8 hour</option>
-        <option value="12 hour">12 hour</option>
-        <option value="18 hour">18 hour</option>
-        <option value="24 hour">24 hour</option>
-        <option value="36 hour">36 hour</option>
-        <option value="48 hour">48 hour</option>
-        <option value="60 hour">60 hour</option>
-        <option value="72 hour">72 hour</option>
-        <option value="84 hour">84 hour</option>
-        <option value="96 hour">96 hour</option>
-        <option value="120 hour">120 hour</option>
-        <option value="144 hour">144 hour</option>
-    </datalist>
+<datalist id="timepoint_units">
+    <option value="min">min</option>
+    <option value="hour">hour</option>
+    <option value="day">day</option>
 </datalist>
 
 <form ID="form1" name="form1" method="post" action="$link.setAction("ModifyPixiItem")">
@@ -247,10 +223,13 @@ $page.setVlinkColor($ui.vlink)
                                         <input type="text" id="pixi:biodistributionData/sample_uptake_data[*]/percent_injected_dose_per_organ" name="pixi:biodistributionData/sample_uptake_data[*]/percent_injected_dose_per_organ">
                                     </TD>
                                     <TD>
-                                        <input list="timepoints"
-                                               id="pixi:biodistributionData/sample_uptake_data[*]/timepoint"
-                                               name="pixi:biodistributionData/sample_uptake_data[*]/timepoint"
-                                               value="">
+                                        <input type="text" id="pixi:biodistributionData/sample_uptake_data[*]/timepoint_value" name="pixi:biodistributionData/sample_uptake_data[*]/timepoint_value">
+                                        <select id="pixi:biodistributionData/sample_uptake_data[*]/timepoint_unit" name="pixi:biodistributionData/sample_uptake_data[*]/timepoint_unit">
+                                            <option value="sec">sec</option>
+                                            <option value="min">min</option>
+                                            <option value="hour">hour</option>
+                                            <option value="day">day</option>
+                                        </select>
                                     </TD>
                                     <TD>
                                         <button type="button" onclick="removeSampleRow(this)"><i class="fa fa-trash" title="Remove"></i></button>
@@ -273,9 +252,13 @@ $page.setVlinkColor($ui.vlink)
                                             <TD>#xdatTextBox("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/percent_injected_dose_per_gram" $item "" $vr)</TD>
                                             <TD>#xdatTextBox("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/percent_injected_dose_per_organ" $item "" $vr)</TD>
                                             <TD>
-                                                <input list="timepoints" id="pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint"
-                                                       name="pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint"
-                                                       value="$!item.getStringProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint")">
+                                                #xdatTextBox("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_value" $item "" $vr)
+                                                <select id="pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit" name="pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit">
+                                                    <option value="min" #if($item.getStringProperty('pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit') == 'sec') selected="selected" #end>sec</option>
+                                                    <option value="min" #if($item.getStringProperty('pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit') == 'min') selected="selected" #end>min</option>
+                                                    <option value="hour" #if($item.getStringProperty('pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit') == 'hour') selected="selected" #end>hour</option>
+                                                    <option value="day" #if($item.getStringProperty('pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit') == 'day') selected="selected" #end>day</option>
+                                                </select>
                                             </TD>
                                             <TD><button type="button" onclick="removeSampleRow(this)"><i class="fa fa-trash" title="Remove"></i></button></TD>
                                             #xdatHiddenBox("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/pixi_biodSampleUptakeData_id" $item "")

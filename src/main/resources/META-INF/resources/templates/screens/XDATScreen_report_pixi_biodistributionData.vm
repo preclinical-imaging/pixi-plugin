@@ -128,7 +128,7 @@ $page.setVlinkColor($ui.vlink)
                                                             </TR>
                                                             <TR>
                                                                 <TD>Timepoint</TD>
-                                                                <TD>$!item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_8_COUNTER]/timepoint")</TD>
+                                                                <TD>$!item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_8_COUNTER]/timepoint_value") $!item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_8_COUNTER]/timepoint_unit")</TD>
                                                             </TR>
                                                             <TR>
                                                                 <TD>Sample Weight</TD>

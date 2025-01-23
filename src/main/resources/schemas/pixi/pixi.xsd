@@ -853,9 +853,14 @@
                     <xs:documentation>Percent injected dose per organ</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="timepoint" type="xs:string" minOccurs="0">
+            <xs:element name="timepoint_value" type="xs:decimal" minOccurs="0">
                 <xs:annotation>
-                    <xs:documentation>Timepoint</xs:documentation>
+                    <xs:documentation>Timepoint value</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="timepoint_unit" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Timepoint unit (e.g. hours, minutes)</xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
