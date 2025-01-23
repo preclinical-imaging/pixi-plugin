@@ -53,6 +53,20 @@
             </tr>
             <tr>
                 <td>
+                    <h5>Injection Route:</h5>
+                    #xdatSearchField($schemaElement $schemaElement.getDisplayField("INJECTION_ROUTE"))
+                </td>
+                <td>
+                    <h5>Injection Site:</h5>
+                    #xdatSearchField($schemaElement $schemaElement.getDisplayField("INJECTION_SITE"))
+                </td>
+            <tr>
+                <td>
+                    <p></p>
+                </td>
+            </tr>
+            <tr>
+                <td>
                     <h5>Sample Type:</h5>
                     #xdatSearchField($schemaElement $schemaElement.getDisplayField("BIOD_SAMPLE_TYPE_COUNT_AGG"))
                 </td>
