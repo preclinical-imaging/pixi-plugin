@@ -167,9 +167,9 @@ $page.setVlinkColor($ui.vlink)
                                                 <TD>#xdatHiddenBox("pixi:biodistributionData/injection_data/injected_dose_unit" $item "&#181;Ci")</TD>
                                             </TR>
                                             <TR>
-                                                #formLabel("Injection Volume and Unit")
+                                                #formLabel("Injection Volume (&#181;L)")
                                                 <TD>#xdatTextBox("pixi:biodistributionData/injection_data/injection_volume" $item "" $vr)</TD>
-                                                <TD>#xdatTextBox("pixi:biodistributionData/injection_data/injection_volume_unit" $item "" $vr)</TD>
+                                                <TD>#xdatHiddenBox("pixi:biodistributionData/injection_data/injection_volume_unit" $item "&#181;L")</TD>
                                             </TR>
                                             <TR>
                                                 #formLabel("Injection Site")
