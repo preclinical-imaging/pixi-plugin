@@ -148,12 +148,16 @@ $page.setVlinkColor($ui.vlink)
                                                                 <TD>$!item.getStringProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_8_COUNTER]/sample_type")</TD>
                                                             </TR>
                                                             <TR>
-                                                                <TD>Timepoint</TD>
-                                                                <TD>$!item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_8_COUNTER]/timepoint_value") $!item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_8_COUNTER]/timepoint_unit")</TD>
-                                                            </TR>
-                                                            <TR>
                                                                 <TD>Sample Weight</TD>
                                                                 <TD>$!item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_8_COUNTER]/sample_weight") $!item.getStringProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_8_COUNTER]/sample_weight_unit")</TD>
+                                                            </TR>
+                                                            <TR>
+                                                                <TD>Measurement Date Time</TD>
+                                                                <TD>$!item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_8_COUNTER]/measurement_date") $!item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_8_COUNTER]/measurement_time")</TD>
+                                                            </TR>
+                                                            <TR>
+                                                                <TD>Timepoint</TD>
+                                                                <TD>$!item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_8_COUNTER]/timepoint_value") $!item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_8_COUNTER]/timepoint_unit")</TD>
                                                             </TR>
                                                             <TR>
                                                                 <TD>%ID/gram</TD>

@@ -234,7 +234,10 @@ $page.setVlinkColor($ui.vlink)
                                     <TD>Sample Weight (g)</TD>
                                     <TD>%ID/g</TD>
                                     <TD>%ID/organ</TD>
+                                    <TD>Measurement Date</TD>
+                                    <TD>Time</TD>
                                     <TD>Timepoint</TD>
+                                    <TD></TD>
                                     <TD>Action</TD>
                                 </TR>
                                 <!-- Template row for cloning -->
@@ -253,7 +256,16 @@ $page.setVlinkColor($ui.vlink)
                                         <input type="text" id="pixi:biodistributionData/sample_uptake_data[*]/percent_injected_dose_per_organ" name="pixi:biodistributionData/sample_uptake_data[*]/percent_injected_dose_per_organ">
                                     </TD>
                                     <TD>
+                                        <input type="date" id="pixi:biodistributionData/sample_uptake_data[*]/measurement_date" name="pixi:biodistributionData/sample_uptake_data[*]/measurement_date">
+                                    </TD>
+                                    <TD>
+
+                                        <input type="time" id="pixi:biodistributionData/sample_uptake_data[*]/measurement_time" name="pixi:biodistributionData/sample_uptake_data[*]/measurement_time">
+                                    </TD>
+                                    <TD>
                                         <input type="text" id="pixi:biodistributionData/sample_uptake_data[*]/timepoint_value" name="pixi:biodistributionData/sample_uptake_data[*]/timepoint_value">
+                                    </TD>
+                                    <TD>
                                         <select id="pixi:biodistributionData/sample_uptake_data[*]/timepoint_unit" name="pixi:biodistributionData/sample_uptake_data[*]/timepoint_unit">
                                             <option value="sec">sec</option>
                                             <option value="min">min</option>
@@ -282,12 +294,26 @@ $page.setVlinkColor($ui.vlink)
                                             <TD>#xdatTextBox("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/percent_injected_dose_per_gram" $item "" $vr)</TD>
                                             <TD>#xdatTextBox("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/percent_injected_dose_per_organ" $item "" $vr)</TD>
                                             <TD>
+                                                <input type="date"
+                                                       id="pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/measurement_date"
+                                                       name="pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/measurement_date"
+                                                       value="$item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/measurement_date")">
+                                            </TD>
+                                            <TD>
+                                                <input type="time"
+                                                       id="pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/measurement_time"
+                                                       name="pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/measurement_time"
+                                                       value="$item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/measurement_time")">
+                                            </TD>
+                                            <TD>
                                                 #xdatTextBox("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_value" $item "" $vr)
+                                            </TD>
+                                            <TD>
                                                 <select id="pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit" name="pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit">
-                                                    <option value="min" #if($item.getStringProperty('pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit') == 'sec') selected="selected" #end>sec</option>
-                                                    <option value="min" #if($item.getStringProperty('pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit') == 'min') selected="selected" #end>min</option>
-                                                    <option value="hour" #if($item.getStringProperty('pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit') == 'hour') selected="selected" #end>hour</option>
-                                                    <option value="day" #if($item.getStringProperty('pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit') == 'day') selected="selected" #end>day</option>
+                                                    <option value="sec" #if($om.getStringProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit").equals('sec')) SELECTED #end>sec</option>
+                                                    <option value="min" #if($om.getStringProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit").equals('min')) SELECTED #end>min</option>
+                                                    <option value="hour" #if($om.getStringProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit").equals('hour')) SELECTED #end>hour</option>
+                                                    <option value="day" #if($om.getStringProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit").equals('day')) SELECTED #end>day</option>
                                                 </select>
                                             </TD>
                                             <TD><button type="button" onclick="removeSampleRow(this)"><i class="fa fa-trash" title="Remove"></i></button></TD>

@@ -863,6 +863,16 @@
                     <xs:documentation>Percent injected dose per organ</xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="measurement_date" type="xs:date" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Gamma counter measurement date</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="measurement_time" type="xs:time" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Gamma counter measurement time</xs:documentation>
+                </xs:annotation>
+            </xs:element>
             <xs:element name="timepoint_value" type="xs:decimal" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation>Timepoint value</xs:documentation>
