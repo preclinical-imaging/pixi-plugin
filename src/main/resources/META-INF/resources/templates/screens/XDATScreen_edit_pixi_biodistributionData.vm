@@ -194,6 +194,30 @@ $page.setVlinkColor($ui.vlink)
                             <!-- END pixi:biodistributionData/injection_data -->
                         </TD>
                     </TR>
+                    <TR>
+                        <TD align="left" valign="top">
+                            <!-- BEGIN pixi:biodistributionData/anesthesia_administration -->
+                            <TABLE>
+                                <TR><TH align="left"><BR><font face="$ui.sansSerifFonts" size="2">Anesthesia Administration</font></TH></TR>
+                                <TR>
+                                    <TD align="left" valign="top">
+                                        <TABLE>
+                                            <TR>
+                                                #formLabel("Anesthesia")
+                                                <TD>#xdatStringBox("pixi:biodistributionData/anesthesia_administration/anesthesia" $item "" $vr)</TD>
+                                            </TR>
+                                            <TR>
+                                                #formLabel("Administration Route")
+                                                <TD>#xdatStringBox("pixi:biodistributionData/anesthesia_administration/routeOfAdministration" $item "" $vr)</TD>
+                                            </TR>
+                                            #xdatHiddenBox("pixi:biodistributionData/anesthesia_administration/pixi_anesthesiaData_id" $item "")
+                                        </TABLE>
+                                    </TD>
+                                </TR>
+                            </TABLE>
+                            <!-- END pixi:biodistributionData/anesthesia_administration -->
+                        </TD>
+                    </TR>
                     <!-- BEGIN pixi:biodistributionData/sample_uptake_data -->
                     <TR><TH align="left"><BR><font face="$ui.sansSerifFonts" size="2">Sample Uptake Data</font></TH></TR>
                     <TR>

@@ -107,6 +107,23 @@ $page.setVlinkColor($ui.vlink)
                 </TR>
                 <TR>
                     <TD align="left" valign="top">
+                        <!-- BEGIN pixi:biodistributionData/anesthesia_administration -->
+                        <TABLE>
+                            <TR><TH align="left"><BR><font face="$ui.sansSerifFonts" size="2">Anesthesia Administration</font></TH></TR>
+                            <TR>
+                                <TD align="left" valign="top">
+                                    <TABLE>
+                                        <TR><TD>Anesthesia</TD><TD>$!item.getStringProperty("pixi:biodistributionData/anesthesia_administration/anesthesia")</TD></TR>
+                                        <TR><TD>Administration Route</TD><TD>$!item.getStringProperty("pixi:biodistributionData/anesthesia_administration/routeOfAdministration")</TD></TR>
+                                    </TABLE>
+                                </TD>
+                            </TR>
+                        </TABLE>
+                        <!-- END pixi:biodistributionData/anesthesia_administration -->
+                    </TD>
+                </TR>
+                <TR>
+                    <TD align="left" valign="top">
                         <TABLE>
                             <TR>
                                 <TD>

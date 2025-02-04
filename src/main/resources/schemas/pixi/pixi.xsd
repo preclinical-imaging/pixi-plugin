@@ -743,6 +743,11 @@
                             <xs:documentation>Sample uptake data</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="anesthesia_administration" type="pixi:anesthesiaData" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Anesthesia administration</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="animal_weight" type="xs:decimal" minOccurs="0">
                         <xs:annotation>
                             <xs:documentation>Animal weight</xs:documentation>
