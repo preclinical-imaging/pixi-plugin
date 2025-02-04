@@ -789,6 +789,11 @@
                     <xs:documentation>Isotope</xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="diluent" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Diluent</xs:documentation>
+                </xs:annotation>
+            </xs:element>
             <xs:element name="injected_dose" type="xs:decimal" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation>Injected dose</xs:documentation>

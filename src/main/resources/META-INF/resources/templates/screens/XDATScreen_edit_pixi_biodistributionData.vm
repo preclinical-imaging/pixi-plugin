@@ -156,6 +156,10 @@ $page.setVlinkColor($ui.vlink)
                                                 <TD>#xdatStringBox("pixi:biodistributionData/injection_data/isotope" $item "" $vr)</TD>
                                             </TR>
                                             <TR>
+                                                #formLabel("Diluent")
+                                                <TD>#xdatStringBox("pixi:biodistributionData/injection_data/diluent" $item "" $vr)</TD>
+                                            </TR>
+                                            <TR>
                                                 #formLabel("Injected Dose (&#181;Ci)")
                                                 <TD>#xdatTextBox("pixi:biodistributionData/injection_data/injected_dose" $item "" $vr)</TD>
                                                 <TD>#xdatHiddenBox("pixi:biodistributionData/injection_data/injected_dose_unit" $item "&#181;Ci")</TD>
