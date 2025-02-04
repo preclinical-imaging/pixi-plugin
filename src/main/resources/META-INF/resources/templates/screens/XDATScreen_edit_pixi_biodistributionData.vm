@@ -34,6 +34,7 @@ $page.setVlinkColor($ui.vlink)
     <option value="Hippocampus">Hippocampus</option>
     <option value="Hypothalamus">Hypothalamus</option>
     <option value="Kidneys">Kidneys</option>
+    <option value="Legs">Legs</option>
     <option value="Liver">Liver</option>
     <option value="Marrow">Marrow</option>
     <option value="Muscle (abdominal)">Muscle (abdominal)</option>
@@ -42,6 +43,7 @@ $page.setVlinkColor($ui.vlink)
     <option value="Pancreas">Pancreas</option>
     <option value="Prostate">Prostate</option>
     <option value="Small Intestine">Small Intestine</option>
+    <option value="Spine">Spine</option>
     <option value="Spleen">Spleen</option>
     <option value="Stomach">Stomach</option>
     <option value="Striatum">Striatum</option>
