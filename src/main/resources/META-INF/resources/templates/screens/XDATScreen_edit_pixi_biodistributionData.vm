@@ -172,6 +172,10 @@ $page.setVlinkColor($ui.vlink)
                                                 <TD>#xdatHiddenBox("pixi:biodistributionData/injection_data/injection_volume_unit" $item "&#181;L")</TD>
                                             </TR>
                                             <TR>
+                                                #formLabel("Total Counts Injected")
+                                                <TD>#xdatTextBox("pixi:biodistributionData/injection_data/injection_total_counts" $item "" $vr)</TD>
+                                            </TR>
+                                            <TR>
                                                 #formLabel("Injection Site")
                                                 <TD>#xdatStringBox("pixi:biodistributionData/injection_data/injection_site" $item "" $vr)</TD>
                                             </TR>
@@ -232,6 +236,7 @@ $page.setVlinkColor($ui.vlink)
                                 <TR>
                                     <TD>Sample Type</TD>
                                     <TD>Sample Weight (g)</TD>
+                                    <TD>Decay Corrected CPM</TD>
                                     <TD>%ID/g</TD>
                                     <TD>%ID/organ</TD>
                                     <TD>Measurement Date</TD>
@@ -248,6 +253,9 @@ $page.setVlinkColor($ui.vlink)
                                     <TD>
                                         <input type="text" id="pixi:biodistributionData/sample_uptake_data[*]/sample_weight" name="pixi:biodistributionData/sample_uptake_data[*]/sample_weight" value="">
                                         <input type="hidden" id="pixi:biodistributionData/sample_uptake_data[*]/sample_weight_unit" name="pixi:biodistributionData/sample_uptake_data[*]/sample_weight_unit" value="">
+                                    </TD>
+                                    <TD>
+                                        <input type="text" id="pixi:biodistributionData/sample_uptake_data[*]/decay_corrected_cpm" name="pixi:biodistributionData/sample_uptake_data[*]/decay_corrected_cpm">
                                     </TD>
                                     <TD>
                                         <input type="text" id="pixi:biodistributionData/sample_uptake_data[*]/percent_injected_dose_per_gram" name="pixi:biodistributionData/sample_uptake_data[*]/percent_injected_dose_per_gram">
@@ -291,6 +299,7 @@ $page.setVlinkColor($ui.vlink)
                                                        value="$!item.getStringProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/sample_type")">
                                             </TD>
                                             <TD>#xdatTextBox("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/sample_weight" $item "" $vr) #xdatHiddenBox("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/sample_weight_unit" $item "g")</TD>
+                                            <TD>#xdatTextBox("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/decay_corrected_cpm" $item "" $vr)</TD>
                                             <TD>#xdatTextBox("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/percent_injected_dose_per_gram" $item "" $vr)</TD>
                                             <TD>#xdatTextBox("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/percent_injected_dose_per_organ" $item "" $vr)</TD>
                                             <TD>

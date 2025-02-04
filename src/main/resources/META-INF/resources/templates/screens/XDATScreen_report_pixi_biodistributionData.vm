@@ -95,6 +95,10 @@ $page.setVlinkColor($ui.vlink)
                                             <TD>$!item.getProperty("pixi:biodistributionData/injection_data/injection_volume") $!item.getStringProperty("pixi:biodistributionData/injection_data/injection_volume_unit")</TD>
                                         </TR>
                                         <TR>
+                                            <TD>Total Counts Injected</TD>
+                                            <TD>$!item.getProperty("pixi:biodistributionData/injection_data/injection_total_counts")</TD>
+                                        </TR>
+                                        <TR>
                                             <TD>Injection Route</TD>
                                             <TD>$!item.getStringProperty("pixi:biodistributionData/injection_data/injection_route")</TD>
                                         </TR>
@@ -150,6 +154,10 @@ $page.setVlinkColor($ui.vlink)
                                                             <TR>
                                                                 <TD>Sample Weight</TD>
                                                                 <TD>$!item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_8_COUNTER]/sample_weight") $!item.getStringProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_8_COUNTER]/sample_weight_unit")</TD>
+                                                            </TR>
+                                                            <TR>
+                                                                <TD>Decay Corrected CPM</TD>
+                                                                <TD>$!item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_8_COUNTER]/decay_corrected_cpm")</TD>
                                                             </TR>
                                                             <TR>
                                                                 <TD>Measurement Date Time</TD>

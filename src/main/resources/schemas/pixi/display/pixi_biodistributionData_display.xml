@@ -133,18 +133,21 @@
     <DisplayField id="ISOTOPE" header="Isotope" visible="true" searchable="true">
         <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/isotope"/>
     </DisplayField>
-    <DisplayField id="INJECTION_DOSE" header="Injection Dose" visible="true" searchable="true">
-        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/injection_dose"/>
+    <DisplayField id="INJECTED_DOSE" header="Injected Dose" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/injected_dose"/>
     </DisplayField>
-    <DisplayField id="INJECTION_DOSE_UNIT" header="Injection Dose Unit" visible="true" searchable="true">
+    <DisplayField id="INJECTED_DOSE_UNIT" header="Injected Dose Unit" visible="true" searchable="true">
         <DisplayFieldElement name="Field1"
-                             schema-element="pixi:biodistributionData/injection_data/injection_dose_unit"/>
+                             schema-element="pixi:biodistributionData/injection_data/injected_dose_unit"/>
     </DisplayField>
     <DisplayField id="INJECTION_VOLUME" header="Injection Volume" visible="true" searchable="true">
         <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/injection_volume"/>
     </DisplayField>
     <DisplayField id="INJECTION_VOLUME_UNIT" header="Injection Volume Unit" visible="true" searchable="true">
         <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/injection_volume_unit"/>
+    </DisplayField>
+    <DisplayField id="INJECTION_TOTAL_COUNTS" header="Total Counts Injected" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/injection_total_counts"/>
     </DisplayField>
     <DisplayField id="INJECTION_ROUTE" header="Injection Route" visible="true" searchable="true">
         <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/injection_route"/>

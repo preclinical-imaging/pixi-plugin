@@ -814,6 +814,11 @@
                     <xs:documentation>Injection volume unit (mL)</xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="injection_total_counts" type="xs:decimal" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Total counts injected</xs:documentation>
+                </xs:annotation>
+            </xs:element>
             <xs:element name="injection_route" type="xs:string" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation>Injection route</xs:documentation>
@@ -861,6 +866,11 @@
             <xs:element name="percent_injected_dose_per_organ" type="xs:decimal" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation>Percent injected dose per organ</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="decay_corrected_cpm" type="xs:decimal" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Decay corrected counts per minute</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="measurement_date" type="xs:date" minOccurs="0">
