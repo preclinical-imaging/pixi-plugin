@@ -103,6 +103,10 @@ $page.setVlinkColor($ui.vlink)
                                             <TD>$!item.getStringProperty("pixi:biodistributionData/injection_data/injection_route")</TD>
                                         </TR>
                                         <TR>
+                                            <TD>Injection Site</TD>
+                                            <TD>$!item.getStringProperty("pixi:biodistributionData/injection_data/injection_site")</TD>
+                                        </TR>
+                                        <TR>
                                             <TD>Injection Date Time</TD>
                                             <TD>$!item.getProperty("pixi:biodistributionData/injection_data/injection_date") $!item.getProperty("pixi:biodistributionData/injection_data/injection_time")</TD>
                                         </TR>
