@@ -1,0 +1,308 @@
+<!-- BEGIN pixi-plugin templates/screens/UploadBiodistribution.vm -->
+<div class="upload-container">
+    <h2>Small Animal Biodistribution Upload</h2>
+
+    <div class="form-instructions">
+        <p>Upload an Excel file containing biodistribution data for small animal imaging studies.</p>
+
+        <p>File format requirements:</p>
+
+        <ul>
+            <li>An Excel file with the following sheets: 'pixi_injection_common', 'pixi_injection', 'pixi_biodistribution_common', 'pixi_biodistribution'</li>
+            <li>Columns in the common sheets are shared by all animals (rows) in the respective injection or biodistribution sheet</li>
+        </ul>
+
+        <p>Download a template Excel file <a href="$content.getURI('biod/BiodistributionTemplate.xlsx')" download>here</a>.</p>
+    </div>
+
+    <form id="upload-form" name="upload-form" method="post">
+
+        <fieldset>
+            <legend>Project & Data Selection</legend>
+
+            <div class="filter-container">
+                <label for="project" class="filter-label">Select Project</label>
+
+                <label class="filter-icon" for="project-filter"><i class="fa fa-search"></i></label>
+                <input type="text" id="project-filter" name="project-filter" placeholder="Filter" onkeyup="" class="filter-input"/>
+
+                <select id="project" name="project" form="upload-form" size="8" required class="filer-select"></select>
+            </div>
+
+            <div class="form-component">
+                <label class="file-label" for="file">Select Excel file to upload</label>
+##                TODO DOUBLE CHECK FILE TYPE. IS THIS FOR BOTH XLSX AND XLS?
+                <input type="file" id="file" name="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" required/>
+            </div>
+        </fieldset>
+
+        <input class="submit" id="upload-button" type="button" name="eventSubmit_doPerform" value="Begin Upload" onclick="submitForm();"/>
+
+    </form>
+</div>
+
+<style>
+
+    .upload-container {
+        width: 100%;
+    }
+
+    .form-instructions {
+        margin-bottom: 2em;
+    }
+
+    #upload-form {
+        display: flex;
+        flex-direction: column;
+        row-gap: 1em;
+        font-size: 14px;
+        box-sizing: border-box;
+        width: 600px;
+    }
+
+    #upload-form label {
+        font-weight: normal;
+    }
+
+    #upload-form select,
+    #upload-form text,
+    #upload-form input[type="file"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    #upload-form .filter-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        row-gap: 0.5rem;
+        margin-bottom: 2rem;
+    }
+
+    #upload-form .filter-label {
+        flex: 2 1 auto;
+    }
+
+    #upload-form .filter-icon {
+        flex: 0 0 auto;
+        margin-right: 5px;
+    }
+
+    #upload-form .form-component {
+        display: flex;
+        flex-direction: column;
+        row-gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    #upload-button {
+        width: 30%;
+        margin-top: 10px;
+        background-color: #0074b8; /* XNAT blue color */
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        background-image: none;  /* Remove default button background */
+        align-self: flex-end;
+    }
+
+    #upload-button:hover {
+        background-color: #005eaa; /* Slightly darker blue on hover */
+    }
+
+    .input-desc {
+        margin: 0 0 10px 0;
+        font-size: 12px;
+    }
+
+    #upload-form fieldset {
+        margin: 1em 0;
+        padding: 1em;
+        border: 1px solid #ccc;
+        background-color: #fdfdfd;
+        border-radius: 4px;
+    }
+
+    #upload-form legend {
+        font-weight: bold;
+    }
+
+    #upload-form .advanced-options-button {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+        background-image: none;  /* Remove default button background */
+    }
+
+</style>
+
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-projects.js')"></script>
+
+<script type="text/javascript">
+    // Form Elements
+    let formEl            = document.getElementById("upload-form");
+    let projectEl         = document.getElementById("project");
+    let projectFilerInput = document.getElementById("project-filter");
+    let mappingEl         = document.getElementById("mapping");
+    let fileEl            = document.getElementById("file");
+
+    // Form rendering
+    let renderProjectSelectBox = function(selectBox, projects) {
+        console.debug('renderProjectSelectBox()')
+
+        // Clear select box
+        selectBox.options.length = 0;
+
+        projects.forEach(project => {
+            selectBox.options[selectBox.length] = new Option(project['id'], project['id'])
+        })
+    }
+
+    // Load projects and mappings then render select boxes
+    XNAT.plugin.pixi.projects.getAll()
+            .then(resultSet => resultSet['ResultSet']['Result'])
+            .then(projects => renderProjectSelectBox(projectEl, projects));
+
+    // Event listeners
+    let filterProject = (event) => {
+        console.debug('filterProject()')
+
+        let filter = event.target.value.toLowerCase();
+        let projects = Array.from(projectEl.options);
+
+        projects.forEach(project => {
+            project.hidden = !project.value.toLowerCase().includes(filter);
+        });
+    }
+
+    projectFilerInput.addEventListener('keyup', filterProject);
+
+    async function submitForm() {
+        console.debug('submitForm()')
+
+        function validateForm() {
+            let validProject = XNAT.validate(projectEl).required().check();
+            // TODO Double check file type. Is this for both xlsx and xls?
+            let validFile = XNAT.validate(fileEl).is('fileType', 'xls,xlsx').check()
+            return validProject && validFile;
+        }
+
+        let isValid = validateForm()
+
+        console.debug(`Uploader form validation: ${isValid}`);
+
+        if (!isValid) {
+            return;
+        }
+
+        let projectId = projectEl.value;
+        let uploadId = new Date().toISOString()
+                .replaceAll('-', '_')
+                .replaceAll(':', '_')
+                .replaceAll('.', '_');
+
+        let file = fileEl.files[0];
+        let encodedFileName = encodeURIComponent(file.name);
+        encodedFileName = encodedFileName.replaceAll('%20', '_'); // Replace spaces with underscores
+        let cachePath = `/user/cache/resources/${uploadId}/files/${encodedFileName}`;
+        let encodedCachePath = encodeURIComponent(cachePath);
+        let userResourceCacheUrl = XNAT.url.csrfUrl(`/data/${cachePath}`);
+
+        let formDataFileOnly = new FormData()
+        formDataFileOnly.append('file', file)
+
+        // Upload the zip file to the users cache
+        console.debug(`Uploading ${file.name}`);
+        XNAT.ui.dialog.static.wait(`Uploading ${file.name}`,{id: "biod_upload"});
+
+        let response = await fetch(userResourceCacheUrl, {
+            method: 'PUT',
+            body : formDataFileOnly
+        })
+
+        if (response.ok) {
+            console.debug('Upload successful');
+            XNAT.ui.dialog.close("biod_upload");
+        } else {
+            console.error(`Failed to upload ${file.name}`)
+            XNAT.ui.dialog.close("biod_upload");
+            XNAT.ui.dialog.open({
+                title: 'Upload Failed',
+                content: `<div class="error">Failed to upload ${file.name}.</div>`,
+                buttons: [
+                    {
+                        label: 'OK',
+                        isDefault: true,
+                        close: true,
+                    }
+                ]
+            })
+            return;
+        }
+
+        let biodApiUrl = XNAT.url.csrfUrl('/xapi/pixi/biodistribution');
+        let biodApiUrlWithParams = XNAT.url.addQueryString(biodApiUrl, [
+            `project=${projectId}`,
+            `cachePath=${uploadId}/${encodedFileName}`
+        ]);
+
+        console.debug(`Calling ${biodApiUrlWithParams}`);
+        response = await fetch(biodApiUrlWithParams, {method: 'POST'})
+        if (response.ok) {
+            console.debug('Upload successful');
+            XNAT.ui.dialog.close("biod_upload");
+            XNAT.ui.dialog.open({
+                title: 'Upload Successful',
+                content: `<div class="success">Upload and extraction successful..... TODO Link to project...</div>`,
+                buttons: [
+                    {
+                        label: 'OK',
+                        isDefault: true,
+                        close: true,
+                    }
+                ]
+            })
+        } else {
+            console.error(`Failed to extract ${file.name}`)
+            XNAT.ui.dialog.close("bli_extraction");
+
+            response.text()
+                .then(errorMessage => {
+                    console.error(`Error message: ${errorMessage}`);
+                    XNAT.ui.dialog.open({
+                        title: 'Extraction Failed',
+                        content: `<div class="error">Failed to extract biodistribution data from ${file.name}. ${errorMessage}</div>`,
+                        buttons: [
+                            {
+                                label: 'OK',
+                                isDefault: true,
+                                close: true,
+                            }
+                        ]
+                    })
+                })
+                .catch(error => {
+                    console.error(`Error reading response text: ${error}`);
+                    XNAT.ui.dialog.open({
+                        title: 'Extraction Failed',
+                        content: `<div class="error">Failed to extract biodistribution data from ${file.name}. ${error}</div>`,
+                        buttons: [
+                            {
+                                label: 'OK',
+                                isDefault: true,
+                                close: true,
+                            }
+                        ]
+                    })
+                });
+        }
+    }
+</script>
+<!-- END pixi-plugin templates/screens/UploadBiodistribution.vm -->

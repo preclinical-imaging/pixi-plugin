@@ -1,0 +1,5 @@
+<!-- BEGIN pixi-plugin templates/screens/topBar/Upload/Biodistribution.vm -->
+
+<li><a href="$link.setPage("UploadBiodistribution.vm")">Upload Biod Experiments</a></li>
+
+<!-- END pixi-plugin templates/screens/topBar/Upload/Biodistribution.vm -->
