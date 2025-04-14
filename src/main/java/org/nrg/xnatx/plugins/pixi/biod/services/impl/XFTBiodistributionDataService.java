@@ -346,9 +346,10 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         }
 
         // TODO Process common sheets!
-        Path relativeArchivePath = Paths.get(siteConfigPreferences.getBuildPath()).relativize(Paths.get(siteConfigPreferences.getArchivePath() + "/projects/" + project));
-        String resourcesPath = relativeArchivePath.toString().replace("..", "");
-        defaultCatalogService.insertResources(user, resourcesPath, file, "bioDExcelFiles", "", "", "");
+        XnatProjectdata projectData = XnatProjectdata.getProjectByIDorAlias(project, user, false);
+        Path projectResourcePath = Paths.get(siteConfigPreferences.getArchivePath()).getFileName().resolve(Paths.get("projects")).resolve(projectData.getArchiveDirectoryName());
+        String resourcesPathWithLeadingElement = Paths.get(siteConfigPreferences.getArchivePath()).getRoot().toString() + projectResourcePath.toString();
+        defaultCatalogService.insertResources(user, resourcesPathWithLeadingElement, file, "BioDExcelFiles", "", "", "");
         return biodExperiments;
     }
 
