@@ -127,6 +127,7 @@ $page.setVlinkColor($ui.vlink)
                                                value="$item.getProperty("pixi:biodistributionData/animal_sacrifice_date")">
                                         <input type="time"
                                                id="pixi:biodistributionData/animal_sacrifice_time"
+                                               step="1"
                                                name="pixi:biodistributionData/animal_sacrifice_time"
                                                value="$item.getProperty("pixi:biodistributionData/animal_sacrifice_time")">
                                     </TD>
@@ -192,6 +193,7 @@ $page.setVlinkColor($ui.vlink)
                                                            value="$item.getProperty("pixi:biodistributionData/injection_data/injection_date")">
                                                     <input type="time"
                                                            id="pixi:biodistributionData/injection_data/injection_time"
+                                                           step="1"
                                                            name="pixi:biodistributionData/injection_data/injection_time"
                                                            value="$item.getProperty("pixi:biodistributionData/injection_data/injection_time")">
                                                 </TD>
@@ -311,6 +313,7 @@ $page.setVlinkColor($ui.vlink)
                                             <TD>
                                                 <input type="time"
                                                        id="pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/measurement_time"
+                                                       step="1"
                                                        name="pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/measurement_time"
                                                        value="$item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/measurement_time")">
                                             </TD>
