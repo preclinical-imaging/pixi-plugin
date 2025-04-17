@@ -182,6 +182,10 @@
         });
     }
 
+    function getProjectLink(id) {
+        return XNAT.url.rootUrl('data/projects/' + id);
+    }
+
     projectFilerInput.addEventListener('keyup', filterProject);
 
     async function submitForm() {
@@ -258,9 +262,10 @@
         if (response.ok) {
             console.debug('Upload successful');
             XNAT.ui.dialog.close("biod_upload");
+            let project_link = getProjectLink(projectId);
             XNAT.ui.dialog.open({
                 title: 'Upload Successful',
-                content: `<div class="success">Upload and extraction successful..... TODO Link to project...</div>`,
+                content: `<div class="success">Upload and extraction successful. Data has been successfully added to <a href=${project_link}>${projectId}</a></div>`,
                 buttons: [
                     {
                         label: 'OK',

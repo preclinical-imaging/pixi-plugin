@@ -12,11 +12,13 @@ import org.nrg.xapi.exceptions.DataFormatException;
 import org.nrg.xapi.exceptions.NotFoundException;
 import org.nrg.xdat.model.*;
 import org.nrg.xdat.om.*;
+import org.nrg.xdat.preferences.SiteConfigPreferences;
 import org.nrg.xdat.services.cache.UserDataCache;
 import org.nrg.xft.ItemI;
 import org.nrg.xft.XFTItem;
 import org.nrg.xft.event.EventUtils;
 import org.nrg.xft.security.UserI;
+import org.nrg.xnat.services.archive.impl.legacy.DefaultCatalogService;
 import org.nrg.xnatx.plugins.pixi.biod.helpers.SaveItemHelper;
 import org.nrg.xnatx.plugins.pixi.biod.helpers.XnatExperimentDataHelper;
 import org.nrg.xnatx.plugins.pixi.biod.helpers.XnatSubjectDataHelper;
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Service;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -38,6 +41,8 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
     private final XnatSubjectDataHelper xnatSubjectDataHelper;
     private final XnatExperimentDataHelper xnatExperimentDataHelper;
     private final SaveItemHelper saveItemHelper;
+    private final DefaultCatalogService defaultCatalogService;
+    private final SiteConfigPreferences siteConfigPreferences;
 
     private static final String SUBJECT_LABEL_COLUMN = "subject_id";
 
@@ -46,11 +51,13 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
     public XFTBiodistributionDataService(UserDataCache userDataCache,
                                          XnatSubjectDataHelper xnatSubjectDataHelper,
                                          XnatExperimentDataHelper xnatExperimentDataHelper,
-                                         SaveItemHelper saveItemHelper) {
+                                         SaveItemHelper saveItemHelper, DefaultCatalogService defaultCatalogService, SiteConfigPreferences siteConfigPreferences) {
         this.userDataCache = userDataCache;
         this.xnatSubjectDataHelper = xnatSubjectDataHelper;
         this.xnatExperimentDataHelper = xnatExperimentDataHelper;
         this.saveItemHelper = saveItemHelper;
+        this.defaultCatalogService = defaultCatalogService;
+        this.siteConfigPreferences = siteConfigPreferences;
     }
 
     @Override
@@ -339,7 +346,10 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         }
 
         // TODO Process common sheets!
-
+        XnatProjectdata projectData = XnatProjectdata.getProjectByIDorAlias(project, user, false);
+        Path projectResourcePath = Paths.get(siteConfigPreferences.getArchivePath()).getFileName().resolve(Paths.get("projects")).resolve(projectData.getArchiveDirectoryName());
+        String resourcesPathWithLeadingElement = Paths.get(siteConfigPreferences.getArchivePath()).getRoot().toString() + projectResourcePath.toString();
+        defaultCatalogService.insertResources(user, resourcesPathWithLeadingElement, file, "BioDExcelFiles", "", "", "");
         return biodExperiments;
     }
 

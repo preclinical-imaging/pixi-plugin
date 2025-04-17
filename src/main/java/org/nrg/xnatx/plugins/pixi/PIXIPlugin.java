@@ -80,7 +80,7 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.DEFAULT_DIGITS;
                                          plural = "BLI Scans",
                                          code = "BLIScan"),
                           @XnatDataModel(value = PixiBiodistributiondata.SCHEMA_ELEMENT_NAME,
-                                         singular = "Biodistribution.vm",
+                                         singular = "Biodistribution",
                                          plural = "Biodistributions",
                                          code = "BIOD"),
                           })
