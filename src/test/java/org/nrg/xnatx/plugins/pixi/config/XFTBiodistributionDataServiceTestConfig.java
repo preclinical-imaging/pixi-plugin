@@ -1,6 +1,8 @@
 package org.nrg.xnatx.plugins.pixi.config;
 
+import org.nrg.xdat.preferences.SiteConfigPreferences;
 import org.nrg.xdat.services.cache.UserDataCache;
+import org.nrg.xnat.services.archive.impl.legacy.DefaultCatalogService;
 import org.nrg.xnatx.plugins.pixi.biod.helpers.SaveItemHelper;
 import org.nrg.xnatx.plugins.pixi.biod.helpers.XnatExperimentDataHelper;
 import org.nrg.xnatx.plugins.pixi.biod.helpers.XnatSubjectDataHelper;
@@ -17,12 +19,16 @@ public class XFTBiodistributionDataServiceTestConfig {
     public XFTBiodistributionDataService XFTBiodistributionDataService(UserDataCache mockUserDataCache,
                                                                        XnatSubjectDataHelper mockXnatSubjectDataHelper,
                                                                        XnatExperimentDataHelper mockXnatExperimentDataHelper,
-                                                                       SaveItemHelper mockSaveItemHelper) {
+                                                                       SaveItemHelper mockSaveItemHelper,
+                                                                       DefaultCatalogService defaultCatalogService,
+                                                                       SiteConfigPreferences siteConfigPreferences) {
         return new XFTBiodistributionDataService(
                 mockUserDataCache,
                 mockXnatSubjectDataHelper,
                 mockXnatExperimentDataHelper,
-                mockSaveItemHelper
+                mockSaveItemHelper,
+                defaultCatalogService,
+                siteConfigPreferences
         );
     }
 
