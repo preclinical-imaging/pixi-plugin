@@ -166,7 +166,6 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         log.debug("User {} is attempting to create biodistribution data experiment in project {} from file {}",
                   user.getUsername(), project, file.getAbsolutePath());
 
-        List<XnatSubjectdata> newSubjects = new ArrayList<>();
         List<PixiBiodistributiondataI> biodExperiments = new ArrayList<>();
 
         // Read Excel file with Apache POI
