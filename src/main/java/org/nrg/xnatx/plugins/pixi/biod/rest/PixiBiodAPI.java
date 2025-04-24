@@ -44,12 +44,13 @@ public class PixiBiodAPI extends AbstractXapiRestController {
                    @ApiResponse(code = 500, message = "Unexpected error")})
     @XapiRequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     public List<PixiBiodistributiondataI> createBiodistributionExperiments(@RequestParam @Project String project,
-                                                                           @RequestParam String cachePath) throws Exception {
+                                                                           @RequestParam String cachePath,
+                                                                           @RequestParam String dataOverlapHandling) throws Exception {
         log.info("Creating biodistribution experiments for project: {} from cache path: {}", project, cachePath);
 
         // Call the service to create biodistribution experiments
         List<PixiBiodistributiondataI> biodExps = biodistributionDataService.fromExcel(getSessionUser(), project, cachePath);
-        List<PixiBiodistributiondataI> createdBiodExps = biodistributionDataService.createOrUpdate(getSessionUser(), biodExps);
+        List<PixiBiodistributiondataI> createdBiodExps = biodistributionDataService.createOrUpdate(getSessionUser(), biodExps, dataOverlapHandling);
         log.info("Created {} biodistribution experiments for project: {}", createdBiodExps.size(), project);
 
         return Collections.emptyList(); // TODO: Return the created biodistribution experiments, update front end to handle this

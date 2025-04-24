@@ -34,6 +34,15 @@
 ##                TODO DOUBLE CHECK FILE TYPE. IS THIS FOR BOTH XLSX AND XLS?
                 <input type="file" id="file" name="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" required/>
             </div>
+
+            <div class="form-component">
+                <label for="data_overlap_handling">Choose how to handle overlapping data:</label>
+                <select id="data_overlap_handling" name="data_overlap_handling">
+                  <option value="throw_error">Do Not Allow Upload</option>
+                  <option value="ignore_matching">Upload And Skip Matching Data</option>
+                  <option value="upload_overwrite">Upload and Overwrite Matching Data</option>
+                </select>
+            </div>
         </fieldset>
 
         <input class="submit" id="upload-button" type="button" name="eventSubmit_doPerform" value="Begin Upload" onclick="submitForm();"/>
@@ -147,11 +156,12 @@
 
 <script type="text/javascript">
     // Form Elements
-    let formEl            = document.getElementById("upload-form");
-    let projectEl         = document.getElementById("project");
-    let projectFilerInput = document.getElementById("project-filter");
-    let mappingEl         = document.getElementById("mapping");
-    let fileEl            = document.getElementById("file");
+    let formEl             = document.getElementById("upload-form");
+    let projectEl          = document.getElementById("project");
+    let projectFilerInput  = document.getElementById("project-filter");
+    let dataOverlapElement = document.getElementById("data_overlap_handling");
+    let mappingEl          = document.getElementById("mapping");
+    let fileEl             = document.getElementById("file");
 
     // Form rendering
     let renderProjectSelectBox = function(selectBox, projects) {
@@ -182,11 +192,29 @@
         });
     }
 
+    let alertUserOfOverwriteDecision = (event) => {
+        if (event.target.value === "upload_overwrite") {
+            console.log("Overwrite Data");
+            XNAT.ui.dialog.open({
+                title: 'Data Overlap Method Changed',
+                content: `<div class="info">Setting the method of handling data overlap may cause data in the system to be overwritten. Only upload data with this set if you know there is no chance of data loss.</div>`,
+                buttons: [
+                    {
+                        label: 'OK',
+                        isDefault: true,
+                        close: true,
+                    }
+                ]
+            })
+        }
+    }
+
     function getProjectLink(id) {
         return XNAT.url.rootUrl('data/projects/' + id);
     }
 
     projectFilerInput.addEventListener('keyup', filterProject);
+    dataOverlapElement.addEventListener('change', alertUserOfOverwriteDecision);
 
     async function submitForm() {
         console.debug('submitForm()')
@@ -207,6 +235,7 @@
         }
 
         let projectId = projectEl.value;
+        let dataOverlapHandling = dataOverlapElement.value;
         let uploadId = new Date().toISOString()
                 .replaceAll('-', '_')
                 .replaceAll(':', '_')
@@ -254,7 +283,8 @@
         let biodApiUrl = XNAT.url.csrfUrl('/xapi/pixi/biodistribution');
         let biodApiUrlWithParams = XNAT.url.addQueryString(biodApiUrl, [
             `project=${projectId}`,
-            `cachePath=${uploadId}/${encodedFileName}`
+            `cachePath=${uploadId}/${encodedFileName}`,
+            `dataOverlapHandling=${dataOverlapHandling}`
         ]);
 
         console.debug(`Calling ${biodApiUrlWithParams}`);
@@ -283,7 +313,7 @@
                     console.error(`Error message: ${errorMessage}`);
                     XNAT.ui.dialog.open({
                         title: 'Extraction Failed',
-                        content: `<div class="error">Failed to extract biodistribution data from ${file.name}. ${errorMessage}</div>`,
+                        content: `<div class="error">Failed to extract biodistribution data from ${file.name}. <br>${errorMessage}</div>`,
                         buttons: [
                             {
                                 label: 'OK',
@@ -297,7 +327,7 @@
                     console.error(`Error reading response text: ${error}`);
                     XNAT.ui.dialog.open({
                         title: 'Extraction Failed',
-                        content: `<div class="error">Failed to extract biodistribution data from ${file.name}. ${error}</div>`,
+                        content: `<div class="error">Failed to extract biodistribution data from ${file.name}.<br>${error}</div>`,
                         buttons: [
                             {
                                 label: 'OK',
