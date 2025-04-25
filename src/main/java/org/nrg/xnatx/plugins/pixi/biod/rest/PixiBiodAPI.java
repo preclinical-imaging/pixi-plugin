@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.nrg.framework.annotations.XapiRestController;
+import org.nrg.xapi.exceptions.DataFormatException;
 import org.nrg.xapi.rest.AbstractXapiRestController;
 import org.nrg.xapi.rest.Project;
 import org.nrg.xapi.rest.XapiRequestMapping;
@@ -14,10 +15,9 @@ import org.nrg.xdat.security.services.RoleHolder;
 import org.nrg.xdat.security.services.UserManagementServiceI;
 import org.nrg.xnatx.plugins.pixi.biod.services.BiodistributionDataService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -54,6 +54,14 @@ public class PixiBiodAPI extends AbstractXapiRestController {
         log.info("Created {} biodistribution experiments for project: {}", createdBiodExps.size(), project);
 
         return Collections.emptyList(); // TODO: Return the created biodistribution experiments, update front end to handle this
+    }
+
+    // EXCEPTION HANDLING
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(DataFormatException.class)
+    public String handleDataFormatException(final DataFormatException e) {
+        return e.getMessage();
     }
 
 }
