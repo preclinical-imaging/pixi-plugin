@@ -165,6 +165,34 @@
         <DisplayFieldElement name="Field1" viewName="BIOD_SAMPLE_TYPE_COUNT_AGG" viewColumn="TYPE_LIST"/>
         <description>Sample Types</description>
     </DisplayField>
+    <DisplayField id="BIOD_SAMPLE_WEIGHT_BY_SAMPLE_TYPE" header="Sample Weight By Sample Type" visible="true" searchable="true" data-type="float" xsi:type="SubQueryField">
+        <Content type="sql">SAMPLE_WEIGHT</Content>
+        <SubQuery>select sample_weight AS SAMPLE_WEIGHT, pixi_biodistributiondata_id FROM pixi_biodsampleuptakedata where LOWER(sample_type)=LOWER('@WHERE') GROUP BY pixi_biodistributiondata_id, sample_weight</SubQuery>
+        <MappingColumns>
+            <MappingColumn schemaField="pixi:biodistributionData.ID" queryField="pixi_biodistributiondata_id"/>
+        </MappingColumns>
+    </DisplayField>
+    <DisplayField id="BIOD_PERCENT_INJECTED_DOSE_PER_GRAM_BY_SAMPLE_TYPE" header="%ID per gram By Sample Type" visible="true" searchable="true" data-type="float" xsi:type="SubQueryField">
+        <Content type="sql">PERCENT_INJECTED_DOSE_PER_GRAM</Content>
+        <SubQuery>select percent_injected_dose_per_gram AS PERCENT_INJECTED_DOSE_PER_GRAM, pixi_biodistributiondata_id FROM pixi_biodsampleuptakedata where LOWER(sample_type)=LOWER('@WHERE') GROUP BY pixi_biodistributiondata_id, percent_injected_dose_per_gram</SubQuery>
+        <MappingColumns>
+            <MappingColumn schemaField="pixi:biodistributionData.ID" queryField="pixi_biodistributiondata_id"/>
+        </MappingColumns>
+    </DisplayField>
+    <DisplayField id="BIOD_PERCENT_INJECTED_DOSE_PER_ORGAN_BY_SAMPLE_TYPE" header="%ID per organ By Sample Type" visible="true" searchable="true" data-type="float" xsi:type="SubQueryField">
+        <Content type="sql">PERCENT_INJECTED_DOSE_PER_ORGAN</Content>
+        <SubQuery>select percent_injected_dose_per_organ AS PERCENT_INJECTED_DOSE_PER_ORGAN, pixi_biodistributiondata_id FROM pixi_biodsampleuptakedata where LOWER(sample_type)=LOWER('@WHERE') GROUP BY pixi_biodistributiondata_id, percent_injected_dose_per_organ</SubQuery>
+        <MappingColumns>
+            <MappingColumn schemaField="pixi:biodistributionData.ID" queryField="pixi_biodistributiondata_id"/>
+        </MappingColumns>
+    </DisplayField>
+    <DisplayField id="BIOD_DECAY_CORRECTED_CPM_BY_SAMPLE_TYPE" header="Decay Corrected CPM By Sample Type" visible="true" searchable="true" data-type="float" xsi:type="SubQueryField">
+        <Content type="sql">DECAY_CORRECTED_CPM</Content>
+        <SubQuery>select decay_corrected_cpm AS DECAY_CORRECTED_CPM, pixi_biodistributiondata_id FROM pixi_biodsampleuptakedata where LOWER(sample_type)=LOWER('@WHERE') GROUP BY pixi_biodistributiondata_id, decay_corrected_cpm</SubQuery>
+        <MappingColumns>
+            <MappingColumn schemaField="pixi:biodistributionData.ID" queryField="pixi_biodistributiondata_id"/>
+        </MappingColumns>
+    </DisplayField>
     <DisplayVersion versionName="listing" default-order-by="DATE" default-sort-order="DESC"
                     brief-description="Biodistribution" dark-color="9999CC" light-color="CCCCFF">
         <DisplayFieldRef id="RPT"/>
