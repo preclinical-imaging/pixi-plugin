@@ -184,13 +184,10 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
              Workbook workbook = file.getName().endsWith(".xlsx") ? new XSSFWorkbook(fis) : new HSSFWorkbook(fis)) {
 
             // Expecting sheets: pixi_injection, pixi_biod
-            // Optional sheets: pixi_injection_common, pixi_biod_common
 
             // Get the injection and biodistribution sheets
             Sheet injectionSheet = workbook.getSheet("pixi_injection");
             Sheet biodSheet = workbook.getSheet("pixi_biod");
-            Optional<Sheet> injectionCommonSheet = Optional.ofNullable(workbook.getSheet("pixi_injection_common"));
-            Optional<Sheet> biodCommonSheet = Optional.ofNullable(workbook.getSheet("pixi_biod_common"));
 
             if (injectionSheet == null || biodSheet == null) {
                 throw new DataFormatException("Missing required sheets: pixi_injection, pixi_biod");
@@ -200,8 +197,6 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
 
             Map<String, Integer> injectionHeaderMap = getHeaderMap(injectionSheet.getRow(0));
             Map<String, Integer> biodHeaderMap = getHeaderMap(biodSheet.getRow(0));
-            Optional<Map<String, Integer>> injectionCommonHeaderMap = injectionCommonSheet.map(commonSheet -> getHeaderMap(commonSheet.getRow(0)));
-            Optional<Map<String, Integer>> biodCommonHeaderMap = biodCommonSheet.map(commonSheet -> getHeaderMap(commonSheet.getRow(0)));
 
             // Process injection sheet
             for (Row row : injectionSheet) {
@@ -355,7 +350,6 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
             throw new DataFormatException("Invalid Excel file format", e);
         }
 
-        // TODO Process common sheets!
         XnatProjectdata projectData = XnatProjectdata.getProjectByIDorAlias(project, user, false);
         Path projectResourcePath = Paths.get(siteConfigPreferences.getArchivePath()).getFileName().resolve(Paths.get("projects")).resolve(projectData.getArchiveDirectoryName());
         String resourcesPathWithLeadingElement = Paths.get(siteConfigPreferences.getArchivePath()).getRoot().toString() + projectResourcePath.toString();
