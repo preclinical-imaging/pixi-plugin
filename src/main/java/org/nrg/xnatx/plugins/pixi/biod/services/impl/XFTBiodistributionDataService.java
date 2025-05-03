@@ -224,6 +224,10 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
                 getCellValue(row, injectionHeaderMap, "acquisition_site").ifPresent(biodistributionData::setAcquisitionSite);
                 getCellValue(row, injectionHeaderMap, "note").ifPresent(biodistributionData::setNote);
 
+                getCellValueAsDate(row, injectionHeaderMap, "animal_sacrifice_datetime").ifPresent(biodistributionData::setAnimalSacrificeDate);
+//                getCellValueAsDate(row, injectionHeaderMap, "animal_sacrifice_datetime").ifPresent(date -> biodistributionData.setAnimalSacrificeTime(date.getTime()));
+
+
                 // Handle animal weight and unit in separate columns or combined
                 Optional<Double> animalWeight = getCellValueAsDouble(row, injectionHeaderMap, "animal_weight");
                 Optional<String> animalWeightUnit = getCellValue(row, injectionHeaderMap, "animal_weight_unit");
