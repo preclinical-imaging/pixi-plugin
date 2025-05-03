@@ -8,11 +8,10 @@
         <p>File format requirements:</p>
 
         <ul>
-            <li>An Excel file with the following sheets: 'pixi_injection_common', 'pixi_injection', 'pixi_biodistribution_common', 'pixi_biodistribution'</li>
-            <li>Columns in the common sheets are shared by all animals (rows) in the respective injection or biodistribution sheet</li>
+            <li>An Excel file with the following sheets:'pixi_biodistribution_common', 'pixi_biodistribution'</li>
         </ul>
 
-        <p>Download a template Excel file <a href="$content.getURI('biod/BiodistributionTemplate.xlsx')" download>here</a>.</p>
+        <p>Download a template Excel file <a href="$content.getURI('biod/BiodistributionTemplate.xls')" download>here</a>.</p>
     </div>
 
     <form id="upload-form" name="upload-form" method="post">
