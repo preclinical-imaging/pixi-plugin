@@ -224,6 +224,8 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
                 getCellValue(row, injectionHeaderMap, "acquisition_site").ifPresent(biodistributionData::setAcquisitionSite);
                 getCellValue(row, injectionHeaderMap, "note").ifPresent(biodistributionData::setNote);
 
+                getCellValue(row, injectionHeaderMap, "technician").ifPresent(biodistributionData::setTechnician);
+
                 getCellValueAsDate(row, injectionHeaderMap, "animal_sacrifice_datetime").ifPresent(biodistributionData::setAnimalSacrificeDate);
 //                getCellValueAsDate(row, injectionHeaderMap, "animal_sacrifice_datetime").ifPresent(date -> biodistributionData.setAnimalSacrificeTime(date.getTime()));
 
