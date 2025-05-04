@@ -26,20 +26,15 @@ $page.setVlinkColor($ui.vlink)
                             <TR><TD width="150">Project</TD><TD>$!item.getStringProperty("pixi:biodistributionData/project")</TD></TR>
                             <TR><TD>Experiment ID</TD><TD>$!item.getStringProperty("pixi:biodistributionData/ID")</TD></TR>
                             <TR><TD>Experiment Label</TD><TD>$!item.getStringProperty("pixi:biodistributionData/label")</TD></TR>
-                            <TR><TD>Experiment Date</TD><TD>$!item.getProperty("pixi:biodistributionData/date")</TD></TR>
+                            <TR><TD>Experiment Date Time</TD><TD>$!item.getProperty("pixi:biodistributionData/date") $!item.getProperty("pixi:biodistributionData/time")</TD></TR>
                             <TR><TD>Technician</TD><TD>$!item.getStringProperty("pixi:biodistributionData/technician")</TD></TR>
                             <TR><TD style="height: 1rem"></TD><TD></TD></TR>
 
                             <TR><TH align="left" style="padding: 0">Animal Details</TH></TR>
                             <TR>
-                                <TD>Animal Sacrifice Date</TD>
-                                <TD>$!item.getProperty("pixi:biodistributionData/animal_sacrifice_date")</TD>
+                                <TD>Animal Sacrifice Date Time</TD>
+                                <TD>$!item.getProperty("pixi:biodistributionData/animal_sacrifice_date") $!item.getProperty("pixi:biodistributionData/animal_sacrifice_time")</TD>
                             </TR>
-                            <TR>
-                                <TD>Animal Sacrifice Time</TD>
-                                <TD>$!item.getProperty("pixi:biodistributionData/animal_sacrifice_time")</TD>
-                            </TR>
-                            <TR>
                                 <TD>Animal Weight</TD>
                                 <TD>$!item.getProperty("pixi:biodistributionData/animal_weight") $!item.getStringProperty("pixi:biodistributionData/animal_weight_unit")</TD>
                             </TR>

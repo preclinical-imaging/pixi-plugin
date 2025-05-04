@@ -101,12 +101,17 @@ $page.setVlinkColor($ui.vlink)
                                     <TD colspan="2">#parse("/screens/EditProjectSpecificFields.vm")</TD>
                                 </tr>
                                 <TR>
-                                    #formLabel("Experient Date")
+                                    #formLabel("Experient Date/Time")
                                     <TD>
                                         <input type="date"
                                                id="pixi:biodistributionData/date"
                                                name="pixi:biodistributionData/date"
                                                value="$item.getProperty("pixi:biodistributionData/date")">
+                                        <input type="time"
+                                               id="pixi:biodistributionData/time"
+                                               step="1"
+                                               name="pixi:biodistributionData/time"
+                                               value="$item.getProperty("pixi:biodistributionData/time")">
                                     </TD>
                                 </TR>
                                 <TR>
