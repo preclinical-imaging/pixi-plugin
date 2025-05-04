@@ -336,7 +336,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
                 Optional<PixiBiodistributiondataI> exp = biodExperiments.stream().filter(biod -> biod.getSubjectId().equals(subjectLabel)).findFirst();
 
                 if (exp.isPresent()) {
-                    exp.get().addSampleUptakeData(biodistributionData); // TODO HANDLE Exception
+                    exp.get().addSampleUptakeData(biodistributionData);
                 } else {
                     throw new DataFormatException("No matching injection data found for subject ID: " + subjectLabel);
                 }
@@ -506,7 +506,6 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
             isValid = false;
         }
 
-        // TODO Validate that each row has a unique subject_id / sample_type combination
         Map<String, List<String>> animalSampleTypes = new HashMap<>();
         final String SAMPLE_TYPE_COLUMN = "sample_type";
         for (Row row: biodSheet) {
