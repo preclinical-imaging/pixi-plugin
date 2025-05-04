@@ -37,6 +37,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 @Slf4j
@@ -320,6 +322,10 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
                     continue;
                 }
 
+                if (isRowEmpty(row)) {
+                    continue;
+                }
+
                 PixiBiodsampleuptakedataI biodistributionData = new PixiBiodsampleuptakedata();
 
                 // Get the subject ID. We will need to add it to the appropriate biodistribution data object
@@ -423,6 +429,11 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
     private LocalDateTime getDateTimeFromDate(Date date) {
         Instant instant = date.toInstant();
         return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+    }
+
+    private boolean isRowEmpty(Row row){
+        Iterable<Cell> iterable = row::cellIterator;
+        return StreamSupport.stream(iterable.spliterator(), false).allMatch(cell -> cell.getCellType().toString().equals("BLANK"));
     }
 
     protected void validateSheets(@NotNull Sheet injectionSheet, @NotNull Sheet biodSheet) throws DataFormatException {
