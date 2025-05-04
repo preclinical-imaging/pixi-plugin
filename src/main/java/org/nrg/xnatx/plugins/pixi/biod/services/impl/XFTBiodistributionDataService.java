@@ -31,6 +31,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -219,15 +223,23 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
                 biodistributionData.setSubjectId(subjectLabel);
                 biodistributionData.setLabel(subjectLabel + "_Biod");
 
-                getCellValueAsDate(row, injectionHeaderMap, "experiment_datetime").ifPresent(biodistributionData::setDate);
-                // getCellValueAsDate(row, injectionHeaderMap, "experiment_datetime").ifPresent(biodistributionData::setTime); // TODO FIX TIMES
+                Optional<Date> experimentDate = getCellValueAsDate(row, injectionHeaderMap, "experiment_datetime");
+                if (experimentDate.isPresent()) {
+                    LocalDateTime experimentDateTime = getDateTimeFromDate(experimentDate.get());
+                    biodistributionData.setDate(experimentDateTime.toLocalDate());
+                    biodistributionData.setTime(experimentDateTime.toLocalTime());
+                }
+
                 getCellValue(row, injectionHeaderMap, "acquisition_site").ifPresent(biodistributionData::setAcquisitionSite);
                 getCellValue(row, injectionHeaderMap, "note").ifPresent(biodistributionData::setNote);
-
                 getCellValue(row, injectionHeaderMap, "technician").ifPresent(biodistributionData::setTechnician);
 
-                getCellValueAsDate(row, injectionHeaderMap, "animal_sacrifice_datetime").ifPresent(biodistributionData::setAnimalSacrificeDate);
-//                getCellValueAsDate(row, injectionHeaderMap, "animal_sacrifice_datetime").ifPresent(date -> biodistributionData.setAnimalSacrificeTime(date.getTime()));
+                Optional<Date> animalSacrificeDate = getCellValueAsDate(row, injectionHeaderMap, "animal_sacrifice_datetime");
+                if (animalSacrificeDate.isPresent()) {
+                    LocalDateTime animalSacrificeDateTime = getDateTimeFromDate(animalSacrificeDate.get());
+                    biodistributionData.setAnimalSacrificeDate(animalSacrificeDateTime.toLocalDate());
+                    biodistributionData.setAnimalSacrificeTime(animalSacrificeDateTime.toLocalTime());
+                }
 
 
                 // Handle animal weight and unit in separate columns or combined
@@ -278,8 +290,13 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
                 getCellValue(row, injectionHeaderMap, "injection_total_counts").ifPresent(injectionData::setInjectionTotalCounts);
                 getCellValue(row, injectionHeaderMap, "injection_route").ifPresent(injectionData::setInjectionRoute);
                 getCellValue(row, injectionHeaderMap, "injection_site").ifPresent(injectionData::setInjectionSite);
-                getCellValueAsDate(row, injectionHeaderMap, "injection_datetime").ifPresent(injectionData::setInjectionDate);
-                // getCellValueAsDate(row, injectionHeaderMap, "injection_datetime").ifPresent(date -> injectionData.setInjectionTime(date.getTime()));
+
+                Optional<Date> injectionDate = getCellValueAsDate(row, injectionHeaderMap, "injection_datetime");
+                if(injectionDate.isPresent()) {
+                    LocalDateTime injectionDateTime = getDateTimeFromDate(injectionDate.get());
+                    injectionData.setInjectionDate(injectionDateTime.toLocalDate());
+                    injectionData.setInjectionTime(injectionDateTime.toLocalTime());
+                }
 
                 // Anesthesia is handled in a separate object, reused with the hotel splitter
                 Optional<String> anesthesia = getCellValue(row, injectionHeaderMap, "anesthesia");
@@ -337,8 +354,12 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
                     biodistributionData.setSampleWeightUnit("g");
                 }
 
-                getCellValueAsDate(row, biodHeaderMap, "measurement_datetime").ifPresent(biodistributionData::setMeasurementDate);
-                // getCellValueAsDate(row, biodHeaderMap, "measurement_datetime").ifPresent(date -> biodistributionData.setMeasurementTime(date.getTime()));
+                Optional<Date> measurementDate = getCellValueAsDate(row, biodHeaderMap, "measurement_datetime");
+                if(measurementDate.isPresent()) {
+                    LocalDateTime measurementDateTime = getDateTimeFromDate(measurementDate.get());
+                    biodistributionData.setMeasurementDate(measurementDateTime.toLocalDate());
+                    biodistributionData.setMeasurementTime(measurementDateTime.toLocalTime());
+                }
 
                 Optional<Double> timepointValue = getCellValueAsDouble(row, biodHeaderMap, "timepoint_value");
                 Optional<String> timepointUnit = getCellValue(row, biodHeaderMap, "timepoint_unit");
@@ -396,6 +417,10 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         }
         Cell cell = row.getCell(cellIndex);
         return cell != null ? Optional.ofNullable(cell.getDateCellValue()) : Optional.empty();
+    }
+    private LocalDateTime getDateTimeFromDate(Date date) {
+        Instant instant = date.toInstant();
+        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
     }
 
     protected void validateSheets(@NotNull Sheet injectionSheet, @NotNull Sheet biodSheet) throws DataFormatException {
