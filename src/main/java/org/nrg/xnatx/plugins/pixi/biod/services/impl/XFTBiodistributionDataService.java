@@ -1,5 +1,6 @@
 package org.nrg.xnatx.plugins.pixi.biod.services.impl;
 
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
@@ -418,6 +419,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         Cell cell = row.getCell(cellIndex);
         return cell != null ? Optional.ofNullable(cell.getDateCellValue()) : Optional.empty();
     }
+
     private LocalDateTime getDateTimeFromDate(Date date) {
         Instant instant = date.toInstant();
         return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
@@ -433,7 +435,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
     protected void validateInjectionSheet(@NotNull Sheet injectionSheet) throws DataFormatException {
         log.debug("Validating injection sheet");
 
-        DataFormatException e = new DataFormatException();
+        DataFormatException e = new DataFormatException("There is a problem with the input injection sheet: ");
         boolean isValid = true;
 
         Row headerRow = injectionSheet.getRow(0);
@@ -476,7 +478,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
     protected void validateBiodSheet(@NotNull Sheet biodSheet) throws DataFormatException {
         log.debug("Validating biodistribution sheet");
 
-        DataFormatException e = new DataFormatException();
+        DataFormatException e = new DataFormatException("There is a problem with the input biodistribution sheet: ");
         boolean isValid = true;
 
         // Required columns for biodistribution sheet
@@ -494,7 +496,36 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         }
 
         // TODO Validate that each row has a unique subject_id / sample_type combination
-        Map<String, Set<String>> animalSampleTypes = new HashMap<>();
+        Map<String, List<String>> animalSampleTypes = new HashMap<>();
+        final String SAMPLE_TYPE_COLUMN = "sample_type";
+        for (Row row: biodSheet) {
+            if (row.getRowNum() == 0) {
+                // Skip header row
+                continue;
+            }
+            Optional<String> animalId = getCellValue(row, headerMap, SUBJECT_LABEL_COLUMN);
+            Optional<String> sampleType = getCellValue(row, headerMap, SAMPLE_TYPE_COLUMN);
+            if (!animalId.isPresent()) {
+                e.addInvalidField(SUBJECT_LABEL_COLUMN, "Missing " + SUBJECT_LABEL_COLUMN + " in row " + row.getRowNum());
+                isValid = false;
+            } else if (!sampleType.isPresent()) {
+                e.addInvalidField(SAMPLE_TYPE_COLUMN, "Missing " + SAMPLE_TYPE_COLUMN + " in row " + row.getRowNum());
+                isValid = false;
+            }else {
+                if (animalSampleTypes.containsKey(animalId.get())) {
+                    if (animalSampleTypes.get(animalId.get()).contains(sampleType.get())) {
+                        e.addInvalidField("Duplicate pairing", "The pairing of " + SUBJECT_LABEL_COLUMN + " and " +
+                                SAMPLE_TYPE_COLUMN + " in row " + row.getRowNum() + " is found together in another row.");
+                        isValid = false;
+                    } else {
+                        animalSampleTypes.get(animalId.get()).add(sampleType.get());
+                    }
+                } else {
+                    animalSampleTypes.put(animalId.get(), new ArrayList<>(Collections.singletonList(sampleType.get())));
+                }
+            }
+
+        }
 
         if (!isValid) {
             log.error("", e);
