@@ -282,10 +282,10 @@ $page.setVlinkColor($ui.vlink)
                                     </TD>
                                     <TD>
                                         <select id="pixi:biodistributionData/sample_uptake_data[*]/timepoint_unit" name="pixi:biodistributionData/sample_uptake_data[*]/timepoint_unit">
-                                            <option value="sec">sec</option>
-                                            <option value="min">min</option>
-                                            <option value="hour">hour</option>
-                                            <option value="day">day</option>
+                                            <option value="seconds">second</option>
+                                            <option value="minutes">minute</option>
+                                            <option value="hours">hour</option>
+                                            <option value="days">day</option>
                                         </select>
                                     </TD>
                                     <TD>
@@ -327,10 +327,10 @@ $page.setVlinkColor($ui.vlink)
                                             </TD>
                                             <TD>
                                                 <select id="pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit" name="pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit">
-                                                    <option value="sec" #if($om.getStringProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit").equals('sec')) SELECTED #end>sec</option>
-                                                    <option value="min" #if($om.getStringProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit").equals('min')) SELECTED #end>min</option>
-                                                    <option value="hour" #if($om.getStringProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit").equals('hour')) SELECTED #end>hour</option>
-                                                    <option value="day" #if($om.getStringProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit").equals('day')) SELECTED #end>day</option>
+                                                    <option value="seconds" #if($om.getStringProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit").equals('seconds')) SELECTED #end>seconds</option>
+                                                    <option value="minutes" #if($om.getStringProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit").equals('minutes')) SELECTED #end>minutes</option>
+                                                    <option value="hours" #if($om.getStringProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit").equals('hours')) SELECTED #end>hours</option>
+                                                    <option value="days" #if($om.getStringProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit").equals('days')) SELECTED #end>days</option>
                                                 </select>
                                             </TD>
                                             <TD><button type="button" onclick="removeSampleRow(this)"><i class="fa fa-trash" title="Remove"></i></button></TD>

@@ -1,6 +1,5 @@
 package org.nrg.xnatx.plugins.pixi.biod.services.impl;
 
-import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
@@ -33,11 +32,9 @@ import java.io.FileInputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -371,9 +368,13 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
                 Optional<Double> timepointValue = getCellValueAsDouble(row, biodHeaderMap, "timepoint_value");
                 Optional<String> timepointUnit = getCellValue(row, biodHeaderMap, "timepoint_unit");
 
-                // TODO HOW DO WE WANT TO HAVE UNIFORM TIME POINTS UNITS (ie d vs day vs days, h vs hr vs hour vs hours, ...)
                 timepointValue.ifPresent(biodistributionData::setTimepointValue);
-                timepointUnit.ifPresent(biodistributionData::setTimepointUnit);
+                if (timepointUnit.isPresent()) {
+                    String timepointStandardized = standardizeTimepointValues(timepointUnit.get());
+                    if (timepointStandardized != null) {
+                        biodistributionData.setTimepointUnit(timepointStandardized);
+                    }
+                }
 
                 getCellValue(row, biodHeaderMap, "%_id_g").ifPresent(biodistributionData::setPercentInjectedDosePerGram);
                 getCellValue(row, biodHeaderMap, "%_id_organ").ifPresent(biodistributionData::setPercentInjectedDosePerOrgan);
@@ -434,6 +435,19 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
     private boolean isRowEmpty(Row row){
         Iterable<Cell> iterable = row::cellIterator;
         return StreamSupport.stream(iterable.spliterator(), false).allMatch(cell -> cell.getCellType().toString().equals("BLANK"));
+    }
+
+    private String standardizeTimepointValues(String timepointInput) {
+        if (timepointInput.equals("s") || timepointInput.equals("sec") || timepointInput.equals("secs") || timepointInput.equals("second") | timepointInput.equals("seconds")) {
+            return "seconds";
+        } else if (timepointInput.equals("m") || timepointInput.equals("min") || timepointInput.equals("mins") || timepointInput.equals("minute") | timepointInput.equals("minutes")) {
+            return "minutes";
+        } else if (timepointInput.equals("h") || timepointInput.equals("hr") || timepointInput.equals("hrs") || timepointInput.equals("hour") | timepointInput.equals("hours")) {
+            return "hours";
+        } else if (timepointInput.equals("d") || timepointInput.equals("day") || timepointInput.equals("days")) {
+            return "days";
+        }
+        return null;
     }
 
     protected void validateSheets(@NotNull Sheet injectionSheet, @NotNull Sheet biodSheet) throws DataFormatException {
