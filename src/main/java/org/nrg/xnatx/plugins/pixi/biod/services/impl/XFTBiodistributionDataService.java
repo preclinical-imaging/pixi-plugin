@@ -254,13 +254,6 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
                     biodistributionData.setAnimalWeightUnit("g");
                 }
 
-                Optional<Double> animalWeightGrams = getCellValueAsDouble(row, injectionHeaderMap, "animal_weight_g");
-
-                if (animalWeightGrams.isPresent()) {
-                    biodistributionData.setAnimalWeight(animalWeightGrams.get());
-                    biodistributionData.setAnimalWeightUnit("g");
-                }
-
                 getCellValue(row, injectionHeaderMap, "tracer").ifPresent(injectionData::setTracer);
                 getCellValue(row, injectionHeaderMap, "isotope").ifPresent(injectionData::setIsotope);
                 getCellValue(row, injectionHeaderMap, "diluent").ifPresent(injectionData::setDiluent);
@@ -350,14 +343,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
                     biodistributionData.setSampleWeight(sampleWeight.get());
                     biodistributionData.setSampleWeightUnit("g");
                 }
-
-                Optional<Double> sampleWeightGrams = getCellValueAsDouble(row, biodHeaderMap, "sample_weight_g");
-
-                if (sampleWeightGrams.isPresent()) {
-                    biodistributionData.setSampleWeight(sampleWeightGrams.get());
-                    biodistributionData.setSampleWeightUnit("g");
-                }
-
+                
                 Optional<Date> measurementDate = getCellValueAsDate(row, biodHeaderMap, "measurement_datetime");
                 if(measurementDate.isPresent()) {
                     LocalDateTime measurementDateTime = getDateTimeFromDate(measurementDate.get());
