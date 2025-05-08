@@ -343,7 +343,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
                     biodistributionData.setSampleWeight(sampleWeight.get());
                     biodistributionData.setSampleWeightUnit("g");
                 }
-                
+
                 Optional<Date> measurementDate = getCellValueAsDate(row, biodHeaderMap, "measurement_datetime");
                 if(measurementDate.isPresent()) {
                     LocalDateTime measurementDateTime = getDateTimeFromDate(measurementDate.get());
@@ -374,7 +374,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         XnatProjectdata projectData = XnatProjectdata.getProjectByIDorAlias(project, user, false);
         Path projectResourcePath = Paths.get(siteConfigPreferences.getArchivePath()).getFileName().resolve(Paths.get("projects")).resolve(projectData.getArchiveDirectoryName());
         String resourcesPathWithLeadingElement = Paths.get(siteConfigPreferences.getArchivePath()).getRoot().toString() + projectResourcePath.toString();
-        defaultCatalogService.insertResources(user, resourcesPathWithLeadingElement, file, "BioDExcelFiles", "", "", "");
+        defaultCatalogService.insertResources(user, resourcesPathWithLeadingElement, file, "BioDUploadFiles", "", "", "");
         return biodExperiments;
     }
 
