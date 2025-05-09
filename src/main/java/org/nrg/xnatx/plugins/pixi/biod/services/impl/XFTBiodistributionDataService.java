@@ -374,7 +374,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
             return Optional.empty();
         }
         String cell = row.get(cellIndex);
-        return cell != null ? Optional.of(cell) : Optional.empty();
+        return !(cell.isEmpty()) ? Optional.of(cell) : Optional.empty();
     }
 
     private Optional<Double> getCellValueAsDouble(List<String> row, Map<String, Integer> headerMap, String headerName) {
@@ -383,7 +383,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
             return Optional.empty();
         }
         String cell = row.get(cellIndex);
-        return cell != null ? Optional.of(Double.valueOf(cell)) : Optional.empty();
+        return !(cell.isEmpty()) ? Optional.of(Double.valueOf(cell)) : Optional.empty();
     }
 
     private Optional<LocalDateTime> getCellValueAsDate(List<String> row, Map<String, Integer> headerMap, String headerName) {
@@ -394,7 +394,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         //need to fix this
         String cell = row.get(cellIndex);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss");
-        return cell != null ? Optional.of(LocalDateTime.parse(cell, formatter)) : Optional.empty();
+        return !(cell.isEmpty()) ? Optional.of(LocalDateTime.parse(cell, formatter)) : Optional.empty();
     }
 
     private boolean isRowEmpty(List<String> row){
@@ -439,10 +439,10 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
             Optional<String> animalId = getCellValue(row, ingestionHeaderMap, SUBJECT_LABEL_COLUMN);
             Optional<String> sampleType = getCellValue(row, ingestionHeaderMap, SAMPLE_TYPE_COLUMN);
 
-            if (!animalId.isPresent() || animalId.get().isEmpty()) {
+            if (!animalId.isPresent()) {
                 e.addInvalidField(SUBJECT_LABEL_COLUMN, "Missing " + SUBJECT_LABEL_COLUMN + " in row " + currentRowNumber);
                 isValid = false;
-            } else if (!sampleType.isPresent() || sampleType.get().isEmpty()) {
+            } else if (!sampleType.isPresent()) {
                 e.addInvalidField(SAMPLE_TYPE_COLUMN, "Missing " + SAMPLE_TYPE_COLUMN + " in row " + currentRowNumber);
                 isValid = false;
             }else {
