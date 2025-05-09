@@ -3,15 +3,15 @@
     <h2>Small Animal Biodistribution Upload</h2>
 
     <div class="form-instructions">
-        <p>Upload an Excel file containing biodistribution data for small animal imaging studies.</p>
+        <p>Upload a CSV file containing biodistribution data for small animal imaging studies.</p>
 
         <p>File format requirements:</p>
 
         <ul>
-            <li>An Excel file with the following sheets:'pixi_biodistribution_common', 'pixi_biodistribution'</li>
+            <li>A CSV file with the following sheets:'pixi_biodistribution_common', 'pixi_biodistribution'</li>
         </ul>
 
-        <p>Download a template Excel file <a href="$content.getURI('biod/BiodistributionTemplate.xls')" download>here</a>.</p>
+        <p>Download a template CSV file <a href="$content.getURI('biod/BiodistributionTemplate.csv')" download>here</a>.</p>
     </div>
 
     <form id="upload-form" name="upload-form" method="post">
@@ -29,7 +29,7 @@
             </div>
 
             <div class="form-component">
-                <label class="file-label" for="file">Select Excel file to upload</label>
+                <label class="file-label" for="file">Select file to upload</label>
                 <input type="file" id="file" name="file" accept=".csv" required/>
             </div>
 
