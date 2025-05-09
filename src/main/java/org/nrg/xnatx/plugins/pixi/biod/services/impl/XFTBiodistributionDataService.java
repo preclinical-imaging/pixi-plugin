@@ -1,6 +1,7 @@
 package org.nrg.xnatx.plugins.pixi.biod.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import net.sf.cglib.core.Local;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -29,12 +30,17 @@ import org.springframework.stereotype.Service;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -164,7 +170,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
     }
 
     @Override
-    public List<PixiBiodistributiondataI> fromExcel(UserI user, String project, String userCachePath) throws Exception {
+    public List<PixiBiodistributiondataI> fromCsv(UserI user, String project, String userCachePath) throws Exception {
         log.debug("User {} is attempting to create biodistribution data experiment in project {} from cache path {}",
                   user.getUsername(), project, userCachePath);
 
@@ -173,202 +179,91 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
             throw new DataFormatException("Invalid file path: " + userCachePath);
         }
 
-        return fromExcel(user, project, excelFile);
+        return fromCsv(user, project, excelFile);
     }
 
     @Override
-    public List<PixiBiodistributiondataI> fromExcel(UserI user, String project, File file) throws Exception {
+    public List<PixiBiodistributiondataI> fromCsv(UserI user, String project, File file) throws Exception {
         log.debug("User {} is attempting to create biodistribution data experiment in project {} from file {}",
                   user.getUsername(), project, file.getAbsolutePath());
 
-        List<PixiBiodistributiondataI> biodExperiments = new ArrayList<>();
+        List<PixiBiodistributiondataI> biodExperiments;
 
-        // Read Excel file with Apache POI
-        try (FileInputStream fis = new FileInputStream(file);
-             Workbook workbook = file.getName().endsWith(".xlsx") ? new XSSFWorkbook(fis) : new HSSFWorkbook(fis)) {
+        try (Stream<String> lines = Files.lines(Paths.get(file.toURI()))) {
+            List<List<String>> biodImportRows = lines.map(line -> Arrays.asList(line.split(",")))
+                    .collect(Collectors.toList());
 
-            // Expecting sheets: pixi_injection, pixi_biod
+            Map<String, PixiBiodistributiondataI> currentlyExistingBiod = new HashMap<>();
 
-            // Get the injection and biodistribution sheets
-            Sheet injectionSheet = workbook.getSheet("pixi_injection");
-            Sheet biodSheet = workbook.getSheet("pixi_biod");
+            Map<String, Integer> ingestionHeaderMap = getHeaderMap(biodImportRows.get(0));
+            biodImportRows.remove(0);
 
-            if (injectionSheet == null || biodSheet == null) {
-                throw new DataFormatException("Missing required sheets: pixi_injection, pixi_biod");
-            }
+            validateCsv(biodImportRows, ingestionHeaderMap);
 
-            validateSheets(injectionSheet, biodSheet);
+            int currentRow = 1;
 
-            Map<String, Integer> injectionHeaderMap = getHeaderMap(injectionSheet.getRow(0));
-            Map<String, Integer> biodHeaderMap = getHeaderMap(biodSheet.getRow(0));
-
-            // Process injection sheet
-            for (Row row : injectionSheet) {
-                if (row.getRowNum() == 0) {
-                    // Skip header row
-                    continue;
-                }
-
-                // Create a new biodistribution data object for each row
-                PixiBiodistributiondataI biodistributionData = new PixiBiodistributiondata();
-                biodistributionData.setProject(project);
-
-                // Process the injection data first. Make sure we add it to the biodistribution data object
-                PixiBiodinjectiondataI injectionData = new PixiBiodinjectiondata();
-                biodistributionData.setInjectionData(injectionData);
-
-                String subjectLabel = getCellValue(row, injectionHeaderMap, SUBJECT_LABEL_COLUMN).orElseThrow(
-                        () -> new DataFormatException("Missing required field: " + SUBJECT_LABEL_COLUMN + " in row " + row.getRowNum())
-                );
-                biodistributionData.setSubjectId(subjectLabel);
-                biodistributionData.setLabel(subjectLabel + "_Biod");
-
-                Optional<Date> experimentDate = getCellValueAsDate(row, injectionHeaderMap, "experiment_datetime");
-                if (experimentDate.isPresent()) {
-                    LocalDateTime experimentDateTime = getDateTimeFromDate(experimentDate.get());
-                    biodistributionData.setDate(experimentDateTime.toLocalDate());
-                    biodistributionData.setTime(experimentDateTime.toLocalTime());
-                }
-
-                getCellValue(row, injectionHeaderMap, "acquisition_site").ifPresent(biodistributionData::setAcquisitionSite);
-                getCellValue(row, injectionHeaderMap, "note").ifPresent(biodistributionData::setNote);
-                getCellValue(row, injectionHeaderMap, "technician").ifPresent(biodistributionData::setTechnician);
-
-                Optional<Date> animalSacrificeDate = getCellValueAsDate(row, injectionHeaderMap, "animal_sacrifice_datetime");
-                if (animalSacrificeDate.isPresent()) {
-                    LocalDateTime animalSacrificeDateTime = getDateTimeFromDate(animalSacrificeDate.get());
-                    biodistributionData.setAnimalSacrificeDate(animalSacrificeDateTime.toLocalDate());
-                    biodistributionData.setAnimalSacrificeTime(animalSacrificeDateTime.toLocalTime());
-                }
-
-
-                // Handle animal weight and unit in separate columns or combined
-                Optional<Double> animalWeight = getCellValueAsDouble(row, injectionHeaderMap, "animal_weight");
-                Optional<String> animalWeightUnit = getCellValue(row, injectionHeaderMap, "animal_weight_unit");
-
-                animalWeight.ifPresent(biodistributionData::setAnimalWeight);
-                animalWeightUnit.ifPresent(biodistributionData::setAnimalWeightUnit);
-
-                if (animalWeight.isPresent() && !animalWeightUnit.isPresent()) {
-                    // Assume grams if unit is not specified
-                    biodistributionData.setAnimalWeightUnit("g");
-                }
-
-                getCellValue(row, injectionHeaderMap, "tracer").ifPresent(injectionData::setTracer);
-                getCellValue(row, injectionHeaderMap, "isotope").ifPresent(injectionData::setIsotope);
-                getCellValue(row, injectionHeaderMap, "diluent").ifPresent(injectionData::setDiluent);
-
-                Optional<Double> injectedDose = getCellValueAsDouble(row, injectionHeaderMap, "injected_dose");
-                Optional<String> injectedDoseUnit = getCellValue(row, injectionHeaderMap, "injected_dose_unit");
-
-                injectedDose.ifPresent(injectionData::setInjectedDose);
-                injectedDoseUnit.ifPresent(injectionData::setInjectedDoseUnit);
-
-                if (injectedDose.isPresent() && !injectedDoseUnit.isPresent()) {
-                    injectionData.setInjectedDose(injectedDose.get());
-                    injectionData.setInjectedDoseUnit("µL");
-                }
-
-                Optional<Double> injectionVolume = getCellValueAsDouble(row, injectionHeaderMap, "injection_volume");
-                Optional<String> injectionVolumeUnit = getCellValue(row, injectionHeaderMap, "injection_volume_unit");
-
-                injectionVolume.ifPresent(injectionData::setInjectionVolume);
-                injectionVolumeUnit.ifPresent(injectionData::setInjectionVolumeUnit);
-
-                if (injectionVolume.isPresent() && !injectionVolumeUnit.isPresent()) {
-                    injectionData.setInjectionVolume(injectionVolume.get());
-                    injectionData.setInjectionVolumeUnit("µL");
-                }
-
-                getCellValue(row, injectionHeaderMap, "injection_total_counts").ifPresent(injectionData::setInjectionTotalCounts);
-                getCellValue(row, injectionHeaderMap, "injection_route").ifPresent(injectionData::setInjectionRoute);
-                getCellValue(row, injectionHeaderMap, "injection_site").ifPresent(injectionData::setInjectionSite);
-
-                Optional<Date> injectionDate = getCellValueAsDate(row, injectionHeaderMap, "injection_datetime");
-                if(injectionDate.isPresent()) {
-                    LocalDateTime injectionDateTime = getDateTimeFromDate(injectionDate.get());
-                    injectionData.setInjectionDate(injectionDateTime.toLocalDate());
-                    injectionData.setInjectionTime(injectionDateTime.toLocalTime());
-                }
-
-                // Anesthesia is handled in a separate object, reused with the hotel splitter
-                Optional<String> anesthesia = getCellValue(row, injectionHeaderMap, "anesthesia");
-                Optional<String> anesthesiaRoute = getCellValue(row, injectionHeaderMap, "anesthesia_route");
-
-                if (anesthesia.isPresent() || anesthesiaRoute.isPresent()) {
-                    PixiAnesthesiadataI anesthesiaData = new PixiAnesthesiadata();
-                    anesthesia.ifPresent(anesthesiaData::setAnesthesia);
-                    anesthesiaRoute.ifPresent(anesthesiaData::setRouteofadministration);
-                    biodistributionData.setAnesthesiaAdministration(anesthesiaData);
-                }
-
-                biodExperiments.add(biodistributionData);
-            }
-
-            // Process the biodistribution sheet
-            for (Row row : biodSheet) {
-                if (row.getRowNum() == 0) {
-                    // Skip header row
-                    continue;
-                }
-
+            for (List<String> row: biodImportRows) {
+                //checking for rows (usually at the end of a sheet) which are accidentally left blank
+                // we shouldn't throw exceptions for these
                 if (isRowEmpty(row)) {
                     continue;
                 }
 
-                PixiBiodsampleuptakedataI biodistributionData = new PixiBiodsampleuptakedata();
+                PixiBiodistributiondataI biodistributionData;
 
-                // Get the subject ID. We will need to add it to the appropriate biodistribution data object
-                String subjectLabel = getCellValue(row, biodHeaderMap, SUBJECT_LABEL_COLUMN).orElseThrow(
-                        () -> new DataFormatException("Missing required field: " + SUBJECT_LABEL_COLUMN + " in row " + row.getRowNum())
+                int finalCurrentRow = currentRow;
+                String subjectLabel = getCellValue(row, ingestionHeaderMap, SUBJECT_LABEL_COLUMN).orElseThrow(
+                        () -> new DataFormatException("Missing required field: " + SUBJECT_LABEL_COLUMN + " in row " + finalCurrentRow)
                 );
-
-                Optional<PixiBiodistributiondataI> exp = biodExperiments.stream().filter(biod -> biod.getSubjectId().equals(subjectLabel)).findFirst();
-
-                if (exp.isPresent()) {
-                    exp.get().addSampleUptakeData(biodistributionData);
+                if (currentlyExistingBiod.containsKey(subjectLabel)) {
+                    biodistributionData = currentlyExistingBiod.get(subjectLabel);
                 } else {
-                    throw new DataFormatException("No matching injection data found for subject ID: " + subjectLabel);
+                    biodistributionData = handleCommonPortion(row, project, subjectLabel,ingestionHeaderMap);
                 }
 
-                getCellValue(row, biodHeaderMap, "sample_type").ifPresent(biodistributionData::setSampleType);
+                PixiBiodsampleuptakedataI sampleUptakeData = new PixiBiodsampleuptakedata();
+                getCellValue(row, ingestionHeaderMap, "sample_type").ifPresent(sampleUptakeData::setSampleType);
 
-                Optional<Double> sampleWeight = getCellValueAsDouble(row, biodHeaderMap, "sample_weight");
-                Optional<String> sampleWeightUnit = getCellValue(row, biodHeaderMap, "sample_weight_unit");
+                Optional<Double> sampleWeight = getCellValueAsDouble(row, ingestionHeaderMap, "sample_weight");
+                Optional<String> sampleWeightUnit = getCellValue(row, ingestionHeaderMap, "sample_weight_unit");
 
-                sampleWeight.ifPresent(biodistributionData::setSampleWeight);
-                sampleWeightUnit.ifPresent(biodistributionData::setSampleWeightUnit);
+                sampleWeight.ifPresent(sampleUptakeData::setSampleWeight);
+                sampleWeightUnit.ifPresent(sampleUptakeData::setSampleWeightUnit);
 
                 if (sampleWeight.isPresent() && !sampleWeightUnit.isPresent()) {
-                    biodistributionData.setSampleWeight(sampleWeight.get());
-                    biodistributionData.setSampleWeightUnit("g");
+                    sampleUptakeData.setSampleWeight(sampleWeight.get());
+                    sampleUptakeData.setSampleWeightUnit("g");
                 }
-
-                Optional<Date> measurementDate = getCellValueAsDate(row, biodHeaderMap, "measurement_datetime");
+                Optional<LocalDateTime> measurementDate = getCellValueAsDate(row, ingestionHeaderMap, "measurement_datetime");
                 if(measurementDate.isPresent()) {
-                    LocalDateTime measurementDateTime = getDateTimeFromDate(measurementDate.get());
-                    biodistributionData.setMeasurementDate(measurementDateTime.toLocalDate());
-                    biodistributionData.setMeasurementTime(measurementDateTime.toLocalTime());
+                    sampleUptakeData.setMeasurementDate(measurementDate.get().toLocalDate());
+                    sampleUptakeData.setMeasurementTime(measurementDate.get().toLocalTime());
                 }
 
-                Optional<Double> timepointValue = getCellValueAsDouble(row, biodHeaderMap, "timepoint_value");
-                Optional<String> timepointUnit = getCellValue(row, biodHeaderMap, "timepoint_unit");
+                Optional<Double> timepointValue = getCellValueAsDouble(row, ingestionHeaderMap, "timepoint_value");
+                Optional<String> timepointUnit = getCellValue(row, ingestionHeaderMap, "timepoint_unit");
 
-                timepointValue.ifPresent(biodistributionData::setTimepointValue);
+                timepointValue.ifPresent(sampleUptakeData::setTimepointValue);
                 if (timepointUnit.isPresent()) {
                     String timepointStandardized = standardizeTimepointValues(timepointUnit.get());
                     if (timepointStandardized != null) {
-                        biodistributionData.setTimepointUnit(timepointStandardized);
+                        sampleUptakeData.setTimepointUnit(timepointStandardized);
                     }
                 }
 
-                getCellValue(row, biodHeaderMap, "%_id_g").ifPresent(biodistributionData::setPercentInjectedDosePerGram);
-                getCellValue(row, biodHeaderMap, "%_id_organ").ifPresent(biodistributionData::setPercentInjectedDosePerOrgan);
-                getCellValue(row, biodHeaderMap, "decay_corrected_cpm").ifPresent(biodistributionData::setDecayCorrectedCpm);
+                getCellValue(row, ingestionHeaderMap, "%_id_g").ifPresent(sampleUptakeData::setPercentInjectedDosePerGram);
+                getCellValue(row, ingestionHeaderMap, "%_id_organ").ifPresent(sampleUptakeData::setPercentInjectedDosePerOrgan);
+                getCellValue(row, ingestionHeaderMap, "decay_corrected_cpm").ifPresent(sampleUptakeData::setDecayCorrectedCpm);
+
+                biodistributionData.addSampleUptakeData(sampleUptakeData);
+
+                currentlyExistingBiod.put(subjectLabel, biodistributionData);
+                currentRow++;
             }
-        } catch (NotOLE2FileException e) {
-            log.error("Error reading Excel file: {}", e.getMessage());
-            throw new DataFormatException("Invalid Excel file format", e);
+            biodExperiments = new ArrayList<>(currentlyExistingBiod.values());
+        } catch (IOException e) {
+            log.error("Error reading csv file: {}", e.getMessage());
+            throw new DataFormatException("Invalid csv file", e);
         }
 
         XnatProjectdata projectData = XnatProjectdata.getProjectByIDorAlias(project, user, false);
@@ -378,49 +273,133 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         return biodExperiments;
     }
 
-    private Map<String, Integer> getHeaderMap(Row headerRow) {
+    private PixiBiodistributiondataI handleCommonPortion(List<String> row, String project, String subjectLabel,
+                                                         Map<String, Integer> ingestionHeaderMap) throws Exception {
+        PixiBiodistributiondataI biodistributionData = new PixiBiodistributiondata();
+        biodistributionData.setProject(project);
+
+        PixiBiodinjectiondataI injectionData = new PixiBiodinjectiondata();
+        biodistributionData.setInjectionData(injectionData);
+
+        biodistributionData.setSubjectId(subjectLabel);
+        biodistributionData.setLabel(subjectLabel + "_Biod");
+
+        Optional<LocalDateTime> experimentDate = getCellValueAsDate(row, ingestionHeaderMap, "experiment_datetime");
+        if (experimentDate.isPresent()) {
+            biodistributionData.setDate(experimentDate.get().toLocalDate());
+            biodistributionData.setTime(experimentDate.get().toLocalTime());
+        }
+        getCellValue(row, ingestionHeaderMap, "acquisition_site").ifPresent(biodistributionData::setAcquisitionSite);
+        getCellValue(row, ingestionHeaderMap, "note").ifPresent(biodistributionData::setNote);
+        getCellValue(row, ingestionHeaderMap, "technician").ifPresent(biodistributionData::setTechnician);
+
+        Optional<LocalDateTime> animalSacrificeDate = getCellValueAsDate(row, ingestionHeaderMap, "animal_sacrifice_datetime");
+        if (animalSacrificeDate.isPresent()) {
+            biodistributionData.setAnimalSacrificeDate(animalSacrificeDate.get().toLocalDate());
+            biodistributionData.setAnimalSacrificeTime(animalSacrificeDate.get().toLocalTime());
+        }
+
+        Optional<Double> animalWeight = getCellValueAsDouble(row, ingestionHeaderMap, "animal_weight");
+        Optional<String> animalWeightUnit = getCellValue(row, ingestionHeaderMap, "animal_weight_unit");
+
+        animalWeight.ifPresent(biodistributionData::setAnimalWeight);
+        animalWeightUnit.ifPresent(biodistributionData::setAnimalWeightUnit);
+
+        if (animalWeight.isPresent() && !animalWeightUnit.isPresent()) {
+            // Assume grams if unit is not specified
+            biodistributionData.setAnimalWeightUnit("g");
+        }
+
+        getCellValue(row, ingestionHeaderMap, "tracer").ifPresent(injectionData::setTracer);
+        getCellValue(row, ingestionHeaderMap, "isotope").ifPresent(injectionData::setIsotope);
+        getCellValue(row, ingestionHeaderMap, "diluent").ifPresent(injectionData::setDiluent);
+
+        Optional<Double> injectedDose = getCellValueAsDouble(row, ingestionHeaderMap, "injected_dose");
+        Optional<String> injectedDoseUnit = getCellValue(row, ingestionHeaderMap, "injected_dose_unit");
+
+        injectedDose.ifPresent(injectionData::setInjectedDose);
+        injectedDoseUnit.ifPresent(injectionData::setInjectedDoseUnit);
+
+        if (injectedDose.isPresent() && !injectedDoseUnit.isPresent()) {
+            injectionData.setInjectedDose(injectedDose.get());
+            injectionData.setInjectedDoseUnit("µL");
+        }
+
+        Optional<Double> injectionVolume = getCellValueAsDouble(row, ingestionHeaderMap, "injection_volume");
+        Optional<String> injectionVolumeUnit = getCellValue(row, ingestionHeaderMap, "injection_volume_unit");
+
+        injectionVolume.ifPresent(injectionData::setInjectionVolume);
+        injectionVolumeUnit.ifPresent(injectionData::setInjectionVolumeUnit);
+
+        if (injectionVolume.isPresent() && !injectionVolumeUnit.isPresent()) {
+            injectionData.setInjectionVolume(injectionVolume.get());
+            injectionData.setInjectionVolumeUnit("µL");
+        }
+
+        getCellValue(row, ingestionHeaderMap, "injection_total_counts").ifPresent(injectionData::setInjectionTotalCounts);
+        getCellValue(row, ingestionHeaderMap, "injection_route").ifPresent(injectionData::setInjectionRoute);
+        getCellValue(row, ingestionHeaderMap, "injection_site").ifPresent(injectionData::setInjectionSite);
+
+        Optional<LocalDateTime> injectionDate = getCellValueAsDate(row, ingestionHeaderMap, "injection_datetime");
+        if(injectionDate.isPresent()) {
+            injectionData.setInjectionDate(injectionDate.get().toLocalDate());
+            injectionData.setInjectionTime(injectionDate.get().toLocalTime());
+        }
+
+        // Anesthesia is handled in a separate object, reused with the hotel splitter
+        Optional<String> anesthesia = getCellValue(row, ingestionHeaderMap, "anesthesia");
+        Optional<String> anesthesiaRoute = getCellValue(row, ingestionHeaderMap, "anesthesia_route");
+
+        if (anesthesia.isPresent() || anesthesiaRoute.isPresent()) {
+            PixiAnesthesiadataI anesthesiaData = new PixiAnesthesiadata();
+            anesthesia.ifPresent(anesthesiaData::setAnesthesia);
+            anesthesiaRoute.ifPresent(anesthesiaData::setRouteofadministration);
+            biodistributionData.setAnesthesiaAdministration(anesthesiaData);
+        }
+
+        return biodistributionData;
+    }
+
+    private Map<String, Integer> getHeaderMap(List<String> headerRow) {
         Map<String, Integer> headerMap = new HashMap<>();
-        for (Cell cell : headerRow) {
-            headerMap.put(cell.getStringCellValue(), cell.getColumnIndex());
+        for (int i = 0; i < headerRow.size(); i++) {
+            headerMap.put(headerRow.get(i), i);
         }
         return headerMap;
     }
 
-    private Optional<String> getCellValue(Row row, Map<String, Integer> headerMap, String headerName) {
+    private Optional<String> getCellValue(List<String> row, Map<String, Integer> headerMap, String headerName) {
         Integer cellIndex = headerMap.get(headerName);
         if (cellIndex == null) {
             return Optional.empty();
         }
-        Cell cell = row.getCell(cellIndex);
-        return cell != null ? Optional.of(cell.toString()) : Optional.empty();
+        String cell = row.get(cellIndex);
+        return cell != null ? Optional.of(cell) : Optional.empty();
     }
 
-    private Optional<Double> getCellValueAsDouble(Row row, Map<String, Integer> headerMap, String headerName) {
+    private Optional<Double> getCellValueAsDouble(List<String> row, Map<String, Integer> headerMap, String headerName) {
         Integer cellIndex = headerMap.get(headerName);
         if (cellIndex == null) {
             return Optional.empty();
         }
-        Cell cell = row.getCell(cellIndex);
-        return cell != null ? Optional.of(cell.getNumericCellValue()) : Optional.empty();
+        String cell = row.get(cellIndex);
+        return cell != null ? Optional.of(Double.valueOf(cell)) : Optional.empty();
     }
 
-    private Optional<Date> getCellValueAsDate(Row row, Map<String, Integer> headerMap, String headerName) {
+    private Optional<LocalDateTime> getCellValueAsDate(List<String> row, Map<String, Integer> headerMap, String headerName) {
         Integer cellIndex = headerMap.get(headerName);
         if (cellIndex == null) {
             return Optional.empty();
         }
-        Cell cell = row.getCell(cellIndex);
-        return cell != null ? Optional.ofNullable(cell.getDateCellValue()) : Optional.empty();
+        //need to fix this
+        String cell = row.get(cellIndex);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss");
+        return cell != null ? Optional.of(LocalDateTime.parse(cell, formatter)) : Optional.empty();
     }
 
-    private LocalDateTime getDateTimeFromDate(Date date) {
-        Instant instant = date.toInstant();
-        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-    }
-
-    private boolean isRowEmpty(Row row){
-        Iterable<Cell> iterable = row::cellIterator;
-        return StreamSupport.stream(iterable.spliterator(), false).allMatch(cell -> cell.getCellType().toString().equals("BLANK"));
+    private boolean isRowEmpty(List<String> row){
+        List<String> nonEmptyStrings = row.stream().filter(i -> !i.isEmpty()).collect(Collectors.toList());
+        return nonEmptyStrings.isEmpty();
     }
 
     private String standardizeTimepointValues(String timepointInput) {
@@ -436,96 +415,41 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         return null;
     }
 
-    protected void validateSheets(@NotNull Sheet injectionSheet, @NotNull Sheet biodSheet) throws DataFormatException {
+    protected void validateCsv(List<List<String>> biodImportRows, Map<String, Integer> ingestionHeaderMap) throws DataFormatException {
         log.debug("Validating injection and biodistribution sheets");
-
-        validateInjectionSheet(injectionSheet);
-        validateBiodSheet(biodSheet);
-    }
-
-    protected void validateInjectionSheet(@NotNull Sheet injectionSheet) throws DataFormatException {
-        log.debug("Validating injection sheet");
 
         DataFormatException e = new DataFormatException("There is a problem with the input injection sheet: ");
         boolean isValid = true;
 
-        Row headerRow = injectionSheet.getRow(0);
-        Map<String, Integer> headerMap = getHeaderMap(headerRow);
-
-        if (!headerMap.containsKey(SUBJECT_LABEL_COLUMN)) {
+        if (!ingestionHeaderMap.containsKey(SUBJECT_LABEL_COLUMN)) {
             e.addMissingField(SUBJECT_LABEL_COLUMN);
             isValid = false;
         }
 
-        // Validate that each row has a unique subject_id. Only one injection per animal is allowed.
-        Set<String> animalIds = new HashSet<>();
-        for (Row row : injectionSheet) {
-            if (row.getRowNum() == 0) {
-                // Skip header row
-                continue;
-            }
-
-            Optional<String> animalId = getCellValue(row, headerMap, SUBJECT_LABEL_COLUMN);
-
-            if (!animalId.isPresent()) {
-                e.addInvalidField(SUBJECT_LABEL_COLUMN, "Missing " + SUBJECT_LABEL_COLUMN + " in row " + row.getRowNum());
-                isValid = false;
-            } else if (animalIds.contains(animalId.get())) {
-                e.addInvalidField(SUBJECT_LABEL_COLUMN, "Duplicate " + SUBJECT_LABEL_COLUMN + " " + animalId.get() + " in row " + row.getRowNum());
-                isValid = false;
-            } else {
-                animalIds.add(animalId.get());
-            }
-        }
-
-        if (!isValid) {
-            log.error("", e);
-            throw e;
-        }
-
-        log.debug("Injection sheet is valid");
-    }
-
-    protected void validateBiodSheet(@NotNull Sheet biodSheet) throws DataFormatException {
-        log.debug("Validating biodistribution sheet");
-
-        DataFormatException e = new DataFormatException("There is a problem with the input biodistribution sheet: ");
-        boolean isValid = true;
-
-        // Required columns for biodistribution sheet
-        Row headerRow = biodSheet.getRow(0);
-        Map<String, Integer> headerMap = getHeaderMap(headerRow);
-
-        if (!headerMap.containsKey(SUBJECT_LABEL_COLUMN)) {
-            e.addMissingField(SUBJECT_LABEL_COLUMN);
-            isValid = false;
-        }
-
-        if (!headerMap.containsKey("sample_type")) {
+        if (!ingestionHeaderMap.containsKey("sample_type")) {
             e.addMissingField("sample_type");
             isValid = false;
         }
 
         Map<String, List<String>> animalSampleTypes = new HashMap<>();
         final String SAMPLE_TYPE_COLUMN = "sample_type";
-        for (Row row: biodSheet) {
-            if (row.getRowNum() == 0) {
-                // Skip header row
-                continue;
-            }
-            Optional<String> animalId = getCellValue(row, headerMap, SUBJECT_LABEL_COLUMN);
-            Optional<String> sampleType = getCellValue(row, headerMap, SAMPLE_TYPE_COLUMN);
+        int currentRowNumber = 1;
+        for (List<String> row : biodImportRows) {
+
+            Optional<String> animalId = getCellValue(row, ingestionHeaderMap, SUBJECT_LABEL_COLUMN);
+            Optional<String> sampleType = getCellValue(row, ingestionHeaderMap, SAMPLE_TYPE_COLUMN);
+
             if (!animalId.isPresent()) {
-                e.addInvalidField(SUBJECT_LABEL_COLUMN, "Missing " + SUBJECT_LABEL_COLUMN + " in row " + row.getRowNum());
+                e.addInvalidField(SUBJECT_LABEL_COLUMN, "Missing " + SUBJECT_LABEL_COLUMN + " in row " + currentRowNumber);
                 isValid = false;
             } else if (!sampleType.isPresent()) {
-                e.addInvalidField(SAMPLE_TYPE_COLUMN, "Missing " + SAMPLE_TYPE_COLUMN + " in row " + row.getRowNum());
+                e.addInvalidField(SAMPLE_TYPE_COLUMN, "Missing " + SAMPLE_TYPE_COLUMN + " in row " + currentRowNumber);
                 isValid = false;
             }else {
                 if (animalSampleTypes.containsKey(animalId.get())) {
                     if (animalSampleTypes.get(animalId.get()).contains(sampleType.get())) {
                         e.addInvalidField("Duplicate pairing", "The pairing of " + SUBJECT_LABEL_COLUMN + " and " +
-                                SAMPLE_TYPE_COLUMN + " in row " + row.getRowNum() + " is found together in another row.");
+                                SAMPLE_TYPE_COLUMN + " in row " + currentRowNumber + " is found together in another row.");
                         isValid = false;
                     } else {
                         animalSampleTypes.get(animalId.get()).add(sampleType.get());
@@ -534,7 +458,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
                     animalSampleTypes.put(animalId.get(), new ArrayList<>(Collections.singletonList(sampleType.get())));
                 }
             }
-
+            currentRowNumber++;
         }
 
         if (!isValid) {
@@ -542,7 +466,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
             throw e;
         }
 
-        log.debug("Biodistribution sheet is valid");
+        log.debug("Input file is valid");
     }
 
     protected void validateBiodistributionData(final PixiBiodistributiondataI biodistributionData) throws DataFormatException {

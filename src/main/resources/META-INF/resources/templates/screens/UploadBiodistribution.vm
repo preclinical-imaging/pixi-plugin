@@ -30,8 +30,7 @@
 
             <div class="form-component">
                 <label class="file-label" for="file">Select Excel file to upload</label>
-##                TODO DOUBLE CHECK FILE TYPE. IS THIS FOR BOTH XLSX AND XLS?
-                <input type="file" id="file" name="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" required/>
+                <input type="file" id="file" name="file" accept=".csv" required/>
             </div>
 
             <div class="form-component">
@@ -220,8 +219,7 @@
 
         function validateForm() {
             let validProject = XNAT.validate(projectEl).required().check();
-            // TODO Double check file type. Is this for both xlsx and xls?
-            let validFile = XNAT.validate(fileEl).is('fileType', 'xls,xlsx').check()
+            let validFile = XNAT.validate(fileEl).is('fileType', 'csv').check()
             return validProject && validFile;
         }
 
