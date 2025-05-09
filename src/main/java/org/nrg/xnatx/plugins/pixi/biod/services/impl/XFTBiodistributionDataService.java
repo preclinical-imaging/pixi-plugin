@@ -34,9 +34,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.TemporalAccessor;
@@ -237,10 +235,13 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
                     sampleUptakeData.setSampleWeight(sampleWeight.get());
                     sampleUptakeData.setSampleWeightUnit("g");
                 }
-                Optional<LocalDateTime> measurementDate = getCellValueAsDate(row, ingestionHeaderMap, "measurement_datetime");
+                Optional<DateOptionalTime> measurementDate = getCellValueAsDate(row, ingestionHeaderMap, "measurement_datetime");
                 if(measurementDate.isPresent()) {
-                    sampleUptakeData.setMeasurementDate(measurementDate.get().toLocalDate());
-                    sampleUptakeData.setMeasurementTime(measurementDate.get().toLocalTime());
+                    sampleUptakeData.setMeasurementDate(measurementDate.get().date);
+                    if (measurementDate.get().time != null) {
+                        sampleUptakeData.setMeasurementTime(measurementDate.get().time);
+                    }
+
                 }
 
                 Optional<Double> timepointValue = getCellValueAsDouble(row, ingestionHeaderMap, "timepoint_value");
@@ -287,19 +288,23 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         biodistributionData.setSubjectId(subjectLabel);
         biodistributionData.setLabel(subjectLabel + "_Biod");
 
-        Optional<LocalDateTime> experimentDate = getCellValueAsDate(row, ingestionHeaderMap, "experiment_datetime");
+        Optional<DateOptionalTime> experimentDate = getCellValueAsDate(row, ingestionHeaderMap, "experiment_datetime");
         if (experimentDate.isPresent()) {
-            biodistributionData.setDate(experimentDate.get().toLocalDate());
-            biodistributionData.setTime(experimentDate.get().toLocalTime());
+            biodistributionData.setDate(experimentDate.get().date);
+            if (experimentDate.get().time!= null) {
+                biodistributionData.setTime(experimentDate.get().time);
+            }
         }
         getCellValue(row, ingestionHeaderMap, "acquisition_site").ifPresent(biodistributionData::setAcquisitionSite);
         getCellValue(row, ingestionHeaderMap, "note").ifPresent(biodistributionData::setNote);
         getCellValue(row, ingestionHeaderMap, "technician").ifPresent(biodistributionData::setTechnician);
 
-        Optional<LocalDateTime> animalSacrificeDate = getCellValueAsDate(row, ingestionHeaderMap, "animal_sacrifice_datetime");
+        Optional<DateOptionalTime> animalSacrificeDate = getCellValueAsDate(row, ingestionHeaderMap, "animal_sacrifice_datetime");
         if (animalSacrificeDate.isPresent()) {
-            biodistributionData.setAnimalSacrificeDate(animalSacrificeDate.get().toLocalDate());
-            biodistributionData.setAnimalSacrificeTime(animalSacrificeDate.get().toLocalTime());
+            biodistributionData.setAnimalSacrificeDate(animalSacrificeDate.get().date);
+            if (animalSacrificeDate.get().time!= null) {
+                biodistributionData.setAnimalSacrificeTime(animalSacrificeDate.get().time);
+            }
         }
 
         Optional<Double> animalWeight = getCellValueAsDouble(row, ingestionHeaderMap, "animal_weight");
@@ -343,10 +348,12 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         getCellValue(row, ingestionHeaderMap, "injection_route").ifPresent(injectionData::setInjectionRoute);
         getCellValue(row, ingestionHeaderMap, "injection_site").ifPresent(injectionData::setInjectionSite);
 
-        Optional<LocalDateTime> injectionDate = getCellValueAsDate(row, ingestionHeaderMap, "injection_datetime");
+        Optional<DateOptionalTime> injectionDate = getCellValueAsDate(row, ingestionHeaderMap, "injection_datetime");
         if(injectionDate.isPresent()) {
-            injectionData.setInjectionDate(injectionDate.get().toLocalDate());
-            injectionData.setInjectionTime(injectionDate.get().toLocalTime());
+            injectionData.setInjectionDate(injectionDate.get().date);
+            if (injectionDate.get().time != null) {
+                injectionData.setInjectionTime(injectionDate.get().time);
+            }
         }
 
         // Anesthesia is handled in a separate object, reused with the hotel splitter
@@ -389,28 +396,30 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         return !(cell.isEmpty()) ? Optional.of(Double.valueOf(cell)) : Optional.empty();
     }
 
-    private Optional<LocalDateTime> getCellValueAsDate(List<String> row, Map<String, Integer> headerMap, String headerName) {
+    private Optional<DateOptionalTime> getCellValueAsDate(List<String> row, Map<String, Integer> headerMap, String headerName) {
         Integer cellIndex = headerMap.get(headerName);
         if (cellIndex == null) {
             return Optional.empty();
         }
-        //need to fix this
         String cell = row.get(cellIndex);
         if (cell.isEmpty()) {
             return Optional.empty();
         }
-        String cell2 = cell.replace("-", "").replace("/","").replace(":","").replace(" ", "-");
+        String cell2 = cell.replace("-", "").replace("/","")
+                .replace(":","").replace(" ", "-");
         TemporalAccessor dt = new DateTimeFormatterBuilder()
                 .appendPattern("MMddyyyy[-HHmmss]")
                 .appendOptional(DateTimeFormatter.ISO_TIME).parseCaseInsensitive().toFormatter().parse(cell2);
-        LocalDateTime ldt;
+        //Using inner class to work around needing to always have a time. Should give more options to users.
+        DateOptionalTime dateOptionalTime = new DateOptionalTime();
         if (dt.query(TemporalQueries.localTime()) == null) {
-            ldt = dt.query(TemporalQueries.localDate()).atStartOfDay();
+            dateOptionalTime.date = dt.query(TemporalQueries.localDate());
         } else {
-            ldt = LocalDateTime.of(dt.query(TemporalQueries.localDate()), dt.query(TemporalQueries.localTime()));
+            dateOptionalTime.date = dt.query(TemporalQueries.localDate());
+            dateOptionalTime.time = dt.query(TemporalQueries.localTime());
         }
 
-        return Optional.of(ldt);
+        return Optional.of(dateOptionalTime);
     }
 
     private boolean isRowEmpty(List<String> row){
@@ -502,5 +511,10 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         }
 
         log.debug("Biodistribution data is valid");
+    }
+
+    private class DateOptionalTime {
+        LocalDate date;
+        LocalTime time;
     }
 }
