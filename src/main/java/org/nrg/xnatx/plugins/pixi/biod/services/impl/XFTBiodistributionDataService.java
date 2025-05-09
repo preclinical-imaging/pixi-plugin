@@ -38,6 +38,9 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.TemporalAccessor;
+import java.time.temporal.TemporalQueries;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -393,8 +396,21 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         }
         //need to fix this
         String cell = row.get(cellIndex);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss");
-        return !(cell.isEmpty()) ? Optional.of(LocalDateTime.parse(cell, formatter)) : Optional.empty();
+        if (cell.isEmpty()) {
+            return Optional.empty();
+        }
+        String cell2 = cell.replace("-", "").replace("/","").replace(":","").replace(" ", "-");
+        TemporalAccessor dt = new DateTimeFormatterBuilder()
+                .appendPattern("MMddyyyy[-HHmmss]")
+                .appendOptional(DateTimeFormatter.ISO_TIME).parseCaseInsensitive().toFormatter().parse(cell2);
+        LocalDateTime ldt;
+        if (dt.query(TemporalQueries.localTime()) == null) {
+            ldt = dt.query(TemporalQueries.localDate()).atStartOfDay();
+        } else {
+            ldt = LocalDateTime.of(dt.query(TemporalQueries.localDate()), dt.query(TemporalQueries.localTime()));
+        }
+
+        return Optional.of(ldt);
     }
 
     private boolean isRowEmpty(List<String> row){
