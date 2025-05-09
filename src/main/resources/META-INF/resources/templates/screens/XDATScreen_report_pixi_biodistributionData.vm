@@ -120,7 +120,7 @@ $page.setVlinkColor($ui.vlink)
                             <TR>
                                 <TD align="left" valign="top">
                                     <TABLE>
-                                        <TR><TD>Anesthesia</TD><TD>$!item.getStringProperty("pixi:biodistributionData/anesthesia_administration/anesthesia")</TD></TR>
+                                        <TR><TD width="150">Anesthesia</TD><TD>$!item.getStringProperty("pixi:biodistributionData/anesthesia_administration/anesthesia")</TD></TR>
                                         <TR><TD>Administration Route</TD><TD>$!item.getStringProperty("pixi:biodistributionData/anesthesia_administration/routeOfAdministration")</TD></TR>
                                     </TABLE>
                                 </TD>
