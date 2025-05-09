@@ -49,9 +49,8 @@ public class PixiBiodAPI extends AbstractXapiRestController {
         log.info("Creating biodistribution experiments for project: {} from cache path: {}", project, cachePath);
 
         // Call the service to create biodistribution experiments
-        List<PixiBiodistributiondataI> biodExps = biodistributionDataService.fromCsv(getSessionUser(), project, cachePath);
-        List<PixiBiodistributiondataI> createdBiodExps = biodistributionDataService.createOrUpdate(getSessionUser(), biodExps, dataOverlapHandling);
-        log.info("Created {} biodistribution experiments for project: {}", createdBiodExps.size(), project);
+        List<PixiBiodistributiondataI> biodExps = biodistributionDataService.fromCsv(getSessionUser(), project, cachePath, dataOverlapHandling);
+        log.info("Created {} biodistribution experiments for project: {}", biodExps.size(), project);
 
         return Collections.emptyList(); // TODO: Return the created biodistribution experiments, update front end to handle this
     }

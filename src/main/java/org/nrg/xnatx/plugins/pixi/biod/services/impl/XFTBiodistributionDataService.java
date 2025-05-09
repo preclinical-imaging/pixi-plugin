@@ -84,7 +84,8 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
     }
 
     @Override
-    public PixiBiodistributiondataI createOrUpdate(UserI user, PixiBiodistributiondataI biodistributionData, String dataOverlapHandling) throws Exception {
+    public PixiBiodistributiondataI createOrUpdate(UserI user, PixiBiodistributiondataI biodistributionData,
+                                                   String dataOverlapHandling, Map<String, String> subjectToSubjectGroupMap) throws Exception {
         log.debug("User {} is attempting to create/update biodistribution data experiment in project {} with label {}",
                   user.getUsername(), biodistributionData.getProject(), biodistributionData.getLabel());
 
@@ -104,6 +105,9 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
             newSubject.setProject(biodistributionData.getProject());
             newSubject.setLabel(biodistributionData.getSubjectId()); // If the subject ID could not be found, then the subject ID in the experiment is the subject label
             biodistributionData.setSubjectId(newSubjectId); // Set the subject ID in the experiment to the new subject ID
+            if (subjectToSubjectGroupMap.containsKey(subjectId)) {
+                newSubject.setGroup(subjectToSubjectGroupMap.get(subjectId));
+            }
             saveSubject(user, newSubject);
         } else {
             biodistributionData.setSubjectId(subject.get().getId()); // Set the subject ID in the experiment to the existing subject ID, it may have been the subject label
@@ -137,14 +141,15 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
     }
 
     @Override
-    public List<PixiBiodistributiondataI> createOrUpdate(UserI user, List<PixiBiodistributiondataI> biodistributionDatas, String dataOverlapHandling) throws Exception {
+    public List<PixiBiodistributiondataI> createOrUpdate(UserI user, List<PixiBiodistributiondataI> biodistributionDatas,
+                                                         String dataOverlapHandling, Map<String, String> subjectToSubjectGroupMap) throws Exception {
         log.debug("User {} is attempting to create/update biodistribution data experiments in project {}",
                   user.getUsername(), biodistributionDatas.get(0).getProject());
 
         List<PixiBiodistributiondataI> createdExperiments = new ArrayList<>();
 
         for (PixiBiodistributiondataI biodistributionData : biodistributionDatas) {
-            createdExperiments.add(createOrUpdate(user, biodistributionData, dataOverlapHandling));
+            createdExperiments.add(createOrUpdate(user, biodistributionData, dataOverlapHandling, subjectToSubjectGroupMap));
         }
 
         return createdExperiments;
@@ -171,7 +176,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
     }
 
     @Override
-    public List<PixiBiodistributiondataI> fromCsv(UserI user, String project, String userCachePath) throws Exception {
+    public List<PixiBiodistributiondataI> fromCsv(UserI user, String project, String userCachePath, String dataOverlapHandling) throws Exception {
         log.debug("User {} is attempting to create biodistribution data experiment in project {} from cache path {}",
                   user.getUsername(), project, userCachePath);
 
@@ -180,15 +185,18 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
             throw new DataFormatException("Invalid file path: " + userCachePath);
         }
 
-        return fromCsv(user, project, excelFile);
+        return fromCsv(user, project, excelFile, dataOverlapHandling);
     }
 
     @Override
-    public List<PixiBiodistributiondataI> fromCsv(UserI user, String project, File file) throws Exception {
+    public List<PixiBiodistributiondataI> fromCsv(UserI user, String project, File file, String dataOverlapHandling) throws Exception {
         log.debug("User {} is attempting to create biodistribution data experiment in project {} from file {}",
                   user.getUsername(), project, file.getAbsolutePath());
 
         List<PixiBiodistributiondataI> biodExperiments;
+
+        //We need to pass this data on until we have the subject object
+        Map<String, String> subjectToSubjectGroupMap = new HashMap<>();
 
         try (Stream<String> lines = Files.lines(Paths.get(file.toURI()))) {
             List<List<String>> biodImportRows = lines.map(line -> Arrays.asList(line.split(",")))
@@ -216,10 +224,13 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
                 String subjectLabel = getCellValue(row, ingestionHeaderMap, SUBJECT_LABEL_COLUMN).orElseThrow(
                         () -> new DataFormatException("Missing required field: " + SUBJECT_LABEL_COLUMN + " in row " + finalCurrentRow)
                 );
+
                 if (currentlyExistingBiod.containsKey(subjectLabel)) {
                     biodistributionData = currentlyExistingBiod.get(subjectLabel);
                 } else {
                     biodistributionData = handleCommonPortion(row, project, subjectLabel,ingestionHeaderMap);
+                    Optional<String> subjectGroup = getCellValue(row, ingestionHeaderMap, "subject_group");
+                    subjectGroup.ifPresent(s -> subjectToSubjectGroupMap.put(subjectLabel, s));
                 }
 
                 PixiBiodsampleuptakedataI sampleUptakeData = new PixiBiodsampleuptakedata();
@@ -274,7 +285,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         Path projectResourcePath = Paths.get(siteConfigPreferences.getArchivePath()).getFileName().resolve(Paths.get("projects")).resolve(projectData.getArchiveDirectoryName());
         String resourcesPathWithLeadingElement = Paths.get(siteConfigPreferences.getArchivePath()).getRoot().toString() + projectResourcePath.toString();
         defaultCatalogService.insertResources(user, resourcesPathWithLeadingElement, file, "BioDUploadFiles", "", "", "");
-        return biodExperiments;
+        return createOrUpdate(user, biodExperiments, dataOverlapHandling, subjectToSubjectGroupMap);
     }
 
     private PixiBiodistributiondataI handleCommonPortion(List<String> row, String project, String subjectLabel,
@@ -365,6 +376,11 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
             anesthesia.ifPresent(anesthesiaData::setAnesthesia);
             anesthesiaRoute.ifPresent(anesthesiaData::setRouteofadministration);
             biodistributionData.setAnesthesiaAdministration(anesthesiaData);
+        }
+
+        Optional<String> subjectGroup = getCellValue(row, ingestionHeaderMap, "subject_group");
+        if (subjectGroup.isPresent()) {
+
         }
 
         return biodistributionData;
