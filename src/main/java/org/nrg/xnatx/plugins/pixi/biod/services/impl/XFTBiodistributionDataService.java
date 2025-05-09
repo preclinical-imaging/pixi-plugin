@@ -439,10 +439,10 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
             Optional<String> animalId = getCellValue(row, ingestionHeaderMap, SUBJECT_LABEL_COLUMN);
             Optional<String> sampleType = getCellValue(row, ingestionHeaderMap, SAMPLE_TYPE_COLUMN);
 
-            if (!animalId.isPresent()) {
+            if (!animalId.isPresent() || animalId.get().isEmpty()) {
                 e.addInvalidField(SUBJECT_LABEL_COLUMN, "Missing " + SUBJECT_LABEL_COLUMN + " in row " + currentRowNumber);
                 isValid = false;
-            } else if (!sampleType.isPresent()) {
+            } else if (!sampleType.isPresent() || sampleType.get().isEmpty()) {
                 e.addInvalidField(SAMPLE_TYPE_COLUMN, "Missing " + SAMPLE_TYPE_COLUMN + " in row " + currentRowNumber);
                 isValid = false;
             }else {
