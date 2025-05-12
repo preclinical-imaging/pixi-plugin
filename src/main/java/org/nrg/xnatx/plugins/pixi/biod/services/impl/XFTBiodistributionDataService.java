@@ -510,25 +510,6 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         log.debug("Input file is valid");
     }
 
-    protected void validateBiodistributionData(final PixiBiodistributiondataI biodistributionData) throws DataFormatException {
-        log.debug("Validating biodistribution data");
-
-        DataFormatException e = new DataFormatException();
-        boolean isValid = true;
-
-        if (biodistributionData.getSubjectId() == null) {
-            e.addMissingField("subject_id");
-            isValid = false;
-        }
-
-        if (!isValid) {
-            log.error("", e);
-            throw e;
-        }
-
-        log.debug("Biodistribution data is valid");
-    }
-
     private class DateOptionalTime {
         LocalDate date;
         LocalTime time;
