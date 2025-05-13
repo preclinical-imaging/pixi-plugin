@@ -11,8 +11,6 @@ import java.util.Optional;
 public interface BiodistributionDataService {
 
     Optional<PixiBiodistributiondataI> findByLabel(final UserI user, String project, String label);
-    PixiBiodistributiondataI createOrUpdate(final UserI user, final PixiBiodistributiondataI biodistributionData, String dataOverlapHandling, Map<String, String> subjectToSubjectGroupMap) throws Exception;
-    List<PixiBiodistributiondataI> createOrUpdate(final UserI user, final List<PixiBiodistributiondataI> biodistributionDatas, String dataOverlapHandling, Map<String, String> subjectToSubjectGroupMap) throws Exception;
     List<PixiBiodistributiondataI> fromCsv(final UserI user, final String project, final String userCachePath, String dataOverlapHandling) throws Exception;
     List<PixiBiodistributiondataI> fromCsv(final UserI user, final String project, final File file, String dataOverlapHandling) throws Exception;
 
