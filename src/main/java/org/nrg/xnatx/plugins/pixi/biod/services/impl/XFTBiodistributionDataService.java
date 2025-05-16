@@ -376,11 +376,6 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
             biodistributionData.setAnesthesiaAdministration(anesthesiaData);
         }
 
-        Optional<String> subjectGroup = getCellValue(row, ingestionHeaderMap, "subject_group");
-        if (subjectGroup.isPresent()) {
-
-        }
-
         return biodistributionData;
     }
 
