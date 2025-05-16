@@ -159,8 +159,8 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
                 saveSubject(user, elementToSave.optionalSubjectDataToSave);
             }
             saveExperiment(user, biodistributionDataToSave);
-            Optional<PixiBiodistributiondataI> createdBiodistributiionData = findByLabel(user, biodistributionDataToSave.getProject(), biodistributionDataToSave.getLabel());
-            createdBiodistributiionData.ifPresent(createdExperiments::add);
+            Optional<PixiBiodistributiondataI> createdBiodistributionData = findByLabel(user, biodistributionDataToSave.getProject(), biodistributionDataToSave.getLabel());
+            createdBiodistributionData.ifPresent(createdExperiments::add);
         }
 
         return createdExperiments;
