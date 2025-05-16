@@ -83,10 +83,11 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         }
     }
 
-    protected PixiBiodistributiondataI createOrUpdate(UserI user, PixiBiodistributiondataI biodistributionData,
+    private BiodistributionSubjectToSave createOrUpdate(UserI user, PixiBiodistributiondataI biodistributionData,
                                                    String dataOverlapHandling, Map<String, String> subjectToSubjectGroupMap) throws Exception {
         log.debug("User {} is attempting to create/update biodistribution data experiment in project {} with label {}",
                   user.getUsername(), biodistributionData.getProject(), biodistributionData.getLabel());
+        BiodistributionSubjectToSave biodistributionSubjectToSave = new BiodistributionSubjectToSave();
 
         String subjectId = biodistributionData.getSubjectId();
 
@@ -107,7 +108,8 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
             if (subjectToSubjectGroupMap.containsKey(subjectId)) {
                 newSubject.setGroup(subjectToSubjectGroupMap.get(subjectId));
             }
-            saveSubject(user, newSubject);
+            //don't save until we know there is no overlap with old data and this sheet of data
+            biodistributionSubjectToSave.optionalSubjectDataToSave = newSubject;
         } else {
             biodistributionData.setSubjectId(subject.get().getId()); // Set the subject ID in the experiment to the existing subject ID, it may have been the subject label
         }
@@ -130,13 +132,10 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
             biodistributionData.setId(biodId);
         }
 
-        saveExperiment(user, biodistributionData);
+        //don't save until we know there is no overlap with old data and this sheet of data
+        biodistributionSubjectToSave.biodistributionDataToSave = biodistributionData;
 
-        return findByLabel(
-                user, biodistributionData.getProject(), biodistributionData.getLabel()
-        ).orElseThrow(
-                () -> new NotFoundException("Failed to create or update biodistribution data experiment")
-        );
+        return biodistributionSubjectToSave;
     }
 
     protected List<PixiBiodistributiondataI> createOrUpdate(UserI user, List<PixiBiodistributiondataI> biodistributionDatas,
@@ -144,10 +143,24 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         log.debug("User {} is attempting to create/update biodistribution data experiments in project {}",
                   user.getUsername(), biodistributionDatas.get(0).getProject());
 
-        List<PixiBiodistributiondataI> createdExperiments = new ArrayList<>();
+        List<BiodistributionSubjectToSave> elementsToSave = new ArrayList<>();
 
         for (PixiBiodistributiondataI biodistributionData : biodistributionDatas) {
-            createdExperiments.add(createOrUpdate(user, biodistributionData, dataOverlapHandling, subjectToSubjectGroupMap));
+            elementsToSave.add(createOrUpdate(user, biodistributionData, dataOverlapHandling, subjectToSubjectGroupMap));
+        }
+
+        //we're going through all of this in case we find already existing data in the sheet.
+        //in that case we don't want to save any of the data for risk of leaving the user in the lurch with half saved
+        List<PixiBiodistributiondataI> createdExperiments = new ArrayList<>();
+
+        for (BiodistributionSubjectToSave elementToSave: elementsToSave) {
+            PixiBiodistributiondataI biodistributionDataToSave = elementToSave.biodistributionDataToSave;
+            if (elementToSave.optionalSubjectDataToSave!=null) {
+                saveSubject(user, elementToSave.optionalSubjectDataToSave);
+            }
+            saveExperiment(user, biodistributionDataToSave);
+            Optional<PixiBiodistributiondataI> createdBiodistributiionData = findByLabel(user, biodistributionDataToSave.getProject(), biodistributionDataToSave.getLabel());
+            createdBiodistributiionData.ifPresent(createdExperiments::add);
         }
 
         return createdExperiments;
@@ -506,5 +519,10 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
     private class DateOptionalTime {
         LocalDate date;
         LocalTime time;
+    }
+
+    private class BiodistributionSubjectToSave {
+        PixiBiodistributiondataI biodistributionDataToSave;
+        XnatSubjectdataI optionalSubjectDataToSave;
     }
 }
