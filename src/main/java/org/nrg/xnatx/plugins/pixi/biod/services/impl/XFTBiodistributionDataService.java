@@ -11,6 +11,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.nrg.xapi.exceptions.DataFormatException;
 import org.nrg.xapi.exceptions.NotFoundException;
+import org.nrg.xdat.bean.XnatExperimentdataFieldBean;
 import org.nrg.xdat.model.*;
 import org.nrg.xdat.om.*;
 import org.nrg.xdat.preferences.SiteConfigPreferences;
@@ -292,11 +293,25 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
             throw new DataFormatException("Invalid csv file", e);
         }
 
+        List<PixiBiodistributiondataI> createdBiodistributions = createOrUpdate(user, biodExperiments, dataOverlapHandling, subjectToSubjectGroupMap);
+
+        String projectResourceName = "BioDUploadFiles";
+
         XnatProjectdata projectData = XnatProjectdata.getProjectByIDorAlias(project, user, false);
         Path projectResourcePath = Paths.get(siteConfigPreferences.getArchivePath()).getFileName().resolve(Paths.get("projects")).resolve(projectData.getArchiveDirectoryName());
-        String resourcesPathWithLeadingElement = Paths.get(siteConfigPreferences.getArchivePath()).getRoot().toString() + projectResourcePath.toString();
-        defaultCatalogService.insertResources(user, resourcesPathWithLeadingElement, file, "BioDUploadFiles", "", "", "");
-        return createOrUpdate(user, biodExperiments, dataOverlapHandling, subjectToSubjectGroupMap);
+        String resourcesPathWithLeadingElement = Paths.get(siteConfigPreferences.getArchivePath()).getRoot().toString() + projectResourcePath;
+        defaultCatalogService.insertResources(user, resourcesPathWithLeadingElement, file, projectResourceName, "", "", "");
+
+        String uploadedResourcePath = Paths.get(resourcesPathWithLeadingElement, projectResourceName, file.getName()).toString();
+
+        for (PixiBiodistributiondataI biodistribution: createdBiodistributions) {
+            XnatExperimentdataFieldBean ingestionFileProvenanceField = new XnatExperimentdataFieldBean();
+            ingestionFileProvenanceField.setName("Upload_Provenance_" + LocalDate.now() + "_" + user.getUsername());
+            ingestionFileProvenanceField.setField(uploadedResourcePath);
+            biodistribution.addFields_field(ingestionFileProvenanceField);
+        }
+
+        return createdBiodistributions;
     }
 
     private PixiBiodistributiondataI handleCommonPortion(List<String> row, String project, String subjectLabel,
