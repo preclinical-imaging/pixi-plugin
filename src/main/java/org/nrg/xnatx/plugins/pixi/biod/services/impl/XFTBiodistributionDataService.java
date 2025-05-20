@@ -2,18 +2,17 @@ package org.nrg.xnatx.plugins.pixi.biod.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.nrg.xapi.exceptions.DataFormatException;
-import org.nrg.xdat.bean.XnatExperimentdataFieldBean;
 import org.nrg.xdat.model.PixiAnesthesiadataI;
 import org.nrg.xdat.model.PixiBiodinjectiondataI;
 import org.nrg.xdat.model.PixiBiodistributiondataI;
 import org.nrg.xdat.model.PixiBiodsampleuptakedataI;
-import org.nrg.xdat.model.XnatExperimentdataFieldI;
 import org.nrg.xdat.model.XnatExperimentdataI;
 import org.nrg.xdat.model.XnatSubjectdataI;
 import org.nrg.xdat.om.PixiAnesthesiadata;
 import org.nrg.xdat.om.PixiBiodinjectiondata;
 import org.nrg.xdat.om.PixiBiodistributiondata;
 import org.nrg.xdat.om.PixiBiodsampleuptakedata;
+import org.nrg.xdat.om.XnatExperimentdataField;
 import org.nrg.xdat.om.XnatProjectdata;
 import org.nrg.xdat.om.XnatSubjectdata;
 import org.nrg.xdat.preferences.SiteConfigPreferences;
@@ -305,7 +304,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         String uploadedResourcePath = Paths.get(resourcesPathWithLeadingElement, projectResourceName, file.getName()).toString();
 
         for (PixiBiodistributiondataI biodistribution: createdBiodistributions) {
-            XnatExperimentdataFieldI ingestionFileProvenanceField = new XnatExperimentdataFieldBean();
+            XnatExperimentdataField ingestionFileProvenanceField = new XnatExperimentdataField();
             ingestionFileProvenanceField.setName("Upload_Provenance_" + LocalDate.now() + "_" + user.getUsername());
             ingestionFileProvenanceField.setField(uploadedResourcePath);
             biodistribution.addFields_field(ingestionFileProvenanceField);
