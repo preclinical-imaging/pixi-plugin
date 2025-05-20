@@ -292,8 +292,6 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
             throw new DataFormatException("Invalid csv file", e);
         }
 
-        List<PixiBiodistributiondataI> createdBiodistributions = createOrUpdate(user, biodExperiments, dataOverlapHandling, subjectToSubjectGroupMap);
-
         String projectResourceName = "BioDUploadedFiles";
 
         XnatProjectdata projectData = XnatProjectdata.getProjectByIDorAlias(project, user, false);
@@ -303,14 +301,14 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
 
         String uploadedResourcePath = Paths.get(resourcesPathWithLeadingElement, projectResourceName, file.getName()).toString();
 
-        for (PixiBiodistributiondataI biodistribution: createdBiodistributions) {
+        for (PixiBiodistributiondataI biodistribution: biodExperiments) {
             XnatExperimentdataField ingestionFileProvenanceField = new XnatExperimentdataField();
             ingestionFileProvenanceField.setName("Upload_Provenance_" + LocalDate.now() + "_" + user.getUsername());
             ingestionFileProvenanceField.setField(uploadedResourcePath);
             biodistribution.addFields_field(ingestionFileProvenanceField);
         }
 
-        return createdBiodistributions;
+        return createOrUpdate(user, biodExperiments, dataOverlapHandling, subjectToSubjectGroupMap);
     }
 
     private PixiBiodistributiondataI handleCommonPortion(List<String> row, String project, String subjectLabel,
