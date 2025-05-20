@@ -1,19 +1,21 @@
 package org.nrg.xnatx.plugins.pixi.biod.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.sf.cglib.core.Local;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.NotOLE2FileException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.nrg.xapi.exceptions.DataFormatException;
-import org.nrg.xapi.exceptions.NotFoundException;
 import org.nrg.xdat.bean.XnatExperimentdataFieldBean;
-import org.nrg.xdat.model.*;
-import org.nrg.xdat.om.*;
+import org.nrg.xdat.model.PixiAnesthesiadataI;
+import org.nrg.xdat.model.PixiBiodinjectiondataI;
+import org.nrg.xdat.model.PixiBiodistributiondataI;
+import org.nrg.xdat.model.PixiBiodsampleuptakedataI;
+import org.nrg.xdat.model.XnatExperimentdataFieldI;
+import org.nrg.xdat.model.XnatExperimentdataI;
+import org.nrg.xdat.model.XnatSubjectdataI;
+import org.nrg.xdat.om.PixiAnesthesiadata;
+import org.nrg.xdat.om.PixiBiodinjectiondata;
+import org.nrg.xdat.om.PixiBiodistributiondata;
+import org.nrg.xdat.om.PixiBiodsampleuptakedata;
+import org.nrg.xdat.om.XnatProjectdata;
+import org.nrg.xdat.om.XnatSubjectdata;
 import org.nrg.xdat.preferences.SiteConfigPreferences;
 import org.nrg.xdat.services.cache.UserDataCache;
 import org.nrg.xft.ItemI;
@@ -28,14 +30,13 @@ import org.nrg.xnatx.plugins.pixi.biod.services.BiodistributionDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotNull;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.TemporalAccessor;
@@ -43,7 +44,6 @@ import java.time.temporal.TemporalQueries;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 @Service
 @Slf4j
@@ -295,7 +295,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
 
         List<PixiBiodistributiondataI> createdBiodistributions = createOrUpdate(user, biodExperiments, dataOverlapHandling, subjectToSubjectGroupMap);
 
-        String projectResourceName = "BioDUploadFiles";
+        String projectResourceName = "BioDUploadedFiles";
 
         XnatProjectdata projectData = XnatProjectdata.getProjectByIDorAlias(project, user, false);
         Path projectResourcePath = Paths.get(siteConfigPreferences.getArchivePath()).getFileName().resolve(Paths.get("projects")).resolve(projectData.getArchiveDirectoryName());
@@ -305,7 +305,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         String uploadedResourcePath = Paths.get(resourcesPathWithLeadingElement, projectResourceName, file.getName()).toString();
 
         for (PixiBiodistributiondataI biodistribution: createdBiodistributions) {
-            XnatExperimentdataFieldBean ingestionFileProvenanceField = new XnatExperimentdataFieldBean();
+            XnatExperimentdataFieldI ingestionFileProvenanceField = new XnatExperimentdataFieldBean();
             ingestionFileProvenanceField.setName("Upload_Provenance_" + LocalDate.now() + "_" + user.getUsername());
             ingestionFileProvenanceField.setField(uploadedResourcePath);
             biodistribution.addFields_field(ingestionFileProvenanceField);
