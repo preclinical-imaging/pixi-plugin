@@ -1,0 +1,186 @@
+$page.setTitle("Biodistribution Details")
+$page.setLinkColor($ui.alink)
+$page.setVlinkColor($ui.vlink)
+#if ($turbineUtils.GetPassedParameter("popup", $data))
+    #set ($popup = $turbineUtils.GetPassedParameter("popup", data) )
+    #set ($popup = "false")
+#end
+<TABLE width="100%">
+    <TR>
+        <TD>
+            <table width="100%">
+                <TR>
+                    <TD align="left" valign="middle">
+                        <font face="$ui.sansSerifFonts" size="3"><b>Biodistribution Details</b></font>
+                    </TD>
+                </TR>
+            </TABLE>
+        </TD>
+    </TR>
+    <TR>
+        <TD>
+            <TABLE width="100%">
+                <TR>
+                    <TD valign="top">
+                        <TABLE>
+                            <TR><TD width="150">Project</TD><TD>$!item.getStringProperty("pixi:biodistributionData/project")</TD></TR>
+                            <TR><TD>Experiment ID</TD><TD>$!item.getStringProperty("pixi:biodistributionData/ID")</TD></TR>
+                            <TR><TD>Experiment Label</TD><TD>$!item.getStringProperty("pixi:biodistributionData/label")</TD></TR>
+                            <TR><TD>Experiment Date</TD><TD>$!item.getProperty("pixi:biodistributionData/date")</TD></TR>
+                            <TR><TD>Technician</TD><TD>$!item.getStringProperty("pixi:biodistributionData/technician")</TD></TR>
+                            <TR><TD style="height: 1rem"></TD><TD></TD></TR>
+
+                            <TR><TH align="left" style="padding: 0">Animal Details</TH></TR>
+                            <TR>
+                                <TD>Animal Sacrifice Date</TD>
+                                <TD>$!item.getProperty("pixi:biodistributionData/animal_sacrifice_date")</TD>
+                            </TR>
+                            <TR>
+                                <TD>Animal Sacrifice Time</TD>
+                                <TD>$!item.getProperty("pixi:biodistributionData/animal_sacrifice_time")</TD>
+                            </TR>
+                            <TR>
+                                <TD>Animal Weight</TD>
+                                <TD>$!item.getProperty("pixi:biodistributionData/animal_weight") $!item.getStringProperty("pixi:biodistributionData/animal_weight_unit")</TD>
+                            </TR>
+
+                            <TR><TD style="height: 1rem"></TD><TD></TD></TR>
+
+                            <TR>
+                                <TD>Note</TD>
+                                <TD>$!item.getStringProperty("pixi:biodistributionData/note")</TD>
+                            </TR>
+                        </TABLE>
+                    </TD>
+                    <TD valign="top" align="right">
+                        #parse($turbineUtils.getTemplateName("actions",$om.getXSIType(),$project))
+                    </TD>
+                </TR>
+            </TABLE>
+        </TD>
+    </TR>
+    <TR>
+        <TD>
+            <!-- BEGIN pixi:biodistributionData -->
+            <TABLE>
+                <TR>
+                    <TD align="left" valign="top">
+                        <!-- BEGIN pixi:biodistributionData/injection_data -->
+                        <TABLE>
+                            <TR>
+                                <TH align="left"><BR><font face="$ui.sansSerifFonts" size="2">Injection Details</font>
+                                </TH>
+                            </TR>
+                            <TR>
+                                <TD align="left" valign="top">
+                                    <TABLE>
+                                        <TR>
+                                            <TD width="150">Tracer</TD>
+                                            <TD>$!item.getStringProperty("pixi:biodistributionData/injection_data/tracer")</TD>
+                                        </TR>
+                                        <TR>
+                                            <TD>Isotope</TD>
+                                            <TD>$!item.getStringProperty("pixi:biodistributionData/injection_data/isotope")</TD>
+                                        </TR>
+                                        <TR>
+                                            <TD>Diluent</TD>
+                                            <TD>$!item.getStringProperty("pixi:biodistributionData/injection_data/diluent")</TD>
+                                        </TR>
+                                        <TR>
+                                            <TD>Injected Dose</TD>
+                                            <TD>$!item.getProperty("pixi:biodistributionData/injection_data/injected_dose") $!item.getStringProperty("pixi:biodistributionData/injection_data/injected_dose_unit")</TD>
+                                        </TR>
+                                        <TR>
+                                            <TD>Injection Volume</TD>
+                                            <TD>$!item.getProperty("pixi:biodistributionData/injection_data/injection_volume") $!item.getStringProperty("pixi:biodistributionData/injection_data/injection_volume_unit")</TD>
+                                        </TR>
+                                        <TR>
+                                            <TD>Total Counts Injected</TD>
+                                            <TD>$!item.getProperty("pixi:biodistributionData/injection_data/injection_total_counts")</TD>
+                                        </TR>
+                                        <TR>
+                                            <TD>Injection Route</TD>
+                                            <TD>$!item.getStringProperty("pixi:biodistributionData/injection_data/injection_route")</TD>
+                                        </TR>
+                                        <TR>
+                                            <TD>Injection Site</TD>
+                                            <TD>$!item.getStringProperty("pixi:biodistributionData/injection_data/injection_site")</TD>
+                                        </TR>
+                                        <TR>
+                                            <TD>Injection Date Time</TD>
+                                            <TD>$!item.getProperty("pixi:biodistributionData/injection_data/injection_date") $!item.getProperty("pixi:biodistributionData/injection_data/injection_time")</TD>
+                                        </TR>
+                                    </TABLE>
+                                </TD>
+                            </TR>
+                        </TABLE>
+                        <!-- END pixi:biodistributionData/injection_data -->
+                    </TD>
+                </TR>
+                <TR>
+                    <TD align="left" valign="top">
+                        <!-- BEGIN pixi:biodistributionData/anesthesia_administration -->
+                        <TABLE>
+                            <TR><TH align="left"><BR><font face="$ui.sansSerifFonts" size="2">Anesthesia Administration</font></TH></TR>
+                            <TR>
+                                <TD align="left" valign="top">
+                                    <TABLE>
+                                        <TR><TD>Anesthesia</TD><TD>$!item.getStringProperty("pixi:biodistributionData/anesthesia_administration/anesthesia")</TD></TR>
+                                        <TR><TD>Administration Route</TD><TD>$!item.getStringProperty("pixi:biodistributionData/anesthesia_administration/routeOfAdministration")</TD></TR>
+                                    </TABLE>
+                                </TD>
+                            </TR>
+                        </TABLE>
+                        <!-- END pixi:biodistributionData/anesthesia_administration -->
+                    </TD>
+                </TR>
+                <TR>
+                    <TD align="left" valign="top">
+                    <!-- BEGIN pixi:biodistributionData/sample_uptake_data -->
+                    <TR><TH align="left"><BR><font face="$ui.sansSerifFonts" size="2">Sample Uptake Data</font></TH></TR>
+                    <TR>
+                        <TD align="left" valign="top">
+                            <TABLE id="sampleUptakeTable">
+                                <TR>
+                                    <TD>Sample Type</TD>
+                                    <TD>Sample Weight (g)</TD>
+                                    <TD>Decay Corrected CPM</TD>
+                                    <TD>%ID/g</TD>
+                                    <TD>%ID/organ</TD>
+                                    <TD>Measurement Date</TD>
+                                    <TD>Time</TD>
+                                    <TD>Timepoint</TD>
+                                    <TD></TD>
+                                </TR>
+                                <!-- Existing rows -->
+                                #set($pixi_biodSampleUptakeData_5_NUM_ROWS=$item.getChildItems("pixi:biodistributionData/sample_uptake_data").size() - 1)
+                                #if($pixi_biodSampleUptakeData_5_NUM_ROWS >= 0)
+                                    #foreach($pixi_biodSampleUptakeData_5_COUNTER in [0..$pixi_biodSampleUptakeData_5_NUM_ROWS])
+                                        <TR>
+                                            <TD>
+                                               $!item.getStringProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/sample_type")
+                                            </TD>
+                                            <TD>
+                                              $!item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/sample_weight") $!item.getStringProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/sample_weight_unit")
+                                            </TD>
+                                            <TD>$!item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/decay_corrected_cpm")</TD>
+                                            <TD>$!item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/percent_injected_dose_per_gram")</TD>
+                                            <TD>$!item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/percent_injected_dose_per_organ")</TD>
+                                            <TD>$!item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/measurement_date")</TD>
+                                            <TD>$!item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/measurement_time")</TD>
+                                            <TD>$!item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_value")</TD>
+                                            <TD>$!item.getProperty("pixi:biodistributionData/sample_uptake_data[$pixi_biodSampleUptakeData_5_COUNTER]/timepoint_unit")</TD>
+                                        </TR>
+                                    #end
+                                #end
+                            </TABLE>
+                        </TD>
+                    </TR>
+                    <!-- END pixi:biodistributionData/sample_uptake_data -->
+                    </TD>
+                </TR>
+            </TABLE>
+            <!-- END pixi:biodistributionData -->
+        </TD>
+    </TR>
+</TABLE><BR>#parse("/screens/ReportProjectSpecificFields.vm")
