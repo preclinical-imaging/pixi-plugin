@@ -10,7 +10,7 @@
 			XNAT.app.typeBasedListingOptions[type] = [];
 		}
 		XNAT.app.typeBasedListingOptions[type].push({
-			action: 'BioDSummaryStats',
+			action: 'XnatSummaryStats',
 			display: 'Summary Stats'
 		});
 	}
