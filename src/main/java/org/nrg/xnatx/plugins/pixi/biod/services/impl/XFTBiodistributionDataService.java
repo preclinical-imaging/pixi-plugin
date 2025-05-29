@@ -73,7 +73,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
     }
 
     @Override
-    public PixiBiodistributiondataI createOrUpdate(UserI user, PixiBiodistributiondataI biodistributionData) throws Exception {
+    public PixiBiodistributiondataI createOrUpdate(UserI user, PixiBiodistributiondataI biodistributionData, String dataOverlapHandling) throws Exception {
         log.debug("User {} is attempting to create/update biodistribution data experiment in project {} with label {}",
                   user.getUsername(), biodistributionData.getProject(), biodistributionData.getLabel());
 
@@ -100,9 +100,20 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
 
         Optional<PixiBiodistributiondataI> experiment = findByLabel(user, biodistributionData.getProject(), biodistributionData.getLabel());
 
-        if (!experiment.isPresent()) { // Create new id
-            String newId = xnatExperimentDataHelper.createNewId();
-            biodistributionData.setId(newId);
+        if(experiment.isPresent()) {
+            switch (dataOverlapHandling) {
+                case "throw_error":
+                    throw new DataFormatException("Bio Distribution data has already been created for subject ID: " + subjectId + ". You may have uploaded this file in error.");
+                case "ignore_matching":
+                    return null;
+                case "upload_overwrite":
+                    String biodId = experiment.get().getId();
+                    biodistributionData.setId(biodId);
+                    break;
+            }
+        } else {
+            String biodId = xnatExperimentDataHelper.createNewId();
+            biodistributionData.setId(biodId);
         }
 
         saveExperiment(user, biodistributionData);
@@ -115,14 +126,14 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
     }
 
     @Override
-    public List<PixiBiodistributiondataI> createOrUpdate(UserI user, List<PixiBiodistributiondataI> biodistributionDatas) throws Exception {
+    public List<PixiBiodistributiondataI> createOrUpdate(UserI user, List<PixiBiodistributiondataI> biodistributionDatas, String dataOverlapHandling) throws Exception {
         log.debug("User {} is attempting to create/update biodistribution data experiments in project {}",
                   user.getUsername(), biodistributionDatas.get(0).getProject());
 
         List<PixiBiodistributiondataI> createdExperiments = new ArrayList<>();
 
         for (PixiBiodistributiondataI biodistributionData : biodistributionDatas) {
-            createdExperiments.add(createOrUpdate(user, biodistributionData));
+            createdExperiments.add(createOrUpdate(user, biodistributionData, dataOverlapHandling));
         }
 
         return createdExperiments;
@@ -166,7 +177,6 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         log.debug("User {} is attempting to create biodistribution data experiment in project {} from file {}",
                   user.getUsername(), project, file.getAbsolutePath());
 
-        List<XnatSubjectdata> newSubjects = new ArrayList<>();
         List<PixiBiodistributiondataI> biodExperiments = new ArrayList<>();
 
         // Read Excel file with Apache POI
