@@ -1,0 +1,40 @@
+            <TABLE width="100%">
+                <TR>
+                    <TD valign="top">
+                        <TABLE >
+                            <TR><TD><b>Technician</b>: $!item.getStringProperty("pixi:biodistributionData/technician")</TD><TD></TD></TR>
+                            <TR><TD style="height: 1rem"></TD><TD></TD></TR>
+                            <TR><TH align="left" style="padding: 0">Animal Details</TH>
+                            <TH align="left" style="padding: 0">Anesthesia Details</TH>
+                            </TR>
+                             <TR>
+                             <TD align="left" valign="top">
+                                <table class="xnat-table clean fixed-header selectable">
+                                        <TR>
+                                            <TH>Sacrifice Date</TH>
+                                            <TH>Sacrifice Time</TH>
+                                            <Th>Weight</Th>
+                                        </TR>
+                                        <TR>
+                                            <TD>$!item.getProperty("pixi:biodistributionData/animal_sacrifice_date")</TD>
+                                            <TD>$!item.getProperty("pixi:biodistributionData/animal_sacrifice_time")</TD>
+                                            <TD>$!item.getProperty("pixi:biodistributionData/animal_weight") $!item.getStringProperty("pixi:biodistributionData/animal_weight_unit")</TD>
+                                        </TR>
+                                    </TABLE>
+                             </TD>
+                             <td  valign="top">
+                                  <TABLE class="xnat-table clean fixed-header selectable">
+                                      <tr>
+                                         <TH>Anesthesia</TH>
+                                         <TH>Administration Route</TH>
+                                      </tr>
+                                      <TR>
+                                          <TD>$!item.getStringProperty("pixi:biodistributionData/anesthesia_administration/anesthesia")</TD>
+                                          <TD>$!item.getStringProperty("pixi:biodistributionData/anesthesia_administration/routeOfAdministration")</TD>
+                                      </TR>
+                                  </TABLE>
+                             </td>
+                             </TR>
+                    </TD>
+                </TR>
+            </TABLE>

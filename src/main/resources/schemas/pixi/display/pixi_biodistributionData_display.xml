@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Displays xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xdat/display.xsd"
+          schema-element="pixi:biodistributionData" full-description="Biodistribution"
+          brief-description="Biodistribution">
+    <Arc name="PARTICIPANT_EXPERIMENT">
+        <CommonField id="PART_ID" local-field="SUBJECT_ID"/>
+        <CommonField id="DATE" local-field="DATE"/>
+        <CommonField id="EXPT_ID" local-field="EXPT_ID"/>
+    </Arc>
+    <DisplayField id="SUBJECT_ID" header="Subject" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData.subject_ID"/>
+        <HTML-Link>
+            <Property name="HREF" value="none"/>
+            <Property name="ONCLICK" value="return rpt('@Field1','xnat:subjectData','xnat:subjectData.ID');">
+                <InsertValue id="Field1" field="SUBJECT_ID"/>
+            </Property>
+        </HTML-Link>
+    </DisplayField>
+    <DisplayField id="EXPT_ID" header="ID" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData.ID"/>
+        <HTML-Link>
+            <Property name="HREF" value="none"/>
+            <Property name="ONCLICK"
+                      value="return rpt('@Field1','pixi:biodistributionData','pixi:biodistributionData.ID');">
+                <InsertValue id="Field1" field="EXPT_ID"/>
+            </Property>
+        </HTML-Link>
+    </DisplayField>
+    <DisplayField id="RPT" header="ID" visible="true" image="true">
+        <Content type="sql">'/@WEBAPP/images/r.gif'::text</Content>
+        <HTML-Link>
+            <Property name="HREF" value="none"/>
+            <Property name="ONCLICK"
+                      value="return rpt('@Field1','pixi:biodistributionData','pixi:biodistributionData.ID');">
+                <InsertValue id="Field1" field="EXPT_ID"/>
+            </Property>
+        </HTML-Link>
+    </DisplayField>
+    <DisplayField id="DATE" header="Date" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData.date"/>
+    </DisplayField>
+    <DisplayField header="Projects" id="PROJECTS" data-type="string">
+        <DisplayFieldElement name="Field1" viewName="PIXI_BIODISTRIBUTIONDATA_PROJECTS" viewColumn="PROJECTS"/>
+    </DisplayField>
+    <DisplayField header="Label" id="LABEL" data-type="string">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData.ID"/>
+        <DisplayFieldElement name="Field2" schema-element="pixi:biodistributionData.label"/>
+        <Content type="sql">COALESCE(@Field2, @Field1)</Content>
+        <HTML-Link>
+            <SecureLink elementName="pixi:biodistributionData">
+                <securityMappingValue displayFieldId="PROJECTS"
+                                      schemaElementMap="pixi:biodistributionData/sharing/share/project"/>
+                <securityMappingValue displayFieldId="PROJECT" schemaElementMap="pixi:biodistributionData/project"/>
+            </SecureLink>
+            <Property name="HREF"
+                      value="@WEBAPPapp/action/DisplayItemAction/search_value/@Field1/search_element/pixi:biodistributionData/search_field/pixi:biodistributionData.ID">
+                <InsertValue id="Field1" field="EXPT_ID"/>
+            </Property>
+            <Property name="ONCLICK"
+                      value="return rpt('@Field1','pixi:biodistributionData','pixi:biodistributionData.ID');">
+                <InsertValue id="Field1" field="EXPT_ID"/>
+            </Property>
+            <Property name="TITLE" value="Inserted: @Field1 (@Field2)">
+                <InsertValue id="Field1" field="INSERT_DATE"/>
+                <InsertValue id="Field2" field="INSERT_USER"/>
+            </Property>
+        </HTML-Link>
+    </DisplayField>
+    <DisplayField id="PROJECT" header="Project" visible="true" searchable="true" data-type="string">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData.project"/>
+    </DisplayField>
+    <DisplayField id="PIXI_BIODISTRIBUTIONDATA_PROJECT_IDENTIFIER" header="Biodistribution ID" visible="true"
+                  searchable="false" data-type="string" xsi:type="SubQueryField">
+        <Content type="sql">pixi_biodistributiondata_project_id</Content>
+        <HTML-Link>
+            <SecureLink elementName="pixi:biodistributionData">
+                <securityMappingValue displayFieldId="PROJECTS"
+                                      schemaElementMap="pixi:biodistributionData/sharing/share/project"/>
+                <securityMappingValue displayFieldId="PROJECT" schemaElementMap="pixi:biodistributionData/project"/>
+            </SecureLink>
+            <Property name="HREF"
+                      value="@WEBAPPapp/action/DisplayItemAction/search_value/@Field1/search_element/pixi:biodistributionData/search_field/pixi:biodistributionData.ID/project/@Field2">
+                <InsertValue id="Field1" field="EXPT_ID"/>
+                <InsertValue id="Field2" field="@WHERE"/>
+            </Property>
+        </HTML-Link>
+        <SubQuery>SELECT DISTINCT COALESCE(label,sharing_share_xnat_experimentda_id) AS
+            pixi_biodistributiondata_project_id,sharing_share_xnat_experimentda_id FROM ( SELECT
+            sharing_share_xnat_experimentda_id,label FROM xnat_experimentdata_share WHERE project='@WHERE' UNION SELECT
+            id,label FROM xnat_experimentData WHERE project='@WHERE' )SEARCH
+        </SubQuery>
+        <MappingColumns>
+            <MappingColumn schemaField="pixi:biodistributionData.ID" queryField="sharing_share_xnat_experimentda_id"/>
+        </MappingColumns>
+    </DisplayField>
+    <DisplayField id="INSERT_DATE" header="Inserted" visible="true" searchable="true" data-type="date">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData.meta.insert_date"/>
+    </DisplayField>
+    <DisplayField id="INSERT_USER" header="Creator" visible="true" searchable="true" data-type="string">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData.meta.insert_user.login"/>
+    </DisplayField>
+    <DisplayField id="PIXI_BIODISTRIBUTIONDATA_FIELD_MAP" header="Field" visible="true" searchable="false"
+                  data-type="string" xsi:type="SubQueryField">
+        <Content type="sql">field</Content>
+        <SubQuery>SELECT DISTINCT ON ( e.ID) e.ID AS expt_id,field FROM xnat_experimentData_field ef JOIN (SELECT
+            ID,extension,element_name FROM xnat_experimentData e JOIN xdat_meta_element xme ON
+            e.extension=xme.xdat_meta_element_id WHERE xme.element_name='pixi:biodistributionData') e on
+            ef.fields_field_xnat_experimentdat_id=e.id WHERE name='@WHERE'
+        </SubQuery>
+        <MappingColumns>
+            <MappingColumn schemaField="pixi:biodistributionData.ID" queryField="expt_id"/>
+        </MappingColumns>
+    </DisplayField>
+    ```xml
+    <DisplayField id="ANIMAL_WEIGHT" header="Animal Weight" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/animal_weight"/>
+    </DisplayField>
+    <DisplayField id="ANIMAL_WEIGHT_UNIT" header="Animal Weight Unit" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/animal_weight_unit"/>
+    </DisplayField>
+    <DisplayField id="ANIMAL_SACRIFICE_DATE" header="Animal Sacrifice Date" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/animal_sacrifice_date"/>
+    </DisplayField>
+    <DisplayField id="ANIMAL_SACRIFICE_TIME" header="Animal Sacrifice Time" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/animal_sacrifice_time"/>
+    </DisplayField>
+    <DisplayField id="TECHNICIAN" header="Technician" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/technician"/>
+    </DisplayField>
+    <DisplayField id="TRACER" header="Tracer" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/tracer"/>
+    </DisplayField>
+    <DisplayField id="ISOTOPE" header="Isotope" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/isotope"/>
+    </DisplayField>
+    <DisplayField id="INJECTED_DOSE" header="Injected Dose" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/injected_dose"/>
+    </DisplayField>
+    <DisplayField id="INJECTED_DOSE_UNIT" header="Injected Dose Unit" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1"
+                             schema-element="pixi:biodistributionData/injection_data/injected_dose_unit"/>
+    </DisplayField>
+    <DisplayField id="INJECTION_VOLUME" header="Injection Volume" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/injection_volume"/>
+    </DisplayField>
+    <DisplayField id="INJECTION_VOLUME_UNIT" header="Injection Volume Unit" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/injection_volume_unit"/>
+    </DisplayField>
+    <DisplayField id="INJECTION_TOTAL_COUNTS" header="Total Counts Injected" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/injection_total_counts"/>
+    </DisplayField>
+    <DisplayField id="INJECTION_ROUTE" header="Injection Route" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/injection_route"/>
+    </DisplayField>
+    <DisplayField id="INJECTION_SITE" header="Injection Site" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/injection_site"/>
+    </DisplayField>
+    <DisplayField id="INJECTION_DATE" header="Injection Date" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/injection_date"/>
+    </DisplayField>
+    <DisplayField id="INJECTION_TIME" header="Injection Time" visible="true" searchable="true">
+        <DisplayFieldElement name="Field1" schema-element="pixi:biodistributionData/injection_data/injection_time"/>
+    </DisplayField>
+    <DisplayField id="BIOD_SAMPLE_TYPE_COUNT_AGG" header="Samples Types" searchable="true" data-type="string">
+        <DisplayFieldElement name="Field1" viewName="BIOD_SAMPLE_TYPE_COUNT_AGG" viewColumn="TYPE_LIST"/>
+        <description>Sample Types</description>
+    </DisplayField>
+    <DisplayField id="BIOD_SAMPLE_WEIGHT_BY_SAMPLE_TYPE" header="Sample Weight By Sample Type" visible="true" searchable="true" data-type="float" xsi:type="SubQueryField">
+        <Content type="sql">SAMPLE_WEIGHT</Content>
+        <SubQuery>select sample_weight AS SAMPLE_WEIGHT, pixi_biodistributiondata_id FROM pixi_biodsampleuptakedata where LOWER(sample_type)=LOWER('@WHERE') GROUP BY pixi_biodistributiondata_id, sample_weight</SubQuery>
+        <MappingColumns>
+            <MappingColumn schemaField="pixi:biodistributionData.ID" queryField="pixi_biodistributiondata_id"/>
+        </MappingColumns>
+    </DisplayField>
+    <DisplayField id="BIOD_PERCENT_INJECTED_DOSE_PER_GRAM_BY_SAMPLE_TYPE" header="%ID per gram By Sample Type" visible="true" searchable="true" data-type="float" xsi:type="SubQueryField">
+        <Content type="sql">PERCENT_INJECTED_DOSE_PER_GRAM</Content>
+        <SubQuery>select percent_injected_dose_per_gram AS PERCENT_INJECTED_DOSE_PER_GRAM, pixi_biodistributiondata_id FROM pixi_biodsampleuptakedata where LOWER(sample_type)=LOWER('@WHERE') GROUP BY pixi_biodistributiondata_id, percent_injected_dose_per_gram</SubQuery>
+        <MappingColumns>
+            <MappingColumn schemaField="pixi:biodistributionData.ID" queryField="pixi_biodistributiondata_id"/>
+        </MappingColumns>
+    </DisplayField>
+    <DisplayField id="BIOD_PERCENT_INJECTED_DOSE_PER_ORGAN_BY_SAMPLE_TYPE" header="%ID per organ By Sample Type" visible="true" searchable="true" data-type="float" xsi:type="SubQueryField">
+        <Content type="sql">PERCENT_INJECTED_DOSE_PER_ORGAN</Content>
+        <SubQuery>select percent_injected_dose_per_organ AS PERCENT_INJECTED_DOSE_PER_ORGAN, pixi_biodistributiondata_id FROM pixi_biodsampleuptakedata where LOWER(sample_type)=LOWER('@WHERE') GROUP BY pixi_biodistributiondata_id, percent_injected_dose_per_organ</SubQuery>
+        <MappingColumns>
+            <MappingColumn schemaField="pixi:biodistributionData.ID" queryField="pixi_biodistributiondata_id"/>
+        </MappingColumns>
+    </DisplayField>
+    <DisplayField id="BIOD_DECAY_CORRECTED_CPM_BY_SAMPLE_TYPE" header="Decay Corrected CPM By Sample Type" visible="true" searchable="true" data-type="float" xsi:type="SubQueryField">
+        <Content type="sql">DECAY_CORRECTED_CPM</Content>
+        <SubQuery>select decay_corrected_cpm AS DECAY_CORRECTED_CPM, pixi_biodistributiondata_id FROM pixi_biodsampleuptakedata where LOWER(sample_type)=LOWER('@WHERE') GROUP BY pixi_biodistributiondata_id, decay_corrected_cpm</SubQuery>
+        <MappingColumns>
+            <MappingColumn schemaField="pixi:biodistributionData.ID" queryField="pixi_biodistributiondata_id"/>
+        </MappingColumns>
+    </DisplayField>
+    <DisplayVersion versionName="listing" default-order-by="DATE" default-sort-order="DESC"
+                    brief-description="Biodistribution" dark-color="9999CC" light-color="CCCCFF">
+        <DisplayFieldRef id="RPT"/>
+        <DisplayFieldRef id="LABEL"/>
+        <DisplayFieldRef id="DATE"/>
+        <DisplayFieldRef id="ISOTOPE"/>
+        <DisplayFieldRef id="TRACER"/>
+        <DisplayFieldRef id="TECHNICIAN"/>
+        <DisplayFieldRef id="BIOD_SAMPLE_TYPE_COUNT_AGG"/>
+    </DisplayVersion>
+    <DisplayVersion versionName="listing_csv" default-order-by="DATE" default-sort-order="DESC"
+                    brief-description="Biodistribution" dark-color="9999CC" light-color="CCCCFF">
+        <DisplayFieldRef id="LABEL"/>
+        <DisplayFieldRef id="SUBJECT_LABEL" element_name="xnat:subjectData"/>
+        <DisplayFieldRef id="DATE"/>
+        <DisplayFieldRef id="ISOTOPE"/>
+        <DisplayFieldRef id="TRACER"/>
+        <DisplayFieldRef id="TECHNICIAN"/>
+    </DisplayVersion>
+    <DisplayVersion versionName="full" default-order-by="DATE" default-sort-order="DESC"
+                    brief-description="Biodistribution" dark-color="9999CC" light-color="CCCCFF">
+        <DisplayFieldRef id="EXPT_ID"/>
+        <DisplayFieldRef id="SUBJECT_LABEL" element_name="xnat:subjectData"/>
+        <DisplayFieldRef id="DATE"/>
+        <DisplayFieldRef id="ISOTOPE"/>
+        <DisplayFieldRef id="TRACER"/>
+        <DisplayFieldRef id="TECHNICIAN"/>
+        <DisplayFieldRef id="BIOD_SAMPLE_TYPE_COUNT_AGG"/>
+    </DisplayVersion>
+    <DisplayVersion versionName="detailed" default-order-by="DATE" default-sort-order="DESC"
+                    brief-description="Biodistribution" dark-color="9999CC" light-color="CCCCFF">
+        <DisplayFieldRef id="DATE"/>
+        <DisplayFieldRef id="ISOTOPE"/>
+        <DisplayFieldRef id="TRACER"/>
+        <DisplayFieldRef id="TECHNICIAN"/>
+        <DisplayFieldRef id="BIOD_SAMPLE_TYPE_COUNT_AGG"/>
+    </DisplayVersion>
+    <DisplayVersion versionName="project_bundle" default-order-by="DATE" default-sort-order="DESC"
+                    brief-description="Biodistribution" dark-color="9999CC" light-color="CCCCFF">
+        <DisplayFieldRef id="PIXI_BIODISTRIBUTIONDATA_PROJECT_IDENTIFIER"/>
+        <DisplayFieldRef id="SUB_PROJECT_IDENTIFIER" element_name="xnat:subjectData"/>
+        <DisplayFieldRef id="DATE"/>
+        <DisplayFieldRef id="ISOTOPE"/>
+        <DisplayFieldRef id="TRACER"/>
+        <DisplayFieldRef id="BIOD_SAMPLE_TYPE_COUNT_AGG"/>
+    </DisplayVersion>
+    <ViewLink alias="PIXI_BIODISTRIBUTIONDATA_PROJECTS">
+        <Mapping TableName="PIXI_BIODISTRIBUTIONDATA_PROJECTS">
+            <MappingColumn rootElement="pixi:biodistributionData" fieldElement="pixi:biodistributionData.ID"
+                           mapsTo="id"/>
+        </Mapping>
+    </ViewLink>
+    <ViewLink alias="BIOD_SAMPLE_TYPE_COUNT_AGG">
+        <Mapping TableName="BIOD_SAMPLE_TYPE_COUNT_AGG">
+            <MappingColumn rootElement="pixi:biodistributionData" fieldElement="pixi:biodistributionData.ID" mapsTo="pixi_biodistributiondata_id"/>
+        </Mapping>
+    </ViewLink>
+    <SQLView name="biod_sample_type_count_agg" sql="SELECT pixi_biodistributiondata_id, TRIM(', ' FROM xs_a_concat(sample_type || ', ')) AS TYPE_LIST FROM (SELECT DISTINCT pixi_biodistributiondata_id, sample_type FROM pixi_biodSampleUptakeData ORDER BY pixi_biodistributiondata_id, sample_type) _TYPES GROUP BY pixi_biodistributiondata_id"/>
+    <SQLView name="PIXI_BIODISTRIBUTIONDATA_PROJECTS"
+             sql="SELECT id, '&lt;' || expt.project || '&gt;' || xs_a_concat(',&lt;' || shared.project || '&gt;') AS projects FROM xnat_experimentData expt LEFT JOIN xnat_experimentData_share shared ON expt.id=shared.sharing_share_xnat_experimentda_id LEFT JOIN xdat_meta_element xme ON expt.extension = xme.xdat_meta_element_id WHERE element_name='pixi:biodistributionData' GROUP BY expt.id,expt.project"/>
+</Displays>

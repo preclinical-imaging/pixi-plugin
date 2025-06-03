@@ -4,6 +4,8 @@ This is the repository for the PIXI XNAT plugin. PIXI is designed to help manage
 
 For detailed information, installation instructions, and usage guidelines, please visit [pixi.org](https://pixi.org).
 
+This plugin depends on the statisticsdashboard_plugin from XNAT
+
 ## Build
 
 To build the PIXI XNAT plugin, run the following command:
