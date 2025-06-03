@@ -1,0 +1,9 @@
+<script type="text/javascript">
+    XNAT.frontTabSearchItems = XNAT.frontTabSearchItems || [];
+
+    XNAT.frontTabSearchItems.push({
+        dataTab: 'quick-search-biod',
+        dataType: 'pixi:biodistributionData',
+        tabTitle: 'BioDistribution'
+    });
+</script>
