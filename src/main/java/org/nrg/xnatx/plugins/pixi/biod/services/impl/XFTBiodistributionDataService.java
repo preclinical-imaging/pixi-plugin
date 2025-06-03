@@ -26,6 +26,7 @@ import org.nrg.xnatx.plugins.pixi.biod.services.BiodistributionDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.FileInputStream;
@@ -73,7 +74,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
     }
 
     @Override
-    public PixiBiodistributiondataI createOrUpdate(UserI user, PixiBiodistributiondataI biodistributionData, String dataOverlapHandling) throws Exception {
+    public Optional<PixiBiodistributiondataI> createOrUpdate(UserI user, PixiBiodistributiondataI biodistributionData, String dataOverlapHandling) throws Exception {
         log.debug("User {} is attempting to create/update biodistribution data experiment in project {} with label {}",
                   user.getUsername(), biodistributionData.getProject(), biodistributionData.getLabel());
 
@@ -105,7 +106,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
                 case "throw_error":
                     throw new DataFormatException("Bio Distribution data has already been created for subject ID: " + subjectId + ". You may have uploaded this file in error.");
                 case "ignore_matching":
-                    return null;
+                    return Optional.empty();
                 case "upload_overwrite":
                     String biodId = experiment.get().getId();
                     biodistributionData.setId(biodId);
@@ -118,9 +119,9 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
 
         saveExperiment(user, biodistributionData);
 
-        return findByLabel(
+        return Optional.of(findByLabel(
                 user, biodistributionData.getProject(), biodistributionData.getLabel()
-        ).orElseThrow(
+        )).orElseThrow(
                 () -> new NotFoundException("Failed to create or update biodistribution data experiment")
         );
     }
@@ -133,7 +134,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         List<PixiBiodistributiondataI> createdExperiments = new ArrayList<>();
 
         for (PixiBiodistributiondataI biodistributionData : biodistributionDatas) {
-            createdExperiments.add(createOrUpdate(user, biodistributionData, dataOverlapHandling));
+            createOrUpdate(user, biodistributionData, dataOverlapHandling).ifPresent(createdExperiments::add);
         }
 
         return createdExperiments;

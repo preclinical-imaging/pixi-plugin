@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface BiodistributionDataService {
 
     Optional<PixiBiodistributiondataI> findByLabel(final UserI user, String project, String label);
-    PixiBiodistributiondataI createOrUpdate(final UserI user, final PixiBiodistributiondataI biodistributionData, String dataOverlapHandling) throws Exception;
+    Optional<PixiBiodistributiondataI> createOrUpdate(final UserI user, final PixiBiodistributiondataI biodistributionData, String dataOverlapHandling) throws Exception;
     List<PixiBiodistributiondataI> createOrUpdate(final UserI user, final List<PixiBiodistributiondataI> biodistributionDatas, String dataOverlapHandling) throws Exception;
     List<PixiBiodistributiondataI> fromExcel(final UserI user, final String project, final String userCachePath) throws Exception;
     List<PixiBiodistributiondataI> fromExcel(final UserI user, final String project, final File file) throws Exception;
