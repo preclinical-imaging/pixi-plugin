@@ -83,7 +83,8 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         }
     }
 
-    private BiodistributionSubjectToSave createOrUpdate(UserI user, PixiBiodistributiondataI biodistributionData,
+    private Optional<BiodistributionSubjectToSave> createOrUpdate(UserI user,
+                                                                PixiBiodistributiondataI biodistributionData,
                                                         String dataOverlapHandling, Map<String,
                                                         String> subjectToSubjectGroupMap) throws Exception {
         log.debug("User {} is attempting to create/update biodistribution data experiment in project {} with label {}",
@@ -122,7 +123,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
                 case "throw_error":
                     throw new DataFormatException("Bio Distribution data has already been created for subject ID: " + subjectId + ". You may have uploaded this file in error.");
                 case "ignore_matching":
-                    return null;
+                    return Optional.empty();
                 case "upload_overwrite":
                     String biodId = experiment.get().getId();
                     biodistributionData.setId(biodId);
@@ -136,7 +137,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         //don't save until we know there is no overlap with old data and this sheet of data
         biodistributionSubjectToSave.biodistributionDataToSave = biodistributionData;
 
-        return biodistributionSubjectToSave;
+        return Optional.of(biodistributionSubjectToSave);
     }
 
     protected List<PixiBiodistributiondataI> createOrUpdate(UserI user, List<PixiBiodistributiondataI> biodistributionDatas,
@@ -148,7 +149,10 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         List<BiodistributionSubjectToSave> elementsToSave = new ArrayList<>();
 
         for (PixiBiodistributiondataI biodistributionData : biodistributionDatas) {
-            elementsToSave.add(createOrUpdate(user, biodistributionData, dataOverlapHandling, subjectToSubjectGroupMap));
+            Optional<BiodistributionSubjectToSave> optionalOfBiodistribution = createOrUpdate(user, biodistributionData,
+                                                                                          dataOverlapHandling,
+                                                                                          subjectToSubjectGroupMap);
+            optionalOfBiodistribution.ifPresent(elementsToSave::add);
         }
 
         //we're going through all of this in case we find already existing data in the sheet.
