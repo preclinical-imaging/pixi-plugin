@@ -1,0 +1,16 @@
+<!-- BEGIN pixi-plugin templates/screens/Pixi_CMO_PDX_TemplateGenerator.vm -->
+<div id="pixi-container"></div>
+
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/cmo-submission-preclinical.js')"></script>
+
+<div id="reportDiv">
+The Preclinical Imaging Submission template for CancerModels.org
+</div>
+
+<script type="text/javascript">
+    (async () => {
+        await XNAT.plugin.pixi.cmoSubmissionTemplateGenerator.init('$project');
+        await XNAT.plugin.pixi.cmoSubmissionTemplateGenerator.show($("#reportDiv"));
+    })();
+</script>
+<!-- END pixi-plugin templates/screens/Pixi_CMO_PDX_TemplateGenerator -->

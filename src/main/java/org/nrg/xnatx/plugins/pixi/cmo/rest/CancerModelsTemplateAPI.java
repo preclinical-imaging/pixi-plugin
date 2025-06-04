@@ -1,0 +1,202 @@
+package org.nrg.xnatx.plugins.pixi.cmo.rest;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
+import org.nrg.framework.annotations.XapiRestController;
+import org.nrg.framework.exceptions.NotFoundException;
+import org.nrg.xapi.rest.AbstractXapiRestController;
+import org.nrg.xapi.rest.Project;
+import org.nrg.xapi.rest.XapiRequestMapping;
+import org.nrg.xdat.XDAT;
+import org.nrg.xdat.model.XnatImagescandataI;
+import org.nrg.xdat.om.PixiPdxdata;
+import org.nrg.xdat.om.XnatExperimentdata;
+import org.nrg.xdat.om.XnatImagesessiondata;
+import org.nrg.xdat.om.XnatPetmrsessiondata;
+import org.nrg.xdat.om.XnatPetsessiondata;
+import org.nrg.xdat.om.XnatProjectdata;
+import org.nrg.xdat.security.services.RoleHolder;
+import org.nrg.xdat.security.services.UserManagementServiceI;
+import org.nrg.xft.XFTTable;
+import org.nrg.xft.db.PoolDBUtils;
+import org.nrg.xft.search.SQLClause;
+import org.nrg.xft.security.UserI;
+import org.nrg.xnatx.plugins.pixi.cmo.model.PdxReportEntry;
+import org.nrg.xnatx.plugins.pixi.cmo.model.PreClinicalImagingReportEntry;
+import org.nrg.xnatx.plugins.pixi.cmo.model.PreClinicalReport;
+import org.nrg.xnatx.plugins.pixi.cmo.model.PreClinicalReportEntry;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Set;
+
+import static org.nrg.xdat.security.helpers.AccessLevel.Edit;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+@Slf4j
+@XapiRestController
+@RequestMapping(value = "/cmo/template")
+@Api("API for Generating Templates for submission to CancerModels.org")
+public class CancerModelsTemplateAPI extends AbstractXapiRestController {
+
+    @Autowired
+    public CancerModelsTemplateAPI(final UserManagementServiceI userManagementService,
+                                   final RoleHolder roleHolder) {
+        super(userManagementService, roleHolder);
+    }
+
+    @ApiResponses({@ApiResponse(code = 200, message = "Template successfully generated"),
+            @ApiResponse(code = 400, message = "Invalid value passed."),
+            @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
+            @ApiResponse(code = 500, message = "Unexpected error")})
+    @XapiRequestMapping(value = "/preclinical/project/{project}", method = GET, restrictTo = Edit, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Get Preclinical Template")
+    public PreClinicalReport getPreclinicaltemplate(@Project @PathVariable final String project) throws NotFoundException {
+        if (project == null) {
+            throw new NotFoundException("No value passed");
+        }
+        UserI user = getSessionUser();
+        final XnatProjectdata projectdata = XnatProjectdata.getXnatProjectdatasById(project,user,false);
+        if (projectdata == null) {
+            throw new NotFoundException("Invalid value passed");
+        }
+        List<PreClinicalReportEntry> entries =  extractPreClinicalImaging(projectdata, groupPdxByPassageNumber(projectdata.getExperimentsByXSIType("pixi:pdxData")));
+        PreClinicalReport template = new PreClinicalReport();
+        template.setPreClinicalReportEntryList(entries);
+        template.setProjectId(project);
+        template.setProjectTitle(projectdata.getName());
+        template.setProjectUrl(XDAT.getSiteUrl() + "/data/projects/" + project  + "?format=html");
+        template.setDescription(projectdata.getDescription());
+        return template;
+    }
+
+
+    private Hashtable<String, PdxReportEntry> groupPdxByPassageNumber(final ArrayList pdxExperiments) {
+        Hashtable<String, PdxReportEntry> pdxDataHash = new Hashtable<>();
+        for (Object pdx : pdxExperiments) {
+            PixiPdxdata pdxdata = (PixiPdxdata) pdx;
+            if (!pdxDataHash.containsKey(pdxdata.getPassage())) {
+                PdxReportEntry pdxReportEntry = new PdxReportEntry();
+                pdxReportEntry.addSubjectId(pdxdata.getSubjectId());
+                pdxReportEntry.setPassageNumber(pdxdata.getPassage());
+                pdxReportEntry.setSourceId(pdxdata.getSourceid());
+                pdxReportEntry.setEngraftmentSite(pdxdata.getInjectionsite());
+                pdxDataHash.put(pdxdata.getPassage(), pdxReportEntry);
+            } else {
+                PdxReportEntry pdxReportEntry = pdxDataHash.get(pdxdata.getPassage());
+                pdxReportEntry.addSubjectId(pdxdata.getSubjectId());
+            }
+        }
+        return pdxDataHash;
+    }
+
+    private List<PreClinicalReportEntry> extractPreClinicalImaging(final XnatProjectdata projectdata , final Hashtable<String, PdxReportEntry> pdxGroupByPassageNumber) {
+        List<PreClinicalReportEntry> preclinicalReport = new ArrayList();
+        Collection<PdxReportEntry> pdxReportEntries = pdxGroupByPassageNumber.values();
+        for(PdxReportEntry pdxReportEntry: pdxReportEntries) {
+            Hashtable<String, PreClinicalImagingReportEntry> imagingEntry = getImagingSessionsByModality(projectdata, pdxReportEntry.getSubjectIds());
+            for (String modality : imagingEntry.keySet()) {
+                PreClinicalImagingReportEntry preClinicalImagingReportEntryOfAllSequences = imagingEntry.get(modality);
+                Set<String> sequenceOfTracerUsed = preClinicalImagingReportEntryOfAllSequences.getSequenceOrTracerCounts().keySet();
+                if (sequenceOfTracerUsed.size() == 1) {
+                    preclinicalReport.add(new PreClinicalReportEntry(pdxReportEntry, preClinicalImagingReportEntryOfAllSequences));
+                } else {
+                    for (String seq : sequenceOfTracerUsed) {
+                        PreClinicalImagingReportEntry single = new PreClinicalImagingReportEntry();
+                        single.setTreatments(preClinicalImagingReportEntryOfAllSequences.getTreatments());
+                        single.setModality(preClinicalImagingReportEntryOfAllSequences.getModality());
+                        Long countOfImages = preClinicalImagingReportEntryOfAllSequences.getSequenceOrTracerCounts().get(seq);
+                        Hashtable<String, Long> singleCounts = new Hashtable();
+                        singleCounts.put(seq, countOfImages);
+                        single.setSequenceOrTracerCounts(singleCounts);
+                        preclinicalReport.add(new PreClinicalReportEntry(pdxReportEntry, single));
+                    }
+                }
+            }
+        }
+        return preclinicalReport;
+    }
+
+    private Hashtable<String, PreClinicalImagingReportEntry> getImagingSessionsByModality(final XnatProjectdata projectdata, final List<String> subjectIds) {
+        ArrayList<XnatExperimentdata> experiments = projectdata.getExperiments();
+        Hashtable<String, PreClinicalImagingReportEntry> experimentsByModality = new Hashtable<>();
+        for (XnatExperimentdata exp : experiments) {
+            if ((exp instanceof XnatImagesessiondata) && (subjectIds.contains(((XnatImagesessiondata) exp).getSubjectId()))) {
+                final XnatImagesessiondata imagesessiondata = ((XnatImagesessiondata)exp);
+                List<XnatImagescandataI> scans = imagesessiondata.getScans_scan();
+                for (XnatImagescandataI sc : scans) {
+                    PreClinicalImagingReportEntry preClinicalImagingReportEntry = null;
+                    final String type = sc.getType();
+                    final String modality = sc.getModality();
+                    if (modality != null) {
+                        if (experimentsByModality.containsKey(modality)) {
+                            preClinicalImagingReportEntry = experimentsByModality.get(modality);
+                            setContrastSequenceUsed(preClinicalImagingReportEntry, type, exp);
+                        } else {
+                            preClinicalImagingReportEntry = new PreClinicalImagingReportEntry();
+                            preClinicalImagingReportEntry.setModality(modality);
+                            preClinicalImagingReportEntry.setTreatments(getTreatments(subjectIds));
+                            setContrastSequenceUsed(preClinicalImagingReportEntry, type, exp);
+                            experimentsByModality.put(modality, preClinicalImagingReportEntry);
+                        }
+                    }
+                }
+            }
+        }
+        return experimentsByModality;
+    }
+
+    private void setContrastSequenceUsed(PreClinicalImagingReportEntry preClinicalImagingReportEntry, String type, XnatExperimentdata exp) {
+        if ((exp instanceof XnatPetsessiondata) || exp instanceof XnatPetmrsessiondata) {
+            try {
+                preClinicalImagingReportEntry.addContrastSequenceUsed(((XnatPetsessiondata) exp).getTracer_name());
+            } catch (ClassCastException cce) {
+                preClinicalImagingReportEntry.addContrastSequenceUsed(((XnatPetmrsessiondata) exp).getTracer_name());
+            }
+        } else {
+            preClinicalImagingReportEntry.addContrastSequenceUsed(type);
+        }
+    }
+
+
+    private String getTreatments(final List<String> subjectIds) {
+        final String DRUG_NAME_QUERY = "SELECT STRING_AGG(drug, '+') AS drugnames from " +
+                " (select distinct drug from pixi_drugtherapydata dt " +
+                " left join xnat_subjectassessordata sa on dt.id = sa.id " +
+                " left join xnat_subjectdata s on sa.subject_id = s.id " +
+                " where s.id in (?)) as drugs;";
+        SQLClause.ParamValue[] sqlValues = {new SQLClause.ParamValue(String.join(",", subjectIds), -1)};
+        PoolDBUtils con = new PoolDBUtils();
+        String drugNames = "Not provided";
+        try {
+            final XFTTable table = con.executeSelectPS(DRUG_NAME_QUERY, sqlValues);
+            ArrayList<Object[]> rows  = table.rows();
+            drugNames = (String)rows.get(0)[0];
+        } catch (Exception e) {
+            log.error("Could not get drug  names", e);
+        } finally {
+            con.closeConnection();
+        }
+        return drugNames;
+    }
+
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(value = {NotFoundException.class})
+    public String handleNotFound(final Exception e) {
+        return e.getMessage();
+    }
+
+
+}

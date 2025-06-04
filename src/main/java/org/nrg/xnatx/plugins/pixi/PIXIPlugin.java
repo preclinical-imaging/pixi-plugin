@@ -91,6 +91,7 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.DEFAULT_DIGITS;
                 "org.nrg.xnatx.plugins.pixi.imageAcqCtx.rest",
                 "org.nrg.xnatx.plugins.pixi.imageAcqCtx.services.impl",
                 "org.nrg.xnatx.plugins.pixi.rest",
+                "org.nrg.xnatx.plugins.pixi.cmo.rest"
 })
 @Import({BliConfig.class, InveonConfig.class})
 @Slf4j
