@@ -23,11 +23,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Api("PIXI Biodistribution API")
 @XapiRestController
@@ -62,7 +60,7 @@ public class PixiBiodAPI extends AbstractXapiRestController {
                 .collect(Collectors.toMap(PixiBiodistributiondataI::getId, PixiBiodistributiondataI::getLabel));
     }
 
-    
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(DataFormatException.class)
     public String handleDataFormatException(final DataFormatException e) {
