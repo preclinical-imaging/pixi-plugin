@@ -17,14 +17,15 @@ import org.nrg.xnatx.plugins.pixi.biod.services.BiodistributionDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api("PIXI Biodistribution API")
 @XapiRestController
@@ -47,20 +48,18 @@ public class PixiBiodAPI extends AbstractXapiRestController {
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
     @XapiRequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
-    public List<PixiBiodistributiondataI> createBiodistributionExperiments(@RequestParam @Project String project,
-                                                                           @RequestParam String cachePath,
-                                                                           @RequestParam String dataOverlapHandling) throws Exception {
+    public Map<String, String> createBiodistributionExperiments(@RequestParam @Project String project,
+                                                                @RequestParam String cachePath,
+                                                                @RequestParam String dataOverlapHandling) throws Exception {
         log.info("Creating biodistribution experiments for project: {} from cache path: {}", project, cachePath);
 
-        // Call the service to create biodistribution experiments
-        List<PixiBiodistributiondataI> biodExps = biodistributionDataService.fromExcel(getSessionUser(), project, cachePath);
-        List<PixiBiodistributiondataI> createdBiodExps = biodistributionDataService.createOrUpdate(getSessionUser(), biodExps, dataOverlapHandling);
-        log.info("Created {} biodistribution experiments for project: {}", createdBiodExps.size(), project);
+        List<PixiBiodistributiondataI> biodExps = biodistributionDataService.fromCsv(getSessionUser(), project, cachePath, dataOverlapHandling);
+        log.info("Created {} biodistribution experiments for project: {}", biodExps.size(), project);
 
-        return Collections.emptyList(); // TODO: Return the created biodistribution experiments, update front end to handle this
+        return biodExps.stream()
+                .collect(Collectors.toMap(PixiBiodistributiondataI::getId, PixiBiodistributiondataI::getLabel));
     }
 
-    // EXCEPTION HANDLING
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(DataFormatException.class)

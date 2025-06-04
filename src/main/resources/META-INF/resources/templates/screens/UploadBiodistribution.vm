@@ -3,16 +3,11 @@
     <h2>Small Animal Biodistribution Upload</h2>
 
     <div class="form-instructions">
-        <p>Upload an Excel file containing biodistribution data for small animal imaging studies.</p>
+        <p>Upload a CSV file containing biodistribution data for small animal imaging studies.</p>
 
-        <p>File format requirements:</p>
+        <p>Download a template CSV file <a href="$content.getURI('biod/BiodistributionTemplate.csv')" download>here</a>.</p>
 
-        <ul>
-            <li>An Excel file with the following sheets: 'pixi_injection_common', 'pixi_injection', 'pixi_biodistribution_common', 'pixi_biodistribution'</li>
-            <li>Columns in the common sheets are shared by all animals (rows) in the respective injection or biodistribution sheet</li>
-        </ul>
-
-        <p>Download a template Excel file <a href="$content.getURI('biod/BiodistributionTemplate.xlsx')" download>here</a>.</p>
+        <p>Pleas use the template to find the correct column names for the data in your CSV.</p>
     </div>
 
     <form id="upload-form" name="upload-form" method="post">
@@ -30,9 +25,8 @@
             </div>
 
             <div class="form-component">
-                <label class="file-label" for="file">Select Excel file to upload</label>
-##                TODO DOUBLE CHECK FILE TYPE. IS THIS FOR BOTH XLSX AND XLS?
-                <input type="file" id="file" name="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" required/>
+                <label class="file-label" for="file">Select file to upload</label>
+                <input type="file" id="file" name="file" accept=".csv" required/>
             </div>
 
             <div class="form-component">
@@ -213,6 +207,22 @@
         return XNAT.url.rootUrl('data/projects/' + id);
     }
 
+    function createExperimentLink(experimentId) {
+        return XNAT.url.rootUrl('app/action/DisplayItemAction/search_value/' + experimentId + '/search_element/pixi:biodistributionData/search_field/pixi:biodistributionData.ID')
+    }
+
+    function createExperimentDetailsList(allExperiments) {
+        let fullDetailsList = ''
+        for (const experimentId in allExperiments) {
+            let experimentLabel = allExperiments[experimentId];
+            let experimentLink = createExperimentLink(experimentId);
+            let experimentHtmlElement = `<a href=${experimentLink}>${experimentLabel}</a><br>`;
+            fullDetailsList = fullDetailsList.concat(experimentHtmlElement);
+        }
+        fullDetailsList = fullDetailsList.substring(0, fullDetailsList.length - 4);
+        return fullDetailsList;
+    }
+
     projectFilerInput.addEventListener('keyup', filterProject);
     dataOverlapElement.addEventListener('change', alertUserOfOverwriteDecision);
 
@@ -221,8 +231,7 @@
 
         function validateForm() {
             let validProject = XNAT.validate(projectEl).required().check();
-            // TODO Double check file type. Is this for both xlsx and xls?
-            let validFile = XNAT.validate(fileEl).is('fileType', 'xls,xlsx').check()
+            let validFile = XNAT.validate(fileEl).is('fileType', 'csv').check()
             return validProject && validFile;
         }
 
@@ -288,56 +297,45 @@
         ]);
 
         console.debug(`Calling ${biodApiUrlWithParams}`);
-        response = await fetch(biodApiUrlWithParams, {method: 'POST'})
-        if (response.ok) {
-            console.debug('Upload successful');
-            XNAT.ui.dialog.close("biod_upload");
-            let project_link = getProjectLink(projectId);
-            XNAT.ui.dialog.open({
-                title: 'Upload Successful',
-                content: `<div class="success">Upload and extraction successful. Data has been successfully added to <a href=${project_link}>${projectId}</a></div>`,
-                buttons: [
-                    {
-                        label: 'OK',
-                        isDefault: true,
-                        close: true,
-                    }
-                ]
-            })
-        } else {
-            console.error(`Failed to extract ${file.name}`)
-            XNAT.ui.dialog.close("bli_extraction");
-
-            response.text()
-                .then(errorMessage => {
-                    console.error(`Error message: ${errorMessage}`);
-                    XNAT.ui.dialog.open({
-                        title: 'Extraction Failed',
-                        content: `<div class="error">Failed to extract biodistribution data from ${file.name}. <br>${errorMessage}</div>`,
-                        buttons: [
-                            {
-                                label: 'OK',
-                                isDefault: true,
-                                close: true,
-                            }
-                        ]
-                    })
+        XNAT.xhr.post({
+            url: biodApiUrlWithParams,
+            success: function (data) {
+                console.log(data);
+                console.debug('Upload successful');
+                XNAT.ui.dialog.close("biod_upload");
+                let project_link = getProjectLink(projectId);
+                let experimentsList = createExperimentDetailsList(data);
+                XNAT.ui.dialog.open({
+                    title: 'Upload Successful',
+                    content: `<div class="success">Upload and extraction successful. Data has been successfully added to <a href=${project_link}>${projectId}.</a>
+                    <details>
+                      <summary>The following Biodistribution experiments have been created: </summary>${experimentsList}</details></div>`,
+                    buttons: [
+                        {
+                            label: 'OK',
+                            isDefault: true,
+                            close: true,
+                        }
+                    ]
                 })
-                .catch(error => {
-                    console.error(`Error reading response text: ${error}`);
-                    XNAT.ui.dialog.open({
-                        title: 'Extraction Failed',
-                        content: `<div class="error">Failed to extract biodistribution data from ${file.name}.<br>${error}</div>`,
-                        buttons: [
-                            {
-                                label: 'OK',
-                                isDefault: true,
-                                close: true,
-                            }
-                        ]
-                    })
-                });
-        }
+            },
+            error: function(e) {
+                console.error(`Failed to extract ${file.name}`)
+                XNAT.ui.dialog.close("bli_extraction");
+
+                XNAT.ui.dialog.open({
+                    title: 'Extraction Failed',
+                    content: `<div class="error">Failed to extract biodistribution data from ${file.name}. <br>${e.responseText}</div>`,
+                    buttons: [
+                        {
+                            label: 'OK',
+                            isDefault: true,
+                            close: true,
+                        }
+                    ]
+                })
+            }
+        });
     }
 </script>
 <!-- END pixi-plugin templates/screens/UploadBiodistribution.vm -->
