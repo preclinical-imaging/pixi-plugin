@@ -84,7 +84,8 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
     }
 
     private BiodistributionSubjectToSave createOrUpdate(UserI user, PixiBiodistributiondataI biodistributionData,
-                                                   String dataOverlapHandling, Map<String, String> subjectToSubjectGroupMap) throws Exception {
+                                                        String dataOverlapHandling, Map<String,
+                                                        String> subjectToSubjectGroupMap) throws Exception {
         log.debug("User {} is attempting to create/update biodistribution data experiment in project {} with label {}",
                   user.getUsername(), biodistributionData.getProject(), biodistributionData.getLabel());
         BiodistributionSubjectToSave biodistributionSubjectToSave = new BiodistributionSubjectToSave();
@@ -139,7 +140,8 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
     }
 
     protected List<PixiBiodistributiondataI> createOrUpdate(UserI user, List<PixiBiodistributiondataI> biodistributionDatas,
-                                                         String dataOverlapHandling, Map<String, String> subjectToSubjectGroupMap) throws Exception {
+                                                            String dataOverlapHandling, Map<String,
+                                                            String> subjectToSubjectGroupMap) throws Exception {
         log.debug("User {} is attempting to create/update biodistribution data experiments in project {}",
                   user.getUsername(), biodistributionDatas.get(0).getProject());
 

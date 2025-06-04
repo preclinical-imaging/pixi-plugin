@@ -17,7 +17,11 @@ import org.nrg.xnatx.plugins.pixi.biod.services.BiodistributionDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,17 +51,15 @@ public class PixiBiodAPI extends AbstractXapiRestController {
                    @ApiResponse(code = 500, message = "Unexpected error")})
     @XapiRequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     public Map<String, String> createBiodistributionExperiments(@RequestParam @Project String project,
-                                                                           @RequestParam String cachePath,
-                                                                           @RequestParam String dataOverlapHandling) throws Exception {
+                                                                @RequestParam String cachePath,
+                                                                @RequestParam String dataOverlapHandling) throws Exception {
         log.info("Creating biodistribution experiments for project: {} from cache path: {}", project, cachePath);
 
         List<PixiBiodistributiondataI> biodExps = biodistributionDataService.fromCsv(getSessionUser(), project, cachePath, dataOverlapHandling);
         log.info("Created {} biodistribution experiments for project: {}", biodExps.size(), project);
 
-        List<String> ids = biodExps.stream().map(PixiBiodistributiondataI::getId).collect(Collectors.toList());
-        List<String> labels = biodExps.stream().map(PixiBiodistributiondataI::getLabel).collect(Collectors.toList());
-
-        return IntStream.range(0, ids.size()).boxed().collect(Collectors.toMap(ids::get, labels::get));
+        return biodExps.stream()
+                .collect(Collectors.toMap(PixiBiodistributiondataI::getId, PixiBiodistributiondataI::getLabel));
     }
 
     // EXCEPTION HANDLING
