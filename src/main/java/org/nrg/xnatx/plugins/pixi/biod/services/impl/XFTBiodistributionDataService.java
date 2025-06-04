@@ -38,6 +38,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalQueries;
 import java.util.*;
@@ -436,7 +437,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         return !(cell.isEmpty()) ? Optional.of(Double.valueOf(cell)) : Optional.empty();
     }
 
-    private Optional<DateOptionalTime> getCellValueAsDate(List<String> row, Map<String, Integer> headerMap, String headerName) {
+    private Optional<DateOptionalTime> getCellValueAsDate(List<String> row, Map<String, Integer> headerMap, String headerName) throws DataFormatException {
         Integer cellIndex = headerMap.get(headerName);
         if (cellIndex == null) {
             return Optional.empty();
@@ -445,11 +446,28 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         if (cell.isEmpty()) {
             return Optional.empty();
         }
-        String cell2 = cell.replace("-", "").replace("/","")
-                .replace(":","").replace(" ", "-");
-        TemporalAccessor dt = new DateTimeFormatterBuilder()
-                .appendPattern("MMddyyyy[-HHmmss]")
-                .appendOptional(DateTimeFormatter.ISO_TIME).parseCaseInsensitive().toFormatter().parse(cell2);
+
+        //we don't know whether user will use time or not or whether that time will have milliseconds.
+        //this will allow us to accept any of the above.
+        List<String> allPossibleDateTimePatterns = Arrays.asList(siteConfigPreferences.getUiDateTimeSecondsFormat(),
+                                                                 siteConfigPreferences.getUiDateTimeFormat(),
+                                                                 siteConfigPreferences.getUiDateFormat());
+        TemporalAccessor dt = null;
+
+        for (String dateTimePattern: allPossibleDateTimePatterns) {
+            try {
+                dt = new DateTimeFormatterBuilder().appendPattern(dateTimePattern)
+                        .appendOptional(DateTimeFormatter.ISO_TIME).parseCaseInsensitive().toFormatter().parse(cell);
+            } catch (DateTimeParseException e) {
+                //this format didn't work. try until we run out of them
+            }
+        }
+
+        if (dt == null) {
+            throw new DataFormatException("The input datetime with value: " + cell + " in column: " + headerName + " " +
+                                                 "is not compatible with site config preferences for date/time.");
+        }
+
         //Using inner class to work around needing to always have a time. Should give more options to users.
         DateOptionalTime dateOptionalTime = new DateOptionalTime();
         if (dt.query(TemporalQueries.localTime()) == null) {
@@ -458,7 +476,6 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
             dateOptionalTime.date = dt.query(TemporalQueries.localDate());
             dateOptionalTime.time = dt.query(TemporalQueries.localTime());
         }
-
         return Optional.of(dateOptionalTime);
     }
 
