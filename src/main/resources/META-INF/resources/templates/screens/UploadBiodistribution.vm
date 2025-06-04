@@ -309,7 +309,7 @@
                     title: 'Upload Successful',
                     content: `<div class="success">Upload and extraction successful. Data has been successfully added to <a href=${project_link}>${projectId}.</a>
                     <details>
-                      <summary>The following Bio Distribution experiments have been created: </summary>${experimentsList}</details></div>`,
+                      <summary>The following Biodistribution experiments have been created: </summary>${experimentsList}</details></div>`,
                     buttons: [
                         {
                             label: 'OK',

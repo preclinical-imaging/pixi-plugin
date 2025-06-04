@@ -62,8 +62,7 @@ public class PixiBiodAPI extends AbstractXapiRestController {
                 .collect(Collectors.toMap(PixiBiodistributiondataI::getId, PixiBiodistributiondataI::getLabel));
     }
 
-    // EXCEPTION HANDLING
-
+    
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(DataFormatException.class)
     public String handleDataFormatException(final DataFormatException e) {
