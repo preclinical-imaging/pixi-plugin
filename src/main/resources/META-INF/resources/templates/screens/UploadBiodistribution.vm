@@ -165,12 +165,30 @@
         selectBox.options.length = 0;
 
         projects.forEach(project => {
+            let keys = Object.keys(project)
+            const permissions_key = keys.filter((key) => key.startsWith("user_role"));
+            if (project[permissions_key] != "Owners") {
+                return;
+            }
             selectBox.options[selectBox.length] = new Option(project['id'], project['id'])
         })
+        if (selectBox.options.length === 0) {
+            XNAT.ui.dialog.open({
+                title: 'No Projects Available For Upload',
+                content: `<div class="info">Biodistribution upload is currently limited to project owners. As you are not an owner of any project you are not able to upload biodistribution data.</div>`,
+                buttons: [
+                    {
+                        label: 'OK',
+                        isDefault: true,
+                        close: true,
+                    }
+                ]
+            })
+        }
     }
 
     // Load projects and mappings then render select boxes
-    XNAT.plugin.pixi.projects.getAll()
+    XNAT.plugin.pixi.projects.getOnlyOwners()
             .then(resultSet => resultSet['ResultSet']['Result'])
             .then(projects => renderProjectSelectBox(projectEl, projects));
 

@@ -11,8 +11,12 @@ import org.nrg.xapi.rest.AbstractXapiRestController;
 import org.nrg.xapi.rest.Project;
 import org.nrg.xapi.rest.XapiRequestMapping;
 import org.nrg.xdat.model.PixiBiodistributiondataI;
+import org.nrg.xdat.security.helpers.AccessLevel;
+import org.nrg.xdat.security.helpers.Permissions;
 import org.nrg.xdat.security.services.RoleHolder;
 import org.nrg.xdat.security.services.UserManagementServiceI;
+import org.nrg.xft.security.UserI;
+import org.nrg.xnat.eventservice.exceptions.UnauthorizedException;
 import org.nrg.xnatx.plugins.pixi.biod.services.BiodistributionDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -52,8 +56,12 @@ public class PixiBiodAPI extends AbstractXapiRestController {
                                                                 @RequestParam String cachePath,
                                                                 @RequestParam String dataOverlapHandling) throws Exception {
         log.info("Creating biodistribution experiments for project: {} from cache path: {}", project, cachePath);
+        UserI user = getSessionUser();
+        if (!Permissions.hasAccess(user, project, AccessLevel.Owner)) {
+            throw new UnauthorizedException("You must be a project owner to be able to upload biodistribution data");
+        }
 
-        List<PixiBiodistributiondataI> biodExps = biodistributionDataService.fromCsv(getSessionUser(), project, cachePath, dataOverlapHandling);
+        List<PixiBiodistributiondataI> biodExps = biodistributionDataService.fromCsv(user, project, cachePath, dataOverlapHandling);
         log.info("Created {} biodistribution experiments for project: {}", biodExps.size(), project);
 
         return biodExps.stream()
