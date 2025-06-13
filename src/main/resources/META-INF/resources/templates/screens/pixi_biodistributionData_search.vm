@@ -1,4 +1,6 @@
 <div class="advanced-search-fields autogen">
+ <a href="#!" style="position:absolute;right:0;top:0;font-size:12px;" class="link" onclick="XNAT.ui.popup('$link.setPage("SearchHelp.vm").addPathInfo("popup","true")','Help',500,600)">Help</a>
+
     <div class="search-group by-criteria"><h3><label>Search by Criteria <input type="checkbox"
                                                                                class="search-method by-criteria"
                                                                                value="by-criteria"></label></h3>
@@ -88,4 +90,20 @@
             </tr>
         </table>
     </div>
+    <div style="padding-left:40px;" class="search-group by-id">
+
+            <h3><label>Search by Exact IDs
+                <input type="checkbox" class="search-method by-id" value="by-id"></label>
+            </h3>
+
+            <select name="pixi:biodistributionData.COMBO0_FIELDS">
+                <option value="pixi:biodistributionData/ID_in,pixi:biodistributionData/label_in,pixi:biodistributionData/sharing/share/label_in" #if($!search.getWebFormValue("pixi:biodistributionData.COMBO0_FIELDS")=="pixi:biodistributionData/ID_in,pixi:biodistributionData/label_in,pixi:biodistributionData/sharing/share/label_in")SELECTED#end>$displayManager.getSingularDisplayNameForImageSession().toUpperCase() ID</option>
+                <option value="xnat:subjectData/ID_in,xnat:subjectData/label_in,xnat:subjectData/sharing/share/label_in" #if($!search.getWebFormValue("pixi:biodistributionData.COMBO0_FIELDS")=="xnat:subjectData/ID_in,xnat:subjectData/label_in,xnat:subjectData/sharing/share/label_in")SELECTED#end>$displayManager.getSingularDisplayNameForSubject().toUpperCase()</option>
+            </select>
+
+            <textarea class="exact-ids" name="pixi:biodistributionData.COMBO0" cols="30" rows="6">$!search.getWebFormValue("pixi:biodistributionData.COMBO0")</textarea>
+
+        </div>
+
+        <div class="clear"></div>
 </div>
