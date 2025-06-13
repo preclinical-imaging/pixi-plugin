@@ -243,6 +243,19 @@
         return fullDetailsList;
     }
 
+    function createSuccessPrintoutMessage(projectId, data) {
+        let project_link = getProjectLink(projectId);
+        let experimentsList = createExperimentDetailsList(data);
+
+        if (!jQuery.isEmptyObject(data)) {
+            return `<div class="success">Upload and extraction successful. Data has been successfully added to <a href=${project_link}>${projectId}.</a>
+                <details>
+                      <summary>The following Biodistribution experiments have been created: </summary>${experimentsList}</details></div>`
+        } else {
+            return `<div class="success">Upload and extraction successful. However, all input data overlaps with existing data and you have selected the skip matching data option. As such, no new data was uploaded to the system.</div>`
+        }
+    }
+
     projectFilerInput.addEventListener('keyup', filterProject);
     dataOverlapElement.addEventListener('change', alertUserOfOverwriteDecision);
 
@@ -323,13 +336,9 @@
                 console.log(data);
                 console.debug('Upload successful');
                 XNAT.ui.dialog.close("biod_upload");
-                let project_link = getProjectLink(projectId);
-                let experimentsList = createExperimentDetailsList(data);
                 XNAT.ui.dialog.open({
                     title: 'Upload Successful',
-                    content: `<div class="success">Upload and extraction successful. Data has been successfully added to <a href=${project_link}>${projectId}.</a>
-                    <details>
-                      <summary>The following Biodistribution experiments have been created: </summary>${experimentsList}</details></div>`,
+                    content: createSuccessPrintoutMessage(projectId, data),
                     buttons: [
                         {
                             label: 'OK',
