@@ -343,9 +343,11 @@
                 console.error(`Failed to extract ${file.name}`)
                 XNAT.ui.dialog.close("bli_extraction");
 
+                let errorTextWithBreaks = e.responseText.replaceAll("\n", "<br>");
+
                 XNAT.ui.dialog.open({
                     title: 'Extraction Failed',
-                    content: `<div class="error">Failed to extract biodistribution data from ${file.name}. <br>${e.responseText}</div>`,
+                    content: `<div class="error">Failed to extract biodistribution data from ${file.name}. <br>${errorTextWithBreaks}</div>`,
                     buttons: [
                         {
                             label: 'OK',

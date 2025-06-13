@@ -471,7 +471,11 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
 
         if (dt == null) {
             throw new DataFormatException("The input datetime with value: " + cell + " in column: " + headerName + " " +
-                                                 "is not compatible with site config preferences for date/time.");
+                                                 "is not compatible with site config preferences for date/time. The " +
+                                                  "available options for datetimes are: \n"  +
+                                                  siteConfigPreferences.getUiDateFormat() + "\n" +
+                                                  siteConfigPreferences.getUiDateTimeFormat() + "\n" +
+                                                  siteConfigPreferences.getUiDateTimeSecondsFormat());
         }
 
         //Using inner class to work around needing to always have a time. Should give more options to users.
