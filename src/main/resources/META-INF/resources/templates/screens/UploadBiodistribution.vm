@@ -9,7 +9,7 @@
         Please use the template to find the correct column names for the data in your CSV.</p>
 
         <p> Currently, biodistribution upload via CSV file is only available to owners of a project.
-        Only projects for which you have Owner level access have been listed below</p>
+        Only projects for which you have Owner level access have been listed below.</p>
     </div>
 
     <form id="upload-form" name="upload-form" method="post">

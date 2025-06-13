@@ -500,6 +500,11 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
     protected void validateCsv(List<List<String>> biodImportRows, Map<String, Integer> ingestionHeaderMap) throws DataFormatException {
         log.debug("Validating injection and biodistribution sheets");
 
+        if (biodImportRows.size() == 0){
+            throw new DataFormatException("The input sheet does not have any data. Please check your input and try " +
+                                                  "again.");
+        }
+
         DataFormatException e = new DataFormatException("There is a problem with the input injection sheet: ");
         boolean isValid = true;
 
