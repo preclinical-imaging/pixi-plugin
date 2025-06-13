@@ -63,7 +63,7 @@ public class BliScanBuilder implements Callable<XnatImagescandataBean> {
         bliScan.setStarttime(analyzedClickInfo.getLuminescentImage().getAcquisitionDateTime());
 
         // Set scan type
-        bliScan.setType("");
+        bliScan.setType(PixiUtils.BLI_SCAN_MODALITY);
         bliScan.setModality(PixiUtils.BLI_SCAN_MODALITY);
 
         // Set series description
