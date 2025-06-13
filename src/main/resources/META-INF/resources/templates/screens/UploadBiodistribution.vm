@@ -5,9 +5,11 @@
     <div class="form-instructions">
         <p>Upload a CSV file containing biodistribution data for small animal imaging studies.</p>
 
-        <p>Download a template CSV file <a href="$content.getURI('biod/BiodistributionTemplate.csv')" download>here</a>.</p>
+        <p>Download a template CSV file <a href="$content.getURI('biod/BiodistributionTemplate.csv')" download>here</a>.
+        Please use the template to find the correct column names for the data in your CSV.</p>
 
-        <p>Pleas use the template to find the correct column names for the data in your CSV.</p>
+        <p> Currently, biodistribution upload via CSV file is only available to owners of a project. The list of project below
+        corresponds to that level of file access.</p>
     </div>
 
     <form id="upload-form" name="upload-form" method="post">
