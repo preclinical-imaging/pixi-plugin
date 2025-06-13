@@ -424,7 +424,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         if (cellIndex == null) {
             return Optional.empty();
         }
-        String cell = row.get(cellIndex);
+        String cell = row.get(cellIndex).trim();
         return !(cell.isEmpty()) ? Optional.of(cell) : Optional.empty();
     }
 
@@ -433,7 +433,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         if (cellIndex == null) {
             return Optional.empty();
         }
-        String cell = row.get(cellIndex);
+        String cell = row.get(cellIndex).trim();
         return !(cell.isEmpty()) ? Optional.of(Double.valueOf(cell)) : Optional.empty();
     }
 
@@ -442,7 +442,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         if (cellIndex == null) {
             return Optional.empty();
         }
-        String cell = row.get(cellIndex);
+        String cell = row.get(cellIndex).trim();
         if (cell.isEmpty()) {
             return Optional.empty();
         }
