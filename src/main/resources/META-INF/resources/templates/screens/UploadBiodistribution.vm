@@ -5,9 +5,11 @@
     <div class="form-instructions">
         <p>Upload a CSV file containing biodistribution data for small animal imaging studies.</p>
 
-        <p>Download a template CSV file <a href="$content.getURI('biod/BiodistributionTemplate.csv')" download>here</a>.</p>
+        <p>Download a template CSV file <a href="$content.getURI('biod/BiodistributionTemplate.csv')" download>here</a>.
+        Please use the template to find the correct column names for the data in your CSV.</p>
 
-        <p>Pleas use the template to find the correct column names for the data in your CSV.</p>
+        <p> Currently, biodistribution upload via CSV file is only available to owners of a project. The list of project below
+        corresponds to that level of file access.</p>
     </div>
 
     <form id="upload-form" name="upload-form" method="post">
@@ -165,12 +167,30 @@
         selectBox.options.length = 0;
 
         projects.forEach(project => {
+            let keys = Object.keys(project)
+            const permissions_key = keys.filter((key) => key.startsWith("user_role"));
+            if (project[permissions_key] != "Owners") {
+                return;
+            }
             selectBox.options[selectBox.length] = new Option(project['id'], project['id'])
         })
+        if (selectBox.options.length === 0) {
+            XNAT.ui.dialog.open({
+                title: 'No Projects Available For Upload',
+                content: `<div class="info">Biodistribution upload is currently limited to project owners. As you are not an owner of any project you are not able to upload biodistribution data.</div>`,
+                buttons: [
+                    {
+                        label: 'OK',
+                        isDefault: true,
+                        close: true,
+                    }
+                ]
+            })
+        }
     }
 
     // Load projects and mappings then render select boxes
-    XNAT.plugin.pixi.projects.getAll()
+    XNAT.plugin.pixi.projects.getOnlyOwners()
             .then(resultSet => resultSet['ResultSet']['Result'])
             .then(projects => renderProjectSelectBox(projectEl, projects));
 
