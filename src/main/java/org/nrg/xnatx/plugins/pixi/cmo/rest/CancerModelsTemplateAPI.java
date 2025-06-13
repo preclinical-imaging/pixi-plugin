@@ -19,6 +19,7 @@ import org.nrg.xdat.om.XnatImagesessiondata;
 import org.nrg.xdat.om.XnatPetmrsessiondata;
 import org.nrg.xdat.om.XnatPetsessiondata;
 import org.nrg.xdat.om.XnatProjectdata;
+import org.nrg.xdat.om.XnatSubjectdata;
 import org.nrg.xdat.search.CriteriaCollection;
 import org.nrg.xdat.security.services.RoleHolder;
 import org.nrg.xdat.security.services.UserManagementServiceI;
@@ -75,7 +76,10 @@ public class CancerModelsTemplateAPI extends AbstractXapiRestController {
         if (projectdata == null) {
             throw new NotFoundException("Invalid value passed");
         }
-        List<PreClinicalReportEntry> entries =  extractPreClinicalImaging(projectdata, groupPdxByPassageNumber(getExperiments(user, projectdata, "pixi:pdxData")));
+        List<XnatExperimentdata> allProjectExperiments = getAllExperiments(user, projectdata);
+        final String hotelSubjectIdInProject = getHotelSubjectIdinProject(projectdata, user);
+
+        List<PreClinicalReportEntry> entries =  extractPreClinicalImaging(projectdata, allProjectExperiments, hotelSubjectIdInProject, groupPdxByPassageNumber(getPdxExperiments(allProjectExperiments, hotelSubjectIdInProject)));
         PreClinicalReport template = new PreClinicalReport();
         template.setPreClinicalReportEntryList(entries);
         template.setProjectId(project);
@@ -85,16 +89,34 @@ public class CancerModelsTemplateAPI extends AbstractXapiRestController {
         return template;
     }
 
-    private List<XnatExperimentdata> getExperiments(final UserI user, final XnatProjectdata projectdata, final String xsiType) {
+    private String getHotelSubjectIdinProject(final XnatProjectdata projectdata, final UserI user) {
+        final CriteriaCollection cc   = new CriteriaCollection("AND");
+        cc.addClause("xnat:subjectData/label", "Hotel");
+        cc.addClause("xnat:subjectData/project", projectdata.getId());
+        final List<XnatSubjectdata> subjectdatas =  XnatSubjectdata.getXnatSubjectdatasByField(cc, user, false);
+        return subjectdatas.get(0).getId();
+    }
+
+    private List<XnatExperimentdata> getAllExperiments(final UserI user, final XnatProjectdata projectdata) {
         //projectData.getExperimentsByXSIType does not refresh the cache fetched experiments
-        final CriteriaCollection cc = new CriteriaCollection("AND");
-        cc.addClause("xnat:subjectData/label", " != ", "Hotel");
-        final CriteriaCollection cc1   = new CriteriaCollection("OR");
-        cc1.addClause("xnat:experimentData/project", projectdata.getId());
-        cc1.addClause("xnat:experimentData/sharing/share/project", projectdata.getId());
-        cc.addClause(cc1);
+        final CriteriaCollection cc   = new CriteriaCollection("OR");
+        cc.addClause("xnat:experimentData/project", projectdata.getId());
+        cc.addClause("xnat:experimentData/sharing/share/project", projectdata.getId());
         final List<XnatExperimentdata> experiments =  XnatExperimentdata.getXnatExperimentdatasByField(cc, user, false);
-        return experiments.stream().filter(experiment -> experiment != null && StringUtils.equalsIgnoreCase(xsiType, experiment.getXSIType())).collect(Collectors.toCollection(ArrayList::new));
+        log.debug("Total experiments found including ones for Hotel subject: " + experiments.size());
+        return experiments;
+    }
+
+    private List<XnatExperimentdata> getPdxExperiments(final List<XnatExperimentdata> experiments, final String hotelSubjectIdInProject) {
+        return experiments.stream()
+                .filter(experiment -> experiment != null && StringUtils.equalsIgnoreCase(PixiPdxdata.SCHEMA_ELEMENT_NAME, experiment.getXSIType()))
+                .filter(experiment ->  !((PixiPdxdata)experiment).getSubjectId().equals(hotelSubjectIdInProject)).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private List<XnatExperimentdata> getImagingExperiments(final List<XnatExperimentdata> experiments, final String hotelSubjectIdInProject) {
+        return experiments.stream()
+                .filter(experiment -> experiment != null && (experiment instanceof XnatImagesessiondata))
+                .filter(experiment ->  !((XnatImagesessiondata)experiment).getSubjectId().equals(hotelSubjectIdInProject)).collect(Collectors.toCollection(ArrayList::new));
     }
 
     private Hashtable<String, PdxReportEntry> groupPdxByPassageNumber(final List pdxExperiments) {
@@ -116,11 +138,11 @@ public class CancerModelsTemplateAPI extends AbstractXapiRestController {
         return pdxDataHash;
     }
 
-    private List<PreClinicalReportEntry> extractPreClinicalImaging(final XnatProjectdata projectdata , final Hashtable<String, PdxReportEntry> pdxGroupByPassageNumber) {
+    private List<PreClinicalReportEntry> extractPreClinicalImaging(final XnatProjectdata projectdata, final List<XnatExperimentdata> allProjectExperiments, final String hotelSubjectId, final Hashtable<String, PdxReportEntry> pdxGroupByPassageNumber) {
         List<PreClinicalReportEntry> preclinicalReport = new ArrayList();
         Collection<PdxReportEntry> pdxReportEntries = pdxGroupByPassageNumber.values();
         for(PdxReportEntry pdxReportEntry: pdxReportEntries) {
-            Hashtable<String, PreClinicalImagingReportEntry> imagingEntry = getImagingSessionsByModality(projectdata, pdxReportEntry.getSubjectIds());
+            Hashtable<String, PreClinicalImagingReportEntry> imagingEntry = getImagingSessionsByModality(projectdata, getImagingExperiments(allProjectExperiments, hotelSubjectId), pdxReportEntry.getSubjectIds());
             for (String modality : imagingEntry.keySet()) {
                 PreClinicalImagingReportEntry preClinicalImagingReportEntryOfAllSequences = imagingEntry.get(modality);
                 Set<String> sequenceOfTracerUsed = preClinicalImagingReportEntryOfAllSequences.getSequenceOrTracerCounts().keySet();
@@ -143,10 +165,9 @@ public class CancerModelsTemplateAPI extends AbstractXapiRestController {
         return preclinicalReport;
     }
 
-    private Hashtable<String, PreClinicalImagingReportEntry> getImagingSessionsByModality(final XnatProjectdata projectdata, final List<String> subjectIds) {
-        ArrayList<XnatExperimentdata> experiments = projectdata.getExperiments();
+    private Hashtable<String, PreClinicalImagingReportEntry> getImagingSessionsByModality(final XnatProjectdata projectdata, List<XnatExperimentdata> imagingExperiments, final List<String> subjectIds) {
         Hashtable<String, PreClinicalImagingReportEntry> experimentsByModality = new Hashtable<>();
-        for (XnatExperimentdata exp : experiments) {
+        for (XnatExperimentdata exp : imagingExperiments) {
             if ((exp instanceof XnatImagesessiondata) && (subjectIds.contains(((XnatImagesessiondata) exp).getSubjectId()))) {
                 final XnatImagesessiondata imagesessiondata = ((XnatImagesessiondata)exp);
                 List<XnatImagescandataI> scans = imagesessiondata.getScans_scan();
