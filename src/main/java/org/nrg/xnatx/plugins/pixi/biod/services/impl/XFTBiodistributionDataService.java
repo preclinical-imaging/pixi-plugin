@@ -459,6 +459,12 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
                 dt = new DateTimeFormatterBuilder().appendPattern(dateTimePattern)
                         .appendOptional(DateTimeFormatter.ISO_TIME).parseCaseInsensitive().toFormatter().parse(cell);
             } catch (DateTimeParseException e) {
+                //check to see if the problem is the date is simply not a functional date even though the format is
+                // right
+                if (e.getMessage().contains("MonthOfYear") || e.getMessage().contains(("DayOfMonth"))) {
+                    throw new DataFormatException("The input datetime with value: " + cell + " in column: " + headerName +
+                                                          " is not a functional date. Please check this cell again.");
+                }
                 //this format didn't work. try until we run out of them
             }
         }
@@ -500,7 +506,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
     protected void validateCsv(List<List<String>> biodImportRows, Map<String, Integer> ingestionHeaderMap) throws DataFormatException {
         log.debug("Validating injection and biodistribution sheets");
 
-        if (biodImportRows.size() == 0){
+        if (biodImportRows.isEmpty()){
             throw new DataFormatException("The input sheet does not have any data. Please check your input and try " +
                                                   "again.");
         }
@@ -556,7 +562,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         log.debug("Input file is valid");
     }
 
-    private class DateOptionalTime {
+    private static class DateOptionalTime {
         LocalDate date;
         LocalTime time;
     }
