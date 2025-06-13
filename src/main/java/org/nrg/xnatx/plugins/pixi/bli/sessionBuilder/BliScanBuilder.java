@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.nrg.xdat.XDAT;
 import org.nrg.xdat.bean.*;
+import org.nrg.xnatx.plugins.pixi.PixiUtils;
 import org.nrg.xnatx.plugins.pixi.bli.helpers.AnalyzedClickInfoHelper;
 import org.nrg.xnatx.plugins.pixi.bli.helpers.ClickInfoHelper;
 import org.nrg.xnatx.plugins.pixi.bli.models.AnalyzedClickInfo;
@@ -62,7 +63,8 @@ public class BliScanBuilder implements Callable<XnatImagescandataBean> {
         bliScan.setStarttime(analyzedClickInfo.getLuminescentImage().getAcquisitionDateTime());
 
         // Set scan type
-        bliScan.setType("BLI");
+        bliScan.setType("");
+        bliScan.setModality(PixiUtils.BLI_SCAN_MODALITY);
 
         // Set series description
         String seriesDescription = makeSeriesDescription(analyzedClickInfo);
