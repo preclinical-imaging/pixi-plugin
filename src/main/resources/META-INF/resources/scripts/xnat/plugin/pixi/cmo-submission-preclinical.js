@@ -64,8 +64,8 @@ XNAT.plugin.pixi.cmoSubmissionTemplateGenerator = getObject(XNAT.plugin.pixi.cmo
                 return report;
     }
 
-    cmoSubmissionTemplateGenerator.show = function($form) {
-                let columnIds = ["model_id", "passage_number",	"engraftment_site",	"treatment",	"modality",	"contrast_sequence_used",	"number_of_images",	"project_name",	"project_url", "description"];
+    cmoSubmissionTemplateGenerator.show = function($form, tableId) {
+                let columnIds = ["model_id", "passage_number",	"engraftment_site",	"treatment",	"modality",	"contrast_sequence_used",	"number_of_images",	"project_name",	"project_url"];
                 let labelMap = {
                     model_id: {
                         label: "model_id",
@@ -111,15 +111,11 @@ XNAT.plugin.pixi.cmoSubmissionTemplateGenerator = getObject(XNAT.plugin.pixi.cmo
                         label: "project_url",
                         checkboxes: false,
                         id: "project_url"
-                    },
-                    description: {
-                        label: "description",
-                        checkboxes: false,
-                        id: "description"
                     }
                 };
 
                 var reportTable = XNAT.table({
+                    id: tableId,
                     className: 'report-table xnat-table data-table fixed-header clean',
                     style: {
                         width: 'auto'
@@ -168,9 +164,6 @@ XNAT.plugin.pixi.cmoSubmissionTemplateGenerator = getObject(XNAT.plugin.pixi.cmo
                     reportTable.td({
                         classes: columnIds[8]
                     }, report['projectUrl']);
-                    reportTable.td({
-                        classes: columnIds[8]
-                    }, report['description']);
                 });
                 $form.append(reportTable.table);
                 cmoSubmissionTemplateGenerator.container = $form;

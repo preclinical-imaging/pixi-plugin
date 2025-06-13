@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.nrg.framework.annotations.XapiRestController;
 import org.nrg.framework.exceptions.NotFoundException;
 import org.nrg.xapi.rest.AbstractXapiRestController;
@@ -18,6 +19,7 @@ import org.nrg.xdat.om.XnatImagesessiondata;
 import org.nrg.xdat.om.XnatPetmrsessiondata;
 import org.nrg.xdat.om.XnatPetsessiondata;
 import org.nrg.xdat.om.XnatProjectdata;
+import org.nrg.xdat.search.CriteriaCollection;
 import org.nrg.xdat.security.services.RoleHolder;
 import org.nrg.xdat.security.services.UserManagementServiceI;
 import org.nrg.xft.XFTTable;
@@ -41,6 +43,7 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.nrg.xdat.security.helpers.AccessLevel.Edit;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -72,7 +75,7 @@ public class CancerModelsTemplateAPI extends AbstractXapiRestController {
         if (projectdata == null) {
             throw new NotFoundException("Invalid value passed");
         }
-        List<PreClinicalReportEntry> entries =  extractPreClinicalImaging(projectdata, groupPdxByPassageNumber(projectdata.getExperimentsByXSIType("pixi:pdxData")));
+        List<PreClinicalReportEntry> entries =  extractPreClinicalImaging(projectdata, groupPdxByPassageNumber(getExperiments(user, projectdata, "pixi:pdxData")));
         PreClinicalReport template = new PreClinicalReport();
         template.setPreClinicalReportEntryList(entries);
         template.setProjectId(project);
@@ -82,8 +85,19 @@ public class CancerModelsTemplateAPI extends AbstractXapiRestController {
         return template;
     }
 
+    private List<XnatExperimentdata> getExperiments(final UserI user, final XnatProjectdata projectdata, final String xsiType) {
+        //projectData.getExperimentsByXSIType does not refresh the cache fetched experiments
+        final CriteriaCollection cc = new CriteriaCollection("AND");
+        cc.addClause("xnat:subjectData/label", " != ", "Hotel");
+        final CriteriaCollection cc1   = new CriteriaCollection("OR");
+        cc1.addClause("xnat:experimentData/project", projectdata.getId());
+        cc1.addClause("xnat:experimentData/sharing/share/project", projectdata.getId());
+        cc.addClause(cc1);
+        final List<XnatExperimentdata> experiments =  XnatExperimentdata.getXnatExperimentdatasByField(cc, user, false);
+        return experiments.stream().filter(experiment -> experiment != null && StringUtils.equalsIgnoreCase(xsiType, experiment.getXSIType())).collect(Collectors.toCollection(ArrayList::new));
+    }
 
-    private Hashtable<String, PdxReportEntry> groupPdxByPassageNumber(final ArrayList pdxExperiments) {
+    private Hashtable<String, PdxReportEntry> groupPdxByPassageNumber(final List pdxExperiments) {
         Hashtable<String, PdxReportEntry> pdxDataHash = new Hashtable<>();
         for (Object pdx : pdxExperiments) {
             PixiPdxdata pdxdata = (PixiPdxdata) pdx;
