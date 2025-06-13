@@ -8,8 +8,8 @@
         <p>Download a template CSV file <a href="$content.getURI('biod/BiodistributionTemplate.csv')" download>here</a>.
         Please use the template to find the correct column names for the data in your CSV.</p>
 
-        <p> Currently, biodistribution upload via CSV file is only available to owners of a project. The list of project below
-        corresponds to that level of file access.</p>
+        <p> Currently, biodistribution upload via CSV file is only available to owners of a project.
+        Only projects for which you have Owner level access have been listed below</p>
     </div>
 
     <form id="upload-form" name="upload-form" method="post">
