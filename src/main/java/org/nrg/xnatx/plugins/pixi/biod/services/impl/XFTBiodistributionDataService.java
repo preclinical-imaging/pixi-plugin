@@ -424,7 +424,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         if (cellIndex == null) {
             return Optional.empty();
         }
-        String cell = row.get(cellIndex);
+        String cell = row.get(cellIndex).trim();
         return !(cell.isEmpty()) ? Optional.of(cell) : Optional.empty();
     }
 
@@ -433,7 +433,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         if (cellIndex == null) {
             return Optional.empty();
         }
-        String cell = row.get(cellIndex);
+        String cell = row.get(cellIndex).trim();
         return !(cell.isEmpty()) ? Optional.of(Double.valueOf(cell)) : Optional.empty();
     }
 
@@ -442,7 +442,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         if (cellIndex == null) {
             return Optional.empty();
         }
-        String cell = row.get(cellIndex);
+        String cell = row.get(cellIndex).trim();
         if (cell.isEmpty()) {
             return Optional.empty();
         }
@@ -459,13 +459,23 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
                 dt = new DateTimeFormatterBuilder().appendPattern(dateTimePattern)
                         .appendOptional(DateTimeFormatter.ISO_TIME).parseCaseInsensitive().toFormatter().parse(cell);
             } catch (DateTimeParseException e) {
+                //check to see if the problem is the date is simply not a functional date even though the format is
+                // right
+                if (e.getMessage().contains("MonthOfYear") || e.getMessage().contains(("DayOfMonth"))) {
+                    throw new DataFormatException("The input datetime with value: " + cell + " in column: " + headerName +
+                                                          " is not a functional date. Please check this cell again.");
+                }
                 //this format didn't work. try until we run out of them
             }
         }
 
         if (dt == null) {
             throw new DataFormatException("The input datetime with value: " + cell + " in column: " + headerName + " " +
-                                                 "is not compatible with site config preferences for date/time.");
+                                                 "is not compatible with site config preferences for date/time. The " +
+                                                  "available options for datetimes are: \n"  +
+                                                  siteConfigPreferences.getUiDateFormat() + "\n" +
+                                                  siteConfigPreferences.getUiDateTimeFormat() + "\n" +
+                                                  siteConfigPreferences.getUiDateTimeSecondsFormat());
         }
 
         //Using inner class to work around needing to always have a time. Should give more options to users.
@@ -499,6 +509,11 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
 
     protected void validateCsv(List<List<String>> biodImportRows, Map<String, Integer> ingestionHeaderMap) throws DataFormatException {
         log.debug("Validating injection and biodistribution sheets");
+
+        if (biodImportRows.isEmpty()){
+            throw new DataFormatException("The input sheet does not have any data. Please check your input and try " +
+                                                  "again.");
+        }
 
         DataFormatException e = new DataFormatException("There is a problem with the input injection sheet: ");
         boolean isValid = true;
@@ -551,7 +566,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         log.debug("Input file is valid");
     }
 
-    private class DateOptionalTime {
+    private static class DateOptionalTime {
         LocalDate date;
         LocalTime time;
     }

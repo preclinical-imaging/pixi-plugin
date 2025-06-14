@@ -8,8 +8,8 @@
         <p>Download a template CSV file <a href="$content.getURI('biod/BiodistributionTemplate.csv')" download>here</a>.
         Please use the template to find the correct column names for the data in your CSV.</p>
 
-        <p> Currently, biodistribution upload via CSV file is only available to owners of a project. The list of project below
-        corresponds to that level of file access.</p>
+        <p> Currently, biodistribution upload via CSV file is only available to owners of a project.
+        Only projects for which you have Owner level access have been listed below.</p>
     </div>
 
     <form id="upload-form" name="upload-form" method="post">
@@ -243,6 +243,19 @@
         return fullDetailsList;
     }
 
+    function createSuccessPrintoutMessage(projectId, data) {
+        let project_link = getProjectLink(projectId);
+        let experimentsList = createExperimentDetailsList(data);
+
+        if (!jQuery.isEmptyObject(data)) {
+            return `<div class="success">Upload and extraction successful. Data has been successfully added to <a href=${project_link}>${projectId}.</a>
+                <details>
+                      <summary>The following Biodistribution experiments have been created: </summary>${experimentsList}</details></div>`
+        } else {
+            return `<div class="success">Upload and extraction successful. However, all input data overlaps with existing data and you have selected the skip matching data option. As such, no new data was uploaded to the system.</div>`
+        }
+    }
+
     projectFilerInput.addEventListener('keyup', filterProject);
     dataOverlapElement.addEventListener('change', alertUserOfOverwriteDecision);
 
@@ -323,13 +336,9 @@
                 console.log(data);
                 console.debug('Upload successful');
                 XNAT.ui.dialog.close("biod_upload");
-                let project_link = getProjectLink(projectId);
-                let experimentsList = createExperimentDetailsList(data);
                 XNAT.ui.dialog.open({
                     title: 'Upload Successful',
-                    content: `<div class="success">Upload and extraction successful. Data has been successfully added to <a href=${project_link}>${projectId}.</a>
-                    <details>
-                      <summary>The following Biodistribution experiments have been created: </summary>${experimentsList}</details></div>`,
+                    content: createSuccessPrintoutMessage(projectId, data),
                     buttons: [
                         {
                             label: 'OK',
@@ -343,9 +352,11 @@
                 console.error(`Failed to extract ${file.name}`)
                 XNAT.ui.dialog.close("bli_extraction");
 
+                let errorTextWithBreaks = e.responseText.replaceAll("\n", "<br>");
+
                 XNAT.ui.dialog.open({
                     title: 'Extraction Failed',
-                    content: `<div class="error">Failed to extract biodistribution data from ${file.name}. <br>${e.responseText}</div>`,
+                    content: `<div class="error">Failed to extract biodistribution data from ${file.name}. <br>${errorTextWithBreaks}</div>`,
                     buttons: [
                         {
                             label: 'OK',
