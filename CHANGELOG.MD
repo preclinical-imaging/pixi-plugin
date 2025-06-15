@@ -8,13 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.4.1] - 2025-06-30
 
 This release includes ability to:
-    - import BioDistribution datatype
-    - ability to generate Statistics Summary for the BioDistribution data [Statistics Dashboard Plugin](https://bitbucket.org/xnatx/statisticsdashboard_plugin)
-    - ability to generate a PreClinical Imaging Template to submit to [Cancermodels.org](https://www.cancermodels.org/)
+
+  - import BioDistribution datatype
+
+  - ability to generate Statistics Summary for the BioDistribution data [Statistics Dashboard Plugin](https://bitbucket.org/xnatx/statisticsdashboard_plugin)
+  
+  - ability to generate a PreClinical Imaging Template to submit to [Cancermodels.org](https://www.cancermodels.org/)
 
 ### Added
-- [[PIXI-159](https://radiologics.atlassian.net/browse/PIXI-159)]: Add a Biodistribution subject assessor
-- [[PIXI-165](https://radiologics.atlassian.net/browse/PIXI-165)]: Integrate PIXI data with CancerModels.org
+- [PIXI-159](https://radiologics.atlassian.net/browse/PIXI-159): Add a Biodistribution subject assessor
+- [PIXI-165](https://radiologics.atlassian.net/browse/PIXI-165): Integrate PIXI data with CancerModels.org
 
 ## [1.4.0] - 2024-12-19
 
