@@ -306,6 +306,7 @@
             console.debug('Upload to cache successful');
         } else {
             console.error(`Failed to upload ${file.name}`)
+            XNAT.ui.dialog.close("biod_upload");
             XNAT.ui.dialog.open({
                 title: 'Upload Failed',
                 content: `<div class="error">Failed to upload ${file.name}.</div>`,
