@@ -303,8 +303,7 @@
         })
 
         if (response.ok) {
-            console.debug('Upload successful');
-            XNAT.ui.dialog.close("biod_upload");
+            console.debug('Upload to cache successful');
         } else {
             console.error(`Failed to upload ${file.name}`)
             XNAT.ui.dialog.close("biod_upload");
@@ -330,12 +329,14 @@
         ]);
 
         console.debug(`Calling ${biodApiUrlWithParams}`);
+        xmodal.loading.open({ title: 'Uploading Biodistribution Data'});
         XNAT.xhr.post({
             url: biodApiUrlWithParams,
             success: function (data) {
                 console.log(data);
                 console.debug('Upload successful');
                 XNAT.ui.dialog.close("biod_upload");
+                xmodal.loading.close();
                 XNAT.ui.dialog.open({
                     title: 'Upload Successful',
                     content: createSuccessPrintoutMessage(projectId, data),
@@ -350,7 +351,8 @@
             },
             error: function(e) {
                 console.error(`Failed to extract ${file.name}`)
-                XNAT.ui.dialog.close("bli_extraction");
+                XNAT.ui.dialog.close("biod_upload");
+                xmodal.loading.close();
 
                 let errorTextWithBreaks = e.responseText.replaceAll("\n", "<br>");
 
