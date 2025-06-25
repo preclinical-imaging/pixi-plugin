@@ -55,7 +55,6 @@ XNAT.plugin.pixi.cmoSubmissionTemplateGenerator = getObject(XNAT.plugin.pixi.cmo
                     dataType: 'json',
                     success: function(data) {
                         report = data;
-                        console.log(JSON.stringify(report));
                     },
                     error: function(e) {
                         errorHandler(e);
@@ -137,13 +136,13 @@ XNAT.plugin.pixi.cmoSubmissionTemplateGenerator = getObject(XNAT.plugin.pixi.cmo
                     reportTable.tr();
                     reportTable.td({
                         classes: columnIds[0],
-                    }, e['pdxReportEntry']['sourceId']);
+                    }, e['pdxReportEntry']['pdx']['sourceId']);
                     reportTable.td({
                         classes: columnIds[1]
-                    }, e['pdxReportEntry']['passageNumber']);
+                    }, e['pdxReportEntry']['pdx']['passageNumber']);
                     reportTable.td({
                         classes: columnIds[2]
-                    }, e['pdxReportEntry']['engraftmentSite']);
+                    }, e['pdxReportEntry']['pdx']['engraftmentSite']);
                     reportTable.td({
                         classes: columnIds[3]
                     }, e['preClinicalOtherReportEntry']['treatments']);

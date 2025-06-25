@@ -27,6 +27,8 @@ import org.nrg.xft.XFTTable;
 import org.nrg.xft.db.PoolDBUtils;
 import org.nrg.xft.search.SQLClause;
 import org.nrg.xft.security.UserI;
+import org.nrg.xnatx.plugins.pixi.cmo.CMOUtils;
+import org.nrg.xnatx.plugins.pixi.cmo.model.PdxPojo;
 import org.nrg.xnatx.plugins.pixi.cmo.model.PdxReportEntry;
 import org.nrg.xnatx.plugins.pixi.cmo.model.PreClinicalImagingReportEntry;
 import org.nrg.xnatx.plugins.pixi.cmo.model.PreClinicalReport;
@@ -39,8 +41,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.annotation.Nullable;
+import javax.validation.constraints.Null;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
@@ -83,18 +89,20 @@ public class CancerModelsTemplateAPI extends AbstractXapiRestController {
         PreClinicalReport template = new PreClinicalReport();
         template.setPreClinicalReportEntryList(entries);
         template.setProjectId(project);
-        template.setProjectTitle(projectdata.getName());
+        template.setProjectTitle(projectdata.getName().replaceAll(CMOUtils.REGuLAR_EXP, "_"));
         template.setProjectUrl(XDAT.getSiteUrl() + "/data/projects/" + project  + "?format=html");
         template.setDescription(projectdata.getDescription());
         return template;
     }
 
+
+    @Nullable
     private String getHotelSubjectIdinProject(final XnatProjectdata projectdata, final UserI user) {
         final CriteriaCollection cc   = new CriteriaCollection("AND");
         cc.addClause("xnat:subjectData/label", "Hotel");
         cc.addClause("xnat:subjectData/project", projectdata.getId());
         final List<XnatSubjectdata> subjectdatas =  XnatSubjectdata.getXnatSubjectdatasByField(cc, user, false);
-        return subjectdatas.get(0).getId();
+        return (subjectdatas == null || subjectdatas.size() == 0) ? null : subjectdatas.get(0).getId();
     }
 
     private List<XnatExperimentdata> getAllExperiments(final UserI user, final XnatProjectdata projectdata) {
@@ -113,36 +121,40 @@ public class CancerModelsTemplateAPI extends AbstractXapiRestController {
                 .filter(experiment ->  !((PixiPdxdata)experiment).getSubjectId().equals(hotelSubjectIdInProject)).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    private List<XnatExperimentdata> getImagingExperiments(final List<XnatExperimentdata> experiments, final String hotelSubjectIdInProject) {
+    private List<XnatImagesessiondata> getImagingExperiments(final List<XnatExperimentdata> experiments, final String hotelSubjectIdInProject) {
         return experiments.stream()
                 .filter(experiment -> experiment != null && (experiment instanceof XnatImagesessiondata))
-                .filter(experiment ->  !((XnatImagesessiondata)experiment).getSubjectId().equals(hotelSubjectIdInProject)).collect(Collectors.toCollection(ArrayList::new));
+                .filter(experiment ->  !((XnatImagesessiondata)experiment).getSubjectId().equals(hotelSubjectIdInProject))
+                .map(exp -> (XnatImagesessiondata)exp)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    private Hashtable<String, PdxReportEntry> groupPdxByPassageNumber(final List pdxExperiments) {
-        Hashtable<String, PdxReportEntry> pdxDataHash = new Hashtable<>();
+    private Hashtable<PdxPojo, PdxReportEntry> groupPdxByPassageNumber(final List pdxExperiments) {
+        Hashtable<PdxPojo, PdxReportEntry> pdxDataHash = new Hashtable<>();
         for (Object pdx : pdxExperiments) {
             PixiPdxdata pdxdata = (PixiPdxdata) pdx;
-            if (!pdxDataHash.containsKey(pdxdata.getPassage())) {
-                PdxReportEntry pdxReportEntry = new PdxReportEntry();
-                pdxReportEntry.addSubjectId(pdxdata.getSubjectId());
-                pdxReportEntry.setPassageNumber(pdxdata.getPassage());
-                pdxReportEntry.setSourceId(pdxdata.getSourceid());
-                pdxReportEntry.setEngraftmentSite(pdxdata.getInjectionsite());
-                pdxDataHash.put(pdxdata.getPassage(), pdxReportEntry);
-            } else {
-                PdxReportEntry pdxReportEntry = pdxDataHash.get(pdxdata.getPassage());
-                pdxReportEntry.addSubjectId(pdxdata.getSubjectId());
+            if (pdxdata.getPassage() != null) {
+                PdxPojo pdxPojo = new PdxPojo(pdxdata.getPassage(), pdxdata.getSourceid(), pdxdata.getInjectionsite());
+                if (!pdxDataHash.containsKey(pdxPojo)) {
+                    PdxReportEntry pdxReportEntry = new PdxReportEntry();
+                    pdxReportEntry.addSubjectId(pdxdata.getSubjectId());
+                    pdxReportEntry.setPdx(pdxPojo);
+                    pdxDataHash.put(pdxPojo, pdxReportEntry);
+                } else {
+                    PdxReportEntry pdxReportEntry = pdxDataHash.get(pdxPojo);
+                    pdxReportEntry.addSubjectId(pdxdata.getSubjectId());
+                }
             }
         }
         return pdxDataHash;
     }
 
-    private List<PreClinicalReportEntry> extractPreClinicalImaging(final XnatProjectdata projectdata, final List<XnatExperimentdata> allProjectExperiments, final String hotelSubjectId, final Hashtable<String, PdxReportEntry> pdxGroupByPassageNumber) {
+    private List<PreClinicalReportEntry> extractPreClinicalImaging(final XnatProjectdata projectdata, final List<XnatExperimentdata> allProjectExperiments, final String hotelSubjectId, final Hashtable<PdxPojo, PdxReportEntry> pdxGroupByPassageNumber) {
         List<PreClinicalReportEntry> preclinicalReport = new ArrayList();
         Collection<PdxReportEntry> pdxReportEntries = pdxGroupByPassageNumber.values();
+        List<XnatImagesessiondata> imagingExperiments = getImagingExperiments(allProjectExperiments, hotelSubjectId);
         for(PdxReportEntry pdxReportEntry: pdxReportEntries) {
-            Hashtable<String, PreClinicalImagingReportEntry> imagingEntry = getImagingSessionsByModality(projectdata, getImagingExperiments(allProjectExperiments, hotelSubjectId), pdxReportEntry.getSubjectIds());
+            Hashtable<String, PreClinicalImagingReportEntry> imagingEntry = getImagingSessionsByModality(projectdata, imagingExperiments, pdxReportEntry.getSubjectIds());
             for (String modality : imagingEntry.keySet()) {
                 PreClinicalImagingReportEntry preClinicalImagingReportEntryOfAllSequences = imagingEntry.get(modality);
                 Set<String> sequenceOfTracerUsed = preClinicalImagingReportEntryOfAllSequences.getSequenceOrTracerCounts().keySet();
@@ -165,27 +177,32 @@ public class CancerModelsTemplateAPI extends AbstractXapiRestController {
         return preclinicalReport;
     }
 
-    private Hashtable<String, PreClinicalImagingReportEntry> getImagingSessionsByModality(final XnatProjectdata projectdata, List<XnatExperimentdata> imagingExperiments, final List<String> subjectIds) {
+    private List<XnatImagesessiondata> filterImagingExperimentsForGivenSubjects(final List<XnatImagesessiondata> imagingExperiments, final List<String> subjectIds) {
+        return imagingExperiments.stream().filter(exp -> subjectIds.contains(exp.getSubjectId())).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private Hashtable<String, PreClinicalImagingReportEntry> getImagingSessionsByModality(final XnatProjectdata projectdata, final List<XnatImagesessiondata> allImagingExperiments, final List<String> subjectIds) {
         Hashtable<String, PreClinicalImagingReportEntry> experimentsByModality = new Hashtable<>();
-        for (XnatExperimentdata exp : imagingExperiments) {
-            if ((exp instanceof XnatImagesessiondata) && (subjectIds.contains(((XnatImagesessiondata) exp).getSubjectId()))) {
-                final XnatImagesessiondata imagesessiondata = ((XnatImagesessiondata)exp);
-                List<XnatImagescandataI> scans = imagesessiondata.getScans_scan();
-                for (XnatImagescandataI sc : scans) {
-                    PreClinicalImagingReportEntry preClinicalImagingReportEntry = null;
-                    final String type = sc.getType();
-                    final String modality = sc.getModality();
-                    if (modality != null) {
-                        if (experimentsByModality.containsKey(modality)) {
-                            preClinicalImagingReportEntry = experimentsByModality.get(modality);
-                            setContrastSequenceUsed(preClinicalImagingReportEntry, type, exp);
-                        } else {
-                            preClinicalImagingReportEntry = new PreClinicalImagingReportEntry();
-                            preClinicalImagingReportEntry.setModality(modality);
-                            preClinicalImagingReportEntry.setTreatments(getTreatments(subjectIds));
-                            setContrastSequenceUsed(preClinicalImagingReportEntry, type, exp);
-                            experimentsByModality.put(modality, preClinicalImagingReportEntry);
-                        }
+        final String treatments = getTreatments(subjectIds);
+        final List<XnatImagesessiondata> subjectSpecificImagingExperiments =  filterImagingExperimentsForGivenSubjects(allImagingExperiments, subjectIds);
+        for (XnatExperimentdata exp : subjectSpecificImagingExperiments) {
+            final XnatImagesessiondata imagesessiondata = ((XnatImagesessiondata)exp);
+            List<XnatImagescandataI> scans = imagesessiondata.getScans_scan();
+            for (XnatImagescandataI sc : scans) {
+                PreClinicalImagingReportEntry preClinicalImagingReportEntry = null;
+                final String type = sc.getType();
+                final String modality = sc.getModality();
+                if (modality != null) {
+                    if (experimentsByModality.containsKey(modality)) {
+                        preClinicalImagingReportEntry = experimentsByModality.get(modality);
+                        setContrastSequenceUsed(preClinicalImagingReportEntry, type, exp);
+                        preClinicalImagingReportEntry.setTreatments(treatments);
+                    } else {
+                        preClinicalImagingReportEntry = new PreClinicalImagingReportEntry();
+                        preClinicalImagingReportEntry.setModality(modality);
+                        preClinicalImagingReportEntry.setTreatments(treatments);
+                        setContrastSequenceUsed(preClinicalImagingReportEntry, type, exp);
+                        experimentsByModality.put(modality, preClinicalImagingReportEntry);
                     }
                 }
             }
@@ -207,16 +224,18 @@ public class CancerModelsTemplateAPI extends AbstractXapiRestController {
 
 
     private String getTreatments(final List<String> subjectIds) {
+        String subjects = subjectIds.stream()
+                .map(s -> "'" + s + "'")
+                .collect(Collectors.joining(","));
         final String DRUG_NAME_QUERY = "SELECT STRING_AGG(drug, '+') AS drugnames from " +
                 " (select distinct drug from pixi_drugtherapydata dt " +
                 " left join xnat_subjectassessordata sa on dt.id = sa.id " +
                 " left join xnat_subjectdata s on sa.subject_id = s.id " +
-                " where s.id in (?)) as drugs;";
-        SQLClause.ParamValue[] sqlValues = {new SQLClause.ParamValue(String.join(",", subjectIds), -1)};
+                " where s.id in (" + subjects +")) as drugs;";
         PoolDBUtils con = new PoolDBUtils();
         String drugNames = "Not provided";
         try {
-            final XFTTable table = con.executeSelectPS(DRUG_NAME_QUERY, sqlValues);
+            final XFTTable table = con.executeSelectPS(DRUG_NAME_QUERY);
             ArrayList<Object[]> rows  = table.rows();
             drugNames = (String)rows.get(0)[0];
         } catch (Exception e) {
@@ -224,7 +243,7 @@ public class CancerModelsTemplateAPI extends AbstractXapiRestController {
         } finally {
             con.closeConnection();
         }
-        return drugNames;
+        return (drugNames == null ? CMOUtils.NOT_PROVIDED : drugNames);
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
