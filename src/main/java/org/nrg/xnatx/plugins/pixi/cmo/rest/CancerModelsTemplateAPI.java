@@ -89,7 +89,7 @@ public class CancerModelsTemplateAPI extends AbstractXapiRestController {
         PreClinicalReport template = new PreClinicalReport();
         template.setPreClinicalReportEntryList(entries);
         template.setProjectId(project);
-        template.setProjectTitle(projectdata.getName().replaceAll(CMOUtils.REGuLAR_EXP, "_"));
+        template.setProjectTitle(projectdata.getId().replaceAll(CMOUtils.REGuLAR_EXP, "_"));
         template.setProjectUrl(XDAT.getSiteUrl() + "/data/projects/" + project  + "?format=html");
         template.setDescription(projectdata.getDescription());
         return template;
@@ -133,17 +133,17 @@ public class CancerModelsTemplateAPI extends AbstractXapiRestController {
         Hashtable<PdxPojo, PdxReportEntry> pdxDataHash = new Hashtable<>();
         for (Object pdx : pdxExperiments) {
             PixiPdxdata pdxdata = (PixiPdxdata) pdx;
-            if (pdxdata.getPassage() != null) {
-                PdxPojo pdxPojo = new PdxPojo(pdxdata.getPassage(), pdxdata.getSourceid(), pdxdata.getInjectionsite());
-                if (!pdxDataHash.containsKey(pdxPojo)) {
-                    PdxReportEntry pdxReportEntry = new PdxReportEntry();
-                    pdxReportEntry.addSubjectId(pdxdata.getSubjectId());
-                    pdxReportEntry.setPdx(pdxPojo);
-                    pdxDataHash.put(pdxPojo, pdxReportEntry);
-                } else {
-                    PdxReportEntry pdxReportEntry = pdxDataHash.get(pdxPojo);
-                    pdxReportEntry.addSubjectId(pdxdata.getSubjectId());
-                }
+            final String passage = pdxdata.getPassage() == null ? CMOUtils.NOT_PROVIDED : pdxdata.getPassage();
+            PdxPojo pdxPojo = new PdxPojo(passage, pdxdata.getSourceid(),
+                    pdxdata.getInjectionsite() == null ? CMOUtils.NOT_PROVIDED : pdxdata.getInjectionsite());
+            if (!pdxDataHash.containsKey(pdxPojo)) {
+                PdxReportEntry pdxReportEntry = new PdxReportEntry();
+                pdxReportEntry.addSubjectId(pdxdata.getSubjectId());
+                pdxReportEntry.setPdx(pdxPojo);
+                pdxDataHash.put(pdxPojo, pdxReportEntry);
+            } else {
+                PdxReportEntry pdxReportEntry = pdxDataHash.get(pdxPojo);
+                pdxReportEntry.addSubjectId(pdxdata.getSubjectId());
             }
         }
         return pdxDataHash;
