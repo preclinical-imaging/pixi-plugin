@@ -196,6 +196,7 @@ siteSettings:
   name: pixiAdminPage
   label: Administer PIXI
   meta:
+    restricted: PixiDataManager
     tabGroups:
       pixiTabGroup: PIXI
   contains: tabs
