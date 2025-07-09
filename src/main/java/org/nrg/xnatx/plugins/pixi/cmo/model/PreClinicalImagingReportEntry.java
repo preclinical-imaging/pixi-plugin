@@ -3,6 +3,7 @@ package org.nrg.xnatx.plugins.pixi.cmo.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.nrg.xnatx.plugins.pixi.cmo.CMOUtils;
 
 import java.io.Serializable;
 import java.util.Hashtable;
@@ -12,7 +13,7 @@ import java.util.Hashtable;
 @NoArgsConstructor
 public class PreClinicalImagingReportEntry implements Serializable {
 
-    String treatments;
+    String treatments = CMOUtils.NOT_PROVIDED;
     String modality;
     Hashtable<String, Long> sequenceOrTracerCounts = new Hashtable();
 
@@ -21,10 +22,11 @@ public class PreClinicalImagingReportEntry implements Serializable {
     }
 
     private void incrementNumberOfImages(final String sequence) {
-        if (sequenceOrTracerCounts.containsKey(sequence)) {
-            sequenceOrTracerCounts.put(sequence, sequenceOrTracerCounts.get(sequence) + 1);
+        String sequenceWithoutInvalidChars = sequence.replaceAll(CMOUtils.REGULAR_EXP, "_");
+        if (sequenceOrTracerCounts.containsKey(sequenceWithoutInvalidChars)) {
+            sequenceOrTracerCounts.put(sequenceWithoutInvalidChars, sequenceOrTracerCounts.get(sequenceWithoutInvalidChars) + 1);
         } else {
-            sequenceOrTracerCounts.put(sequence, 1L);
+            sequenceOrTracerCounts.put(sequenceWithoutInvalidChars, 1L);
         }
     }
 
