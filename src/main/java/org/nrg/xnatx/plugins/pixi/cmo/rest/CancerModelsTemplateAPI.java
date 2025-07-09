@@ -25,7 +25,6 @@ import org.nrg.xdat.security.services.RoleHolder;
 import org.nrg.xdat.security.services.UserManagementServiceI;
 import org.nrg.xft.XFTTable;
 import org.nrg.xft.db.PoolDBUtils;
-import org.nrg.xft.search.SQLClause;
 import org.nrg.xft.security.UserI;
 import org.nrg.xnatx.plugins.pixi.cmo.CMOUtils;
 import org.nrg.xnatx.plugins.pixi.cmo.model.PdxPojo;
@@ -42,11 +41,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.Null;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
@@ -89,7 +85,7 @@ public class CancerModelsTemplateAPI extends AbstractXapiRestController {
         PreClinicalReport template = new PreClinicalReport();
         template.setPreClinicalReportEntryList(entries);
         template.setProjectId(project);
-        template.setProjectTitle(projectdata.getId().replaceAll(CMOUtils.REGuLAR_EXP, "_"));
+        template.setProjectTitle(projectdata.getId().replaceAll(CMOUtils.REGULAR_EXP, "_"));
         template.setProjectUrl(XDAT.getSiteUrl() + "/data/projects/" + project  + "?format=html");
         template.setDescription(projectdata.getDescription());
         return template;

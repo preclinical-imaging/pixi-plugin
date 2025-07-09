@@ -22,7 +22,7 @@ public class PreClinicalImagingReportEntry implements Serializable {
     }
 
     private void incrementNumberOfImages(final String sequence) {
-        String sequenceWithoutInvalidChars = sequence.replaceAll(CMOUtils.REGuLAR_EXP, "_");
+        String sequenceWithoutInvalidChars = sequence.replaceAll(CMOUtils.REGULAR_EXP, "_");
         if (sequenceOrTracerCounts.containsKey(sequenceWithoutInvalidChars)) {
             sequenceOrTracerCounts.put(sequenceWithoutInvalidChars, sequenceOrTracerCounts.get(sequenceWithoutInvalidChars) + 1);
         } else {
