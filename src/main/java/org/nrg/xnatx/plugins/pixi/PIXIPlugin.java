@@ -88,6 +88,7 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.DEFAULT_DIGITS;
                 "org.nrg.xnatx.plugins.pixi.xenografts.repositories",
                 "org.nrg.xnatx.plugins.pixi.xenografts.services.impl",
                 "org.nrg.xnatx.plugins.pixi.xenografts.rest",
+                "org.nrg.xnatx.plugins.pixi.xenografts.services",
                 "org.nrg.xnatx.plugins.pixi.hotelsplitter.services.impl",
                 "org.nrg.xnatx.plugins.pixi.hotelsplitter.rest",
                 "org.nrg.xnatx.plugins.pixi.hotelsplitter.initialize",

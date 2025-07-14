@@ -1,11 +1,14 @@
 package org.nrg.xnatx.plugins.pixi.xenografts.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.nrg.framework.exceptions.NotFoundException;
 import org.nrg.framework.orm.hibernate.AbstractHibernateEntityService;
 import org.nrg.xnatx.plugins.pixi.xenografts.entities.XenograftEntity;
+import org.nrg.xnatx.plugins.pixi.xenografts.handlers.ModelJsonHandler;
 import org.nrg.xnatx.plugins.pixi.xenografts.models.Xenograft;
 import org.nrg.xnatx.plugins.pixi.xenografts.repositories.XenograftEntityDAO;
+import org.nrg.xnatx.plugins.pixi.xenografts.services.XenograftModelImporterHandlerService;
 import org.nrg.xnatx.plugins.pixi.xenografts.services.XenograftService;
 import org.nrg.xapi.exceptions.ResourceAlreadyExistsException;
 import org.nrg.xnatx.plugins.pixi.xenografts.exceptions.XenograftDeletionException;
@@ -20,11 +23,13 @@ import java.util.stream.Collectors;
 public abstract class HibernateXenograftEnityService<E extends XenograftEntity, T extends XenograftEntityDAO<E>, X extends Xenograft> extends AbstractHibernateEntityService<E, T> implements XenograftService<E,X> {
 
     private final Class<X> type;
+    private final XenograftModelImporterHandlerService importerHandlerService;
 
     @Autowired
-    public HibernateXenograftEnityService(final Class<X> type) {
+    public HibernateXenograftEnityService(final Class<X> type, final XenograftModelImporterHandlerService importerHandlerService) {
         super();
         this.type = type;
+        this.importerHandlerService = importerHandlerService;
     }
 
     @Override
@@ -52,8 +57,8 @@ public abstract class HibernateXenograftEnityService<E extends XenograftEntity, 
         if (getDao().findBySourceId(x.getSourceId()).isPresent()) {
             throw new ResourceAlreadyExistsException(type.getSimpleName(), x.getSourceId());
         }
-
-        super.create(toEntity(x));
+        X populatedXenograft = populateXenograft(x);
+        super.create(toEntity(populatedXenograft));
     }
 
     @Override
@@ -70,7 +75,12 @@ public abstract class HibernateXenograftEnityService<E extends XenograftEntity, 
 
         E e = getDao().findBySourceId(sourceId)
                       .orElseThrow(() -> new NotFoundException("Entity with ID " + sourceId + " not found. Cannot update."));
-        updateEntity(e, x);
+        X populatedXenograft = x;
+        if (!x.getSourceURL().equals(e.getSourceURL())) {
+            //Needs an update from site
+            populatedXenograft = populateXenograft(x);
+        }
+        updateEntity(e, populatedXenograft);
         super.update(e);
     }
 
@@ -83,6 +93,18 @@ public abstract class HibernateXenograftEnityService<E extends XenograftEntity, 
         }
 
         super.getDao().findBySourceId(sourceId).ifPresent(super::delete);
+    }
+
+    private X populateXenograft(final X x) {
+        X updatedXenograft = x;
+        if (!StringUtils.isEmpty(x.getSourceURL())) {
+            //Fetch the data from the URL
+            ModelJsonHandler importer = importerHandlerService.getImporter(x.getSourceURL());
+            if (null != importer) {
+                updatedXenograft = (X) importer.process(x);
+            }
+        }
+        return updatedXenograft;
     }
 
     protected abstract X toDTO(final E e);

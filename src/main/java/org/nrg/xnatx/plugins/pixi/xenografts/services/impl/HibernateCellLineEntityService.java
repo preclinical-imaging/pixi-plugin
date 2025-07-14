@@ -3,6 +3,7 @@ package org.nrg.xnatx.plugins.pixi.xenografts.services.impl;
 import org.nrg.xnatx.plugins.pixi.xenografts.entities.CellLineEntity;
 import org.nrg.xnatx.plugins.pixi.xenografts.models.CellLine;
 import org.nrg.xnatx.plugins.pixi.xenografts.repositories.CellLineEntityDAO;
+import org.nrg.xnatx.plugins.pixi.xenografts.services.XenograftModelImporterHandlerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -16,8 +17,8 @@ public class HibernateCellLineEntityService extends HibernateXenograftEnityServi
     private static final String QUERY_HAS_SUBJECT_REFERENCES = "SELECT EXISTS(SELECT sourceid FROM pixi_celllinedata WHERE sourceid = :source_id)";
 
     @Autowired
-    public HibernateCellLineEntityService(NamedParameterJdbcTemplate template) {
-        super(CellLine.class);
+    public HibernateCellLineEntityService(NamedParameterJdbcTemplate template, final XenograftModelImporterHandlerService importerHandlerService) {
+        super(CellLine.class, importerHandlerService);
         this.template = template;
     }
 
