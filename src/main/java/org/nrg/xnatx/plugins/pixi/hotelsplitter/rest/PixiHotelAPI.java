@@ -10,12 +10,14 @@ import org.nrg.xapi.exceptions.DataFormatException;
 import org.nrg.xapi.exceptions.NotFoundException;
 import org.nrg.xapi.exceptions.ResourceAlreadyExistsException;
 import org.nrg.xapi.rest.AbstractXapiRestController;
+import org.nrg.xapi.rest.AuthDelegate;
 import org.nrg.xapi.rest.AuthorizedRoles;
 import org.nrg.xapi.rest.XapiRequestMapping;
 import org.nrg.xdat.model.PixiHotelI;
 import org.nrg.xdat.model.PixiHotelpositionI;
 import org.nrg.xdat.om.PixiHotel;
 import org.nrg.xdat.om.PixiHotelposition;
+import org.nrg.xdat.security.Authorizer;
 import org.nrg.xdat.security.helpers.AccessLevel;
 import org.nrg.xdat.security.services.RoleHolder;
 import org.nrg.xdat.security.services.UserManagementServiceI;
@@ -23,6 +25,7 @@ import org.nrg.xnatx.plugins.pixi.hotelsplitter.dtos.HotelDTO;
 import org.nrg.xnatx.plugins.pixi.hotelsplitter.dtos.HotelPositionDTO;
 import org.nrg.xnatx.plugins.pixi.hotelsplitter.exceptions.HotelReferenceException;
 import org.nrg.xnatx.plugins.pixi.hotelsplitter.services.HotelService;
+import org.nrg.xnatx.plugins.pixi.security.PixiDataManagerUserAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +35,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import static org.nrg.xdat.security.helpers.AccessLevel.Authorizer;
+
 
 @Api("Hotel API")
 @XapiRestController
@@ -74,8 +79,8 @@ public class PixiHotelAPI extends AbstractXapiRestController {
     @ApiResponses({@ApiResponse(code = 200, message = "Hotel successfully created."),
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
-    @AuthorizedRoles({"PIXI", "Administrator"})
-    @XapiRequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST, restrictTo = AccessLevel.Role)
+    @AuthDelegate(PixiDataManagerUserAuthorization.class)
+    @XapiRequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST, restrictTo = Authorizer)
     public HotelDTO create(@RequestBody final HotelDTO hotelDTO) throws DataFormatException, ResourceAlreadyExistsException {
         return toDTO(hotelService.create(getSessionUser(), fromDTO(hotelDTO)));
     }
@@ -84,8 +89,8 @@ public class PixiHotelAPI extends AbstractXapiRestController {
     @ApiResponses({@ApiResponse(code = 200, message = "Hotel successfully updated."),
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
-    @AuthorizedRoles({"PIXI", "Administrator"})
-    @XapiRequestMapping(value = "/{hotelName}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT, restrictTo = AccessLevel.Role)
+    @AuthDelegate(PixiDataManagerUserAuthorization.class)
+    @XapiRequestMapping(value = "/{hotelName}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT, restrictTo = Authorizer)
     public HotelDTO update(@PathVariable String hotelName, @RequestBody final HotelDTO hotelDTO) throws DataFormatException, NotFoundException, ResourceAlreadyExistsException {
         return toDTO(hotelService.update(getSessionUser(), hotelName, fromDTO(hotelDTO)));
     }
@@ -94,8 +99,8 @@ public class PixiHotelAPI extends AbstractXapiRestController {
     @ApiResponses({@ApiResponse(code = 200, message = "Hotel successfully deleted."),
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
-    @AuthorizedRoles({"PIXI", "Administrator"})
-    @XapiRequestMapping(value = "/{hotelName}", method = RequestMethod.DELETE, restrictTo = AccessLevel.Role)
+    @AuthDelegate(PixiDataManagerUserAuthorization.class)
+    @XapiRequestMapping(value = "/{hotelName}", method = RequestMethod.DELETE, restrictTo = Authorizer)
     public void delete(@PathVariable String hotelName) throws NotFoundException, HotelReferenceException {
         hotelService.delete(getSessionUser(), hotelName);
     }

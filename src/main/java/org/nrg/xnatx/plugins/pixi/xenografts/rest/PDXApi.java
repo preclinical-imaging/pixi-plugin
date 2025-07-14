@@ -8,11 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.nrg.framework.annotations.XapiRestController;
 import org.nrg.xapi.exceptions.NotFoundException;
 import org.nrg.xapi.exceptions.ResourceAlreadyExistsException;
-import org.nrg.xapi.rest.AuthorizedRoles;
+import org.nrg.xapi.rest.AuthDelegate;
 import org.nrg.xapi.rest.XapiRequestMapping;
-import org.nrg.xdat.security.helpers.AccessLevel;
 import org.nrg.xdat.security.services.RoleHolder;
 import org.nrg.xdat.security.services.UserManagementServiceI;
+import org.nrg.xnatx.plugins.pixi.security.PixiDataManagerUserAuthorization;
 import org.nrg.xnatx.plugins.pixi.xenografts.entities.PDXEntity;
 import org.nrg.xnatx.plugins.pixi.xenografts.models.PDX;
 import org.nrg.xnatx.plugins.pixi.xenografts.services.XenograftService;
@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
+
+import static org.nrg.xdat.security.helpers.AccessLevel.Authorizer;
 
 @Api("PDX API")
 @XapiRestController
@@ -61,20 +63,22 @@ public class PDXApi extends XenograftAPI<PDXEntity, PDX> {
 
     @Override
     @ApiOperation(value = "Create new PDX.")
+    @AuthDelegate(PixiDataManagerUserAuthorization.class)
     @ApiResponses({@ApiResponse(code = 200, message = "PDX successfully created."),
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
-    @XapiRequestMapping(value = "/pdx", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    @XapiRequestMapping(value = "/pdx", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST, restrictTo=Authorizer)
     public void create(@RequestBody final PDX pdx) throws ResourceAlreadyExistsException {
         super.create(pdx);
     }
 
     @Override
     @ApiOperation(value = "Update the supplied PDX.")
+    @AuthDelegate(PixiDataManagerUserAuthorization.class)
     @ApiResponses({@ApiResponse(code = 200, message = "PDX successfully updated."),
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
-    @XapiRequestMapping(value = "/pdx/{sourceId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
+    @XapiRequestMapping(value = "/pdx/{sourceId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT, restrictTo=Authorizer)
     public void update(@PathVariable final String sourceId, @RequestBody final PDX pdx) throws ResourceAlreadyExistsException, NotFoundException {
         super.update(sourceId, pdx);
     }
@@ -84,8 +88,8 @@ public class PDXApi extends XenograftAPI<PDXEntity, PDX> {
     @ApiResponses({@ApiResponse(code = 200, message = "PDX successfully deleted."),
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
-    @AuthorizedRoles({"PIXI", "Administrator"})
-    @XapiRequestMapping(value = "/pdx/{sourceId}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE, restrictTo = AccessLevel.Role)
+    @AuthDelegate(PixiDataManagerUserAuthorization.class)
+    @XapiRequestMapping(value = "/pdx/{sourceId}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE, restrictTo=Authorizer)
     public void delete(@PathVariable final String sourceId) throws XenograftDeletionException {
         super.delete(sourceId);
     }
