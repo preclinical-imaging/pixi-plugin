@@ -18,6 +18,16 @@ public class PDX extends Xenograft {
     @Nullable
     private String storage;
 
+    @Nullable
+    private String patientId;
+
+    @Nullable
+    private String gender;
+
+    @Nullable
+    private String age;
+
+
     @Builder
     public PDX(@NotBlank final String sourceId,
                @Nullable final String source,
@@ -25,7 +35,6 @@ public class PDX extends Xenograft {
                @Nullable final String createdBy,
                @Nullable final String storage) {
         super(sourceId, source, sourceURL, createdBy);
-
         this.storage = storage;
     }
 }

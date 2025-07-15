@@ -249,6 +249,51 @@ XNAT.plugin.pixi.pdxs = getObject(XNAT.plugin.pixi.pdxs || {});
                 }, 'Edit');
             }
 
+               function formatInfo(key, val='', bold=false) {
+                         var str = '';
+                         if (bold) {
+                           str +=  '<b>';
+                         }
+                         str += String(key).charAt(0).toUpperCase() + String(key).slice(1);
+                         if (bold) {
+                           str +=  '</b>';
+                         }
+                          if (val !== '') {
+                             str += ': '+val;
+                             str += '<br><br>';
+                          }
+                          return str;
+                     }
+
+
+            function viewButton(item) {
+                var pdxDetails = "";
+                for (const key in item) {
+                    if (Object.hasOwnProperty.call(item, key)) {
+                           pdxDetails += `${formatInfo(key, item[key], true)}`;
+                    }
+                }
+                if (pdxDetails === "") {
+                   pdxDetails = "No metadata available for " + item.sourceId;
+                }
+                return spawn('button.btn.sm.edit', {
+                    onclick: function(e) {
+                          XNAT.dialog.open({
+                                      width: 450,
+                                      title: 'Information about ' + item.sourceId,
+                                      content: pdxDetails,
+                                      buttons: [
+                                          {
+                                              label: 'OK',
+                                              isDefault: true,
+                                              close: true
+                                          }
+                                      ]
+                          });
+                    }
+                }, 'View');
+            }
+
             function deleteButton(item) {
                 return spawn('button.btn.sm.delete', {
                     onclick: function() {
@@ -296,7 +341,7 @@ XNAT.plugin.pixi.pdxs = getObject(XNAT.plugin.pixi.pdxs || {});
                         .td([ spawn('div.left', [item['sourceId']]) ])
                         .td([ spawn('div.center', [item['source']]) ])
                         .td([ spawn('div.center', [detailsButton(item)]) ])
-                        .td([ spawn('div.center', [editButton(item), pixi.spacer(10), deleteButton(item)]) ])
+                        .td([ spawn('div.center', [viewButton(item), pixi.spacer(10), editButton(item), pixi.spacer(10), deleteButton(item)]) ])
                 })
 
                 if (container) {
