@@ -8,11 +8,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.nrg.framework.annotations.XapiRestController;
 import org.nrg.xapi.exceptions.NotFoundException;
 import org.nrg.xapi.exceptions.ResourceAlreadyExistsException;
+import org.nrg.xapi.rest.AuthDelegate;
 import org.nrg.xapi.rest.AuthorizedRoles;
 import org.nrg.xapi.rest.XapiRequestMapping;
 import org.nrg.xdat.security.helpers.AccessLevel;
 import org.nrg.xdat.security.services.RoleHolder;
 import org.nrg.xdat.security.services.UserManagementServiceI;
+import org.nrg.xnatx.plugins.pixi.security.PixiDataManagerUserAuthorization;
 import org.nrg.xnatx.plugins.pixi.xenografts.entities.CellLineEntity;
 import org.nrg.xnatx.plugins.pixi.xenografts.models.CellLine;
 import org.nrg.xnatx.plugins.pixi.xenografts.services.XenograftService;
@@ -25,6 +27,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
+
+import static org.nrg.xdat.security.helpers.AccessLevel.Authorizer;
 
 @Api("Cell Line API")
 @XapiRestController
@@ -61,20 +65,22 @@ public class CellLineAPI extends XenograftAPI<CellLineEntity, CellLine> {
 
     @Override
     @ApiOperation(value = "Create new Cell Line.")
+    @AuthDelegate(PixiDataManagerUserAuthorization.class)
     @ApiResponses({@ApiResponse(code = 200, message = "Cell Line successfully created."),
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
-    @XapiRequestMapping(value = "/cellline", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    @XapiRequestMapping(value = "/cellline", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST,  restrictTo=Authorizer)
     public void create(@RequestBody final CellLine cellLine) throws ResourceAlreadyExistsException {
         super.create(cellLine);
     }
 
     @Override
     @ApiOperation(value = "Update the supplied Cell Line.")
+    @AuthDelegate(PixiDataManagerUserAuthorization.class)
     @ApiResponses({@ApiResponse(code = 200, message = "Cell Line successfully updated."),
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
-    @XapiRequestMapping(value = "/cellline/{sourceId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
+    @XapiRequestMapping(value = "/cellline/{sourceId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT, restrictTo = Authorizer)
     public void update(@PathVariable final String sourceId, @RequestBody final CellLine cellLine) throws ResourceAlreadyExistsException, NotFoundException {
         super.update(sourceId, cellLine);
     }
@@ -84,8 +90,8 @@ public class CellLineAPI extends XenograftAPI<CellLineEntity, CellLine> {
     @ApiResponses({@ApiResponse(code = 200, message = "Cell Line successfully deleted."),
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
-    @AuthorizedRoles({"PIXI", "Administrator"})
-    @XapiRequestMapping(value = "/cellline/{sourceId}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE, restrictTo = AccessLevel.Role)
+    @AuthDelegate(PixiDataManagerUserAuthorization.class)
+    @XapiRequestMapping(value = "/cellline/{sourceId}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE, restrictTo = Authorizer)
     public void delete(@PathVariable final String sourceId) throws XenograftDeletionException {
         super.delete(sourceId);
     }
