@@ -17,7 +17,7 @@ import javax.validation.constraints.NotBlank;
 @Slf4j
 public abstract class Xenograft {
 
-    public  Xenograft(@NotBlank final String sourceId,
+    public Xenograft(@NotBlank final String sourceId,
                           @Nullable final String source,
                           @Nullable final String sourceURL,
                           @Nullable final String createdBy) {
