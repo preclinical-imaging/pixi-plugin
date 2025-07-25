@@ -182,6 +182,10 @@
 		<DisplayFieldElement name="Field1" schema-element="xnat:mrSessionData.project"/>
 	<description>Primary Project for this session</description>
 	</DisplayField>
+	<DisplayField id="CONTRAST_AGENTS" header="Contrast Agents" searchable="true" data-type="string">
+		<DisplayFieldElement name="Field1" viewName="CONTRAST_AGENTS" viewColumn="CONTRAST_AGENTS"/>
+	<description>Contrast Bolus Elements</description>
+	</DisplayField>
 	<DisplayField id="MR_PROJECT_IDENTIFIER" header="MR ID" visible="true" searchable="false" data-type="string" xsi:type="SubQueryField">
 		<Content type="sql">mr_project_id</Content>
 		<HTML-Link>
@@ -383,6 +387,11 @@
 			<MappingColumn rootElement="xnat:mrSessionData" fieldElement="xnat:mrSessionData.ID" mapsTo="image_session_id"/>
 		</Mapping>
 	</ViewLink>
+	<ViewLink alias="CONTRAST_AGENTS">
+		<Mapping TableName="CONTRAST_AGENTS">
+			<MappingColumn rootElement="xnat:mrSessionData" fieldElement="xnat:mrSessionData.ID" mapsTo="image_session_id"/>
+		</Mapping>
+	</ViewLink>
 	<SQLView name="mr_scan_count_agg" sql="SELECT image_session_id, TRIM(', ' FROM xs_a_concat(TYPE_COUNT || ', ')) AS TYPE_COUNT FROM (SELECT image_session_id, (TYPE || '(' || COUNT(id) || ')') AS TYPE_COUNT FROM xnat_imageScanData GROUP BY image_session_id,TYPE ORDER BY image_session_id,TYPE) _TYPES GROUP BY image_session_id"/>
 	<SQLView name="MR_PROJECTS" sql="SELECT id, '&lt;' || expt.project || '&gt;' || xs_a_concat(',&lt;' || shared.project || '&gt;') AS projects FROM xnat_experimentData expt LEFT JOIN xnat_experimentData_share shared ON expt.id=shared.sharing_share_xnat_experimentda_id LEFT JOIN xdat_meta_element xme ON expt.extension = xme.xdat_meta_element_id WHERE element_name='xnat:mrSessionData' GROUP BY expt.id,expt.project"/>
 	<SQLView name="ordered_workflows" sql="SELECT wrk_workflowdata.id, status, wrk_workflowdata_id,
@@ -398,6 +407,10 @@
           GROUP BY wrk_workflowdata.id) wrk_max ON wrk_workflowdata.id::text = wrk_max.id::text AND wrk_workflowdata.launch_time = wrk_max.launch_time"/>
 	<SQLView name="DTI_COUNT" sql="SELECT image_session_id,COUNT(*) AS DTI_COUNT FROM xnat_imagescandata WHERE series_description LIKE '%DTI%' OR type LIKE '%DTI%' GROUP BY image_session_id"/>
 	<SQLView name="SUBJECT_LABEL" sql="SELECT isd.id AS image_session_id, sd.label AS subject_label from xnat_imageSessionData isd left join xnat_subjectassessordata sad on isd.id = sad.id LEFT JOIN xnat_subjectdata sd ON sad.subject_id = sd.id;"/>
+	<SQLView name="CONTRAST_AGENTS" sql="SELECT image_session_id, STRING_AGG(CONCAT('Scan ', id, ': ', agent), ', ') AS CONTRAST_AGENTS
+		FROM xnat_contrastbolusv2 AS contrast
+		LEFT JOIN xnat_imagescandata AS scan ON contrast.image_scan_id = scan.xnat_imagescandata_id
+		GROUP BY image_session_id;"/>
 	<SQLFunction name="xs_lastPosition" content="CREATE OR REPLACE FUNCTION xs_lastPosition(text, text)
   RETURNS int4 AS
 $BODY$
