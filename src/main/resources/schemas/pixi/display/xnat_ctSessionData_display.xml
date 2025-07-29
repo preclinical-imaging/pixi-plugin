@@ -133,6 +133,10 @@
 			<MappingColumn schemaField="xnat:ctSessionData.ID" queryField="expt_id"/>
 		</MappingColumns>
 	</DisplayField>
+	<DisplayField id="CONTRAST_AGENTS" header="Contrast Agents" searchable="true" data-type="string">
+		<DisplayFieldElement name="Field1" viewName="CONTRAST_AGENTS" viewColumn="CONTRAST_AGENTS"/>
+		<description>Contrast Bolus Elements</description>
+	</DisplayField>
 	<DisplayField id="DCMACCESSIONNUMBER" header="dcmAccessionNumber" visible="true" searchable="true">
 		<DisplayFieldElement name="Field1" schema-element="xnat:ctSessionData/dcmAccessionNumber"/>
 	</DisplayField>
@@ -242,6 +246,17 @@
 			<MappingColumn rootElement="xnat:ctSessionData" fieldElement="xnat:ctSessionData.ID" mapsTo="image_session_id"/>
 		</Mapping>
 	</ViewLink>
+	<ViewLink alias="CONTRAST_AGENTS">
+		<Mapping TableName="CONTRAST_AGENTS">
+			<MappingColumn rootElement="xnat:ctSessionData" fieldElement="xnat:ctSessionData.ID" mapsTo="image_session_id"/>
+		</Mapping>
+	</ViewLink>
 	<SQLView name="ct_scan_count_agg" sql="SELECT image_session_id, TRIM(', ' FROM xs_a_concat(TYPE_COUNT || ', ')) AS TYPE_COUNT FROM (SELECT image_session_id, (TYPE || '(' || COUNT(id) || ')') AS TYPE_COUNT FROM xnat_imageScanData GROUP BY image_session_id,TYPE ORDER BY image_session_id,TYPE) _TYPES GROUP BY image_session_id"/>
 	<SQLView name="XNAT_CTSESSIONDATA_PROJECTS" sql="SELECT id, '&lt;' || expt.project || '&gt;' || xs_a_concat(',&lt;' || shared.project || '&gt;') AS projects FROM xnat_experimentData expt LEFT JOIN xnat_experimentData_share shared ON expt.id=shared.sharing_share_xnat_experimentda_id LEFT JOIN xdat_meta_element xme ON expt.extension = xme.xdat_meta_element_id WHERE element_name='xnat:ctSessionData' GROUP BY expt.id,expt.project"/>
+	<SQLView name="CONTRAST_AGENTS" sql="SELECT image_session_id, TRIM(', ' FROM xs_a_concat(CONTRAST_AGENTS || ', '))
+				AS CONTRAST_AGENTS FROM (SELECT image_session_id, (agent || '(' || COUNT(id) || ')') AS CONTRAST_AGENTS
+					FROM xnat_contrastbolusv2 AS contrast
+                LEFT JOIN xnat_imagescandata AS scan ON contrast.image_scan_id = scan.xnat_imagescandata_id
+                GROUP BY image_session_id,agent ORDER BY image_session_id,agent)
+    _CONTRASTS GROUP BY image_session_id;"/>
 </Displays>
