@@ -186,6 +186,13 @@
 		<DisplayFieldElement name="Field1" viewName="CONTRAST_AGENTS" viewColumn="CONTRAST_AGENTS"/>
 	<description>Contrast Bolus Elements</description>
 	</DisplayField>
+	<DisplayField id="CONTRAST_COUNT" header="Count By Contrast" visible="true" searchable="true" data-type="integer" xsi:type="SubQueryField">
+		<Content type="sql">CONTRAST_COUNT</Content>
+		<SubQuery>SELECT image_session_id, COUNT(*) AS CONTRAST_COUNT FROM xnat_imageScandata scan LEFT JOIN xnat_contrastbolusv2 contrast ON scan.xnat_imageScandata_id=contrast.image_scan_id WHERE LOWER(contrast.agent)=LOWER('@WHERE') GROUP BY image_session_id</SubQuery>
+		<MappingColumns>
+			<MappingColumn schemaField="xnat:mrSessionData.ID" queryField="image_session_id"/>
+		</MappingColumns>
+	</DisplayField>
 	<DisplayField id="MR_PROJECT_IDENTIFIER" header="MR ID" visible="true" searchable="false" data-type="string" xsi:type="SubQueryField">
 		<Content type="sql">mr_project_id</Content>
 		<HTML-Link>
