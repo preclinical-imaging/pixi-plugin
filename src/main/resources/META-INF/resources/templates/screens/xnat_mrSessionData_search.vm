@@ -1,4 +1,5 @@
 #* @vtlvariable name="data" type="org.apache.turbine.util.RunData" *#
+#* @vtlvariable name="user" type="org.nrg.xft.security.UserI" *#
 #* @vtlvariable name="userHelper" type="org.nrg.xdat.security.services.UserHelperServiceI" *#
 ##Copyright 2005 Harvard University / Howard Hughes Medical Institute (HHMI) All Rights Reserved
 <!-- start: pixi-plugin screens/xnat_mrSessionData_search.vm -->
@@ -114,12 +115,10 @@
                    value="$!search.getWebFormValue("xnat:mrSessionData.OPERATOR_equals")"
                    maxlength="100">
         </div>
-
         <div class="search-item">
             <h5>Date Range:</h5>
             #xdatSearchField($schemaElement $schemaElement.getDisplayField("DATE"))
         </div>
-
         <div class="search-item">
             <h5>Scanner:</h5>
             <!-- Scanner -->
@@ -143,6 +142,13 @@
                 #end
             </select>
         </div>
+
+        #if($user.checkFeatureForAnyTag("contrast_visible"))
+            <div class="search-item">
+                <h5>Contrast Bolus:</h5>
+                #xdatSearchField($schemaElement $schemaElement.getDisplayField("CONTRAST_AGENTS"))
+            </div>
+        #end
 
         <div class="clear"></div>
 
