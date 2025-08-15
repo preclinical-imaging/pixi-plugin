@@ -421,7 +421,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
 
     private Optional<String> getCellValue(List<String> row, Map<String, Integer> headerMap, String headerName) {
         Integer cellIndex = headerMap.get(headerName);
-        if (cellIndex == null) {
+        if (cellIndex == null || row.size() <= cellIndex) {
             return Optional.empty();
         }
         String cell = row.get(cellIndex).trim();
@@ -430,7 +430,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
 
     private Optional<Double> getCellValueAsDouble(List<String> row, Map<String, Integer> headerMap, String headerName) {
         Integer cellIndex = headerMap.get(headerName);
-        if (cellIndex == null) {
+        if (cellIndex == null || row.size() <= cellIndex) {
             return Optional.empty();
         }
         String cell = row.get(cellIndex).trim();
@@ -439,7 +439,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
 
     private Optional<DateOptionalTime> getCellValueAsDate(List<String> row, Map<String, Integer> headerMap, String headerName) throws DataFormatException {
         Integer cellIndex = headerMap.get(headerName);
-        if (cellIndex == null) {
+        if (cellIndex == null | row.size() <= cellIndex) {
             return Optional.empty();
         }
         String cell = row.get(cellIndex).trim();
