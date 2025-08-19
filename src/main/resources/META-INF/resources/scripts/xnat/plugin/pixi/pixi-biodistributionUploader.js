@@ -79,6 +79,15 @@
         }
     }
 
+    function createSubjectList(subjects) {
+            let subjectList = '';
+            for (const subjectId of subjects) {
+                let subjectHtmlElement = `${subjectId} <br>`;
+                subjectList = subjectList.concat(subjectHtmlElement);
+            }
+            return subjectList;
+        }
+
     function getProjectLink(id) {
         return XNAT.url.rootUrl('data/projects/' + id);
     }
@@ -110,6 +119,54 @@
         } else {
             return `<div class="success">Upload and extraction successful. However, all input data overlaps with existing data and you have selected the skip matching data option. As such, no new data was uploaded to the system.</div>`
         }
+    }
+
+    function peformBiodistributionUpload(projectId, uploadId, encodedFileName, dataOverlapHandling) {
+        let biodCreateApiUrl = XNAT.url.csrfUrl('/xapi/pixi/biodistribution/create');
+        let biodCreateApiUrlWithParams = XNAT.url.addQueryString(biodCreateApiUrl, [
+            `project=${projectId}`,
+            `cachePath=${uploadId}/${encodedFileName}`,
+            `dataOverlapHandling=${dataOverlapHandling}`
+        ]);
+
+        xmodal.loading.open({ title: 'Uploading Biodistribution Data'});
+        XNAT.xhr.post({
+            url: biodCreateApiUrlWithParams,
+            success: function (data) {
+                XNAT.ui.dialog.close("biod_upload");
+                xmodal.loading.close();
+                XNAT.ui.dialog.open({
+                    title: 'Upload Successful',
+                    content: createSuccessPrintoutMessage(projectId, data),
+                    buttons: [
+                        {
+                            label: 'OK',
+                            isDefault: true,
+                            close: true,
+                        }
+                    ]
+                })
+            },
+            error: function(e) {
+                console.error(`Failed to extract ${file.name}`)
+                XNAT.ui.dialog.close("biod_upload");
+                xmodal.loading.close();
+
+                let errorTextWithBreaks = e.responseText.replaceAll("\n", "<br>");
+
+                XNAT.ui.dialog.open({
+                    title: 'Extraction Failed',
+                    content: `<div class="error">Failed to extract biodistribution data from ${file.name}. <br>${errorTextWithBreaks}</div>`,
+                    buttons: [
+                        {
+                            label: 'OK',
+                            isDefault: true,
+                            close: true,
+                        }
+                    ]
+                })
+            }
+        });
     }
 
     projectFilerInput.addEventListener('keyup', filterProject);
@@ -165,41 +222,51 @@
             return;
         }
 
-        let biodApiUrl = XNAT.url.csrfUrl('/xapi/pixi/biodistribution');
-        let biodApiUrlWithParams = XNAT.url.addQueryString(biodApiUrl, [
+        let biodPreprocessingUrl = XNAT.url.csrfUrl('/xapi/pixi/biodistribution/preprocessing');
+        let biodPreprocessingApiUrlWithParams = XNAT.url.addQueryString(biodPreprocessingUrl, [
             `project=${projectId}`,
-            `cachePath=${uploadId}/${encodedFileName}`,
-            `dataOverlapHandling=${dataOverlapHandling}`
+            `cachePath=${uploadId}/${encodedFileName}`
         ]);
-
-        xmodal.loading.open({ title: 'Uploading Biodistribution Data'});
         XNAT.xhr.post({
-            url: biodApiUrlWithParams,
+            url: biodPreprocessingApiUrlWithParams,
             success: function (data) {
                 XNAT.ui.dialog.close("biod_upload");
-                xmodal.loading.close();
-                XNAT.ui.dialog.open({
-                    title: 'Upload Successful',
-                    content: createSuccessPrintoutMessage(projectId, data),
-                    buttons: [
-                        {
-                            label: 'OK',
-                            isDefault: true,
-                            close: true,
-                        }
-                    ]
-                })
+                if (data != undefined || data.length > 0) {
+                    let subjectList = createSubjectList(data);
+                    XNAT.ui.dialog.open({
+                        title: 'Subjects To Be Created',
+                        content: `<div>The following subjects are not present and will be created.
+                                  <details><summary></summary>${subjectList}</details></div>`,
+                        buttons: [
+                            {
+                                label: 'Cancel',
+                                isDefault: false,
+                                close: true,
+                                action: function() {
+                                    return;
+                                }
+                            },
+                            {
+                                label: 'Create',
+                                isDefault: true,
+                                close: true,
+                                action: function() {
+                                    peformBiodistributionUpload(projectId, uploadId, encodedFileName, dataOverlapHandling);
+                                }
+                            }
+                        ]
+                    })
+                } else {
+                    peformBiodistributionUpload(projectId, uploadId, encodedFileName, dataOverlapHandling)
+                }
             },
             error: function(e) {
                 console.error(`Failed to extract ${file.name}`)
                 XNAT.ui.dialog.close("biod_upload");
-                xmodal.loading.close();
-
                 let errorTextWithBreaks = e.responseText.replaceAll("\n", "<br>");
-
                 XNAT.ui.dialog.open({
-                    title: 'Extraction Failed',
-                    content: `<div class="error">Failed to extract biodistribution data from ${file.name}. <br>${errorTextWithBreaks}</div>`,
+                    title: 'Preprocessing Failed',
+                    content: `<div class="error">Failed to extract subject data from ${file.name}. <br>${errorTextWithBreaks}</div>`,
                     buttons: [
                         {
                             label: 'OK',
@@ -208,6 +275,7 @@
                         }
                     ]
                 })
+                return;
             }
         });
     }

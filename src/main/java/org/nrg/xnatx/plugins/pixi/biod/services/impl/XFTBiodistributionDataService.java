@@ -192,6 +192,42 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         saveItemHelper.authorizedSave(item, user, false, false, false, true, EventUtils.DEFAULT_EVENT(user, "Saved " + item.getXSIType()));
         log.debug("Experiment saved");
     }
+    @Override
+    public List<String> findAllSubjectsToBeCreated(UserI user, String project, String userCachePath)
+            throws DataFormatException {
+        log.debug("User {} is opening {} for preprocessing of biodistribution upload. ",
+                  user.getUsername(), userCachePath);
+
+        List<String> subjectsToCreate = new ArrayList<>();
+        File file = userDataCache.getUserDataCacheFile(user, Paths.get(userCachePath));
+        if (!file.exists()) {
+            throw new DataFormatException("Invalid file path: " + userCachePath);
+        }
+        try (Stream<String> lines = Files.lines(Paths.get(file.toURI()))) {
+            List<List<String>> biodImportRows = lines.map(line -> Arrays.asList(line.split(",")))
+                    .collect(Collectors.toList());
+
+            Map<String, Integer> ingestionHeaderMap = getHeaderMap(biodImportRows.get(0));
+            biodImportRows.remove(0);
+
+            for (List<String> row: biodImportRows) {
+                Optional<String> subjectLabel = getCellValue(row, ingestionHeaderMap, SUBJECT_LABEL_COLUMN);
+                if (subjectLabel.isPresent()) {
+                    Optional<XnatSubjectdataI> subject =
+                            Optional.ofNullable(xnatSubjectDataHelper.getSubjectByIdOrProjectlabelCaseInsensitive(
+                                    project, subjectLabel.get(), user, false));
+                    if (!subject.isPresent()) {
+                        subjectsToCreate.add(subjectLabel.get());
+                    }
+                }
+            }
+
+        } catch (IOException e) {
+            log.error("Error opening csv file for preprocessing: {}", e.getMessage());
+            throw new DataFormatException("Invalid csv file", e);
+        }
+        return subjectsToCreate.stream().distinct().collect(Collectors.toList());
+    }
 
     @Override
     public List<PixiBiodistributiondataI> fromCsv(UserI user, String project, String userCachePath, String dataOverlapHandling) throws Exception {
@@ -220,6 +256,10 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
             List<List<String>> biodImportRows = lines.map(line -> Arrays.asList(line.split(",")))
                     .collect(Collectors.toList());
 
+            //This map is so we don't create several biodistribution elements in the case where several rows are for
+            //the same biod element but for different sample uptake instances. This will hold a connection between
+            //the subject label and the already created biod so we can simply add the sample uptake element to the
+            //existing biod.
             Map<String, PixiBiodistributiondataI> currentlyExistingBiod = new HashMap<>();
 
             Map<String, Integer> ingestionHeaderMap = getHeaderMap(biodImportRows.get(0));
