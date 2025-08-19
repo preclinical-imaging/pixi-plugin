@@ -1,6 +1,6 @@
 ## Make the Project Delete button less "scary"
 <script>
     $(document).ready(function(){
-        $('#button3-button').html('Delete Data').prop('title','Select data to delete from this $displayManager.getSingularDisplayNameForProject()');
+        $('#button3-button').html('Select Data to Delete').prop('title','Select data to delete from this $displayManager.getSingularDisplayNameForProject()');
     });
 </script>
