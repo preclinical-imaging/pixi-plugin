@@ -350,7 +350,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
 
         for (PixiBiodistributiondataI biodistribution: biodExperiments) {
             XnatExperimentdataField ingestionFileProvenanceField = new XnatExperimentdataField();
-            ingestionFileProvenanceField.setName("Upload_Provenance_" + LocalDate.now() + "_" + user.getUsername());
+            ingestionFileProvenanceField.setName("sourcefile");
             ingestionFileProvenanceField.setField(uploadedResourcePath);
             biodistribution.addFields_field(ingestionFileProvenanceField);
         }
