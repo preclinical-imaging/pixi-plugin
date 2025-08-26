@@ -314,6 +314,7 @@ Beyond this, filling in the columns should be as easy as copying in the data you
 
 .. image:: ./images/biod_subjects_to_be_created.png
  :align: center
+ :width: 300px
 
 10. After clicking “Create”, XNAT will begin processing the data from your biodistribution upload sheet. If your sheet is long, and thus will result in the creation of many experiments within XNAT, this process may take a while. At any point, you may navigate away from the upload page and the upload process will continue in the background. However, if you wish to see an outline of the data created by the upload, stay on the upload page until the process is completed.
 
@@ -321,5 +322,6 @@ Beyond this, filling in the columns should be as easy as copying in the data you
 
 .. image:: ./images/biod_upload_successful.png
  :align: center
+ :width: 300px
 
 Congratulations! You have now successfully uploaded your biodistribution data to XNAT.
