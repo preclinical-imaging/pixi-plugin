@@ -298,6 +298,7 @@ Beyond this, filling in the columns should be as easy as copying in the data you
 5. The first step will be to select which project you wish to upload data to. Simply click on the project you intend to upload to which will result in it being highlighted. If you have a large number of projects within your XNAT instance, you may use the filter field in the top right-hand corner to search for the specific project you are interested in.
 
 6. Next, you will need to select the upload file you have just created in the above steps. Click the Choose File button which will bring up a new window from which you can choose the file you have saved from your local computer. Once you have selected a file, the window will close and the name of the file you have selected will be shown next to the Choose File button:
+
 .. image:: ./images/biod_upload_file_complete.png
  :align: center
 
@@ -309,12 +310,14 @@ Beyond this, filling in the columns should be as easy as copying in the data you
 8. Once you have completed and reviewed the above fields, click the “Begin Upload” button. Which will start the process of uploading data to XNAT.
 
 9. Upon beginning the upload process, XNAT will check to see if any of the subjects found within the subject_id column of the uploaded file are not present in the project to which you are uploading. If there are any subject that will need to be created in order to facilitate the upload of the biodistribution data, you will be shown a pop up alerting you of which subjects will be created. If you wish to proceed, click “Create”. If, for any reason, you do not want to create these subjects, you can click “Cancel” to stop the upload process.
+
 .. image:: ./images/biod_subjects_to_be_created.png
  :align: center
 
 10. After clicking “Create”, XNAT will begin processing the data from your biodistribution upload sheet. If your sheet is long, and thus will result in the creation of many experiments within XNAT, this process may take a while. At any point, you may navigate away from the upload page and the upload process will continue in the background. However, if you wish to see an outline of the data created by the upload, stay on the upload page until the process is completed.
 
-11. After completion of the upload process, you will be shown an outline of the data that has been created within your project. An example of this outline can be seen below. The names of the biodistribution elements will be automatically named using the format <Subject Name>_Biod. As a subject cannot hold more than one biodistribution experiment, this nomenclature does not risk causing overlaps. If you wish to navigate to either the project page or any of the created biodistribution pages, you may do so using the links provided in the outline. 
+11. After completion of the upload process, you will be shown an outline of the data that has been created within your project. An example of this outline can be seen below. The names of the biodistribution elements will be automatically named using the format <Subject Name>_Biod. As a subject cannot hold more than one biodistribution experiment, this nomenclature does not risk causing overlaps. If you wish to navigate to either the project page or any of the created biodistribution pages, you may do so using the links provided in the outline.
+
 .. image:: ./images/biod_upload_successful.png
  :align: center
 
