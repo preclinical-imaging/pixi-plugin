@@ -262,7 +262,7 @@ prearchive which can be accessed from the top menu by selecting Upload -> Go to 
 .. _pixi_data_model:
 
 Uploading Biodistribution Data
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------------------
 In order to facilitate the upload of biodistribution data to an XNAT project, a dedicated biodistribution upload workflow has been created within PIXI. This workflow is currently only available to users with owner level permissions on a given project. The methodology for upload is as follows:
 
 1. Navigate to the biodistribution upload page via the top navigation bar by clicking `Upload → Upload Biod Experiments.`
