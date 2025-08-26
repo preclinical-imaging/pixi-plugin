@@ -260,3 +260,55 @@ prearchive which can be accessed from the top menu by selecting Upload -> Go to 
 .. _XNAT platform: https://www.xnat.org
 .. _How To Use XNAT: https://wiki.xnat.org/documentation/how-to-use-xnat
 .. _pixi_data_model:
+
+Uploading Biodistribution Data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In order to facilitate the upload of biodistribution data to an XNAT project, a dedicated biodistribution upload workflow has been created within PIXI. This workflow is currently only available to users with owner level permissions on a given project. The methodology for upload is as follows:
+
+1. Navigate to the biodistribution upload page via the top navigation bar by clicking `Upload → Upload Biod Experiments.`
+
+2. On this page, you will be able to use a CSV file to outline biodistribution information for upload. If you do not already have the template downloaded, you may do so by clicking the “Get CSV Template” link. 
+
+3. Opening the template will show you a list of columns that you may use to upload biodistribution information. We will now take a moment to outline the information found in the template.
+
+The biodistribution uploader – and by extension the template – have been created to include a wide variety of fields – so that different institutions may each capture the data that they find important. Please note you *do not* need to use all, or even a majority, of the columns shown. Within XNAT, only two fields must be included in each line of a biodistribution upload – subject_id and sample_type. These two fields are used in order to differentiate between biodistribution elements. Each subject is limited to one biodistribution element which may itself have several samples from different parts of the animal. In order for XNAT to be able to understand where to upload the data you have put into your sheet, both of these fields are required and must be made up of a unique pair. This concept may be difficult to explain in prose – as such, we have included the following example. A user may have two lines within their uploaded sheet that look like this:
+.. image:: ./images/biod_same_subject_different_sample_type.png
+ :align: center
+In this case, though there are two lines that include the subject id M1, each of them has a different sample type. Thus, the two lines are unique. The following two lines are also acceptable:
+.. image:: ./images/biod_same_sample_type_different_subject.png
+ :align: center
+ Though in this case the two sample types are the same, they are related two different subjects (and thus different biodistribution elements) and thus are also considered unique. The following, however, cannot be uploaded:
+ .. image:: ./images/biod_same_subject_same_sample_type.png
+ :align: center
+In this case, both the subject id and sample type fields are the same. This violates the uniqueness constraint and will thus cause an error during upload.
+As long as each row of your sheet includes data within both of these columns, you will be able to upload data from that sheet. Feel free to delete any columns that are not applicable to your institution while preparing your data for upload within the template. 
+Beyond this, filling in the columns should be as easy as copying in the data you wish to include. For all fields related to dates/times, please use the one of the date formats that has been set by your site administrator. If you are a site administrator, these date formats can be found and/or edit by going to Administration Bar → Site Administration → Appearance. Within the Standard Date Formatting subheader you will see four fields: Date Format, Time Format, Date/time Format, and Date/time/seconds Format. Any of the date formats – that is, any of these except for Time Format – may be used within any of the columns that represent dates/times. If you are not a site administrator and are confused as to what formats have been set for your XNAT site, please contact your site administrator.
+
+4. Once you have completed the data entry for and saved your upload sheet, you can return to the biodistribution upload page. You will see the following elements which each must be completed to upload your data:
+ .. image:: ./images/biod_open_upload_page.png
+ :align: center
+
+5. The first step will be to select which project you wish to upload data to. Simply click on the project you intend to upload to which will result in it being highlighted. If you have a large number of projects within your XNAT instance, you may use the filter field in the top right-hand corner to search for the specific project you are interested in.
+
+6. Next, you will need to select the upload file you have just created in the above steps. Click the Choose File button which will bring up a new window from which you can choose the file you have saved from your local computer. Once you have selected a file, the window will close and the name of the file you have selected will be shown next to the Choose File button:
+ .. image:: ./images/biod_upload_file_complete.png
+ :align: center
+
+7. From here, you should turn to the “Choose how to handle overlapping data” section. This menu has three options:
+- Do Not Allow Upload – This will cause an upload failure in the case that data within the sheet is already present within the project you are uploading to. It is on by default and is recommended for most users as it will ensure that no data is ever lost as a result of overlapping data.
+- Upload And Skip Matching – This option will continue an upload in which there is overlapping data between the upload sheet and the project. However, it will simply skip the rows which contain overlapping data. Recommended for users that plan to have one upload sheet which they will append to as they get new data.
+- Upload And Overwrite Overlapping Data – This will upload any data from within the upload sheet – regardless of if overlapping data already present within the XNAT project will be overwritten in the upload process. Recommended only for users who are certain that they will not accidentally cause data loss in the overwrite process. 
+
+8. Once you have completed and reviewed the above fields, click the “Begin Upload” button. Which will start the process of uploading data to XNAT.
+
+9. Upon beginning the upload process, XNAT will check to see if any of the subjects found within the subject_id column of the uploaded file are not present in the project to which you are uploading. If there are any subject that will need to be created in order to facilitate the upload of the biodistribution data, you will be shown a pop up alerting you of which subjects will be created. If you wish to proceed, click “Create”. If, for any reason, you do not want to create these subjects, you can click “Cancel” to stop the upload process.
+ .. image:: ./images/biod_subjects_to_be_created.png
+ :align: center
+
+10. After clicking “Create”, XNAT will begin processing the data from your biodistribution upload sheet. If your sheet is long, and thus will result in the creation of many experiments within XNAT, this process may take a while. At any point, you may navigate away from the upload page and the upload process will continue in the background. However, if you wish to see an outline of the data created by the upload, stay on the upload page until the process is completed.
+
+11. After completion of the upload process, you will be shown an outline of the data that has been created within your project. An example of this outline can be seen below. The names of the biodistribution elements will be automatically named using the format <Subject Name>_Biod. As a subject cannot hold more than one biodistribution experiment, this nomenclature does not risk causing overlaps. If you wish to navigate to either the project page or any of the created biodistribution pages, you may do so using the links provided in the outline. 
+ .. image:: ./images/biod_upload_successful.png
+ :align: center
+
+Congratulations! You have now successfully uploaded your biodistribution data to XNAT.
