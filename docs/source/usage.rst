@@ -310,7 +310,7 @@ Beyond this, filling in the columns should be as easy as copying in the data you
 
 8. Once you have completed and reviewed the above fields, click the “Begin Upload” button. Which will start the process of uploading data to XNAT.
 
-9. Upon beginning the upload process, XNAT will check to see if any of the subjects found within the subject_id column of the uploaded file are not present in the project to which you are uploading. If there are any subject that will need to be created in order to facilitate the upload of the biodistribution data, you will be shown a pop up alerting you of which subjects will be created. If you wish to proceed, click “Create”. If, for any reason, you do not want to create these subjects, you can click “Cancel” to stop the upload process.
+9. Upon beginning the upload process, XNAT will check to see if any of the subjects found within the subject_id column of the uploaded file are not present in the project to which you are uploading. If there are any subjects that will need to be created in order to facilitate the upload of the biodistribution data, you will be shown a pop up alerting you of which subjects will be created. If you wish to proceed, click “Create”. If, for any reason, you do not want to create these subjects, you can click “Cancel” to stop the upload process.
 
 .. image:: ./images/biod_subjects_to_be_created.png
  :align: center
