@@ -231,7 +231,7 @@
             url: biodPreprocessingApiUrlWithParams,
             success: function (data) {
                 XNAT.ui.dialog.close("biod_upload");
-                if (data != undefined || data.length > 0) {
+                if (data != undefined && data.length > 0) {
                     let subjectList = createSubjectList(data);
                     XNAT.ui.dialog.open({
                         title: 'Subjects To Be Created',
