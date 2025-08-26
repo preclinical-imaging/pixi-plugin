@@ -303,6 +303,7 @@ Beyond this, filling in the columns should be as easy as copying in the data you
  :align: center
 
 7. From here, you should turn to the “Choose how to handle overlapping data” section. This menu has three options:
+
 - Do Not Allow Upload – This will cause an upload failure in the case that data within the sheet is already present within the project you are uploading to. It is on by default and is recommended for most users as it will ensure that no data is ever lost as a result of overlapping data.
 - Upload And Skip Matching – This option will continue an upload in which there is overlapping data between the upload sheet and the project. However, it will simply skip the rows which contain overlapping data. Recommended for users that plan to have one upload sheet which they will append to as they get new data.
 - Upload And Overwrite Overlapping Data – This will upload any data from within the upload sheet – regardless of if overlapping data already present within the XNAT project will be overwritten in the upload process. Recommended only for users who are certain that they will not accidentally cause data loss in the overwrite process. 
