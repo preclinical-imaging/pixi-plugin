@@ -114,7 +114,7 @@
 
         if (!jQuery.isEmptyObject(data)) {
             return `<div class="success">Upload and extraction successful. Data has been successfully added to <a href=${project_link}>${projectId}.</a>
-                <details>
+                <details id="results_details">
                       <summary>The following Biodistribution experiments have been created: </summary>${experimentsList}</details></div>`
         } else {
             return `<div class="success">Upload and extraction successful. However, all input data overlaps with existing data and you have selected the skip matching data option. As such, no new data was uploaded to the system.</div>`
@@ -137,6 +137,14 @@
                 xmodal.loading.close();
                 XNAT.ui.dialog.open({
                     title: 'Upload Successful',
+                    height: '250px',
+                    beforeShow: function(obj){
+                        let details = document.getElementById("results_details");
+                        if (details!=null) {
+                            details.dialog = obj;
+                            handleDetailsChanges(details, '250px', '150px');
+                        }
+                    },
                     content: createSuccessPrintoutMessage(projectId, data),
                     buttons: [
                         {
@@ -167,6 +175,18 @@
                 })
             }
         });
+    }
+
+    function handleDetailsChanges(currentDetailsElement, inputBaseHeight, inputBodyHeight) {
+        currentDetailsElement.addEventListener("toggle", function() {
+            if(currentDetailsElement.open) {
+                currentDetailsElement.dialog.dialog0.style.height='300px';
+                currentDetailsElement.dialog.body0.style.maxHeight='200px';
+            } else {
+                currentDetailsElement.dialog.dialog0.style.height=inputBaseHeight;
+                currentDetailsElement.dialog.body0.style.maxHeight=inputBodyHeight;
+            }
+        })
     }
 
     projectFilerInput.addEventListener('keyup', filterProject);
@@ -235,8 +255,14 @@
                     let subjectList = createSubjectList(data);
                     XNAT.ui.dialog.open({
                         title: 'Subjects To Be Created',
+                        height: '175px',
+                        beforeShow: function(obj){
+                            let details = document.getElementById("subject_details");
+                            details.dialog = obj;
+                            handleDetailsChanges(details, '175px', '100px');
+                        },
                         content: `<div>The following subjects are not present and will be created.
-                                  <details><summary></summary>${subjectList}</details></div>`,
+                                  <details id = "subject_details"><summary></summary>${subjectList}</details></div>`,
                         buttons: [
                             {
                                 label: 'Cancel',
