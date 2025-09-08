@@ -1,5 +1,6 @@
 package org.nrg.xnatx.plugins.pixi.biod.services.impl;
 
+import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import org.nrg.xapi.exceptions.DataFormatException;
 import org.nrg.xdat.model.PixiAnesthesiadataI;
@@ -57,6 +58,14 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
     private final SiteConfigPreferences siteConfigPreferences;
 
     private static final String SUBJECT_LABEL_COLUMN = "subject_id";
+
+    //all required columns mapped to their type (string, date, etc.) to facilitate validation checking
+    Map<String, String> requiredColumnsWithTypes = ImmutableMap.of(SUBJECT_LABEL_COLUMN, "String",
+                                                                   "sample_type", "String",
+                                                                   "%_id_g", "String",
+                                                                   "tracer", "String",
+                                                                   "experiment_datetime", "date",
+                                                                   "injection_datetime", "date");
 
 
     @Autowired
@@ -547,7 +556,9 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         return null;
     }
 
-    protected void validateCsv(List<List<String>> biodImportRows, Map<String, Integer> ingestionHeaderMap) throws DataFormatException {
+    protected void validateCsv(List<List<String>> biodImportRows,
+                               Map<String,
+                               Integer> ingestionHeaderMap) throws DataFormatException {
         log.debug("Validating injection and biodistribution sheets");
 
         if (biodImportRows.isEmpty()){
@@ -556,54 +567,76 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         }
 
         DataFormatException e = new DataFormatException("There is a problem with the input injection sheet: ");
-        boolean isValid = true;
 
-        if (!ingestionHeaderMap.containsKey(SUBJECT_LABEL_COLUMN)) {
-            e.addMissingField(SUBJECT_LABEL_COLUMN);
-            isValid = false;
-        }
-
-        if (!ingestionHeaderMap.containsKey("sample_type")) {
-            e.addMissingField("sample_type");
-            isValid = false;
-        }
+        validatePresentHeaders(ingestionHeaderMap, e);
 
         Map<String, List<String>> animalSampleTypes = new HashMap<>();
-        final String SAMPLE_TYPE_COLUMN = "sample_type";
-        int currentRowNumber = 1;
-        for (List<String> row : biodImportRows) {
+        for (int i = 0; i < biodImportRows.size(); i++) {
+            List<String> row = biodImportRows.get(i);
 
-            Optional<String> animalId = getCellValue(row, ingestionHeaderMap, SUBJECT_LABEL_COLUMN);
-            Optional<String> sampleType = getCellValue(row, ingestionHeaderMap, SAMPLE_TYPE_COLUMN);
+            //row is two past number found here as list is zero indexed, and we removed the header row above
+            validatePresentValuesInRow(ingestionHeaderMap, e, row, i+2);
 
-            if (!animalId.isPresent()) {
-                e.addInvalidField(SUBJECT_LABEL_COLUMN, "Missing " + SUBJECT_LABEL_COLUMN + " in row " + currentRowNumber);
-                isValid = false;
-            } else if (!sampleType.isPresent()) {
-                e.addInvalidField(SAMPLE_TYPE_COLUMN, "Missing " + SAMPLE_TYPE_COLUMN + " in row " + currentRowNumber);
-                isValid = false;
-            }else {
-                if (animalSampleTypes.containsKey(animalId.get())) {
-                    if (animalSampleTypes.get(animalId.get()).contains(sampleType.get())) {
-                        e.addInvalidField("Duplicate pairing", "The pairing of " + SUBJECT_LABEL_COLUMN + " and " +
-                                SAMPLE_TYPE_COLUMN + " in row " + currentRowNumber + " is found together in another row.");
-                        isValid = false;
-                    } else {
-                        animalSampleTypes.get(animalId.get()).add(sampleType.get());
-                    }
-                } else {
-                    animalSampleTypes.put(animalId.get(), new ArrayList<>(Collections.singletonList(sampleType.get())));
-                }
+            Optional<String> animalIdOptional = getCellValue(row, ingestionHeaderMap, SUBJECT_LABEL_COLUMN);
+            String animalId;
+            if (animalIdOptional.isPresent()) {
+                animalId = animalIdOptional.get();
+            } else {
+                continue;
             }
-            currentRowNumber++;
+
+            Optional<String> sampleTypeOptional = getCellValue(row, ingestionHeaderMap, "sample_type");
+            String sampleType;
+            if (sampleTypeOptional.isPresent()) {
+                sampleType = sampleTypeOptional.get();
+            } else {
+                continue;
+            }
+
+            if (animalSampleTypes.containsKey(animalId)) {
+                if (animalSampleTypes.get(animalId).contains(sampleType)) {
+                    //row is two past number found here as list is zero indexed, and we removed the header row above
+                    e.addInvalidField("Duplicate pairing", "The pairing of subject id and sample type "
+                            + "in row " + (i+2) + " is found together in another row");
+                } else {
+                    animalSampleTypes.get(animalId).add(sampleType);
+                }
+            } else {
+                animalSampleTypes.put(animalId, new ArrayList<>(Collections.singletonList(sampleType)));
+            }
         }
 
-        if (!isValid) {
+        if (!e.getMissingFields().isEmpty() || !e.getInvalidFields().isEmpty()) {
             log.error("", e);
             throw e;
         }
 
         log.debug("Input file is valid");
+    }
+
+    private void validatePresentHeaders(Map<String, Integer> ingestionHeaderMap, DataFormatException e) {
+        for (String header : requiredColumnsWithTypes.keySet()) {
+            if (!ingestionHeaderMap.containsKey(header)) {
+                e.addMissingField("Missing column " + header);
+            }
+        }
+    }
+
+    private void validatePresentValuesInRow(Map<String, Integer> ingestionHeaderMap,
+                                            DataFormatException e,
+                                            List<String> row,
+                                            int currentRowNumber) throws DataFormatException {
+        for(String requiredElement : requiredColumnsWithTypes.keySet()) {
+            if (requiredColumnsWithTypes.get(requiredElement).equals("String")) {
+                if (!getCellValue(row, ingestionHeaderMap, requiredElement).isPresent()) {
+                    e.addMissingField("\nMissing " + requiredElement + " in row " + currentRowNumber);
+                }
+            } else {
+                if (!getCellValueAsDate(row, ingestionHeaderMap, requiredElement).isPresent()) {
+                    e.addMissingField("\nMissing " + requiredElement + " in row " + currentRowNumber);
+                }
+            }
+        }
     }
 
     private static class DateOptionalTime {
