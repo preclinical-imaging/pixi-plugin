@@ -267,7 +267,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
 
             //This map is so we don't create several biodistribution elements in the case where several rows are for
             //the same biod element but for different sample uptake instances. This will hold a connection between
-            //the subject label and the already created biod so we can simply add the sample uptake element to the
+            //the subject id and the already created biod so we can simply add the sample uptake element to the
             //existing biod.
             Map<String, PixiBiodistributiondataI> currentlyExistingBiod = new HashMap<>();
 
@@ -629,10 +629,12 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         for(String requiredElement : requiredColumnsWithTypes.keySet()) {
             if (requiredColumnsWithTypes.get(requiredElement).equals("String")) {
                 if (!getCellValue(row, ingestionHeaderMap, requiredElement).isPresent()) {
+                    //line break will make list more clear when shown to the user
                     e.addMissingField("\nMissing " + requiredElement + " in row " + currentRowNumber);
                 }
             } else {
                 if (!getCellValueAsDate(row, ingestionHeaderMap, requiredElement).isPresent()) {
+                    //line break will make list more clear when shown to the user
                     e.addMissingField("\nMissing " + requiredElement + " in row " + currentRowNumber);
                 }
             }
