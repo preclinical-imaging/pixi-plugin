@@ -7,6 +7,7 @@ import org.nrg.xnatx.plugins.pixi.biod.helpers.SaveItemHelper;
 import org.nrg.xnatx.plugins.pixi.biod.helpers.XnatExperimentDataHelper;
 import org.nrg.xnatx.plugins.pixi.biod.helpers.XnatSubjectDataHelper;
 import org.nrg.xnatx.plugins.pixi.biod.services.impl.XFTBiodistributionDataService;
+import org.nrg.xnatx.plugins.pixi.preferences.PIXIPreferences;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -21,14 +22,16 @@ public class XFTBiodistributionDataServiceTestConfig {
                                                                        XnatExperimentDataHelper mockXnatExperimentDataHelper,
                                                                        SaveItemHelper mockSaveItemHelper,
                                                                        DefaultCatalogService defaultCatalogService,
-                                                                       SiteConfigPreferences siteConfigPreferences) {
+                                                                       SiteConfigPreferences siteConfigPreferences,
+                                                                       PIXIPreferences pixiPreferences) {
         return new XFTBiodistributionDataService(
                 mockUserDataCache,
                 mockXnatSubjectDataHelper,
                 mockXnatExperimentDataHelper,
                 mockSaveItemHelper,
                 defaultCatalogService,
-                siteConfigPreferences
+                siteConfigPreferences,
+                pixiPreferences
         );
     }
 

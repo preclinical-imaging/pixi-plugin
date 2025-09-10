@@ -27,6 +27,7 @@ import org.nrg.xnatx.plugins.pixi.biod.helpers.SaveItemHelper;
 import org.nrg.xnatx.plugins.pixi.biod.helpers.XnatExperimentDataHelper;
 import org.nrg.xnatx.plugins.pixi.biod.helpers.XnatSubjectDataHelper;
 import org.nrg.xnatx.plugins.pixi.biod.services.BiodistributionDataService;
+import org.nrg.xnatx.plugins.pixi.preferences.PIXIPreferences;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,29 +57,31 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
     private final SaveItemHelper saveItemHelper;
     private final DefaultCatalogService defaultCatalogService;
     private final SiteConfigPreferences siteConfigPreferences;
+    private final PIXIPreferences pixiPreferences;
 
     private static final String SUBJECT_LABEL_COLUMN = "subject_id";
+    private static final String SAMPLE_TYPE_COLUMN = "sample_type";
 
     //all required columns mapped to their type (string, date, etc.) to facilitate validation checking
     Map<String, String> requiredColumnsWithTypes = ImmutableMap.of(SUBJECT_LABEL_COLUMN, "String",
-                                                                   "sample_type", "String",
+                                                                   SAMPLE_TYPE_COLUMN, "String",
                                                                    "%_id_g", "String",
                                                                    "tracer", "String",
                                                                    "experiment_datetime", "date",
                                                                    "injection_datetime", "date");
 
-
     @Autowired
     public XFTBiodistributionDataService(UserDataCache userDataCache,
                                          XnatSubjectDataHelper xnatSubjectDataHelper,
                                          XnatExperimentDataHelper xnatExperimentDataHelper,
-                                         SaveItemHelper saveItemHelper, DefaultCatalogService defaultCatalogService, SiteConfigPreferences siteConfigPreferences) {
+                                         SaveItemHelper saveItemHelper, DefaultCatalogService defaultCatalogService, SiteConfigPreferences siteConfigPreferences, PIXIPreferences pixiPreferences) {
         this.userDataCache = userDataCache;
         this.xnatSubjectDataHelper = xnatSubjectDataHelper;
         this.xnatExperimentDataHelper = xnatExperimentDataHelper;
         this.saveItemHelper = saveItemHelper;
         this.defaultCatalogService = defaultCatalogService;
         this.siteConfigPreferences = siteConfigPreferences;
+        this.pixiPreferences = pixiPreferences;
     }
 
     @Override
@@ -301,7 +304,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
                 }
 
                 PixiBiodsampleuptakedataI sampleUptakeData = new PixiBiodsampleuptakedata();
-                getCellValue(row, ingestionHeaderMap, "sample_type").ifPresent(sampleUptakeData::setSampleType);
+                getCellValue(row, ingestionHeaderMap, SAMPLE_TYPE_COLUMN).ifPresent(sampleUptakeData::setSampleType);
 
                 Optional<Double> sampleWeight = getCellValueAsDouble(row, ingestionHeaderMap, "sample_weight");
                 Optional<String> sampleWeightUnit = getCellValue(row, ingestionHeaderMap, "sample_weight_unit");
@@ -570,6 +573,8 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
 
         validatePresentHeaders(ingestionHeaderMap, e);
 
+        List<String> allowedSampleTypes = pixiPreferences.getBiodistributionAcceptedSampleTypes();
+
         Map<String, List<String>> animalSampleTypes = new HashMap<>();
         for (int i = 0; i < biodImportRows.size(); i++) {
             List<String> row = biodImportRows.get(i);
@@ -577,32 +582,29 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
             //row is two past number found here as list is zero indexed, and we removed the header row above
             validatePresentValuesInRow(ingestionHeaderMap, e, row, i+2);
 
+            //validating uniqueness constraint for the pair of subject_id and sample_type
             Optional<String> animalIdOptional = getCellValue(row, ingestionHeaderMap, SUBJECT_LABEL_COLUMN);
-            String animalId;
-            if (animalIdOptional.isPresent()) {
-                animalId = animalIdOptional.get();
-            } else {
-                continue;
-            }
-
-            Optional<String> sampleTypeOptional = getCellValue(row, ingestionHeaderMap, "sample_type");
-            String sampleType;
-            if (sampleTypeOptional.isPresent()) {
-                sampleType = sampleTypeOptional.get();
-            } else {
-                continue;
-            }
-
-            if (animalSampleTypes.containsKey(animalId)) {
-                if (animalSampleTypes.get(animalId).contains(sampleType)) {
-                    //row is two past number found here as list is zero indexed, and we removed the header row above
-                    e.addInvalidField("Duplicate pairing", "The pairing of subject id and sample type "
-                            + "in row " + (i+2) + " is found together in another row");
+            Optional<String> sampleTypeOptional = getCellValue(row, ingestionHeaderMap, SAMPLE_TYPE_COLUMN);
+            if (animalIdOptional.isPresent() && sampleTypeOptional.isPresent()) {
+                String animalId = animalIdOptional.get();
+                String sampleType = sampleTypeOptional.get();
+                if (animalSampleTypes.containsKey(animalId)) {
+                    if (animalSampleTypes.get(animalId).contains(sampleType)) {
+                        //row is two past number found here as list is zero indexed, and we removed the header row above
+                        e.addInvalidField("Duplicate pairing", "The pairing of subject id and sample type "
+                                + "in row " + (i+2) + " is found together in another row");
+                    } else {
+                        animalSampleTypes.get(animalId).add(sampleType);
+                    }
                 } else {
-                    animalSampleTypes.get(animalId).add(sampleType);
+                    animalSampleTypes.put(animalId, new ArrayList<>(Collections.singletonList(sampleType)));
                 }
-            } else {
-                animalSampleTypes.put(animalId, new ArrayList<>(Collections.singletonList(sampleType)));
+
+                if (!allowedSampleTypes.contains(sampleType)) {
+                    //row is two past number found here as list is zero indexed, and we removed the header row above
+                    e.addInvalidField("Sample Type Not Allowed Row " + (i+2), "The sample type in row " +  (i+2) +
+                            " does not contain an accepted sample type for this project.");
+                }
             }
         }
 

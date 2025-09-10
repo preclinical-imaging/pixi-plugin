@@ -38,6 +38,7 @@ public class PIXIPreferences extends AbstractPreferenceBean {
     public static final String UI_SHOW_INVEON_PCIF_OPTION_PREFERENCE_ID =  "uiShowInveonPcifOption";
     public static final String UI_HIDE_SITE_WIDE_COUNTS_PREFERENCE_ID =  "uiHideSiteWideCounts";
     public static final String DEFAULT_BLI_IMPORTER_MAPPING = "defaultBliImporterMapping";
+    public static final String BIODISTRIBUTION_ACCEPTED_SAMPLE_TYPES = "biodistributionAcceptedSampleTypes";
 
     private static final List<String> demographicDataImpls = new ArrayList<>();
     static {
@@ -231,6 +232,39 @@ public class PIXIPreferences extends AbstractPreferenceBean {
             set(defaultBliImporterMapping, DEFAULT_BLI_IMPORTER_MAPPING);
         } catch (InvalidPreferenceName e) {
             log.error("Invalid preference name " + DEFAULT_BLI_IMPORTER_MAPPING + ": something is very wrong here.", e);
+        }
+    }
+
+    @NrgPreference(defaultValue = "[]")
+    public List<String> getBiodistributionAcceptedSampleTypes() { return getListValue(BIODISTRIBUTION_ACCEPTED_SAMPLE_TYPES);}
+
+    public void setBiodistributionAcceptedSampleTypes(final List<String> biodistributionAcceptedSampleTypes) {
+        try {
+            setListValue(BIODISTRIBUTION_ACCEPTED_SAMPLE_TYPES, biodistributionAcceptedSampleTypes);
+        } catch (InvalidPreferenceName e) {
+            log.error("Invalid preference name " + BIODISTRIBUTION_ACCEPTED_SAMPLE_TYPES + ": something is very wrong here.", e);
+        }
+    }
+
+
+    public List<String> getBiodistributionAcceptedSampleTypes(final String projectId) throws NotFoundException {
+        if (!Permissions.verifyProjectExists(template, projectId)) {
+            throw new NotFoundException(XnatProjectdata.SCHEMA_ELEMENT_NAME, projectId);
+        }
+
+        List<String> preference = getListValue(Scope.Project, projectId, PIXIPreferences.BIODISTRIBUTION_ACCEPTED_SAMPLE_TYPES);
+        return preference != null ? preference : getBiodistributionAcceptedSampleTypes();
+    }
+
+    public void setBiodistributionAcceptedSampleTypes(final String projectId, final List<String> biodistributionAcceptedSampleTypes) throws NotFoundException, DataFormatException {
+        if (!Permissions.verifyProjectExists(template, projectId)) {
+            throw new NotFoundException(XnatProjectdata.SCHEMA_ELEMENT_NAME, projectId);
+        }
+
+        try {
+            setListValue(Scope.Project, projectId, BIODISTRIBUTION_ACCEPTED_SAMPLE_TYPES, biodistributionAcceptedSampleTypes);
+        } catch (InvalidPreferenceName e) {
+            log.error("Invalid preference name " + BIODISTRIBUTION_ACCEPTED_SAMPLE_TYPES + ": something is very wrong here.", e);
         }
     }
 
