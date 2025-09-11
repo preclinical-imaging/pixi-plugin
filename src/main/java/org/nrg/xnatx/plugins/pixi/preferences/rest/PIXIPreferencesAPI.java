@@ -101,6 +101,11 @@ public class PIXIPreferencesAPI extends AbstractXapiRestController {
                         pixiPreferences.setMapValue(name, (Map) value);
                     } else if (value.getClass().isArray()) {
                         pixiPreferences.setArrayValue(name, (Object[]) value);
+                    } else if (name.equals(PIXIPreferences.BIODISTRIBUTION_ACCEPTED_SAMPLE_TYPES)) {
+                        //only way I can see to make this preference work without breaking the other ones given that
+                        //it is encoded as a comma separated list
+                        pixiPreferences.setBiodistributionAcceptedSampleTypes(Stream.of(String.valueOf(value).split(
+                                ",", -1)).collect(Collectors.toList()));
                     } else {
                         pixiPreferences.set(value.toString(), name);
                     }
