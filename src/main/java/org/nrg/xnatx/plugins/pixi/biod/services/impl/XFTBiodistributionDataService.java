@@ -3,6 +3,7 @@ package org.nrg.xnatx.plugins.pixi.biod.services.impl;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import org.nrg.xapi.exceptions.DataFormatException;
+import org.nrg.xapi.exceptions.NotFoundException;
 import org.nrg.xdat.model.PixiAnesthesiadataI;
 import org.nrg.xdat.model.PixiBiodinjectiondataI;
 import org.nrg.xdat.model.PixiBiodistributiondataI;
@@ -277,7 +278,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
             Map<String, Integer> ingestionHeaderMap = getHeaderMap(biodImportRows.get(0));
             biodImportRows.remove(0);
 
-            validateCsv(biodImportRows, ingestionHeaderMap);
+            validateCsv(biodImportRows, ingestionHeaderMap, project);
 
             int currentRow = 1;
 
@@ -561,7 +562,8 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
 
     protected void validateCsv(List<List<String>> biodImportRows,
                                Map<String,
-                               Integer> ingestionHeaderMap) throws DataFormatException {
+                               Integer> ingestionHeaderMap,
+                               String projectId) throws DataFormatException, NotFoundException {
         log.debug("Validating injection and biodistribution sheets");
 
         if (biodImportRows.isEmpty()){
@@ -573,7 +575,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
 
         validatePresentHeaders(ingestionHeaderMap, e);
 
-        List<String> allowedSampleTypes = pixiPreferences.getBiodistributionAcceptedSampleTypes();
+        List<String> allowedSampleTypes = pixiPreferences.getBiodistributionAcceptedSampleTypes(projectId);
 
         Map<String, List<String>> animalSampleTypes = new HashMap<>();
         for (int i = 0; i < biodImportRows.size(); i++) {
