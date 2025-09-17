@@ -6,11 +6,11 @@
         <p> Import Biodistribution data for small animal imaging studies via a CSV file.
         Please see our documentation for usage of the CSV template, including required fields and formatting.</p>
 
-        <p>(<a href="$content.getURI('biod/BiodistributionTemplateSimplified.csv')" download>Get Basic CSV Template</a>)
-        (<a href="$content.getURI('biod/BiodistributionTemplate.csv')" download>Get Advanced CSV Template</a>)
-        (<a href="https://pixi-documentation.readthedocs.io/en/stable/usage.html#uploading-biodistribution-data">BioD Import Documentation</a>)</p>
+        <p><a class="btn btn-sm" href="$content.getURI('biod/BiodistributionTemplateSimplified.csv')" download>Get Basic CSV Template</a>
+        <a class="btn btn-sm" href="$content.getURI('biod/BiodistributionTemplate.csv')" download>Get Advanced CSV Template</a>
+        <a class="btn btn-sm" href="https://pixi-documentation.readthedocs.io/en/stable/usage.html#uploading-biodistribution-data">BioD Import Documentation</a></p>
 
-        <p>Currently, biodistribution upload is only available to project owners.
+        <p>Currently, biodistribution upload is only available to Project Owners.
         Only projects for which you have Owner level access have been listed below.</p>
 
     </div>
