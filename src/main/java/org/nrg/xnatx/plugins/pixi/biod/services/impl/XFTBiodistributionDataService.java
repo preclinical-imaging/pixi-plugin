@@ -69,7 +69,8 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
                                                                    "%_id_g", "String",
                                                                    "tracer", "String",
                                                                    "experiment_datetime", "date",
-                                                                   "injection_datetime", "date");
+                                                                   "injection_datetime", "date",
+                                                                   "subject_group", "String");
 
     @Autowired
     public XFTBiodistributionDataService(UserDataCache userDataCache,
