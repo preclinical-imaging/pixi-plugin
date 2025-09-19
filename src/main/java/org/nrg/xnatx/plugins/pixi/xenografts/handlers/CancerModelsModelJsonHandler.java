@@ -19,7 +19,7 @@ public class CancerModelsModelJsonHandler implements ModelJsonHandler {
         }
         log.debug("Fetching model details from: " + X.getSourceURL());
         JsonNode processingNode = null;
-        Xenograft Y = X;
+        Xenograft updatedXenograft = X;
         try {
             String jsonModel = RemoteReader.ReadFromUrl(X.getSourceURL());
             ObjectMapper mapper = new ObjectMapper();
@@ -30,43 +30,43 @@ public class CancerModelsModelJsonHandler implements ModelJsonHandler {
             }
             if (processingNode != null) {
                 final String modelId = processingNode.get("model_id").textValue();
-                if (modelId != null && modelId.equals(Y.getSourceId())) {
+                if (modelId != null && modelId.equals(updatedXenograft.getSourceId())) {
                     if (processingNode.has("data_source")) {
-                        Y.setSource(processingNode.get("data_source").textValue());
+                        updatedXenograft.setSource(processingNode.get("data_source").textValue());
                     }
                     if (processingNode.has("tumor_type")) {
-                        Y.setTumorType(processingNode.get("tumor_type").textValue());
+                        updatedXenograft.setTumorType(processingNode.get("tumor_type").textValue());
                     }
                     if (processingNode.has("primary_site")) {
-                        Y.setPrimarySite(processingNode.get("primary_site").textValue());
+                        updatedXenograft.setPrimarySite(processingNode.get("primary_site").textValue());
                     }
                     if (processingNode.has("collection_site")) {
-                        Y.setCollectionSite(processingNode.get("collection_site").textValue());
+                        updatedXenograft.setCollectionSite(processingNode.get("collection_site").textValue());
                     }
                     if (processingNode.has("histology")) {
-                        Y.setTissueHistology(processingNode.get("histology").textValue());
+                        updatedXenograft.setTissueHistology(processingNode.get("histology").textValue());
                     }
                     if (processingNode.has("cancer_grade")) {
-                        Y.setTumorGradeClassification(processingNode.get("cancer_grade").textValue());
+                        updatedXenograft.setTumorGradeClassification(processingNode.get("cancer_grade").textValue());
                     }
                     if (processingNode.has("cancer_stage")) {
-                        Y.setDiseaseStageClassification(processingNode.get("cancer_stage").textValue());
+                        updatedXenograft.setDiseaseStageClassification(processingNode.get("cancer_stage").textValue());
                     }
-                    if (Y instanceof PDX) {
-                        PDX pdx = new PDX(Y.getSourceId(), Y.getSource(), Y.getSourceURL(), Y.getCreatedBy(), ((PDX) Y).getStorage());
+                    if (updatedXenograft instanceof PDX) {
+                        PDX pdx = new PDX(updatedXenograft.getSourceId(), updatedXenograft.getSource(), updatedXenograft.getSourceURL(), updatedXenograft.getCreatedBy(), ((PDX) updatedXenograft).getStorage());
                         if (processingNode.has("patient_age")) {
                             pdx.setAge(processingNode.get("patient_age").textValue());
                         }
                         if (processingNode.has("patient_sex")) {
                             pdx.setGender(processingNode.get("patient_sex").textValue());
                         }
-                        Y = pdx;
+                        updatedXenograft = pdx;
                     }
                 }
             }
         } catch (Exception e) {
             log.error("Could not read from remote host {}", X.getSourceURL());
         }
-        return Y;
+        return updatedXenograft;
     }
 }
