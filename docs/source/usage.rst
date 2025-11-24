@@ -302,6 +302,7 @@ In addition to this uniqueness requirement, in order to try and ensure quality d
 
 .. image:: ./images/invalid_sample_type.png
  :align: center
+ :width: 600px
 
 In this case, the sample type in row two is not found in the list of acceptable sample type for the project the user is attempting to upload to. In order to successfully upload the data found within the csv, the uploader must change the value for sample type in row two. If you are unsure of the list of acceptable sample types for a given project, contact the project owner or a site administrator for a complete list. If you are a project owner or site administrator and you are looking to change the list of accepted sample types for a project or site wide, please see the section below on "Changing Valid Input Sample Types."
 
@@ -356,6 +357,7 @@ If you wish to change the accepted sample type values for your XNAT, navigate to
 
 .. image:: ./images/biodistribution_sample_type_sitewide_setting.png
  :align: center
+ :width: 800px
 
 As you can see in the image, you will be shown a comma separated list of values which are allowed within the sample type column of a biodistribution sheet. In order to change the list, simply add or remove values from the list and then click "Save" to update the list. The list is comma separated and expects no spaces between values. In order to ensure that the configuration works correctly, ensure that the list follows this format when you make any changes.
 
