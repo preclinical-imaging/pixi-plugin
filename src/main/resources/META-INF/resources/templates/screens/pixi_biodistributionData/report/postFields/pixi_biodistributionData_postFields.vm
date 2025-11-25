@@ -1,8 +1,21 @@
+#set ($tracer = $item.getStringProperty("pixi:biodistributionData/injection_data/tracer"))
+#set ($isotope = $!item.getStringProperty("pixi:biodistributionData/injection_data/"))
+#set ($diluent = $!item.getStringProperty("pixi:biodistributionData/injection_data/diluent"))
+#set ($injectedDose = $!item.getProperty("pixi:biodistributionData/injection_data/injected_dose"))
+#set ($injectedVolume = $!item.getProperty("pixi:biodistributionData/injection_data/injection_volume"))
+#set ($injectionTotalCounts = $!item.getProperty("pixi:biodistributionData/injection_data/injection_total_counts"))
+#set ($injectionRoute = $!item.getStringProperty("pixi:biodistributionData/injection_data/injection_route"))
+#set ($injectionSite = $!item.getStringProperty("pixi:biodistributionData/injection_data/injection_site"))
+#set ($injectionDate = $!item.getProperty("pixi:biodistributionData/injection_data/injection_date"))
+#set ($injectionTime = $!item.getProperty("pixi:biodistributionData/injection_data/injection_time"))
+#set($anyInjectionDataPresent = ($tracer || $isotope || $diluent || $injectedDose || $injectedVolume || $injectionTotalCounts || $injectionRoute || $injectionSite || $injectionDate || $injectionTime))
+
 <TABLE width="100%">
     <TR>
         <TD>
             <!-- BEGIN pixi:biodistributionData -->
             <TABLE>
+                #if($anyInjectionDataPresent)
                 <TR>
                     <TD align="left" valign="top">
                         <!-- BEGIN pixi:biodistributionData/injection_data -->
@@ -27,23 +40,28 @@
                                         </TR>
 
                                         <TR>
-                                            <TD>$!item.getStringProperty("pixi:biodistributionData/injection_data/tracer")</TD>
-                                            <TD>$!item.getStringProperty("pixi:biodistributionData/injection_data/isotope")</TD>
-                                            <TD>$!item.getStringProperty("pixi:biodistributionData/injection_data/diluent")</TD>
-                                            <TD>$!item.getProperty("pixi:biodistributionData/injection_data/injected_dose") $!item.getStringProperty("pixi:biodistributionData/injection_data/injected_dose_unit")</TD>
-                                            <TD>$!item.getProperty("pixi:biodistributionData/injection_data/injection_volume") $!item.getStringProperty("pixi:biodistributionData/injection_data/injection_volume_unit")</TD>
-                                            <TD>$!item.getProperty("pixi:biodistributionData/injection_data/injection_total_counts")</TD>
-                                            <TD>$!item.getStringProperty("pixi:biodistributionData/injection_data/injection_route")</TD>
-                                            <TD>$!item.getStringProperty("pixi:biodistributionData/injection_data/injection_site")</TD>
-                                            <TD>$!item.getProperty("pixi:biodistributionData/injection_data/injection_date") $!item.getProperty("pixi:biodistributionData/injection_data/injection_time")</TD>
+                                            <TD>$!tracer</TD>
+                                            <TD>$!isotope</TD>
+                                            <TD>$!diluent</TD>
+                                            #if($injectedDose)
+                                            <TD>$!injectedDose $!item.getStringProperty("pixi:biodistributionData/injection_data/injected_dose_unit")</TD>
+                                            #end
+                                            #if($injectedVolume)
+                                            <TD>$!injectedVolume $!item.getStringProperty("pixi:biodistributionData/injection_data/injection_volume_unit")</TD>
+                                            #end
+                                            <TD>$!injectionTotalCounts</TD>
+                                            <TD>$!injectionRoute</TD>
+                                            <TD>$!injectionSite</TD>
+                                            <TD>$!injectionDate $!injectionTime</TD>
                                         </TR>
                                     </TABLE>
                                 </TD>
                             </TR>
                         </TABLE>
                         <!-- END pixi:biodistributionData/injection_data -->
-            </TD>
-        </TR>
+                    </TD>
+                </TR>
+                #end
                 <TR>
                     <TD align="left" valign="top">
                     <!-- BEGIN pixi:biodistributionData/sample_uptake_data -->

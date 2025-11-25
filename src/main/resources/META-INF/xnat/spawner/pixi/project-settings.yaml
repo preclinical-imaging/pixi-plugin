@@ -99,6 +99,37 @@ imageAcquisitionContextHeatingConditionsProjPanel:
       content: >
         XNAT.plugin.pixi.imageAcqCtx.heatingConditions.manager('image-acquisition-context-heating-conditions-proj-manager');
 
+biodistributionUploadForm:
+  kind: panel.form
+  id: biodistributionUploadForm
+  name: biodistributionUploadForm
+  label: Biodistribution Upload
+  method: POST
+  contentType: json
+  contents:
+    ${biodistributionAcceptedSampleTypes}
+    ${biodistributionPreferenceScript}
+    ${initBiodistributionDataData}
+
+biodistributionPreferenceScript:
+  tag: script|src="~/scripts/xnat/plugin/pixi/pixi-biodistributionDataPreference.js"
+
+initBiodistributionDataData:
+  tag: script
+  content: >
+    XNAT.plugin.pixi.biodistributionDataPreferenceManager.init();
+
+
+biodistributionAcceptedSampleTypes:
+  kind: panel.textarea
+  name: biodistributionAcceptedSampleTypes
+  label: "Accepted Sample Types"
+  code: text
+  validation: max-length:1000
+  description: >
+    This is the project specific list of accepted sample types when uploading biodistribution data. List entries should be separated by a comma (no spaces). If blank, this will default to the site wide properties set by the site administrator.
+
+
 #######################################################
 ####  Root Project Settings Spawner Config Object  ####
 #######################################################
@@ -130,3 +161,11 @@ projectSettings:
           ${imageAcquisitionContextFastingProjPanel}
           ${imageAcquisitionContextAnesthesiaProjPanel}
           ${imageAcquisitionContextHeatingConditionsProjPanel}
+    biodistributionSettingsTab:
+      kind: tab
+      name: biodistributionSettingsTab
+      label: Biodistribution Upload
+      group: pixiProjectTabGroup
+      active: true
+      contents:
+        ${biodistributionUploadForm}

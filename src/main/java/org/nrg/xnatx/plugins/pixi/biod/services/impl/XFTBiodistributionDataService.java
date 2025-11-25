@@ -1,7 +1,9 @@
 package org.nrg.xnatx.plugins.pixi.biod.services.impl;
 
+import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import org.nrg.xapi.exceptions.DataFormatException;
+import org.nrg.xapi.exceptions.NotFoundException;
 import org.nrg.xdat.model.PixiAnesthesiadataI;
 import org.nrg.xdat.model.PixiBiodinjectiondataI;
 import org.nrg.xdat.model.PixiBiodistributiondataI;
@@ -26,6 +28,7 @@ import org.nrg.xnatx.plugins.pixi.biod.helpers.SaveItemHelper;
 import org.nrg.xnatx.plugins.pixi.biod.helpers.XnatExperimentDataHelper;
 import org.nrg.xnatx.plugins.pixi.biod.helpers.XnatSubjectDataHelper;
 import org.nrg.xnatx.plugins.pixi.biod.services.BiodistributionDataService;
+import org.nrg.xnatx.plugins.pixi.preferences.PIXIPreferences;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,21 +58,32 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
     private final SaveItemHelper saveItemHelper;
     private final DefaultCatalogService defaultCatalogService;
     private final SiteConfigPreferences siteConfigPreferences;
+    private final PIXIPreferences pixiPreferences;
 
     private static final String SUBJECT_LABEL_COLUMN = "subject_id";
+    private static final String SAMPLE_TYPE_COLUMN = "sample_type";
 
+    //all required columns mapped to their type (string, date, etc.) to facilitate validation checking
+    Map<String, String> requiredColumnsWithTypes = ImmutableMap.of(SUBJECT_LABEL_COLUMN, "String",
+                                                                   SAMPLE_TYPE_COLUMN, "String",
+                                                                   "%_id_g", "String",
+                                                                   "tracer", "String",
+                                                                   "experiment_datetime", "date",
+                                                                   "injection_datetime", "date",
+                                                                   "subject_group", "String");
 
     @Autowired
     public XFTBiodistributionDataService(UserDataCache userDataCache,
                                          XnatSubjectDataHelper xnatSubjectDataHelper,
                                          XnatExperimentDataHelper xnatExperimentDataHelper,
-                                         SaveItemHelper saveItemHelper, DefaultCatalogService defaultCatalogService, SiteConfigPreferences siteConfigPreferences) {
+                                         SaveItemHelper saveItemHelper, DefaultCatalogService defaultCatalogService, SiteConfigPreferences siteConfigPreferences, PIXIPreferences pixiPreferences) {
         this.userDataCache = userDataCache;
         this.xnatSubjectDataHelper = xnatSubjectDataHelper;
         this.xnatExperimentDataHelper = xnatExperimentDataHelper;
         this.saveItemHelper = saveItemHelper;
         this.defaultCatalogService = defaultCatalogService;
         this.siteConfigPreferences = siteConfigPreferences;
+        this.pixiPreferences = pixiPreferences;
     }
 
     @Override
@@ -192,6 +206,42 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         saveItemHelper.authorizedSave(item, user, false, false, false, true, EventUtils.DEFAULT_EVENT(user, "Saved " + item.getXSIType()));
         log.debug("Experiment saved");
     }
+    @Override
+    public List<String> findAllSubjectsToBeCreated(UserI user, String project, String userCachePath)
+            throws DataFormatException {
+        log.debug("User {} is opening {} for preprocessing of biodistribution upload. ",
+                  user.getUsername(), userCachePath);
+
+        List<String> subjectsToCreate = new ArrayList<>();
+        File file = userDataCache.getUserDataCacheFile(user, Paths.get(userCachePath));
+        if (!file.exists()) {
+            throw new DataFormatException("Invalid file path: " + userCachePath);
+        }
+        try (Stream<String> lines = Files.lines(Paths.get(file.toURI()))) {
+            List<List<String>> biodImportRows = lines.map(line -> Arrays.asList(line.split(",")))
+                    .collect(Collectors.toList());
+
+            Map<String, Integer> ingestionHeaderMap = getHeaderMap(biodImportRows.get(0));
+            biodImportRows.remove(0);
+
+            for (List<String> row: biodImportRows) {
+                Optional<String> subjectLabel = getCellValue(row, ingestionHeaderMap, SUBJECT_LABEL_COLUMN);
+                if (subjectLabel.isPresent()) {
+                    Optional<XnatSubjectdataI> subject =
+                            Optional.ofNullable(xnatSubjectDataHelper.getSubjectByIdOrProjectlabelCaseInsensitive(
+                                    project, subjectLabel.get(), user, false));
+                    if (!subject.isPresent()) {
+                        subjectsToCreate.add(subjectLabel.get());
+                    }
+                }
+            }
+
+        } catch (IOException e) {
+            log.error("Error opening csv file for preprocessing: {}", e.getMessage());
+            throw new DataFormatException("Invalid csv file", e);
+        }
+        return subjectsToCreate.stream().distinct().collect(Collectors.toList());
+    }
 
     @Override
     public List<PixiBiodistributiondataI> fromCsv(UserI user, String project, String userCachePath, String dataOverlapHandling) throws Exception {
@@ -220,12 +270,16 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
             List<List<String>> biodImportRows = lines.map(line -> Arrays.asList(line.split(",")))
                     .collect(Collectors.toList());
 
+            //This map is so we don't create several biodistribution elements in the case where several rows are for
+            //the same biod element but for different sample uptake instances. This will hold a connection between
+            //the subject id and the already created biod so we can simply add the sample uptake element to the
+            //existing biod.
             Map<String, PixiBiodistributiondataI> currentlyExistingBiod = new HashMap<>();
 
             Map<String, Integer> ingestionHeaderMap = getHeaderMap(biodImportRows.get(0));
             biodImportRows.remove(0);
 
-            validateCsv(biodImportRows, ingestionHeaderMap);
+            validateCsv(biodImportRows, ingestionHeaderMap, project);
 
             int currentRow = 1;
 
@@ -252,7 +306,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
                 }
 
                 PixiBiodsampleuptakedataI sampleUptakeData = new PixiBiodsampleuptakedata();
-                getCellValue(row, ingestionHeaderMap, "sample_type").ifPresent(sampleUptakeData::setSampleType);
+                getCellValue(row, ingestionHeaderMap, SAMPLE_TYPE_COLUMN).ifPresent(sampleUptakeData::setSampleType);
 
                 Optional<Double> sampleWeight = getCellValueAsDouble(row, ingestionHeaderMap, "sample_weight");
                 Optional<String> sampleWeightUnit = getCellValue(row, ingestionHeaderMap, "sample_weight_unit");
@@ -310,7 +364,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
 
         for (PixiBiodistributiondataI biodistribution: biodExperiments) {
             XnatExperimentdataField ingestionFileProvenanceField = new XnatExperimentdataField();
-            ingestionFileProvenanceField.setName("Upload_Provenance_" + LocalDate.now() + "_" + user.getUsername());
+            ingestionFileProvenanceField.setName("sourcefile");
             ingestionFileProvenanceField.setField(uploadedResourcePath);
             biodistribution.addFields_field(ingestionFileProvenanceField);
         }
@@ -421,7 +475,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
 
     private Optional<String> getCellValue(List<String> row, Map<String, Integer> headerMap, String headerName) {
         Integer cellIndex = headerMap.get(headerName);
-        if (cellIndex == null) {
+        if (cellIndex == null || row.size() <= cellIndex) {
             return Optional.empty();
         }
         String cell = row.get(cellIndex).trim();
@@ -430,7 +484,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
 
     private Optional<Double> getCellValueAsDouble(List<String> row, Map<String, Integer> headerMap, String headerName) {
         Integer cellIndex = headerMap.get(headerName);
-        if (cellIndex == null) {
+        if (cellIndex == null || row.size() <= cellIndex) {
             return Optional.empty();
         }
         String cell = row.get(cellIndex).trim();
@@ -439,7 +493,7 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
 
     private Optional<DateOptionalTime> getCellValueAsDate(List<String> row, Map<String, Integer> headerMap, String headerName) throws DataFormatException {
         Integer cellIndex = headerMap.get(headerName);
-        if (cellIndex == null) {
+        if (cellIndex == null || row.size() <= cellIndex) {
             return Optional.empty();
         }
         String cell = row.get(cellIndex).trim();
@@ -507,7 +561,10 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         return null;
     }
 
-    protected void validateCsv(List<List<String>> biodImportRows, Map<String, Integer> ingestionHeaderMap) throws DataFormatException {
+    protected void validateCsv(List<List<String>> biodImportRows,
+                               Map<String,
+                               Integer> ingestionHeaderMap,
+                               String projectId) throws DataFormatException, NotFoundException {
         log.debug("Validating injection and biodistribution sheets");
 
         if (biodImportRows.isEmpty()){
@@ -516,54 +573,77 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         }
 
         DataFormatException e = new DataFormatException("There is a problem with the input injection sheet: ");
-        boolean isValid = true;
 
-        if (!ingestionHeaderMap.containsKey(SUBJECT_LABEL_COLUMN)) {
-            e.addMissingField(SUBJECT_LABEL_COLUMN);
-            isValid = false;
-        }
+        validatePresentHeaders(ingestionHeaderMap, e);
 
-        if (!ingestionHeaderMap.containsKey("sample_type")) {
-            e.addMissingField("sample_type");
-            isValid = false;
-        }
+        List<String> allowedSampleTypes = pixiPreferences.getBiodistributionAcceptedSampleTypes(projectId);
 
         Map<String, List<String>> animalSampleTypes = new HashMap<>();
-        final String SAMPLE_TYPE_COLUMN = "sample_type";
-        int currentRowNumber = 1;
-        for (List<String> row : biodImportRows) {
+        for (int i = 0; i < biodImportRows.size(); i++) {
+            List<String> row = biodImportRows.get(i);
 
-            Optional<String> animalId = getCellValue(row, ingestionHeaderMap, SUBJECT_LABEL_COLUMN);
-            Optional<String> sampleType = getCellValue(row, ingestionHeaderMap, SAMPLE_TYPE_COLUMN);
+            //row is two past number found here as list is zero indexed, and we removed the header row above
+            validatePresentValuesInRow(ingestionHeaderMap, e, row, i+2);
 
-            if (!animalId.isPresent()) {
-                e.addInvalidField(SUBJECT_LABEL_COLUMN, "Missing " + SUBJECT_LABEL_COLUMN + " in row " + currentRowNumber);
-                isValid = false;
-            } else if (!sampleType.isPresent()) {
-                e.addInvalidField(SAMPLE_TYPE_COLUMN, "Missing " + SAMPLE_TYPE_COLUMN + " in row " + currentRowNumber);
-                isValid = false;
-            }else {
-                if (animalSampleTypes.containsKey(animalId.get())) {
-                    if (animalSampleTypes.get(animalId.get()).contains(sampleType.get())) {
-                        e.addInvalidField("Duplicate pairing", "The pairing of " + SUBJECT_LABEL_COLUMN + " and " +
-                                SAMPLE_TYPE_COLUMN + " in row " + currentRowNumber + " is found together in another row.");
-                        isValid = false;
+            //validating uniqueness constraint for the pair of subject_id and sample_type
+            Optional<String> animalIdOptional = getCellValue(row, ingestionHeaderMap, SUBJECT_LABEL_COLUMN);
+            Optional<String> sampleTypeOptional = getCellValue(row, ingestionHeaderMap, SAMPLE_TYPE_COLUMN);
+            if (animalIdOptional.isPresent() && sampleTypeOptional.isPresent()) {
+                String animalId = animalIdOptional.get();
+                String sampleType = sampleTypeOptional.get();
+                if (animalSampleTypes.containsKey(animalId)) {
+                    if (animalSampleTypes.get(animalId).contains(sampleType)) {
+                        //row is two past number found here as list is zero indexed, and we removed the header row above
+                        e.addInvalidField("Duplicate pairing", "The pairing of subject id and sample type "
+                                + "in row " + (i+2) + " is found together in another row");
                     } else {
-                        animalSampleTypes.get(animalId.get()).add(sampleType.get());
+                        animalSampleTypes.get(animalId).add(sampleType);
                     }
                 } else {
-                    animalSampleTypes.put(animalId.get(), new ArrayList<>(Collections.singletonList(sampleType.get())));
+                    animalSampleTypes.put(animalId, new ArrayList<>(Collections.singletonList(sampleType)));
+                }
+
+                if (!allowedSampleTypes.contains(sampleType)) {
+                    //row is two past number found here as list is zero indexed, and we removed the header row above
+                    e.addInvalidField("Sample Type Not Allowed Row " + (i+2), "The sample type in row " +  (i+2) +
+                            " does not contain an accepted sample type for this project.");
                 }
             }
-            currentRowNumber++;
         }
 
-        if (!isValid) {
+        if (!e.getMissingFields().isEmpty() || !e.getInvalidFields().isEmpty()) {
             log.error("", e);
             throw e;
         }
 
         log.debug("Input file is valid");
+    }
+
+    private void validatePresentHeaders(Map<String, Integer> ingestionHeaderMap, DataFormatException e) {
+        for (String header : requiredColumnsWithTypes.keySet()) {
+            if (!ingestionHeaderMap.containsKey(header)) {
+                e.addMissingField("Missing column " + header);
+            }
+        }
+    }
+
+    private void validatePresentValuesInRow(Map<String, Integer> ingestionHeaderMap,
+                                            DataFormatException e,
+                                            List<String> row,
+                                            int currentRowNumber) throws DataFormatException {
+        for(String requiredElement : requiredColumnsWithTypes.keySet()) {
+            if (requiredColumnsWithTypes.get(requiredElement).equals("String")) {
+                if (!getCellValue(row, ingestionHeaderMap, requiredElement).isPresent()) {
+                    //line break will make list more clear when shown to the user
+                    e.addMissingField("\nMissing " + requiredElement + " in row " + currentRowNumber);
+                }
+            } else {
+                if (!getCellValueAsDate(row, ingestionHeaderMap, requiredElement).isPresent()) {
+                    //line break will make list more clear when shown to the user
+                    e.addMissingField("\nMissing " + requiredElement + " in row " + currentRowNumber);
+                }
+            }
+        }
     }
 
     private static class DateOptionalTime {

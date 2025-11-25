@@ -47,11 +47,27 @@ public class PixiBiodAPI extends AbstractXapiRestController {
         this.biodistributionDataService = biodistributionDataService;
     }
 
+    @ApiOperation(value = "Checks input Biodistribution csv for any subjects that need to be created.")
+    @ApiResponses({@ApiResponse(code = 200, message = "Subjects for creation obtained."),
+            @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
+            @ApiResponse(code = 500, message = "Unexpected error")})
+    @XapiRequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST, value = "/preprocessing")
+    public List<String> checkSheetForSubjectsToBeCreated(@RequestParam @Project String project,
+                                                                @RequestParam String cachePath) throws Exception {
+        UserI user = getSessionUser();
+        if (!Permissions.hasAccess(user, project, AccessLevel.Owner)) {
+            throw new UnauthorizedException("User must be a project owner to be able to perform Biodistribution actions.");
+        }
+
+        return biodistributionDataService.findAllSubjectsToBeCreated(user, project, cachePath);
+
+    }
+
     @ApiOperation(value = "Create biodistribution experiments from Excel file")
     @ApiResponses({@ApiResponse(code = 200, message = "Biodistribution experiments successfully created."),
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
-    @XapiRequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    @XapiRequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST, value = "/create")
     public Map<String, String> createBiodistributionExperiments(@RequestParam @Project String project,
                                                                 @RequestParam String cachePath,
                                                                 @RequestParam String dataOverlapHandling) throws Exception {

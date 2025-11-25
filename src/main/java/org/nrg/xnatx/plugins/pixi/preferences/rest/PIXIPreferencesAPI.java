@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.nrg.xdat.security.helpers.AccessLevel.Authenticated;
 import static org.nrg.xdat.security.helpers.AccessLevel.Authorizer;
@@ -100,6 +101,11 @@ public class PIXIPreferencesAPI extends AbstractXapiRestController {
                         pixiPreferences.setMapValue(name, (Map) value);
                     } else if (value.getClass().isArray()) {
                         pixiPreferences.setArrayValue(name, (Object[]) value);
+                    } else if (name.equals(PIXIPreferences.BIODISTRIBUTION_ACCEPTED_SAMPLE_TYPES)) {
+                        //only way I can see to make this preference work without breaking the other ones given that
+                        //it is encoded as a comma separated list
+                        pixiPreferences.setBiodistributionAcceptedSampleTypes(Stream.of(String.valueOf(value).split(
+                                ",", -1)).collect(Collectors.toList()));
                     } else {
                         pixiPreferences.set(value.toString(), name);
                     }
@@ -187,25 +193,59 @@ public class PIXIPreferencesAPI extends AbstractXapiRestController {
         pixiPreferences.set(value, preference);
     }
 
-    @ApiOperation(value = "Returns project preferred abstractDemographicData implementation", response = String.class)
-    @ApiResponses({@ApiResponse(code = 200, message = "Demographic data implementation preference successfully retrieved."),
-                   @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
-                   @ApiResponse(code = 500, message = "Unexpected error")})
-    @XapiRequestMapping(value = "/demographicDataImpl/projects/{projectId}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET, restrictTo = Authenticated)
-    public Map<String, String> getDemographicDataImpl(@PathVariable @Project final String projectId) throws NotFoundException {
-        return Collections.singletonMap("demographicDataImpl", pixiPreferences.getDemographicDataImpl(projectId));
-    }
-
-    @ApiOperation(value="Set project preferred abstractDemographicData implementation.")
-    @ApiResponses({@ApiResponse(code = 200, message = "Demographic data implementation preference successfully set."),
-                   @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
-                   @ApiResponse(code = 500, message = "Unexpected error")})
-    @XapiRequestMapping(value = "/demographicDataImpl/projects/{projectId}", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST, restrictTo = AccessLevel.Edit)
-    public void setDemographicDataImpl(@PathVariable @Project final String projectId, @RequestBody final Map<String, String> preference) throws NotFoundException, DataFormatException {
-        if (!preference.containsKey("demographicDataImpl")) {
-            throw new NotFoundException("No demographicDataImpl submitted");
+    @ApiOperation(value = "Returns project specific preference value", response = String.class)
+    @ApiResponses({@ApiResponse(code = 200, message = "Preference successfully retrieved."),
+            @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
+            @ApiResponse(code = 500, message = "Unexpected error")})
+    @XapiRequestMapping(value = "/{preference}/projects/{projectId}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET, restrictTo = Authenticated)
+    public Map<String, Object> getSpecificPixiPreferenceProject(@ApiParam(value = "The preference to retrieve.", required = true) @PathVariable final String preference,
+                                                                @PathVariable @Project final String projectId) throws NotFoundException {
+        if (!pixiPreferences.containsKey(preference)) {
+            throw new NotFoundException("No PIXI plugin preference named " + preference);
         }
 
-        pixiPreferences.setDemographicDataImpl(projectId, preference.get("demographicDataImpl"));
+        Object value;
+        switch (preference) {
+            case (PIXIPreferences.DEMOGRAPHIC_DATA_IMPL_PREFERENCE_ID): {
+                value = pixiPreferences.getDemographicDataImpl(projectId);
+                break;
+            }
+            case (PIXIPreferences.BIODISTRIBUTION_ACCEPTED_SAMPLE_TYPES): {
+                value = pixiPreferences.getBiodistributionAcceptedSampleTypes(projectId);
+                break;
+            }
+            default:
+                throw new NotFoundException(preference+ " does not have a project level implementation.");
+        }
+
+        return Collections.singletonMap(preference, value);
+    }
+
+    @ApiOperation(value="Set project specific preference value.")
+    @ApiResponses({@ApiResponse(code = 200, message = "Preference successfully set."),
+            @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
+            @ApiResponse(code = 500, message = "Unexpected error")})
+    @XapiRequestMapping(value = "/{preference}/projects/{projectId}", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST, restrictTo = AccessLevel.Edit)
+    public void setSpecificPixiPreferenceProject(@PathVariable @Project final String projectId,
+                                                 @ApiParam(value = "The preference to be set.", required = true) @PathVariable("preference") final String preference,
+                                                 @ApiParam("The value to be set for the property.") @RequestBody final Map<String, Object> value) throws NotFoundException, DataFormatException {
+        if (!pixiPreferences.containsKey(preference)) {
+            throw new NotFoundException("No PIXI plugin preference named " + preference);
+        }
+
+        switch (preference) {
+            case (PIXIPreferences.DEMOGRAPHIC_DATA_IMPL_PREFERENCE_ID): {
+                 pixiPreferences.setDemographicDataImpl(projectId, (String) value.get("demographicDataImpl"));
+                break;
+            }
+            case (PIXIPreferences.BIODISTRIBUTION_ACCEPTED_SAMPLE_TYPES): {
+                String biodSampleTypes = (String) value.get("biodistributionAcceptedSampleTypes");
+                pixiPreferences.setBiodistributionAcceptedSampleTypes(projectId, Stream.of(biodSampleTypes.split(",", -1))
+                        .collect(Collectors.toList()));
+                break;
+            }
+            default:
+                throw new NotFoundException(preference+ " does not have a project level implementation.");
+        }
     }
 }
