@@ -5,19 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.4.1] - 2025-06-30
+## [1.5.0] - 
 
 This release includes ability to:
 
   - import BioDistribution datatype
 
   - ability to generate Statistics Summary for the BioDistribution data [Statistics Dashboard Plugin](https://bitbucket.org/xnatx/statisticsdashboard_plugin)
-  
-  - ability to generate a PreClinical Imaging Template to submit to [Cancermodels.org](https://www.cancermodels.org/)
 
+  - integration of Contrast Data implementation within PIXI which was added to core XNAT in version 1.9.3
+
+  - bug fixes relating to PDX and cell line datatypes
+
+  
 ### Added
 - [PIXI-159](https://radiologics.atlassian.net/browse/PIXI-159): Add a Biodistribution subject assessor
-- [PIXI-165](https://radiologics.atlassian.net/browse/PIXI-165): Integrate PIXI data with CancerModels.org
+- [PIXI-163](https://radiologics.atlassian.net/browse/PIXI-163): Create importer for Biodistribution data from CSV input
+- [PIXI-164](https://radiologics.atlassian.net/browse/PIXI-164): Create Biodistribution Report with Summary Statistics
+
+### Fixed
+- [PIXI-215](https://radiologics.atlassian.net/browse/PIXI-215): Editing of PDX and removing passage number does not work via the Action -> Edit 
+- [PIXI-228](https://radiologics.atlassian.net/browse/PIXI-228): XFT cast error when saving cell line
+
+### Changed
+- [PIXI-204](https://radiologics.atlassian.net/browse/PIXI-204): Remove Statistics Dashboard files from Pixi Plugin. This is now located in the dedicated [Statistics Dashboard Plugin](https://bitbucket.org/xnatx/statisticsdashboard_plugin)
+- [PIXI-217](https://radiologics.atlassian.net/browse/PIXI-217): Tumor data model should be handled by Data Manager Role rather than the site admin
 
 ## [1.4.0] - 2024-12-19
 
