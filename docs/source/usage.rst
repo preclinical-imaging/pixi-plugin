@@ -35,7 +35,7 @@ PIXI and core XNAT support three mechanisms for creating research subjects in th
 - External software can invoke the XNAT REST API to create a subject.
 
 We will discuss the first method on this page.
-Select New -> Subjects from the main menu.
+Select `New -> Subjects` from the main menu.
 
 .. image:: ./images/pixi_create_subjects.png
  :align: center
@@ -155,13 +155,19 @@ Fasting, anesthesia, and heating conditions can be entered manually or by select
 Return to the Session Page for this (hotel session).
 PIXI shows you that a Hotel Scan Record now exists for this session
 and provides a Container to run the code to split the Hotel Session and create separate sessions for the subjects selected.
-In the Actions box on the Session Page, select Run Containers -> Hotel Session Splitter.
+In the Actions box on the Session Page, select `Run Containers -> Hotel Session Splitter`.
 
 .. image:: ./images/pixi_select_hotel_splitter_container.png
  :align: center
 
-8. Container service will present a dialog with the parameters used for the hotel splitter. When you select
-"Run Container", the job is launched using the container infrastructure you have deployed.
+8. Container service will present a dialog with the parameters used for the hotel splitter. There is one optional input to consider – margin.
+This option refers to the size of the space around identified elements within the input image that the splitter will add as a buffer to ensure it captures the entire mouse in a given split image. A larger margin will mean more buffer space given and vice versa. The default value is 4, which represents 4px for a PET image. Inputting an empty value to the margin field will cause the container to use the default value.
+
+We believe that, in most cases, you should not need to set this value. However, if the splitter produces a set of split images that do not successfully capture the mice – for instance if the edge of a mouse is cut off – this input can be used to attempt to produce a better output upon re-running the container.
+In the case that the edge of a mouse is cut off, we recommend re-running the splitter with an input margin higher than 4.
+In the case that the one of the split images includes a piece of another mouse within the output image, we recommend re-running the splitter with an input margin below 4.
+
+9. Select "Run Container" to launch the job using the container infrastructure you have deployed.
 
 Uploading Native Inveon PET/CT Imaging Data
 -------------------------------------------
@@ -207,7 +213,7 @@ by providing a new image session data type to store the data.
 
 XNAT does not provide a mechanism to upload these image sessions. PIXI provides an importer to upload IVIS bioluminescence
 imaging data to XNAT. The importer reads the metadata from the AnalyzedClickInfo.txt and ClickInfo.txt files generated
-by the IVIS system and uploads the data to XNAT. To access the upload page, select Upload -> Upload BLI Images from the
+by the IVIS system and uploads the data to XNAT. To access the upload page, select `Upload -> Upload BLI Images` from the
 top menu.
 
 
@@ -230,7 +236,7 @@ metadata about the imaging session which will be stored in the XNAT database.
 Uploading IVIS Imaging Data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To upload IVIS bioluminescence imaging data to XNAT, from the top menu, select the Upload -> Upload BLI Images menu
+To upload IVIS bioluminescence imaging data to XNAT, from the top menu, select the `Upload -> Upload BLI Images` menu
 item to access the upload page.
 
 In the Project & Data Selection section, select the project to upload the data to and select a zip file containing the
@@ -255,7 +261,7 @@ Comment1 field.
 
 After selecting the project, zip file, and labeling options, click 'Begin Upload' to start the upload process. If there
 are any issues with uploading the IVIS BLI images to your project, the image sessions will be stored in the XNAT
-prearchive which can be accessed from the top menu by selecting Upload -> Go to prearchive.
+prearchive which can be accessed from the top menu by selecting `Upload -> Go to prearchive`.
 
 .. _XNAT platform: https://www.xnat.org
 .. _How To Use XNAT: https://wiki.xnat.org/documentation/how-to-use-xnat
@@ -267,11 +273,15 @@ In order to facilitate the upload of biodistribution data to an XNAT project, a 
 
 1. Navigate to the biodistribution upload page via the top navigation bar by clicking `Upload → Upload Biod Experiments.`
 
-2. On this page, you will be able to use a CSV file to outline biodistribution information for upload. If you do not already have the template downloaded, you may do so by clicking the “Get CSV Template” link. 
+2. From this page, you will be able to use a filled CSV file to upload biodistribution information. If you do not already have a CSV template for biodistribution upload, you can download one from this page. There are two options: a simplified version which only contains columns for basic biodistribtion fields; and an advanced version which contains all possible biofistribution fields that can be uploaded to XNAT. You can use either template as the basis to build your file for upload. In step 3, we will outline the column constraints on an uploaded CSV. 
 
-3. Opening the template will show you a list of columns that you may use to upload biodistribution information. We will now take a moment to outline the information found in the template.
+3. Opening the template – either simplified or advanced – will show you a list of columns that you may use to upload biodistribution information. We will now take a moment to outline the information found in the template and which elements are required/feature constraints that you should be aware of.
 
-The biodistribution uploader – and by extension the template – have been created to include a wide variety of fields – so that different institutions may each capture the data that they find important. Please note you *do not* need to use all, or even a majority, of the columns shown. Within XNAT, only two fields must be included in each line of a biodistribution upload – subject_id and sample_type. These two fields are used in order to differentiate between biodistribution elements. Each subject is limited to one biodistribution element which may itself have several samples from different parts of the animal. In order for XNAT to be able to understand where to upload the data you have put into your sheet, both of these fields are required and must be made up of a unique pair. This concept may be difficult to explain in prose – as such, we have included the following example. A user may have two lines within their uploaded sheet that look like this:
+The biodistribution uploader – and by extension each of the templates – has been created to include a wide variety of fields, so that different institutions may each capture the data that they find important. Please note you *do not* need to use all, or even a majority, of the columns shown within either of the templates. Additionally, if you are starting with the basic template, you do not need to be constrained and you can add columns found in the advanced template as you see fit. However, several of the columns found within both of the templates *are* required in order to successfully upload data to XNAT. We will outline those now:
+
+The first two required columns are inter-related: subject_id and sample_type. These two fields are used by XNAT when parsing the rows of an uploaded sheet to differentiate between biodistribution elements. Each subject is limited to one biodistribution element which may itself have several samples from different parts of the animal. In order for XNAT to be able to understand where to upload the data you have put into your sheet, both of these fields are required and must be made up of a unique pair. This concept may be difficult to explain in prose; as such, we have included the following example:
+
+A user may have two lines within their uploaded sheet that look like this:
 
 .. image:: ./images/biod_same_subject_different_sample_type.png
  :align: center
@@ -287,8 +297,18 @@ Though in this case the two sample types are the same, they are related two diff
  :align: center
 
 In this case, both the subject id and sample type fields are the same. This violates the uniqueness constraint and will thus cause an error during upload.
-As long as each row of your sheet includes data within both of these columns, you will be able to upload data from that sheet. Feel free to delete any columns that are not applicable to your institution while preparing your data for upload within the template. 
-Beyond this, filling in the columns should be as easy as copying in the data you wish to include. For all fields related to dates/times, please use the one of the date formats that has been set by your site administrator. If you are a site administrator, these date formats can be found and/or edit by going to Administration Bar → Site Administration → Appearance. Within the Standard Date Formatting subheader you will see four fields: Date Format, Time Format, Date/time Format, and Date/time/seconds Format. Any of the date formats – that is, any of these except for Time Format – may be used within any of the columns that represent dates/times. If you are not a site administrator and are confused as to what formats have been set for your XNAT site, please contact your site administrator.
+
+In addition to this uniqueness requirement, in order to try and ensure quality data uploads, the sample_type column has a further input constraint. As a uploader you will be limited to a specific set of acceptable values for sample_type which have been set by either the administrator of your XNAT or the owner of the project you are uploading to. Below, we show an image of the response to an upload containing an invalid input sample type:
+
+.. image:: ./images/invalid_sample_type.png
+ :align: center
+ :width: 600px
+
+In this case, the sample type in row two is not found in the list of acceptable sample type for the project the user is attempting to upload to. In order to successfully upload the data found within the csv, the uploader must change the value for sample type in row two. If you are unsure of the list of acceptable sample types for a given project, contact the project owner or a site administrator for a complete list. If you are a project owner or site administrator and you are looking to change the list of accepted sample types for a project or site wide, please see the section below on "Changing Valid Input Sample Types."
+
+Alongside those two interrelated fields, five other columns have been deemed essential, and thus are mandatory for successful upload: subject_group, %_id_g, tracer, experiment_datetime, and injection_datetime. The first three of these elements are encoded as strings and thus will accept whatever format of input you include. The final two fields are date/time fields and will accept a date with or without a time attached. For all fields related to dates/times – including, but not limited to the two aforementioned fields – please use the one of the date formats that has been set by your site administrator. If you are a site administrator, these date formats can be found and/or edit by going to Administration Bar → Site Administration → Appearance. Within the Standard Date Formatting subheader you will see four fields: Date Format, Time Format, Date/time Format, and Date/time/seconds Format. Any of the date formats – that is, any of these except for Time Format – may be used within any of the columns that represent dates/times. If you are not a site administrator and are unsure as to what formats have been set for your XNAT site, please contact your site administrator.
+
+These seven fields will constitute a minimum viable sheet for upload – with each row having a value for each of these columns. Beyond these, additional columns can feature, or not feature, a value in each row. We encourage you to fill out the rest of the sheet however is applicable to your data.
 
 4. Once you have completed the data entry for and saved your upload sheet, you can return to the biodistribution upload page. You will see the following elements which each must be completed to upload your data:
 
@@ -325,3 +345,22 @@ Beyond this, filling in the columns should be as easy as copying in the data you
  :width: 800px
 
 Congratulations! You have now successfully uploaded your biodistribution data to XNAT.
+
+
+**Changing Valid Input Sample Types**
+
+As noted in the above section, the accepted sample types for input within a biodistribution upload can be viewed or changed by both administrators and project owners. Administrators can set a sitewide list of acceptable sample types for an XNAT instance, which can be overridden for a specific project by a project owner setting a list of acceptable sample types for a specific project. We will outline how to perform both of these actions now.
+
+*Administrators*
+
+If you wish to change the accepted sample type values for your XNAT, navigate to the menu for this configuration by going to the top bar and clicking `Administer -> Plugin Settings -> Biodistribution Upload`. Here you will see a screen like the one shown below:
+
+.. image:: ./images/biodistribution_sample_type_sitewide_setting.png
+ :align: center
+ :width: 800px
+
+As you can see in the image, you will be shown a comma separated list of values which are allowed within the sample type column of a biodistribution sheet. In order to change the list, simply add or remove values from the list and then click "Save" to update the list. The list is comma separated and expects no spaces between values. In order to ensure that the configuration works correctly, ensure that the list follows this format when you make any changes.
+
+*Project Owners*
+
+If you wish for your project to deviate from the site wide configuration set by your Administrator(s), you can edit the project setting for accepted sample types. This configuration will automatically override the site wide configuration. To do so, go to the projects page and click on `Project Settings -> Biodistribution Upload`. Here, you will see a screen just like the one shown in the "Administrators" section above. Changing the list can be done just as outlined in the above section as well. Saving these changes will result in the upload system checking the project configuration rather than the site wide configuration at time of upload. As such, any changes made to the site wide configuration from this point on will not propagate to this project. For this reason, please coordinate with your XNAT administrator before making changes to this list.
