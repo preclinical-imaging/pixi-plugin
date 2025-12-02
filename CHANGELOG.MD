@@ -24,6 +24,7 @@ This release includes ability to:
 - [PIXI-164](https://radiologics.atlassian.net/browse/PIXI-164): Create Biodistribution Report with Summary Statistics
 
 ### Fixed
+- [PIXI-197](https://radiologics.atlassian.net/browse/PIXI-197): BLI Session and Scans do not contain the modality field
 - [PIXI-215](https://radiologics.atlassian.net/browse/PIXI-215): Editing of PDX and removing passage number does not work via the Action -> Edit 
 - [PIXI-228](https://radiologics.atlassian.net/browse/PIXI-228): XFT cast error when saving cell line
 
