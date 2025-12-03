@@ -16,6 +16,7 @@ import org.nrg.xdat.om.PixiBiodistributiondata;
 import org.nrg.xdat.om.PixiBiodsampleuptakedata;
 import org.nrg.xdat.om.XnatExperimentdataField;
 import org.nrg.xdat.om.XnatProjectdata;
+import org.nrg.xdat.om.XnatResourcecatalog;
 import org.nrg.xdat.om.XnatSubjectdata;
 import org.nrg.xdat.preferences.SiteConfigPreferences;
 import org.nrg.xdat.services.cache.UserDataCache;
@@ -358,14 +359,13 @@ public class XFTBiodistributionDataService implements BiodistributionDataService
         XnatProjectdata projectData = XnatProjectdata.getProjectByIDorAlias(project, user, false);
         Path projectResourcePath = Paths.get(siteConfigPreferences.getArchivePath()).getFileName().resolve(Paths.get("projects")).resolve(projectData.getArchiveDirectoryName());
         String resourcesPathWithLeadingElement = Paths.get(siteConfigPreferences.getArchivePath()).getRoot().toString() + projectResourcePath;
-        defaultCatalogService.insertResources(user, resourcesPathWithLeadingElement, file, projectResourceName, "", "", "");
-
-        String uploadedResourcePath = Paths.get(resourcesPathWithLeadingElement, projectResourceName, file.getName()).toString();
+        XnatResourcecatalog xnatResourcecatalog = defaultCatalogService.insertResources(user, resourcesPathWithLeadingElement, file,
+                                                                        projectResourceName, "", "", "");
 
         for (PixiBiodistributiondataI biodistribution: biodExperiments) {
             XnatExperimentdataField ingestionFileProvenanceField = new XnatExperimentdataField();
             ingestionFileProvenanceField.setName("sourcefile");
-            ingestionFileProvenanceField.setField(uploadedResourcePath);
+            ingestionFileProvenanceField.setField(xnatResourcecatalog.getUri());
             biodistribution.addFields_field(ingestionFileProvenanceField);
         }
 
