@@ -45,9 +45,13 @@
                                             <TD>$!diluent</TD>
                                             #if($injectedDose)
                                             <TD>$!injectedDose $!item.getStringProperty("pixi:biodistributionData/injection_data/injected_dose_unit")</TD>
+                                            #else
+                                            <TD></TD>
                                             #end
                                             #if($injectedVolume)
                                             <TD>$!injectedVolume $!item.getStringProperty("pixi:biodistributionData/injection_data/injection_volume_unit")</TD>
+                                            #else
+                                            <TD></TD>
                                             #end
                                             <TD>$!injectionTotalCounts</TD>
                                             <TD>$!injectionRoute</TD>
