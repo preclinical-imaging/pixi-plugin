@@ -1,5 +1,5 @@
 #set ($tracer = $item.getStringProperty("pixi:biodistributionData/injection_data/tracer"))
-#set ($isotope = $!item.getStringProperty("pixi:biodistributionData/injection_data/"))
+#set ($isotope = $!item.getStringProperty("pixi:biodistributionData/injection_data/isotope"))
 #set ($diluent = $!item.getStringProperty("pixi:biodistributionData/injection_data/diluent"))
 #set ($injectedDose = $!item.getProperty("pixi:biodistributionData/injection_data/injected_dose"))
 #set ($injectedVolume = $!item.getProperty("pixi:biodistributionData/injection_data/injection_volume"))
@@ -45,9 +45,13 @@
                                             <TD>$!diluent</TD>
                                             #if($injectedDose)
                                             <TD>$!injectedDose $!item.getStringProperty("pixi:biodistributionData/injection_data/injected_dose_unit")</TD>
+                                            #else
+                                            <TD></TD>
                                             #end
                                             #if($injectedVolume)
                                             <TD>$!injectedVolume $!item.getStringProperty("pixi:biodistributionData/injection_data/injection_volume_unit")</TD>
+                                            #else
+                                            <TD></TD>
                                             #end
                                             <TD>$!injectionTotalCounts</TD>
                                             <TD>$!injectionRoute</TD>
@@ -76,7 +80,7 @@
                                     <Th>%ID/g</TH>
                                     <Th>%ID/organ</TH>
                                     <Th>Measurement Date</TH>
-                                    <Th>Time</TH>
+                                    <Th>Measurement Time</TH>
                                     <Th>Timepoint</TH>
                                     <Th></TH>
                                 </TR>
