@@ -1,0 +1,156 @@
+<!-- BEGIN pixi-plugin templates/screens/UploadBiodistribution.vm -->
+<div class="upload-container">
+    <h2>Small Animal Biodistribution Upload</h2>
+
+    <div class="form-instructions">
+        <p> Import Biodistribution data for small animal imaging studies via a CSV file.
+        Please see our documentation for usage of the CSV template, including required fields and formatting.</p>
+
+        <p><a class="btn btn-sm" href="$content.getURI('biod/BiodistributionTemplateSimplified.csv')" download>Get Basic CSV Template</a>
+        <a class="btn btn-sm" href="$content.getURI('biod/BiodistributionTemplate.csv')" download>Get Advanced CSV Template</a>
+        <a class="btn btn-sm" href="https://pixi-documentation.readthedocs.io/en/stable/usage.html#uploading-biodistribution-data" target="_blank">BioD Import Documentation</a></p>
+
+        <p>Currently, biodistribution upload is only available to Project Owners.
+        Only projects for which you have Owner level access have been listed below.</p>
+
+    </div>
+
+    <form id="upload-form" name="upload-form" method="post">
+
+        <fieldset>
+            <legend>Project & Data Selection</legend>
+
+            <div class="filter-container">
+                <label for="project" class="filter-label">Select Project</label>
+
+                <label class="filter-icon" for="project-filter"><i class="fa fa-search"></i></label>
+                <input type="text" id="project-filter" name="project-filter" placeholder="Filter" onkeyup="" class="filter-input"/>
+
+                <select id="project" name="project" form="upload-form" size="8" required class="filer-select"></select>
+            </div>
+
+            <div class="form-component">
+                <label class="file-label" for="file">Select file to upload</label>
+                <input type="file" id="file" name="file" accept=".csv" required/>
+            </div>
+
+            <div class="form-component">
+                <label for="data_overlap_handling">Choose how to handle overlapping data:</label>
+                <select id="data_overlap_handling" name="data_overlap_handling">
+                  <option value="throw_error">Do Not Allow Upload</option>
+                  <option value="ignore_matching">Upload And Skip Matching Data</option>
+                  <option value="upload_overwrite">Upload and Overwrite Matching Data</option>
+                </select>
+            </div>
+        </fieldset>
+
+        <input class="submit" id="upload-button" type="button" name="eventSubmit_doPerform" value="Begin Upload"/>
+
+    </form>
+</div>
+
+<style>
+
+    .upload-container {
+        width: 100%;
+    }
+
+    .form-instructions {
+        margin-bottom: 2em;
+    }
+
+    #upload-form {
+        display: flex;
+        flex-direction: column;
+        row-gap: 1em;
+        font-size: 14px;
+        box-sizing: border-box;
+        width: 600px;
+    }
+
+    #upload-form label {
+        font-weight: normal;
+    }
+
+    #upload-form select,
+    #upload-form text,
+    #upload-form input[type="file"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    #upload-form .filter-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        row-gap: 0.5rem;
+        margin-bottom: 2rem;
+    }
+
+    #upload-form .filter-label {
+        flex: 2 1 auto;
+    }
+
+    #upload-form .filter-icon {
+        flex: 0 0 auto;
+        margin-right: 5px;
+    }
+
+    #upload-form .form-component {
+        display: flex;
+        flex-direction: column;
+        row-gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    #upload-button {
+        width: 30%;
+        margin-top: 10px;
+        background-color: #0074b8; /* XNAT blue color */
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        background-image: none;  /* Remove default button background */
+        align-self: flex-end;
+    }
+
+    #upload-button:hover {
+        background-color: #005eaa; /* Slightly darker blue on hover */
+    }
+
+    .input-desc {
+        margin: 0 0 10px 0;
+        font-size: 12px;
+    }
+
+    #upload-form fieldset {
+        margin: 1em 0;
+        padding: 1em;
+        border: 1px solid #ccc;
+        background-color: #fdfdfd;
+        border-radius: 4px;
+    }
+
+    #upload-form legend {
+        font-weight: bold;
+    }
+
+    #upload-form .advanced-options-button {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+        background-image: none;  /* Remove default button background */
+    }
+
+</style>
+
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-projects.js')"></script>
+<script type="text/javascript" src="$content.getURI('scripts/xnat/plugin/pixi/pixi-biodistributionUploader.js')"></script>
+<!-- END pixi-plugin templates/screens/UploadBiodistribution.vm -->

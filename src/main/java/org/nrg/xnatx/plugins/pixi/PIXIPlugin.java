@@ -10,6 +10,7 @@ import org.nrg.xnat.restlet.actions.importer.ImporterHandlerPackages;
 import org.nrg.xnat.services.XnatAppInfo;
 import org.nrg.xnat.services.system.HostInfoService;
 import org.nrg.xnat.turbine.utils.IDGenerator;
+import org.nrg.xnatx.plugins.pixi.biod.config.BiodConfig;
 import org.nrg.xnatx.plugins.pixi.bli.config.BliConfig;
 import org.nrg.xnatx.plugins.pixi.inveon.config.InveonConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,11 +79,16 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.DEFAULT_DIGITS;
                                          singular = "BLI Scan",
                                          plural = "BLI Scans",
                                          code = "BLIScan"),
+                          @XnatDataModel(value = PixiBiodistributiondata.SCHEMA_ELEMENT_NAME,
+                                         singular = "Biodistribution",
+                                         plural = "Biodistributions",
+                                         code = "BIOD"),
                           })
 @ComponentScan({"org.nrg.xnatx.plugins.pixi.xenografts.entities",
                 "org.nrg.xnatx.plugins.pixi.xenografts.repositories",
                 "org.nrg.xnatx.plugins.pixi.xenografts.services.impl",
                 "org.nrg.xnatx.plugins.pixi.xenografts.rest",
+                "org.nrg.xnatx.plugins.pixi.xenografts.services",
                 "org.nrg.xnatx.plugins.pixi.hotelsplitter.services.impl",
                 "org.nrg.xnatx.plugins.pixi.hotelsplitter.rest",
                 "org.nrg.xnatx.plugins.pixi.hotelsplitter.initialize",
@@ -91,8 +97,10 @@ import static org.nrg.xft.identifier.IDGeneratorFactory.DEFAULT_DIGITS;
                 "org.nrg.xnatx.plugins.pixi.imageAcqCtx.rest",
                 "org.nrg.xnatx.plugins.pixi.imageAcqCtx.services.impl",
                 "org.nrg.xnatx.plugins.pixi.rest",
+                "org.nrg.xnatx.plugins.pixi.security",
+                "org.nrg.xnatx.plugins.pixi.cmo.rest"
 })
-@Import({BliConfig.class, InveonConfig.class})
+@Import({BliConfig.class, InveonConfig.class, BiodConfig.class})
 @Slf4j
 public class PIXIPlugin {
 

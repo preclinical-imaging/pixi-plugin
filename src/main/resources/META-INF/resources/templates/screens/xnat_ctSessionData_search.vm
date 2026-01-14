@@ -108,6 +108,15 @@
 
         <div class="clear"></div>
 
+        #if($user.checkFeatureForAnyTag("contrast_visible"))
+            <div class="search-item">
+                <h5>Contrast Bolus:</h5>
+                #xdatSearchField($schemaElement $schemaElement.getDisplayField("CONTRAST_AGENTS"))
+            </div>
+        #end
+
+        <div class="clear"></div>
+
         #set($mr_projects=$data.getSession().getAttribute("userHelper").getAllowedValues(
             "${schemaElement.getFullXMLName()}","${schemaElement.getFullXMLName()}/project","read"))
 

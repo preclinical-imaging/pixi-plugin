@@ -10,6 +10,7 @@ var XNAT = getObject(XNAT || {});
 XNAT.plugin = getObject(XNAT.plugin || {});
 XNAT.plugin.pixi = getObject(XNAT.plugin.pixi || {});
 XNAT.plugin.pixi.projects = getObject(XNAT.plugin.pixi.projects || {});
+XNAT.plugin.pixi.getOnlyOwners = getObject(XNAT.plugin.pixi.getOnlyOwners || {});
 
 (function(factory) {
     if (typeof define === 'function' && define.amd) {
@@ -32,6 +33,24 @@ XNAT.plugin.pixi.projects = getObject(XNAT.plugin.pixi.projects || {});
                                                           'owner=true',
                                                           'member=true',
                                                           'collaborator=true']);
+
+        const response = await fetch(projectUrl, {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json'}
+        })
+
+        return response.json()
+    }
+
+    XNAT.plugin.pixi.projects.getOnlyOwners = async function() {
+        console.debug(`pixi-projects.js: XNAT.plugin.pixi.projects.getOnlyOwners`);
+
+        let projectUrl = XNAT.url.restUrl('/data/projects');
+        projectUrl = XNAT.url.addQueryString(projectUrl, ['prearc_code=true',
+                                                          'recent=true',
+                                                          'owner=true',
+                                                          'member=false',
+                                                          'collaborator=false']);
 
         const response = await fetch(projectUrl, {
             method: 'GET',

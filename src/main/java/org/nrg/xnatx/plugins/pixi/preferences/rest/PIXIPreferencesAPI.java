@@ -8,6 +8,7 @@ import org.nrg.prefs.exceptions.InvalidPreferenceName;
 import org.nrg.xapi.exceptions.DataFormatException;
 import org.nrg.xapi.exceptions.NotFoundException;
 import org.nrg.xapi.rest.AbstractXapiRestController;
+import org.nrg.xapi.rest.AuthDelegate;
 import org.nrg.xapi.rest.Project;
 import org.nrg.xapi.rest.XapiRequestMapping;
 import org.nrg.xdat.security.helpers.AccessLevel;
@@ -15,6 +16,7 @@ import org.nrg.xdat.security.services.RoleHolder;
 import org.nrg.xdat.security.services.UserManagementServiceI;
 import org.nrg.xft.security.UserI;
 import org.nrg.xnatx.plugins.pixi.preferences.PIXIPreferences;
+import org.nrg.xnatx.plugins.pixi.security.PixiDataManagerUserAuthorization;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,9 +27,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static org.nrg.xdat.security.helpers.AccessLevel.Admin;
 import static org.nrg.xdat.security.helpers.AccessLevel.Authenticated;
+import static org.nrg.xdat.security.helpers.AccessLevel.Authorizer;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -83,7 +86,8 @@ public class PIXIPreferencesAPI extends AbstractXapiRestController {
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 403, message = "Not authorized to set site configuration properties."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
-    @XapiRequestMapping(consumes = {APPLICATION_FORM_URLENCODED_VALUE, APPLICATION_JSON_VALUE}, method = POST, restrictTo = Admin)
+    @AuthDelegate(PixiDataManagerUserAuthorization.class)
+    @XapiRequestMapping(consumes = {APPLICATION_FORM_URLENCODED_VALUE, APPLICATION_JSON_VALUE}, method = POST, restrictTo = Authorizer)
     public void setPixiPreferences(@ApiParam(value = "The map of PIXI plugin preferences to be set.", required = true) @RequestBody final Map<String, Object> preferences) {
         if (!preferences.isEmpty()) {
             for (final String name : preferences.keySet()) {
@@ -97,6 +101,11 @@ public class PIXIPreferencesAPI extends AbstractXapiRestController {
                         pixiPreferences.setMapValue(name, (Map) value);
                     } else if (value.getClass().isArray()) {
                         pixiPreferences.setArrayValue(name, (Object[]) value);
+                    } else if (name.equals(PIXIPreferences.BIODISTRIBUTION_ACCEPTED_SAMPLE_TYPES)) {
+                        //only way I can see to make this preference work without breaking the other ones given that
+                        //it is encoded as a comma separated list
+                        pixiPreferences.setBiodistributionAcceptedSampleTypes(Stream.of(String.valueOf(value).split(
+                                ",", -1)).collect(Collectors.toList()));
                     } else {
                         pixiPreferences.set(value.toString(), name);
                     }
@@ -176,32 +185,67 @@ public class PIXIPreferencesAPI extends AbstractXapiRestController {
                    @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
                    @ApiResponse(code = 403, message = "Not authorized to set site configuration properties."),
                    @ApiResponse(code = 500, message = "Unexpected error")})
-    @XapiRequestMapping(value = "/{preference}", consumes = {TEXT_PLAIN_VALUE, APPLICATION_JSON_VALUE}, method = POST, restrictTo = Admin)
+    @AuthDelegate(PixiDataManagerUserAuthorization.class)
+    @XapiRequestMapping(value = "/{preference}", consumes = {TEXT_PLAIN_VALUE, APPLICATION_JSON_VALUE}, method = POST, restrictTo = Authorizer)
     public void setSpecificPixiPreference(@ApiParam(value = "The preference to be set.", required = true) @PathVariable("preference") final String preference,
                                           @ApiParam("The value to be set for the property.") @RequestBody final String value) throws InvalidPreferenceName {
         log.info("User '{}' set the value of the site configuration property {} to: {}", getSessionUser().getUsername(), preference, value);
         pixiPreferences.set(value, preference);
     }
 
-    @ApiOperation(value = "Returns project preferred abstractDemographicData implementation", response = String.class)
-    @ApiResponses({@ApiResponse(code = 200, message = "Demographic data implementation preference successfully retrieved."),
-                   @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
-                   @ApiResponse(code = 500, message = "Unexpected error")})
-    @XapiRequestMapping(value = "/demographicDataImpl/projects/{projectId}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET, restrictTo = Authenticated)
-    public Map<String, String> getDemographicDataImpl(@PathVariable @Project final String projectId) throws NotFoundException {
-        return Collections.singletonMap("demographicDataImpl", pixiPreferences.getDemographicDataImpl(projectId));
-    }
-
-    @ApiOperation(value="Set project preferred abstractDemographicData implementation.")
-    @ApiResponses({@ApiResponse(code = 200, message = "Demographic data implementation preference successfully set."),
-                   @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
-                   @ApiResponse(code = 500, message = "Unexpected error")})
-    @XapiRequestMapping(value = "/demographicDataImpl/projects/{projectId}", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST, restrictTo = AccessLevel.Edit)
-    public void setDemographicDataImpl(@PathVariable @Project final String projectId, @RequestBody final Map<String, String> preference) throws NotFoundException, DataFormatException {
-        if (!preference.containsKey("demographicDataImpl")) {
-            throw new NotFoundException("No demographicDataImpl submitted");
+    @ApiOperation(value = "Returns project specific preference value", response = String.class)
+    @ApiResponses({@ApiResponse(code = 200, message = "Preference successfully retrieved."),
+            @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
+            @ApiResponse(code = 500, message = "Unexpected error")})
+    @XapiRequestMapping(value = "/{preference}/projects/{projectId}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET, restrictTo = Authenticated)
+    public Map<String, Object> getSpecificPixiPreferenceProject(@ApiParam(value = "The preference to retrieve.", required = true) @PathVariable final String preference,
+                                                                @PathVariable @Project final String projectId) throws NotFoundException {
+        if (!pixiPreferences.containsKey(preference)) {
+            throw new NotFoundException("No PIXI plugin preference named " + preference);
         }
 
-        pixiPreferences.setDemographicDataImpl(projectId, preference.get("demographicDataImpl"));
+        Object value;
+        switch (preference) {
+            case (PIXIPreferences.DEMOGRAPHIC_DATA_IMPL_PREFERENCE_ID): {
+                value = pixiPreferences.getDemographicDataImpl(projectId);
+                break;
+            }
+            case (PIXIPreferences.BIODISTRIBUTION_ACCEPTED_SAMPLE_TYPES): {
+                value = pixiPreferences.getBiodistributionAcceptedSampleTypes(projectId);
+                break;
+            }
+            default:
+                throw new NotFoundException(preference+ " does not have a project level implementation.");
+        }
+
+        return Collections.singletonMap(preference, value);
+    }
+
+    @ApiOperation(value="Set project specific preference value.")
+    @ApiResponses({@ApiResponse(code = 200, message = "Preference successfully set."),
+            @ApiResponse(code = 401, message = "Must be authenticated to access the XNAT REST API."),
+            @ApiResponse(code = 500, message = "Unexpected error")})
+    @XapiRequestMapping(value = "/{preference}/projects/{projectId}", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST, restrictTo = AccessLevel.Edit)
+    public void setSpecificPixiPreferenceProject(@PathVariable @Project final String projectId,
+                                                 @ApiParam(value = "The preference to be set.", required = true) @PathVariable("preference") final String preference,
+                                                 @ApiParam("The value to be set for the property.") @RequestBody final Map<String, Object> value) throws NotFoundException, DataFormatException {
+        if (!pixiPreferences.containsKey(preference)) {
+            throw new NotFoundException("No PIXI plugin preference named " + preference);
+        }
+
+        switch (preference) {
+            case (PIXIPreferences.DEMOGRAPHIC_DATA_IMPL_PREFERENCE_ID): {
+                 pixiPreferences.setDemographicDataImpl(projectId, (String) value.get("demographicDataImpl"));
+                break;
+            }
+            case (PIXIPreferences.BIODISTRIBUTION_ACCEPTED_SAMPLE_TYPES): {
+                String biodSampleTypes = (String) value.get("biodistributionAcceptedSampleTypes");
+                pixiPreferences.setBiodistributionAcceptedSampleTypes(projectId, Stream.of(biodSampleTypes.split(",", -1))
+                        .collect(Collectors.toList()));
+                break;
+            }
+            default:
+                throw new NotFoundException(preference+ " does not have a project level implementation.");
+        }
     }
 }

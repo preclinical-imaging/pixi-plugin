@@ -6,6 +6,7 @@ import org.nrg.xdat.bean.PixiBlisessiondataBean;
 import org.nrg.xdat.bean.XnatImagesessiondataBean;
 import org.nrg.xdat.model.XnatImagescandataI;
 import org.nrg.xnat.helpers.prearchive.PrearcUtils;
+import org.nrg.xnatx.plugins.pixi.PixiUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -56,6 +57,7 @@ public class BliSessionBuilder extends SessionBuilder {
         bliSession.setProject(project);
         bliSession.setSubjectId(subject);
         bliSession.setLabel(label);
+        bliSession.setModality(PixiUtils.BLI_SESSION_MODALITY);
         bliSession.setHotelsession(subject.equalsIgnoreCase("Hotel"));
 
         // Build scans

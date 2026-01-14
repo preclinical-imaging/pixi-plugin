@@ -187,6 +187,31 @@ inveonImporter:
     ${uiShowInveonImporter}
     ${uiShowInveonPcifOption}
 
+###
+### Biodistribution
+###
+
+biodistributionUploadPanel:
+  kind: panel.form
+  id: biodistributionUploadPanel
+  name: biodistributionUploadPanel
+  label: Biodistribution Upload
+  method: POST
+  contentType: json
+  url: /xapi/pixi/preferences
+  contents:
+    ${biodistributionAcceptedSampleTypes}
+
+biodistributionAcceptedSampleTypes:
+  kind: panel.textarea
+  name: biodistributionAcceptedSampleTypes
+  label: "Accepted Sample Types"
+  code: text
+  validation: max-length:1000
+  description: >
+    This is the site-wide list of accepted sample types when uploading biodistribution data. List entries should be separated by a comma (no spaces). Project owners can specify their own lists as needed.
+
+
 #################################################
 ####  Root Site Admin Spawner Config Object  ####
 #################################################
@@ -196,6 +221,7 @@ siteSettings:
   name: pixiAdminPage
   label: Administer PIXI
   meta:
+    restricted: PIXIDataManager
     tabGroups:
       pixiTabGroup: PIXI
   contains: tabs
@@ -237,3 +263,11 @@ siteSettings:
       active: true
       contents:
         ${inveonImporter}
+    biodistributionSettingsTab:
+      kind: tab
+      name: biodistributionSettingsTab
+      label: Biodistribution Upload
+      group: pixiTabGroup
+      active: true
+      contents:
+        ${biodistributionUploadPanel}

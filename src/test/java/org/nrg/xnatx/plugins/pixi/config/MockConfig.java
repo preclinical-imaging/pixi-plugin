@@ -3,7 +3,11 @@ package org.nrg.xnatx.plugins.pixi.config;
 import org.mockito.Mockito;
 import org.nrg.framework.services.SerializerService;
 import org.nrg.prefs.services.NrgPreferenceService;
+import org.nrg.xdat.services.cache.UserDataCache;
 import org.nrg.xnat.services.XnatAppInfo;
+import org.nrg.xnatx.plugins.pixi.biod.helpers.SaveItemHelper;
+import org.nrg.xnatx.plugins.pixi.biod.helpers.XnatExperimentDataHelper;
+import org.nrg.xnatx.plugins.pixi.biod.helpers.XnatSubjectDataHelper;
 import org.nrg.xnatx.plugins.pixi.bli.helpers.XFTManagerHelper;
 import org.nrg.xnatx.plugins.pixi.bli.services.AnalyzedClickInfoObjectIdentifierMappingService;
 import org.nrg.xnatx.plugins.pixi.preferences.PIXIPreferences;
@@ -31,6 +35,26 @@ public class MockConfig {
     @Bean
     public NrgPreferenceService mockNrgPreferenceService() {
         return Mockito.mock(NrgPreferenceService.class);
+    }
+
+    @Bean
+    public UserDataCache mockUserDataCache() {
+        return Mockito.mock(UserDataCache.class);
+    }
+
+    @Bean
+    public XnatSubjectDataHelper mockXnatSubjectDataHelper() {
+        return Mockito.mock(XnatSubjectDataHelper.class);
+    }
+
+    @Bean
+    public XnatExperimentDataHelper mockXnatExperimentDataHelper() {
+        return Mockito.mock(XnatExperimentDataHelper.class);
+    }
+
+    @Bean
+    SaveItemHelper mockSaveItemHelper() {
+        return Mockito.mock(SaveItemHelper.class);
     }
 
     @Bean

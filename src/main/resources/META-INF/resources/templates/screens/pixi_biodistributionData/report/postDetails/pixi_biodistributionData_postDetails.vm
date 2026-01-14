@@ -1,0 +1,64 @@
+#set ($technician = $item.getStringProperty("pixi:biodistributionData/technician"))
+#set ($animalSacrificeDate = $item.getProperty("pixi:biodistributionData/animal_sacrifice_date"))
+#set ($animalSacrificeTime = $item.getProperty("pixi:biodistributionData/animal_sacrifice_time"))
+#set ($animalWeight = $item.getProperty("pixi:biodistributionData/animal_weight"))
+#set ($anesthesia = $item.getStringProperty("pixi:biodistributionData/anesthesia_administration/anesthesia"))
+#set ($anesthesiaRoute = $item.getStringProperty("pixi:biodistributionData/anesthesia_administration/routeOfAdministration"))
+#set ($animalDetailsPresent = ($animalSacrificeDate || $animalSacrificeTime || $animalWeight))
+#set ($anesthesiaPresent = ($anesthesia || $anesthesiaRoute))
+<TABLE width="100%">
+    <TR>
+        <TD valign="top">
+            <TABLE >
+                #if ($technician)
+                <TR><TD><b>Technician</b>: $!technician</TD><TD></TD></TR>
+                #end
+                #if ($animalDetailsPresent || $anesthesiaPresent)
+                <TR><TD style="height: 1rem"></TD><TD></TD></TR>
+                <TR>
+                    #if($animalDetailsPresent)
+                    <TH align="left" style="padding: 0">Animal Details</TH>
+                    #end
+                    #if($anesthesiaPresent)
+                    <TH align="left" style="padding: 0">Anesthesia Details</TH>
+                    #end
+                </TR>
+                <TR>
+                    #if($animalDetailsPresent)
+                    <TD align="left" valign="top">
+                        <table class="xnat-table clean fixed-header selectable">
+                            <TR>
+                                <TH>Sacrifice Date</TH>
+                                <TH>Sacrifice Time</TH>
+                                <Th>Weight</Th>
+                            </TR>
+                            <TR>
+                                <TD>$!animalSacrificeDate</TD>
+                                <TD>$!animalSacrificeTime</TD>
+                                #if($animalWeight)
+                                <TD>$!animalWeight $!item.getStringProperty("pixi:biodistributionData/animal_weight_unit")</TD>
+                                #end
+                            </TR>
+                        </TABLE>
+                    </TD>
+                    #end
+                    #if($anesthesia || $anesthesiaRoute)
+                    <td  valign="top">
+                        <TABLE class="xnat-table clean fixed-header selectable">
+                            <tr>
+                                <TH>Anesthesia</TH>
+                                <TH>Administration Route</TH>
+                            </tr>
+                            <TR>
+                                <TD>$!anesthesia</TD>
+                                <TD>$!anesthesiaRoute</TD>
+                            </TR>
+                        </TABLE>
+                    </td>
+                    #end
+                </TR>
+                #end
+            </TABLE>
+        </TD>
+    </TR>
+</TABLE>

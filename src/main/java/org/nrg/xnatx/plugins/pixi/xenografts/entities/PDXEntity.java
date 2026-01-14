@@ -16,6 +16,9 @@ import org.hibernate.validator.constraints.NotBlank;
 public class PDXEntity extends XenograftEntity {
 
     @Nullable private String storage;
+    @Nullable private String patientId;
+    @Nullable private String gender;
+    @Nullable private String age;
 
     @Builder
     public PDXEntity(@NotBlank final String sourceId,
@@ -24,7 +27,6 @@ public class PDXEntity extends XenograftEntity {
                      @Nullable final String storage,
                      @Nullable final String createdBy) {
         super(sourceId, source, sourceURL, createdBy);
-
         this.storage = storage;
     }
 

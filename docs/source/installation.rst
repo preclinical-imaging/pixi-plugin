@@ -53,12 +53,16 @@ These are available on the `XNAT Downloads Page <https://www.xnat.org/download>`
 +-----------------------------+------------------------------------+
 | `Container Service`_        | Highly Recommended                 |
 +-----------------------------+------------------------------------+
+| `Summary Statistics`_       | Highly Recommended                 |
++-----------------------------+------------------------------------+
 | `Batch Launch`_             | Extends Container Service          |
 +-----------------------------+------------------------------------+
 | `JupyterHub Integration`_   | XNAT/Python Integrated Environment |
 +-----------------------------+------------------------------------+
 
-Note that `Container Service`_ is required for using PIXI's hotel image splitting feature.
+Notes:
+- `Container Service`_ is required for using PIXI's hotel image splitting feature.
+- `Summary Statistics`_ is required for using PIXI's biodistribution group comparison feature.
 
 ------------------------
 Installation Environment
@@ -137,6 +141,7 @@ when you install Docker.
 .. _XNAT Setup - First Time Configuration: https://wiki.xnat.org/documentation/xnat-setup-first-time-configuration
 .. _XNAT OHIF Viewer: https://wiki.xnat.org/xnat-ohif-viewer
 .. _Container Service: https://wiki.xnat.org/container-service/
+.. _Summary Statistics: https://bitbucket.org/xnatx/statisticsdashboard_plugin/
 .. _Batch Launch: https://wiki.xnat.org/xnat-tools/batch-launch-plugin
 .. _JupyterHub Integration: https://wiki.xnat.org/jupyter-integration
 .. _XNAT Installation Guide page: https://wiki.xnat.org/documentation/xnat-installation-guide
