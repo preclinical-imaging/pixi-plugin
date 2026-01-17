@@ -3,12 +3,12 @@
  */
 plugins {
     id "java"
-    id "org.nrg.xnat.build.xnat-data-builder" version "1.9.1"
-    id "io.freefair.lombok" version "6.0.0-m2"
+    id "org.nrg.xnat.build.xnat-data-builder" version "1.10.0-RC-SNAPSHOT"
+    id "io.freefair.lombok" version "8.6"
 }
 
 group "org.nrg.xnatx.plugins"
-version "1.5.0"
+version "1.5.0-java21-RC-SNAPSHOT"
 description "PIXI Plugin for XNAT."
 
 repositories {
@@ -23,18 +23,24 @@ configurations {
     implementation.extendsFrom(xnatProvided)
     implementation.canBeResolved(true)
     testImplementation.exclude group: 'org.slf4j', module: 'log4j-over-slf4j'
+    all {
+        resolutionStrategy {
+            force 'io.projectreactor:reactor-core:2.0.8.RELEASE'
+        }
+    }
 }
 
 dependencies {
-    xnatProvided platform("org.nrg:parent:1.9.1")
+    xnatProvided platform("org.nrg:parent:1.10.0-RC-SNAPSHOT")
     xnatProvided "org.nrg:framework"
     xnatProvided "org.nrg.xnat:xnat-data-models"
     xnatProvided "org.nrg.xnat:web"
     xnatProvided "org.nrg.xdat:core"
     xnatProvided "org.nrg:dicom-xnat-mx"
-    xnatProvided "dcm4che:dcm4che-core"
+    xnatProvided "org.dcm4che:dcm4che-core"
     xnatProvided "io.springfox:springfox-swagger2"
     xnatProvided "io.springfox:springfox-swagger-ui"
+    xnatProvided "io.projectreactor:reactor-bus:2.0.8.RELEASE"
 }
 
 dependencies {
@@ -100,8 +106,8 @@ sourceSets {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = 21
+    targetCompatibility = 21
 }
 
 jar {

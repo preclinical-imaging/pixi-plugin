@@ -3,8 +3,10 @@ package org.nrg.xnatx.plugins.pixi.config;
 import org.mockito.Mockito;
 import org.nrg.framework.services.SerializerService;
 import org.nrg.prefs.services.NrgPreferenceService;
+import org.nrg.xdat.preferences.SiteConfigPreferences;
 import org.nrg.xdat.services.cache.UserDataCache;
 import org.nrg.xnat.services.XnatAppInfo;
+import org.nrg.xnat.services.archive.impl.legacy.DefaultCatalogService;
 import org.nrg.xnatx.plugins.pixi.biod.helpers.SaveItemHelper;
 import org.nrg.xnatx.plugins.pixi.biod.helpers.XnatExperimentDataHelper;
 import org.nrg.xnatx.plugins.pixi.biod.helpers.XnatSubjectDataHelper;
@@ -65,6 +67,16 @@ public class MockConfig {
     @Bean
     public PIXIPreferences mockPIXIPreferences() {
         return Mockito.mock(PIXIPreferences.class);
+    }
+
+    @Bean
+    public DefaultCatalogService mockDefaultCatalogService() {
+        return Mockito.mock(DefaultCatalogService.class);
+    }
+
+    @Bean
+    public SiteConfigPreferences mockSiteConfigPreferences() {
+        return Mockito.mock(SiteConfigPreferences.class);
     }
 
 }
