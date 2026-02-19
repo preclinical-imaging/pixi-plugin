@@ -263,7 +263,7 @@ PET sessions additionally capture tracer information:
 +------------------------+-----------------------------+-------------------------------+
 | ``dose``               | Tracer dose                 |                               |
 +------------------------+-----------------------------+-------------------------------+
-| ``dose_units``         | Tracer dose units           | 1 = mCi, 2 = MBq             |
+| ``dose_units``         | Tracer dose units           | 1 = mCi, 2 = MBq              |
 +------------------------+-----------------------------+-------------------------------+
 
 **Scan**
@@ -273,7 +273,7 @@ The following fields are populated for all scan types (PET and CT):
 +------------------------+------------------------+------------------------------------------+
 | Inveon Header Field    | XNAT Scan Field        | Notes                                    |
 +========================+========================+==========================================+
-| ``modality``           | Modality               | 0 = PET, 1 = CT                         |
+| ``modality``           | Modality               | 0 = PET, 1 = CT                          |
 +------------------------+------------------------+------------------------------------------+
 | ``manufacturer``       | Scanner manufacturer   |                                          |
 +------------------------+------------------------+------------------------------------------+
@@ -300,7 +300,7 @@ CT scans additionally capture the following parameters:
 +--------------------------+----------------------------------+
 | ``ct_anode_current``     | X-ray tube current (mA)          |
 +--------------------------+----------------------------------+
-| ``ct_source_to_detector``| Source-to-detector distance       |
+| ``ct_source_to_detector``| Source-to-detector distance      |
 +--------------------------+----------------------------------+
 | ``pixel_size_x``         | Voxel resolution X               |
 +--------------------------+----------------------------------+
