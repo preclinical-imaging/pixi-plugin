@@ -101,15 +101,16 @@ The models for these data types are found in `Data Models <pixi_data_model.html>
 | Animal Husbandry          | Record animal feeding and housing information over an interval during which conditions are relatively homogeneous.                                 |
 +---------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
 
-DICOM Hotel Splitter
+Hotel Image Splitter
 --------------------
 
 The PIXI platform supports the standard practice of scanning multiple small animals at one time using a hotel apparatus.
-We anticipate that scanner vendors have yet to implement the parts of the DICOM Standard that support hotel scans,
-and PIXI includes software to split the composite images into separate images that are then organized under an
-individual subject.
+The hotel image splitter works with both DICOM and native Inveon PET/CT images, splitting composite images into separate
+images that are then organized under an individual subject.
 The workflow is mostly managed through the XNAT web user interface, but there are some configuration steps that must be
-completed. See the Administration / Hotel splitter configuration page for details. There is one step to be completed at
+completed. See the Administration / Hotel splitter configuration page for details.
+
+For DICOM images, there is one step to be completed at
 the scanner or if the images are submitted to XNAT using the compressed uploader or XNAT Desktop Client.
 
 1. Assign distinct labels to the individual subjects to distinguish them. This can be done before or after the imaging session.
@@ -169,6 +170,11 @@ In the case that the one of the split images includes a piece of another mouse w
 
 9. Select "Run Container" to launch the job using the container infrastructure you have deployed.
 
+For native Inveon PET/CT images, select the "Multi-Subject Image Session" subject labeling option during upload to
+assign the session to the Hotel subject. The same hotel splitting workflow (steps 3-9 above) then applies. After
+splitting, the image acquisition context metadata recorded in the hotel scan record is automatically propagated to
+each individual split session.
+
 Uploading Native Inveon PET/CT Imaging Data
 -------------------------------------------
 
@@ -204,6 +210,104 @@ To upload native Inveon PET/CT images to your XNAT, follow these steps:
 7. After selecting the project, .zip file, and labeling options, click 'Begin Upload' to start the upload process. If
    there are any issues with uploading the Inveon images to your project, the image sessions will be stored in the XNAT
    prearchive which can be accessed from the top menu by selecting `Upload -> Go to prearchive`.
+
+Extracted Metadata
+~~~~~~~~~~~~~~~~~~
+
+The Inveon importer reads the ``.img.hdr`` header file that accompanies each ``.img`` pixel data file and automatically
+populates XNAT fields at each level of the XNAT data hierarchy.
+
+**Project**
+
+The project is set by the user-selected import parameter. No metadata is extracted from the header file.
+
+**Subject**
+
++------------------------+--------------+-----------------------------------------------------+
+| Inveon Header Field    | XNAT Field   | Notes                                               |
++========================+==============+=====================================================+
+| ``subject_identifier`` | Subject ID   | Or defaults to "Hotel" for multi-subject sessions   |
++------------------------+--------------+-----------------------------------------------------+
+
+**Session**
+
+The session type is determined by modality: if any scan is PET, a PET Session is created; otherwise a CT Session is
+created. The following fields are populated for all session types:
+
++------------------------+----------------------+------------------------------------------------------+
+| Inveon Header Field    | XNAT Session Field   | Notes                                                |
++========================+======================+======================================================+
+| ``study_identifier``   | Session label        | Or derived from filename / datetime per user options |
++------------------------+----------------------+------------------------------------------------------+
+| ``scan_time``          | Date / Time          | Derived from primary modality scans                  |
++------------------------+----------------------+------------------------------------------------------+
+| ``manufacturer``       | Scanner manufacturer |                                                      |
++------------------------+----------------------+------------------------------------------------------+
+| ``model``              | Scanner model        | Integer code mapped to name                          |
++------------------------+----------------------+------------------------------------------------------+
+| ``operator``           | Operator             |                                                      |
++------------------------+----------------------+------------------------------------------------------+
+
+PET sessions additionally capture tracer information:
+
++------------------------+-----------------------------+-------------------------------+
+| Inveon Header Field    | XNAT PET Session Field      | Notes                         |
++========================+=============================+===============================+
+| ``injected_compound``  | Tracer name                 |                               |
++------------------------+-----------------------------+-------------------------------+
+| ``isotope``            | Tracer isotope              |                               |
++------------------------+-----------------------------+-------------------------------+
+| ``isotope_half_life``  | Tracer isotope half-life    |                               |
++------------------------+-----------------------------+-------------------------------+
+| ``injection_time``     | Tracer start time           | Parsed from text timestamp    |
++------------------------+-----------------------------+-------------------------------+
+| ``dose``               | Tracer dose                 |                               |
++------------------------+-----------------------------+-------------------------------+
+| ``dose_units``         | Tracer dose units           | 1 = mCi, 2 = MBq             |
++------------------------+-----------------------------+-------------------------------+
+
+**Scan**
+
+The following fields are populated for all scan types (PET and CT):
+
++------------------------+------------------------+------------------------------------------+
+| Inveon Header Field    | XNAT Scan Field        | Notes                                    |
++========================+========================+==========================================+
+| ``modality``           | Modality               | 0 = PET, 1 = CT                         |
++------------------------+------------------------+------------------------------------------+
+| ``manufacturer``       | Scanner manufacturer   |                                          |
++------------------------+------------------------+------------------------------------------+
+| ``model``              | Scanner model          | Integer code mapped to human-readable    |
+|                        |                        | name                                     |
++------------------------+------------------------+------------------------------------------+
+| ``total_frames``       | Number of frames       |                                          |
++------------------------+------------------------+------------------------------------------+
+| ``scan_time``          | Start date / time      | Parsed from text timestamp               |
++------------------------+------------------------+------------------------------------------+
+| ``operator``           | Operator               |                                          |
++------------------------+------------------------+------------------------------------------+
+| ``acquisition_mode``   | Scan type              | Integer 0-17 mapped to descriptive text  |
++------------------------+------------------------+------------------------------------------+
+
+CT scans additionally capture the following parameters:
+
++--------------------------+----------------------------------+
+| Inveon Header Field      | XNAT CT Scan Field               |
++==========================+==================================+
+| ``ct_exposure_time``     | Exposure time                    |
++--------------------------+----------------------------------+
+| ``ct_xray_voltage``      | kVp                              |
++--------------------------+----------------------------------+
+| ``ct_anode_current``     | X-ray tube current (mA)          |
++--------------------------+----------------------------------+
+| ``ct_source_to_detector``| Source-to-detector distance       |
++--------------------------+----------------------------------+
+| ``pixel_size_x``         | Voxel resolution X               |
++--------------------------+----------------------------------+
+| ``pixel_size_y``         | Voxel resolution Y               |
++--------------------------+----------------------------------+
+| ``pixel_size_z``         | Voxel resolution Z               |
++--------------------------+----------------------------------+
 
 Bioluminescence Imaging
 -----------------------
