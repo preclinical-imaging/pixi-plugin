@@ -423,8 +423,8 @@
             XNAT.ui.dialog.open({
                 title: 'Upload/Extraction Successful',
                 content: `<div class="success">Upload/Extraction of ${file.name} successful. Depending on the projects
-                prearchive settings, visit the <a target="_blank" href="/app/template/XDATScreen_prearchives.vm">prearchive</a>
-                to review the session(s) before archiving or visit the <a target="_blank" href="/data/projects/${projectId}">project</a>
+                prearchive settings, visit the <a target="_blank" href="$content.getURI('/app/template/XDATScreen_prearchives.vm')">prearchive</a>
+                to review the session(s) before archiving or visit the <a target="_blank" href="$content.getURI(`/data/projects/${projectId}`)">project</a>
                 to view archived session(s).</div>`,
                 buttons: [
                     {
