@@ -106,6 +106,18 @@ XNAT.plugin.pixi.pdxs = getObject(XNAT.plugin.pixi.pdxs || {});
                     label: self.xenograftType + ' URL',
                     id: 'sourceURL',
                     description: 'Optional: A link to this ' + self.xenograftType + ' at the data source provider (if available).'
+                }).element,
+                XNAT.ui.panel.input.text({
+                    name: 'tumorType',
+                    label: self.xenograftType + ' Tumor Type',
+                    id: 'tumorType',
+                    description: 'Optional: Tumor type'
+                }).element,
+                XNAT.ui.panel.input.text({
+                    name: 'primarySite',
+                    label: self.xenograftType + ' Primary Site',
+                    id: 'primarySite',
+                    description: 'Optional: Primary Site'
                 }).element
             ];
         }
@@ -148,6 +160,8 @@ XNAT.plugin.pixi.pdxs = getObject(XNAT.plugin.pixi.pdxs || {});
                             const sourceIdEl = document.getElementById("sourceId");
                             const sourceEl = document.getElementById("source");
                             const sourceURLEl = document.getElementById("sourceURL");
+                            const tumorTypeEl = document.getElementById("tumorType");
+                            const primarySiteEl = document.getElementById("primarySite");
 
                             // validator for sourceId (i.e. PDX ID and Cell Line ID)
                             let validateSourceId = XNAT.validate(sourceIdEl).reset().chain();
@@ -182,10 +196,12 @@ XNAT.plugin.pixi.pdxs = getObject(XNAT.plugin.pixi.pdxs || {});
                                 let xenograftToSubmit = {
                                     sourceId: sourceIdEl.value,
                                     source: sourceEl.value,
-                                    sourceURL: sourceURLEl.value
+                                    sourceURL: sourceURLEl.value,
+                                    tumorType: tumorTypeEl.value,
+                                    primarySite: primarySiteEl.value
                                 };
 
-                                if (self.xenograftType === "PDX") {
+                                if (self.xenograftType === "Patient-Derived Tumor") {
                                     const storageEl = document.getElementById("storage");
                                     xenograftToSubmit['storage'] = storageEl.value;
                                 }
