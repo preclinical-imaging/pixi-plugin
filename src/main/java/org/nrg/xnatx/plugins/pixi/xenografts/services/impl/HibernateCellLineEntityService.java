@@ -29,12 +29,16 @@ public class HibernateCellLineEntityService extends HibernateXenograftEnityServi
 
     @Override
     protected CellLine toDTO(CellLineEntity cellLineEntity) {
-        return CellLine.builder()
+        CellLine cell =  CellLine.builder()
                 .sourceId(cellLineEntity.getSourceId())
                 .source(cellLineEntity.getSource())
                 .sourceURL(cellLineEntity.getSourceURL())
                 .createdBy(cellLineEntity.getCreatedBy())
                 .build();
+        cell.setPrimarySite(cellLineEntity.getPrimarySite());
+        cell.setTumorType(cellLineEntity.getTumorType());
+        return cell;
+
     }
 
     @Override
@@ -50,5 +54,7 @@ public class HibernateCellLineEntityService extends HibernateXenograftEnityServi
         cellLineEntity.setSource(cellLine.getSource());
         cellLineEntity.setSourceURL(cellLine.getSourceURL());
         cellLineEntity.setCreatedBy(cellLine.getCreatedBy());
+        cellLineEntity.setTumorType(cellLine.getTumorType());
+        cellLineEntity.setPrimarySite(cellLine.getPrimarySite());
     }
 }
