@@ -47,11 +47,14 @@
     <DisplayField header="Projects" id="PROJECTS" data-type="string">
         <DisplayFieldElement name="Field1" viewName="PIXI_PDXDATA_PROJECTS" viewColumn="PROJECTS"/>
     </DisplayField>
-    <DisplayField header="Tumor Type" id="TUMOR_TYPE" data-type="string">
-        <DisplayFieldElement name="Field1" viewName="PIXI_PDXDATA_TUMOR_MODEL" viewColumn="tumor_type"/>
+    <DisplayField header="Tumor Type" id="TUMOR_TYPE_DERIVED" data-type="string">
+        <DisplayFieldElement name="Field1" viewName="PIXI_PDXDATA_TUMOR_MODEL" viewColumn="tumor_type_derived"/>
     </DisplayField>
     <DisplayField header="Primary Site" id="PRIMARY_SITE" data-type="string">
         <DisplayFieldElement name="Field1" viewName="PIXI_PDXDATA_TUMOR_MODEL" viewColumn="primary_site"/>
+    </DisplayField>
+    <DisplayField header="Collection Site" id="COLLECTION_SITE" data-type="string">
+        <DisplayFieldElement name="Field1" viewName="PIXI_PDXDATA_TUMOR_MODEL" viewColumn="collection_site"/>
     </DisplayField>
     <DisplayField header="Label" id="LABEL" data-type="string">
         <DisplayFieldElement name="Field1" schema-element="pixi:pdxData.ID"/>
@@ -143,8 +146,9 @@
         <DisplayFieldRef id="LABEL"/>
         <DisplayFieldRef id="SUBJECT_LABEL" element_name="xnat:subjectData"/>
         <DisplayFieldRef id="SOURCEID"/>
-        <DisplayFieldRef id="TUMOR_TYPE"/>
+        <DisplayFieldRef id="TUMOR_TYPE_DERIVED"/>
         <DisplayFieldRef id="PRIMARY_SITE"/>
+        <DisplayFieldRef id="COLLECTION_SITE"/>
         <DisplayFieldRef id="DATE"/>
         <DisplayFieldRef id="INJECTIONSITE"/>
         <DisplayFieldRef id="INJECTIONTYPE"/>
@@ -157,8 +161,9 @@
         <DisplayFieldRef id="LABEL"/>
         <DisplayFieldRef id="SUBJECT_LABEL" element_name="xnat:subjectData"/>
         <DisplayFieldRef id="SOURCEID"/>
-        <DisplayFieldRef id="TUMOR_TYPE"/>
+        <DisplayFieldRef id="TUMOR_TYPE_DERIVED"/>
         <DisplayFieldRef id="PRIMARY_SITE"/>
+        <DisplayFieldRef id="COLLECTION_SITE"/>
         <DisplayFieldRef id="DATE"/>
         <DisplayFieldRef id="INJECTIONSITE"/>
         <DisplayFieldRef id="INJECTIONTYPE"/>
@@ -171,8 +176,9 @@
         <DisplayFieldRef id="EXPT_ID"/>
         <DisplayFieldRef id="SUBJECT_LABEL" element_name="xnat:subjectData"/>
         <DisplayFieldRef id="SOURCEID"/>
-        <DisplayFieldRef id="TUMOR_TYPE"/>
+        <DisplayFieldRef id="TUMOR_TYPE_DERIVED"/>
         <DisplayFieldRef id="PRIMARY_SITE"/>
+        <DisplayFieldRef id="COLLECTION_SITE"/>
         <DisplayFieldRef id="DATE"/>
         <DisplayFieldRef id="INJECTIONSITE"/>
         <DisplayFieldRef id="INJECTIONTYPE"/>
@@ -183,8 +189,9 @@
     <DisplayVersion versionName="detailed" default-order-by="DATE" default-sort-order="DESC" brief-description="PDX"
                     dark-color="9999CC" light-color="CCCCFF">
         <DisplayFieldRef id="SOURCEID"/>
-        <DisplayFieldRef id="TUMOR_TYPE"/>
+        <DisplayFieldRef id="TUMOR_TYPE_DERIVED"/>
         <DisplayFieldRef id="PRIMARY_SITE"/>
+        <DisplayFieldRef id="COLLECTION_SITE"/>
         <DisplayFieldRef id="INJECTIONSITE"/>
         <DisplayFieldRef id="INJECTIONTYPE"/>
         <DisplayFieldRef id="NUMCELLSINJECTED"/>
@@ -196,8 +203,9 @@
         <DisplayFieldRef id="PIXI_PDXDATA_PROJECT_IDENTIFIER"/>
         <DisplayFieldRef id="SUB_PROJECT_IDENTIFIER" element_name="xnat:subjectData"/>
         <DisplayFieldRef id="SOURCEID"/>
-        <DisplayFieldRef id="TUMOR_TYPE"/>
+        <DisplayFieldRef id="TUMOR_TYPE_DERIVED"/>
         <DisplayFieldRef id="PRIMARY_SITE"/>
+        <DisplayFieldRef id="COLLECTION_SITE"/>
         <DisplayFieldRef id="DATE"/>
         <DisplayFieldRef id="INJECTIONSITE"/>
         <DisplayFieldRef id="INJECTIONTYPE"/>
@@ -217,5 +225,8 @@
     </ViewLink>
     <SQLView name="PIXI_PDXDATA_PROJECTS"
              sql="SELECT id, '&lt;' || expt.project || '&gt;' || xs_a_concat(',&lt;' || shared.project || '&gt;') AS projects FROM xnat_experimentData expt LEFT JOIN xnat_experimentData_share shared ON expt.id=shared.sharing_share_xnat_experimentda_id LEFT JOIN xdat_meta_element xme ON expt.extension = xme.xdat_meta_element_id WHERE element_name='pixi:pdxData' GROUP BY expt.id,expt.project"/>
-    <SQLView name="PDX_TUMOR_MODEL" sql="select  pdx.id, pdx.sourceid, pdxe.tumor_type, pdxe.primary_site from pixi_pdxdata pdx LEFT JOIN xhbm_pdxentity pdxe on pdx.sourceid = pdxe.source_id;"/>
+    <SQLView name="PDX_TUMOR_MODEL" sql="select  pdx.id, pdx.sourceid, pdxe.tumor_type, pdxe.primary_site, pdxe.collection_site, CASE
+    WHEN pdxe.primary_site IS NULL OR pdxe.collection_site IS NULL THEN 'Not Provided'
+    WHEN pdxe.primary_site = pdxe.collection_site THEN 'Primary'
+    ELSE 'Metastatic' as pdxe.tumor_type_derived from pixi_pdxdata pdx LEFT JOIN xhbm_pdxentity pdxe on pdx.sourceid = pdxe.source_id;"/>
 </Displays>

@@ -108,10 +108,10 @@ XNAT.plugin.pixi.pdxs = getObject(XNAT.plugin.pixi.pdxs || {});
                     description: 'Optional: A link to this ' + self.xenograftType + ' at the data source provider (if available).'
                 }).element,
                 XNAT.ui.panel.input.text({
-                    name: 'tumorType',
-                    label: self.xenograftType + ' Tumor Type',
-                    id: 'tumorType',
-                    description: 'Optional: Tumor type'
+                    name: 'collectionSite',
+                    label: self.xenograftType + ' Collection Site',
+                    id: 'collectionSite',
+                    description: 'Optional: Collection Site'
                 }).element,
                 XNAT.ui.panel.input.text({
                     name: 'primarySite',
@@ -160,7 +160,7 @@ XNAT.plugin.pixi.pdxs = getObject(XNAT.plugin.pixi.pdxs || {});
                             const sourceIdEl = document.getElementById("sourceId");
                             const sourceEl = document.getElementById("source");
                             const sourceURLEl = document.getElementById("sourceURL");
-                            const tumorTypeEl = document.getElementById("tumorType");
+                            const tumorTypeEl = document.getElementById("collectionSite");
                             const primarySiteEl = document.getElementById("primarySite");
 
                             // validator for sourceId (i.e. PDX ID and Cell Line ID)
