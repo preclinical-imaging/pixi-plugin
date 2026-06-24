@@ -37,6 +37,7 @@ public class HibernateCellLineEntityService extends HibernateXenograftEnityServi
                 .build();
         cell.setPrimarySite(cellLineEntity.getPrimarySite());
         cell.setTumorType(cellLineEntity.getTumorType());
+        cell.setCollectionSite(cellLineEntity.getCollectionSite());
         return cell;
 
     }
@@ -56,5 +57,6 @@ public class HibernateCellLineEntityService extends HibernateXenograftEnityServi
         cellLineEntity.setCreatedBy(cellLine.getCreatedBy());
         cellLineEntity.setTumorType(cellLine.getTumorType());
         cellLineEntity.setPrimarySite(cellLine.getPrimarySite());
+        cellLineEntity.setCollectionSite(cellLine.getCollectionSite());
     }
 }
