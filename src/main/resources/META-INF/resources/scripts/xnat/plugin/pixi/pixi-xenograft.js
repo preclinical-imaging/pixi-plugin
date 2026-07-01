@@ -88,6 +88,14 @@ XNAT.plugin.pixi.pdxs = getObject(XNAT.plugin.pixi.pdxs || {});
         getSpawnerElements() {
             const self = this;
 
+             let tumorTypeOptions = [{value: 'Metastatic', label: 'Metastatic'},
+                                     {value: 'Not collected', label: 'Not collected'},
+                                     {value: 'Not provided', label: 'Not provided'},
+                                     {value: 'Pre-malignant', label: 'Pre-malignant'},
+                                     {value: 'Primary', label: 'Primary'},
+                                     {value: 'Recurrent', label: 'Recurrent'},
+                                     {value: 'Refractory', label: 'Refractory'}
+                                    ];
             return [
                 XNAT.ui.panel.input.text({
                     name: 'sourceId',
@@ -102,22 +110,30 @@ XNAT.plugin.pixi.pdxs = getObject(XNAT.plugin.pixi.pdxs || {});
                     description: 'Required: The source providing this ' + self.xenograftType + ' model.'
                 }).element,
                 XNAT.ui.panel.input.text({
+                    name: 'primarySite',
+                    label: self.xenograftType + ' Primary Site',
+                    id: 'primarySite',
+                    description: 'Required: Primary Site'
+                }).element,
+                XNAT.ui.panel.select.single({
+                    name: 'tumorType',
+                    id: 'tumorType',
+                    label: self.xenograftType + ' Tumor Type',
+                    description: 'Optional: Select the Tumor type',
+                    options: tumorTypeOptions,
+                    validation: 'not-empty'
+                }).element,
+                XNAT.ui.panel.input.text({
                     name: 'sourceURL',
                     label: self.xenograftType + ' URL',
                     id: 'sourceURL',
                     description: 'Optional: A link to this ' + self.xenograftType + ' at the data source provider (if available).'
                 }).element,
                 XNAT.ui.panel.input.text({
-                    name: 'tumorType',
-                    label: self.xenograftType + ' Tumor Type',
-                    id: 'tumorType',
-                    description: 'Optional: Tumor type'
-                }).element,
-                XNAT.ui.panel.input.text({
-                    name: 'primarySite',
-                    label: self.xenograftType + ' Primary Site',
-                    id: 'primarySite',
-                    description: 'Optional: Primary Site'
+                    name: 'collectionSite',
+                    label: self.xenograftType + ' Collection Site',
+                    id: 'collectionSite',
+                    description: 'Optional: Collection Site'
                 }).element
             ];
         }
@@ -160,8 +176,9 @@ XNAT.plugin.pixi.pdxs = getObject(XNAT.plugin.pixi.pdxs || {});
                             const sourceIdEl = document.getElementById("sourceId");
                             const sourceEl = document.getElementById("source");
                             const sourceURLEl = document.getElementById("sourceURL");
-                            const tumorTypeEl = document.getElementById("tumorType");
+                            const collectionSiteEl = document.getElementById("collectionSite");
                             const primarySiteEl = document.getElementById("primarySite");
+                            const tumorTypeEl = document.getElementById("tumorType");
 
                             // validator for sourceId (i.e. PDX ID and Cell Line ID)
                             let validateSourceId = XNAT.validate(sourceIdEl).reset().chain();
@@ -171,6 +188,11 @@ XNAT.plugin.pixi.pdxs = getObject(XNAT.plugin.pixi.pdxs || {});
                             let validateSource = XNAT.validate(sourceEl).reset().chain();
                             validateSource.minLength(1).failure('Source is required.');
 
+                            // validator for primarySite
+                            let validatePrimarySite = XNAT.validate(primarySiteEl).reset().chain();
+                            validatePrimarySite.minLength(1).failure(`${self.xenograftType} Primary Site is required.`);
+
+
                             // validator for sourceURL
                             let validateSourceURL = XNAT.validate(sourceURLEl).reset().chain();
                             validateSourceURL.allowEmpty = true;
@@ -179,7 +201,7 @@ XNAT.plugin.pixi.pdxs = getObject(XNAT.plugin.pixi.pdxs || {});
                             // validate fields
                             let errorMessages = [];
 
-                            [validateSourceId, validateSource, validateSourceURL].forEach(validator => {
+                            [validateSourceId, validateSource, validatePrimarySite, validateSourceURL].forEach(validator => {
                                 validator.check();
                                 validator.messages.forEach(message => errorMessages.push(message))
                             })
@@ -197,8 +219,9 @@ XNAT.plugin.pixi.pdxs = getObject(XNAT.plugin.pixi.pdxs || {});
                                     sourceId: sourceIdEl.value,
                                     source: sourceEl.value,
                                     sourceURL: sourceURLEl.value,
-                                    tumorType: tumorTypeEl.value,
-                                    primarySite: primarySiteEl.value
+                                    collectionSite: collectionSiteEl.value,
+                                    primarySite: primarySiteEl.value,
+                                    tumorType: tumorTypeEl.value
                                 };
 
                                 if (self.xenograftType === "Patient-Derived Tumor") {
@@ -254,6 +277,9 @@ XNAT.plugin.pixi.pdxs = getObject(XNAT.plugin.pixi.pdxs || {});
                 .th({ addClass: 'left', html: '<b>' + this.xenograftType + ' ID</b>' })
                 .th('<b>Source</b>')
                 .th('<b>Link to Source Details</b>')
+                .th('<b>Primary Site</b>')
+                .th('<b>Collection Site</b>')
+                .th('<b>Tumor Type</b>')
                 .th('<b>Actions</b>')
 
             function editButton(item) {
@@ -357,6 +383,9 @@ XNAT.plugin.pixi.pdxs = getObject(XNAT.plugin.pixi.pdxs || {});
                         .td([ spawn('div.left', [item['sourceId']]) ])
                         .td([ spawn('div.center', [item['source']]) ])
                         .td([ spawn('div.center', [detailsButton(item)]) ])
+                        .td([ spawn('div.left', [item['primarySite']]) ])
+                        .td([ spawn('div.left', [item['collectionSite']]) ])
+                         .td([ spawn('div.left', [item['tumorType']]) ])
                         .td([ spawn('div.center', [viewButton(item), pixi.spacer(10), editButton(item), pixi.spacer(10), deleteButton(item)]) ])
                 })
 

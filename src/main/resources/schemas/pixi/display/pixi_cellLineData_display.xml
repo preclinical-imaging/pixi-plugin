@@ -53,6 +53,9 @@
     <DisplayField header="Primary Site" id="PRIMARY_SITE" data-type="string">
         <DisplayFieldElement name="Field1" viewName="PIXI_CELLLINEDATA_TUMOR_MODEL" viewColumn="primary_site"/>
     </DisplayField>
+    <DisplayField header="Collection Site" id="COLLECTION_SITE" data-type="string">
+        <DisplayFieldElement name="Field1" viewName="PIXI_CELLLINEDATA_TUMOR_MODEL" viewColumn="collection_site"/>
+    </DisplayField>
     <DisplayField header="Label" id="LABEL" data-type="string">
         <DisplayFieldElement name="Field1" schema-element="pixi:cellLineData.ID"/>
         <DisplayFieldElement name="Field2" schema-element="pixi:cellLineData.label"/>
@@ -141,6 +144,7 @@
         <DisplayFieldRef id="SOURCEID"/>
         <DisplayFieldRef id="TUMOR_TYPE"/>
         <DisplayFieldRef id="PRIMARY_SITE"/>
+        <DisplayFieldRef id="COLLECTION_SITE"/>
         <DisplayFieldRef id="DATE"/>
         <DisplayFieldRef id="INJECTIONSITE"/>
         <DisplayFieldRef id="NUMCELLSINJECTED"/>
@@ -152,6 +156,9 @@
         <DisplayFieldRef id="SUBJECT_LABEL" element_name="xnat:subjectData"/>
         <DisplayFieldRef id="SOURCEID"/>
         <DisplayFieldRef id="DATE"/>
+        <DisplayFieldRef id="TUMOR_TYPE"/>
+        <DisplayFieldRef id="PRIMARY_SITE"/>
+        <DisplayFieldRef id="COLLECTION_SITE"/>
         <DisplayFieldRef id="INJECTIONSITE"/>
         <DisplayFieldRef id="NUMCELLSINJECTED"/>
         <DisplayFieldRef id="INJECTIONTYPE"/>
@@ -163,6 +170,7 @@
         <DisplayFieldRef id="SOURCEID"/>
         <DisplayFieldRef id="TUMOR_TYPE"/>
         <DisplayFieldRef id="PRIMARY_SITE"/>
+        <DisplayFieldRef id="COLLECTION_SITE"/>
         <DisplayFieldRef id="DATE"/>
         <DisplayFieldRef id="INJECTIONSITE"/>
         <DisplayFieldRef id="NUMCELLSINJECTED"/>
@@ -173,6 +181,7 @@
         <DisplayFieldRef id="SOURCEID"/>
         <DisplayFieldRef id="TUMOR_TYPE"/>
         <DisplayFieldRef id="PRIMARY_SITE"/>
+        <DisplayFieldRef id="COLLECTION_SITE"/>
         <DisplayFieldRef id="INJECTIONSITE"/>
         <DisplayFieldRef id="NUMCELLSINJECTED"/>
         <DisplayFieldRef id="INJECTIONTYPE"/>
@@ -184,6 +193,7 @@
         <DisplayFieldRef id="SOURCEID"/>
         <DisplayFieldRef id="TUMOR_TYPE"/>
         <DisplayFieldRef id="PRIMARY_SITE"/>
+        <DisplayFieldRef id="COLLECTION_SITE"/>
         <DisplayFieldRef id="DATE"/>
         <DisplayFieldRef id="INJECTIONSITE"/>
         <DisplayFieldRef id="INJECTIONTYPE"/>
@@ -201,5 +211,5 @@
     </ViewLink>
     <SQLView name="PIXI_CELLLINEDATA_PROJECTS"
              sql="SELECT id, '&lt;' || expt.project || '&gt;' || xs_a_concat(',&lt;' || shared.project || '&gt;') AS projects FROM xnat_experimentData expt LEFT JOIN xnat_experimentData_share shared ON expt.id=shared.sharing_share_xnat_experimentda_id LEFT JOIN xdat_meta_element xme ON expt.extension = xme.xdat_meta_element_id WHERE element_name='pixi:cellLineData' GROUP BY expt.id,expt.project"/>
-    <SQLView name="CELLLINE_TUMOR_MODEL" sql="select  cell.id, cell.sourceid, pdxe.tumor_type, pdxe.primary_site from pixi_celllinedata cell LEFT JOIN xhbm_pdxentity pdxe on cell.sourceid = pdxe.source_id;"/>
+    <SQLView name="CELLLINE_TUMOR_MODEL" sql="select  cell.id, cell.sourceid, pdxe.tumor_type, pdxe.primary_site, pdxe.collection_site from pixi_celllinedata cell LEFT JOIN xhbm_cell_line_entity pdxe on cell.sourceid = pdxe.source_id;"/>
 </Displays>
